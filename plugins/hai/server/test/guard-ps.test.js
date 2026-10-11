@@ -193,3 +193,55 @@ test('보안 검토: 절대 경로를 끼워 넣거나 .. 로 돌아가도 상�
   assert.equal(decide('Bash', { command: `python3 -c "from pathlib import Path\nfor p in Path('${desk}/..').rglob('*.txt'): print(p.read_text())"` }, desk), 'deny');
   assert.equal(decide('Bash', { command: `python3 -c "import os\nfor r, _, f in os.walk('${docs}/../Desktop'): print(f)"` }, desk), 'allow');
 });
+
+test('보안 검토: 둥근 따옴표 경로, 홈에 폴더를 붙였다가 .. 로 돌아가기', () => {
+  const od = path.join(root, 'OneDrive - Hecto', '문서');
+  const odhr = path.join(od, '인사');
+  fs.mkdirSync(odhr, { recursive: true });
+  assert.equal(decide('PowerShell', { command: `Get-ChildItem ‘${od}’ -Recurse | Select-String 홍길동` }, root, odhr), 'deny');
+  assert.equal(decide('PowerShell', { command: `Get-Content “${path.join(odhr, 'a.txt')}”` }, root, odhr), 'deny');
+  const homeHr = path.join(process.env.HOME ?? process.env.USERPROFILE, 'Documents', '인사');
+  const f = path.join(desk, 'up.py');
+  fs.writeFileSync(f, `from pathlib import Path\nfor p in (Path.home() / 'Desktop' / '..').rglob('*.txt'): print(p.read_text())\n`);
+  assert.equal(decide('Bash', { command: 'python3 up.py' }, desk, homeHr), 'deny');
+  const g = path.join(desk, 'up2.py');
+  fs.writeFileSync(g, `import os\nfor r, _, f in os.walk(os.path.join(os.path.expanduser('~'), 'Desktop/..')): print(f)\n`);
+  assert.equal(decide('Bash', { command: 'python3 up2.py' }, desk, homeHr), 'deny');
+});
+
+test('PowerShell: 긴 줄표로 쓴 옵션(–Recurse)도 옵션이다', () => {
+  assert.equal(ps(`Get-ChildItem '${root}' –Recurse | Get-Content`), 'deny');
+  assert.equal(ps(`Get-ChildItem '${root}' —Recurse —File | Select-String 홍길동`), 'deny');
+});
+
+test('보안 검토: 홈에 폴더를 붙인 뒤 다음 줄·.parent·dirname 으로 올라가도 홈으로 본다', () => {
+  const homeHr = path.join(process.env.HOME ?? process.env.USERPROFILE, 'Documents', '인사');
+  const cases = {
+    'up3.py': `from pathlib import Path\np = Path.home() / 'Desktop'\nq = p / '..'\nfor x in q.rglob('*.txt'): print(x.read_text())\n`,
+    'up4.py': `from pathlib import Path\nfor x in (Path.home() / 'Desktop').parent.rglob('*.txt'): print(x.read_text())\n`,
+    'up5.py': `import os\nd = os.path.join(os.path.expanduser('~'), 'Desktop')\nfor r, _, f in os.walk(os.path.dirname(d)): print(f)\n`,
+  };
+  for (const [name, body] of Object.entries(cases)) {
+    fs.writeFileSync(path.join(desk, name), body);
+    assert.equal(decide('Bash', { command: `python3 ${name}` }, desk, homeHr), 'deny', name);
+  }
+});
+
+test('최종 재검토: 주석·여러 줄 문자열·안에서 부르는 셸·압축·변수 묶음·파이프로 넘긴 폴더', () => {
+  for (const [tool, c] of [
+    ['PowerShell', `# search user's docs\nGet-ChildItem '${docs}' -Recurse | Select-String '홍길동'`],
+    ['PowerShell', `<# don't touch #>\nGet-ChildItem '${docs}' -Recurse | Select-String '홍길동'`],
+    ['Bash', `# grep user's docs\ngrep -r 홍길동 '${docs}'`],
+    ['PowerShell', `$n = @'\nit's a note\n'@\nGet-ChildItem '${docs}' -Recurse | Select-String '홍길동'`],
+    ['PowerShell', `powershell -Command "Get-ChildItem '${docs}' -Recurse | Select-String 홍길동"`],
+    ['PowerShell', `cmd /c "findstr /s /i 홍길동 ${docs}/*.txt"`],
+    ['Bash', `cmd //c "findstr /s /i 홍길동 ${docs}/*.txt"`],
+    ['PowerShell', `Compress-Archive -Path '${docs}' -DestinationPath '${path.join(desk, 'd.zip')}'`],
+    ['PowerShell', `$p = @{ Path = '${docs}'; Recurse = $true }; Get-ChildItem @p | Select-String 홍길동`],
+    ['PowerShell', `'${docs}' | Get-ChildItem -Recurse | Select-String 홍길동`],
+  ]) assert.equal(decide(tool, { command: c }), 'deny', c);
+  // 주석·여러 줄 문자열 속 글자는 명령이 아니다
+  assert.equal(ps(`# 정리 메모 — it's fine\nGet-Date`), 'allow');
+  assert.equal(ps(`$t = @"\n**제목**\n"@\nSet-Content '${path.join(desk, 'o.md')}' $t`), 'allow');
+  assert.equal(decide('Bash', { command: `echo "a#b" # it's a comment` }), 'allow');
+});
