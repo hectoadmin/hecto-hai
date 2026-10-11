@@ -347,28 +347,22 @@ function check(ev) {
       // 명령 치환·프로세스 치환이 있으면 안에서 무엇이든 돌 수 있다 — echo "$(cat 원문)" 은 이름 보기가 아니다
       const namesOnly = !/\$\(|`|[<>]\(/.test(shell) && segsFirst.length > 0 && segsFirst.every((c) => NAMES_ONLY.has(path.basename(unq(c))));
       const recs = cmds.map(recursionOf);
-      // 위치와 상관없이 — 감싸는 말을 다 알 수는 없으니 따옴표 밖 단어 어디에든 훑는 명령 이름이 있으면 그 명령으로 본다
-      const bare = words.map((w) => path.basename(w));
-      const anyR = words.some((w) => /^(-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)$/.test(w));
-      if (bare.some((w) => /^(rg|ag|ack|tar|7z|ditto)$/.test(w)) || (bare.some((w) => /^(grep|egrep|fgrep|zgrep|cp|scp|rsync|zip)$/.test(w)) && anyR)
-        || (bare.includes('find') && words.some((w) => /^(-exec|-execdir|-ok|-okdir|-delete)$/.test(w)))) recs.push('content');
+      // 위치와 상관없이 — 감싸는 말을 다 알 수는 없으니 따옴표 밖 단어 어디에든 훑는 명령 이름이 있으면 그 명령으로 본다.
+      // 이름을 설명·찾기·설치하는 명령의 인자(echo tar 사용법 · which rg · man tar · brew install rg)는 빼고
+      // 다른 프로그램을 실행할 수 없는 것만(npm exec · git -c · yarn dlx 처럼 실행할 수 있는 건 넣지 않는다)
+      const TALK = new Set(['echo', 'printf', 'which', 'whereis', 'man', 'type', 'whatis', 'apropos', 'help', 'info', 'brew', 'port', 'pip', 'pip3', 'apt', 'apt-get']);
+      // 이름을 말하기만 하는 명령(첫 단어가 TALK)의 단어는 통째로 뺀다
+      const bare = cmds.filter((c) => !TALK.has(path.basename(unq(unwrap(c)[0] ?? '')))).flat().map((w) => path.basename(unq(w)));
+      const named = (re) => bare.some((w) => re.test(w));
+      const anyR = bare.some((w) => /^(-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)$/.test(w));
+      const fallback = !recs.includes('content') && (named(/^(rg|ag|ack|tar|7z|ditto)$/) || (named(/^(grep|egrep|fgrep|zgrep|cp|scp|rsync|zip)$/) && anyR)
+        || (named(/^find$/) && bare.some((w) => /^(-exec|-execdir|-ok|-okdir|-delete)$/.test(w))));
+      if (fallback) recs.push('content');
       let recContent = recs.includes('content');
       let recNames = !recContent && recs.includes('names');
       // 따옴표 밖 와일드카드로 하위 폴더까지 내려가면(*/x · **/x) — 이름만 보는 명령(ls -d */)이 아니면 내용을 읽는 재귀
       const unquotedGlobs = words.map(sub).filter((w) => /[*?[{]/.test(w));
       if (!namesOnly && unquotedGlobs.some((w) => /\*\*|\*\//.test(w))) recContent = true;
-      // 복사·압축의 "받는 곳"은 훑는 곳이 아니다(cp -r 폴더 ~/Desktop/ — 바탕화면에 원문 파일이 있어도 읽지 않는다)
-      const dests = new Set();
-      for (const raw of cmds) {
-        const ws = unwrap(raw).map(unq);
-        const c = path.basename(ws[0] ?? '');
-        const args = ws.slice(1).filter((w) => !w.startsWith('-'));
-        const once = (x) => args.filter((y) => y === x).length === 1;
-        // -t/--target-directory 가 있으면 마지막 인자가 받는 곳이 아니다(cp -t /tmp/x 원본) — 그런 꼴은 받는 곳을 빼 주지 않는다
-        const targetOpt = ws.some((w) => /^(-[a-zA-Z]*t[a-zA-Z]*|--target-directory(=.*)?)$/.test(w));
-        if (/^(cp|scp|rsync|ditto|mv)$/.test(c) && args.length >= 2 && !targetOpt && once(args.at(-1))) dests.add(args.at(-1));
-        if (c === 'zip' && args.length >= 2 && /\.zip$/i.test(args[0]) && once(args[0])) dests.add(args[0]);
-      }
       // 재귀로 훑는 명령의 기준 폴더 아래에 보호 대상이 있나 — 내용을 읽으면 원문 파일까지, 이름만 보면 보호 폴더만
       const under = (p) => (recContent ? ancestorOf(p) : recNames ? ancestorDirOf(p) : null);
 
@@ -406,7 +400,7 @@ function check(ev) {
           const p = key(expand(clean, b));
           const h = hit(p);
           if (h && !(namesOnly && !h.dir)) deny(h, '명령이 그 안을 가리킴'); // 원문 파일에 ls -l·open 은 괜찮다
-          const a = !dests.has(unq(w)) && under(p);
+          const a = fallback && under(p);
           if (a) deny(a, `${tilde(p)} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
         }
         // 기준 폴더를 모르는 상대 경로라도 경로 조각에 보호 폴더 이름이 그대로 있으면(…/인사/…) — 사용자 보호 폴더만
@@ -431,10 +425,30 @@ function check(ev) {
       for (const c of cmds) {
         const kind = recursionOf(c);
         if (!kind) continue;
-        const args = unwrap(c).slice(1).filter((w) => !unq(w).startsWith('-'));
-        // grep 계열은 첫 인자가 찾을 말이다
-        const paths = /^(grep|egrep|fgrep|zgrep|rg|ag|ack)$/.test(path.basename(unq(unwrap(c)[0] ?? ''))) ? args.slice(1) : args;
-        if (!paths.some(isPathArg)) cwdScan(kind);
+        const ws = unwrap(c).map((w) => sub(unq(w)));
+        const name = path.basename(ws[0] ?? '');
+        const rest = ws.slice(1);
+        // 이 명령 안에서만 받는 곳(쓰는 곳) 자리를 뺀다 — 같은 글자가 다른 명령에 나와도 그쪽은 그대로 검사
+        const skip = new Set();
+        const t = rest.findIndex((w) => /^(-[a-zA-Z]*t|--target-directory)$/.test(w));
+        const te = rest.findIndex((w) => w.startsWith('--target-directory='));
+        if (t >= 0) skip.add(t + 1); else if (te >= 0) skip.add(te);
+        const positional = rest.map((w, i) => [w, i]).filter(([w]) => !w.startsWith('-'));
+        if (/^(cp|scp|rsync|ditto|mv)$/.test(name) && t < 0 && te < 0 && positional.length >= 2) skip.add(positional.at(-1)[1]);
+        if (name === 'zip' && positional.length >= 2) skip.add(positional[0][1]);
+        if (name === 'tar') { const f = rest.findIndex((w) => /^-?[a-zA-Z]*f[a-zA-Z]*$/.test(w)); if (f >= 0) skip.add(f + 1); }
+        let args = rest.map((w, i) => [w, i]).filter(([w, i]) => !w.startsWith('-') && !skip.has(i)).map(([w]) => w);
+        if (/^(grep|egrep|fgrep|zgrep|rg|ag|ack)$/.test(name) && !rest.some((w) => /^(-e|-f|--regexp|--file)/.test(w))) args = args.slice(1); // 첫 인자는 찾을 말
+        for (const w of args) for (const b of bases) {
+          const g = /[*?[{]/.test(w) ? globTargets(w, b) : [];
+          for (const { t: tg, rel } of g) if (rel === 'ancestor' && !tg.internal && (kind === 'content' || tg.dir)) deny(tg, `${w} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
+          const clean = w.replace(/[*?[{].*$/, '').replace(/\/+$/, '');
+          if (!clean) continue;
+          const pp = key(expand(clean, b));
+          const a = kind === 'content' ? ancestorOf(pp) : ancestorDirOf(pp);
+          if (a) deny(a, `${tilde(pp)} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
+        }
+        if (!args.some(isPathArg)) cwdScan(kind);
       }
       // 위치로 찾은 재귀(감싸는 말을 모름)는 명령 전체에 경로가 없을 때
       if ((recContent || recNames) && !hasPathArg) cwdScan(recContent ? 'content' : 'names');

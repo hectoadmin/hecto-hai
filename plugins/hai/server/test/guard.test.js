@@ -230,3 +230,19 @@ test('보안 검토 3: 받는 곳 빼기를 악용하거나 문자열로 감싼 
   assert.equal(decide('Bash', { command: `cp -r ${path.join(root, 'Desktop', 'proj')} ${docs}/` }, root, ''), 'allow');
   assert.equal(decide('Bash', { command: 'git commit -m "use rg and tar"' }, root), 'allow');
 });
+
+test('검토 6차 재확인: 다른 명령의 받는 곳 글자로 재귀 검사를 피하지 못한다, 이름 설명은 막지 않는다', () => {
+  for (const [c, w, pd] of [
+    [`cp README.md ${docs}; grep -r 홍길동 ${docs}`, root, hr], [`cp /tmp/e ${docs} && rg 홍길동 ${docs}`, root, hr],
+    [`cp /tmp/e ${docs}; tar czf /tmp/o.tgz ${docs}`, root, ''], ['cp /tmp/e . && grep -r 홍길동 .', docs, hr],
+    [`rsync -a /tmp/e/ ${docs}/ && zip -r /tmp/o.zip ${docs}/`, root, hr], [`mv /tmp/e ${docs}; find ${docs} -exec cat {} +`, root, hr],
+  ]) assert.equal(decide('Bash', { command: c }, w, pd), 'deny', c);
+  for (const c of ['echo tar 사용법', 'which rg', 'man tar', 'brew install ripgrep rg']) assert.equal(decide('Bash', { command: c }, root), 'allow', c);
+  assert.equal(decide('Bash', { command: `cp -r ${path.join(root, 'Desktop', 'proj')} ${docs}/` }, root, ''), 'allow');
+  assert.equal(decide('Bash', { command: `tar czf ${docs}/b.tgz ${path.join(root, 'Desktop', 'proj')}` }, root, ''), 'allow');
+});
+
+test('이름 설명 예외로 실행 도구를 숨기지 못한다', () => {
+  assert.equal(decide('Bash', { command: `npm exec -- rg 홍길동 ${docs}` }, root), 'deny');
+  assert.equal(decide('Bash', { command: `npx rg 홍길동 ${docs}` }, root), 'deny');
+});
