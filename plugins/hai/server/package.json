@@ -1,0 +1,21 @@
+{
+  "name": "hai-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "HAI(사내 Qwen) MCP 서버 — 로컬 파일을 Qwen 이 먼저 읽고 가려서 Claude 에 넘긴다",
+  "scripts": {
+    "build": "esbuild src/index.js --bundle --platform=node --format=esm --target=node20 --outfile=../dist/hai-mcp.mjs --banner:js=\"import{createRequire as __cr}from'module';const require=__cr(import.meta.url);\" --log-level=warning && rm -rf ../dist/pdfjs && mkdir -p ../dist/pdfjs && cp -R node_modules/pdfjs-dist/cmaps node_modules/pdfjs-dist/standard_fonts ../dist/pdfjs/",
+    "test": "node --test test/*.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "mammoth": "^1.13.0",
+    "unpdf": "^1.8.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "pdfjs-dist": "^6.4.299"
+  }
+}
