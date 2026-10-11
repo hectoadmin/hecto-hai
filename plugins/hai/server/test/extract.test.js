@@ -57,3 +57,12 @@ test('옛 형식·비밀 파일은 거절한다', async () => {
   await assert.rejects(readText(await put('.env', 'K=V')), /비밀값/);
   await assert.rejects(readText(await put('id_rsa', 'x')), /비밀값/);
 });
+
+test('원문 장부: 동시에 여러 개를 올려도 하나도 잃지 않는다', async () => {
+  process.env.HAI_DATA_DIR = await fs.mkdtemp(path.join(os.tmpdir(), 'hai-ledger-'));
+  const { addRaw, rawFiles } = await import(`../src/ledger.js?${Date.now()}`);
+  const { config } = await import('../src/config.js');
+  config.dataDir = process.env.HAI_DATA_DIR;
+  await Promise.all(Array.from({ length: 20 }, (_, i) => addRaw(path.join(tmp, `raw-${i}.txt`))));
+  assert.equal((await rawFiles()).length, 20);
+});

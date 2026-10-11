@@ -9411,25 +9411,25 @@ var require_lib = __commonJS({
     var element;
     var channel;
     var draining;
-    var queue = [];
+    var queue2 = [];
     function nextTick() {
       draining = true;
       var i2, oldQueue;
-      var len = queue.length;
+      var len = queue2.length;
       while (len) {
-        oldQueue = queue;
-        queue = [];
+        oldQueue = queue2;
+        queue2 = [];
         i2 = -1;
         while (++i2 < len) {
           oldQueue[i2]();
         }
-        len = queue.length;
+        len = queue2.length;
       }
       draining = false;
     }
     module.exports = immediate;
     function immediate(task) {
-      if (queue.push(task) === 1 && !draining) {
+      if (queue2.push(task) === 1 && !draining) {
         scheduleDrain();
       }
     }
@@ -103013,7 +103013,14 @@ async function realish(file2) {
     return abs;
   }
 }
-async function addRaw(file2) {
+var queue = Promise.resolve();
+function addRaw(file2) {
+  const job = queue.then(() => addRawNow(file2));
+  queue = job.catch(() => {
+  });
+  return job;
+}
+async function addRawNow(file2) {
   await ensureDataDir();
   const p2 = await realish(file2);
   const files = (await rawFiles()).filter((f2) => f2 !== p2);

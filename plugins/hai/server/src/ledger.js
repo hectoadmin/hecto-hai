@@ -26,7 +26,15 @@ async function realish(file) {
   try { return path.join(await fs.realpath(path.dirname(abs)), path.basename(abs)); } catch { return abs; }
 }
 
-export async function addRaw(file) {
+let queue = Promise.resolve(); // 같은 프로세스 안의 동시 기록을 한 줄로 — 읽고-고치고-쓰는 사이에 다른 기록이 사라지지 않게
+
+export function addRaw(file) {
+  const job = queue.then(() => addRawNow(file));
+  queue = job.catch(() => {});
+  return job;
+}
+
+async function addRawNow(file) {
   await ensureDataDir();
   const p = await realish(file);
   const files = (await rawFiles()).filter((f) => f !== p);
