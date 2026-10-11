@@ -518,7 +518,8 @@ function psWords(s) {
 
 function psCheck(cmd0, cwd, where = 'PowerShell 명령') {
   // PowerShell 은 둥근 따옴표(‘ ’ ‚ ‛ · “ ” „)도 따옴표로 읽는다 — 같은 꼴로 맞춰야 띄어쓰기 든 경로가 쪼개지지 않는다
-  let s = String(cmd0).normalize('NFC').replace(/[\u2018\u2019\u201A\u201B]/g, "'").replace(/[\u201C\u201D\u201E]/g, '"');
+  let s = String(cmd0).normalize('NFC').replace(/[\u2018\u2019\u201A\u201B]/g, "'").replace(/[\u201C\u201D\u201E]/g, '"')
+    .replace(/(^|[\s(;|{])[\u2013\u2014\u2015](?=[A-Za-z])/g, '$1-'); // –Recurse · —Path 도 옵션이다
   if (guarded() && PS_OPAQUE.test(s)) deny(userDirs[0] ?? raws[0], `${where}에 글자를 풀거나 만들어 실행하는 부분(iex·base64·[char]·-EncodedCommand)이 있어 어떤 파일을 여는지 확인할 수 없음. 설치 명령(irm … | iex)이면 사용자가 직접 실행하세요`);
   // 백틱 이스케이프, 문자열 잇기('C:\Users\' + '인사'), 변수($d = '…'), Join-Path·[IO.Path]::Combine 을 풀어서 본다
   s = s.replace(/`(.)/gs, '$1').replace(/(['"])\s*\+\s*(['"])/g, '');

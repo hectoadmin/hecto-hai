@@ -208,3 +208,8 @@ test('보안 검토: 둥근 따옴표 경로, 홈에 폴더를 붙였다가 .. �
   fs.writeFileSync(g, `import os\nfor r, _, f in os.walk(os.path.join(os.path.expanduser('~'), 'Desktop/..')): print(f)\n`);
   assert.equal(decide('Bash', { command: 'python3 up2.py' }, desk, homeHr), 'deny');
 });
+
+test('PowerShell: 긴 줄표로 쓴 옵션(–Recurse)도 옵션이다', () => {
+  assert.equal(ps(`Get-ChildItem '${root}' –Recurse | Get-Content`), 'deny');
+  assert.equal(ps(`Get-ChildItem '${root}' —Recurse —File | Select-String 홍길동`), 'deny');
+});
