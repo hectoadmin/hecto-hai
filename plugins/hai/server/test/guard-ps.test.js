@@ -26,7 +26,7 @@ test('PowerShell: 변수·문자열 잇기·Join-Path·백틱으로 나눈 경�
     `$d = '${docs}'; Get-ChildItem (Join-Path $d '인사') | Get-Content`,
     `Get-Content ('${docs}${path.sep}' + '인사${path.sep}a.txt')`,
     `$f = '${path.join(hr, 'a.txt')}'; Get-Content $f`,
-    `Get-Content '${path.join(docs, '인`사', 'a.txt')}'`,
+    `Get-Content "${path.join(docs, '인`사', 'a.txt')}"`, // 큰따옴표 안 백틱은 이스케이프(작은따옴표 안에서는 글자)
     `[IO.Path]::Combine('${docs}', '인사', 'a.txt') | Get-Content`,
   ]) assert.equal(ps(c), 'deny', c);
 });
@@ -244,4 +244,31 @@ test('최종 재검토: 주석·여러 줄 문자열·안에서 부르는 셸·�
   assert.equal(ps(`# 정리 메모 — it's fine\nGet-Date`), 'allow');
   assert.equal(ps(`$t = @"\n**제목**\n"@\nSet-Content '${path.join(desk, 'o.md')}' $t`), 'allow');
   assert.equal(decide('Bash', { command: `echo "a#b" # it's a comment` }), 'allow');
+});
+
+test('파서 차이: 이스케이프된 따옴표, 문자열 안 $( ), 주석·따옴표 속 << 로 숨긴 명령도 본다', () => {
+  for (const [tool, c] of [
+    ['PowerShell', `echo \`'; Get-ChildItem '${docs}' -Recurse | Select-String 홍길동 # \`'`],
+    ['PowerShell', `echo "a\`"b"; Get-ChildItem '${docs}' -Recurse | Select-String 홍길동`],
+    ['PowerShell', `Write-Output "$(Get-ChildItem '${docs}' -Recurse | Select-String 홍길동)"`],
+    ['PowerShell', `$m = @"\nresult: $(Get-Content '${raw}')\n"@\n$m`],
+    ['Bash', `# see <<EOF\ngrep -r 홍길동 '${docs}'\nEOF`],
+    ['Bash', `echo "<<EOF"\ngrep -r 홍길동 '${docs}'\nEOF`],
+  ]) assert.equal(decide(tool, { command: c }), 'deny', c);
+  assert.equal(ps(`Write-Output "오늘: $(Get-Date)"`), 'allow');
+  assert.equal(decide('Bash', { command: `cat <<'EOF'\n${hr}\nEOF` }), 'deny'); // 진짜 heredoc 본문의 보호 폴더 경로는 그대로 막는다
+});
+
+test('재검토: heredoc 으로 넘긴 코드, <<< here-string, } , 뒤 PowerShell 주석', () => {
+  for (const [tool, c] of [
+    ['Bash', `python3 - <<'PY'\nimport os\nprint(open(os.path.join('${docs}','인사','a.txt')).read())\nPY`],
+    ['Bash', `python3 - <<'PY'\nimport os\nfor r,_,fs in os.walk('${docs}'):\n    print(r)\nPY`],
+    ['Bash', `python3 <<EOF\nfrom pathlib import Path\nfor p in Path('${docs}').rglob('*.txt'): print(p.read_text())\nEOF`],
+    ['Bash', `cat <<< hello\ngrep -r 홍길동 '${docs}'`],
+    ['Bash', `tr a-z A-Z <<< 'x'\ngrep -r 홍길동 '${docs}'`],
+    ['PowerShell', `Get-Date }# it's\nGet-ChildItem '${docs}' -Recurse | Select-String 홍길동`],
+    ['PowerShell', `$x = 1,# it's\n2\nGet-ChildItem '${docs}' -Recurse | Select-String 홍길동`],
+  ]) assert.equal(decide(tool, { command: c }), 'deny', c);
+  assert.equal(decide('Bash', { command: `python3 - <<'PY'\nprint(sum(range(10)))\nPY` }), 'allow');
+  assert.equal(decide('Bash', { command: `cat <<'EOF' > ${path.join(desk, 'n.md')}\n# 보고서\n**굵게**\nEOF` }), 'allow');
 });
