@@ -139,10 +139,19 @@ const UNQUOTE = Object.fromEntries(Object.entries(QUOTED).map(([a, b]) => [b, a]
 const lit = (s) => s.replace(/[*?[{]/g, (c) => QUOTED[c]);      // 따옴표 안 → 와일드카드 아님
 const unq = (s) => s.replace(/[\uE001-\uE004]/g, (c) => UNQUOTE[c]); // 원래 글자로
 
-function shellWords(cmd) {
+const SEP = '\u0000SEP';
+/** 따옴표 밖의 ; & | 줄바꿈 ` $( ) 에서 명령을 나눈다 → [[단어…], …] (따옴표 안의 ; 는 나누지 않는다) */
+function shellCommands(cmd) {
+  const out = [[]];
+  for (const w of shellWords(cmd, true)) { if (w === SEP) { if (out.at(-1).length) out.push([]); } else out.at(-1).push(w); }
+  return out.filter((c) => c.length);
+}
+
+function shellWords(cmd, ops = false) {
   const out = [];
   let cur = '', has = false;
   const push = () => { if (has) out.push(cur); cur = ''; has = false; };
+  const sep = () => { push(); if (ops) out.push(SEP); };
   for (let i = 0; i < cmd.length;) {
     const c = cmd[i];
     if (c === '\\') { if (cmd[i + 1] !== '\n' && i + 1 < cmd.length) { cur += cmd[i + 1]; has = true; } i += 2; continue; }
@@ -167,8 +176,9 @@ function shellWords(cmd) {
       while (j < cmd.length && cmd[j] !== '"') { if (cmd[j] === '\\' && /["\\$`]/.test(cmd[j + 1] ?? '')) { cur += cmd[j + 1]; j += 2; } else { cur += lit(cmd[j]); j++; } }
       has = true; i = j + 1; continue;
     }
-    if (/\s/.test(c) || ';&|<>()`'.includes(c)) { push(); i++; continue; }
-    if (c === '$' && cmd[i + 1] === '(') { push(); i += 2; continue; }
+    if (c === '\n' || ';&|()`'.includes(c)) { sep(); i++; continue; }
+    if (/\s/.test(c) || '<>'.includes(c)) { push(); i++; continue; }
+    if (c === '$' && cmd[i + 1] === '(') { sep(); i += 2; continue; }
     cur += c; has = true; i++;
   }
   push();
@@ -300,7 +310,7 @@ function check(ev) {
       if (inCwd && !inCwd.internal) deny(inCwd, '작업 폴더가 그 안');
       const { shell, bodies } = splitHeredocs(cmd);
       // 명령 하나하나(; && || | 줄바꿈, $( ) ` 안도 따로) — 첫 단어로 무엇을 하는지 본다
-      const split = (txt) => txt.split(/\|\||&&|[|;&\n`]|\$\(|\)/).map((seg) => shellWords(seg)).filter((ws) => ws.length);
+      const split = (txt) => shellCommands(txt);
       const cmds = split(shell);
       // bash -c '…' · sh -c "…" 안의 명령도 같은 규칙으로(두 겹까지)
       for (let depth = 0, k = 0; depth < 2; depth++) {
@@ -309,8 +319,10 @@ function check(ev) {
           const raw = cmds[k].map(unq);
           const ws = unwrap(cmds[k]).map(unq);
           const head = path.basename(ws[0] ?? '');
-          const i = ws.indexOf('-c');
-          if (/^((ba|z|da|k|c|tc|fi)?sh|su|script)$/.test(head) && i > 0 && ws[i + 1]) cmds.push(...split(ws[i + 1]));
+          // 셸 이름이 어디에 있든(brew sh -c "…" · nice -n 5 bash -c "…") 그 뒤 -c 의 글자를 명령으로
+          const sh = ws.findIndex((w) => /^((ba|z|da|k|c|tc|fi)?sh|su|script)$/.test(path.basename(w)));
+          const i = sh >= 0 ? ws.indexOf('-c', sh + 1) : -1;
+          if (i > 0 && ws[i + 1]) cmds.push(...split(ws[i + 1]));
           const S = raw.findIndex((w) => w === '-S' || w.startsWith('--split-string'));
           if (path.basename(raw[0] ?? '') === 'env' && S >= 0) cmds.push(...split(raw[S].includes('=') ? raw[S].split('=').slice(1).join('=') : (raw[S + 1] ?? '')));
           if (head === 'watch') cmds.push(...split(ws.slice(1).filter((w) => !w.startsWith('-')).join(' ')));
@@ -350,9 +362,12 @@ function check(ev) {
       // 위치와 상관없이 — 감싸는 말을 다 알 수는 없으니 따옴표 밖 단어 어디에든 훑는 명령 이름이 있으면 그 명령으로 본다.
       // 이름을 설명·찾기·설치하는 명령의 인자(echo tar 사용법 · which rg · man tar · brew install rg)는 빼고
       // 다른 프로그램을 실행할 수 없는 것만(npm exec · git -c · yarn dlx 처럼 실행할 수 있는 건 넣지 않는다)
-      const TALK = new Set(['echo', 'printf', 'which', 'whereis', 'man', 'type', 'whatis', 'apropos', 'help', 'info', 'brew', 'port', 'pip', 'pip3', 'apt', 'apt-get']);
+      const TALK = new Set(['echo', 'printf', 'which', 'whereis', 'type', 'whatis', 'apropos']); // brew sh·pip install 은 실행할 수 있어 넣지 않는다
+      // man 은 옵션이 없을 때만(-P·--pager·-H 로 다른 프로그램을 실행할 수 있다)
+      const talkOnly = (c) => { const ws = unwrap(c).map(unq); const h = path.basename(ws[0] ?? ''); return TALK.has(h) || (h === 'man' && ws.slice(1).every((w) => !w.startsWith('-')))
+        || (h === 'brew' && /^(install|uninstall|reinstall|upgrade|info|search|list|update|outdated|doctor|desc|home)$/.test(ws[1] ?? '')); }; // brew sh·brew ruby 는 아니다
       // 이름을 말하기만 하는 명령(첫 단어가 TALK)의 단어는 통째로 뺀다
-      const bare = cmds.filter((c) => !TALK.has(path.basename(unq(unwrap(c)[0] ?? '')))).flat().map((w) => path.basename(unq(w)));
+      const bare = cmds.filter((c) => !talkOnly(c)).flat().map((w) => path.basename(unq(w)));
       const named = (re) => bare.some((w) => re.test(w));
       const anyR = bare.some((w) => /^(-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)$/.test(w));
       const fallback = !recs.includes('content') && (named(/^(rg|ag|ack|tar|7z|ditto)$/) || (named(/^(grep|egrep|fgrep|zgrep|cp|scp|rsync|zip)$/) && anyR)
@@ -422,21 +437,43 @@ function check(ev) {
       };
       const cwdScan = (kind) => { for (const b of bases) { const a = kind === 'content' ? ancestorOf(key(b)) : ancestorDirOf(key(b)); if (a) deny(a, `작업 폴더(${tilde(b)}) 아래를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true }); } };
       // 재귀 명령마다 — 제 인자에 경로가 없으면 작업 폴더를 훑는다(script -c 'rg 홍' /dev/null 의 /dev/null 은 rg 의 경로가 아니다)
+      const LOOSE = /^(rg|ag|ack|tar|7z|ditto)$/;
+      const looseKind = (c) => {
+        if (talkOnly(c)) return null;
+        const ws = c.map((w) => path.basename(unq(w)));
+        const r = ws.some((w) => /^(-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)$/.test(w));
+        if (ws.slice(1).some((w) => LOOSE.test(w)) || (ws.slice(1).some((w) => /^(grep|egrep|fgrep|zgrep|cp|scp|rsync|zip)$/.test(w)) && r)
+          || (ws.slice(1).includes('find') && ws.some((w) => /^(-exec|-execdir|-ok|-okdir|-delete)$/.test(w)))) return 'content';
+        return null;
+      };
       for (const c of cmds) {
-        const kind = recursionOf(c);
+        let kind = recursionOf(c);
+        if (!kind && looseKind(c)) { // 모르는 감싸는 말 + rg … — 받는 곳 빼기 없이 모든 인자, 경로가 없으면 작업 폴더
+          for (const w of c.slice(1).map((x) => sub(unq(x))).filter((x) => !x.startsWith('-'))) for (const b of bases) {
+            const pp = key(expand(w.replace(/[*?[{].*$/, '').replace(/\/+$/, '') || '.', b));
+            const a = ancestorOf(pp);
+            if (a) deny(a, `${tilde(pp)} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
+          }
+          if (!c.slice(1).some((w) => !unq(w).startsWith('-') && isPathArg(w))) cwdScan('content');
+          continue;
+        }
         if (!kind) continue;
         const ws = unwrap(c).map((w) => sub(unq(w)));
         const name = path.basename(ws[0] ?? '');
         const rest = ws.slice(1);
         // 이 명령 안에서만 받는 곳(쓰는 곳) 자리를 뺀다 — 같은 글자가 다른 명령에 나와도 그쪽은 그대로 검사
         const skip = new Set();
-        const t = rest.findIndex((w) => /^(-[a-zA-Z]*t|--target-directory)$/.test(w));
-        const te = rest.findIndex((w) => w.startsWith('--target-directory='));
-        if (t >= 0) skip.add(t + 1); else if (te >= 0) skip.add(te);
-        const positional = rest.map((w, i) => [w, i]).filter(([w]) => !w.startsWith('-'));
-        if (/^(cp|scp|rsync|ditto|mv)$/.test(name) && t < 0 && te < 0 && positional.length >= 2) skip.add(positional.at(-1)[1]);
-        if (name === 'zip' && positional.length >= 2) skip.add(positional[0][1]);
-        if (name === 'tar') { const f = rest.findIndex((w) => /^-?[a-zA-Z]*f[a-zA-Z]*$/.test(w)); if (f >= 0) skip.add(f + 1); }
+        // cp·mv 의 -t(받는 곳 지정) — 묶음 옵션(-rt · -tr) 어디에 있든. -t 뒤에 글자가 붙으면 그게 값(다음 단어가 아니다)
+        let targetGiven = false;
+        if (/^(cp|mv)$/.test(name)) rest.forEach((w, i) => {
+          if (w === '--target-directory' || /^-[a-zA-Z]*t$/.test(w)) { skip.add(i + 1); targetGiven = true; }
+          else if (/^-[a-zA-Z]*t./.test(w) || w.startsWith('--target-directory=')) targetGiven = true;
+        });
+        const positional = rest.map((w, i) => [w, i]).filter(([w, i]) => !w.startsWith('-') && !skip.has(i));
+        if (/^(cp|scp|rsync|ditto|mv)$/.test(name) && !targetGiven && positional.length >= 2) skip.add(positional.at(-1)[1]);
+        if (name === 'zip' && positional.length >= 2 && /\.zip$/i.test(positional[0][0])) skip.add(positional[0][1]);
+        // tar: 첫 인자가 - 없는 키(czf)이거나 - 옵션 묶음에 f 가 있으면 그다음이 압축 파일 — 아무 낱말(foo)의 f 는 아니다
+        if (name === 'tar') rest.forEach((w, i) => { if ((i === 0 && /^[a-zA-Z]*f[a-zA-Z]*$/.test(w) && /^[AcdrtuxzjJvpfOSkmhWlLbBCgGMNVZ]+$/.test(w)) || /^-[a-zA-Z]*f$/.test(w)) skip.add(i + 1); });
         let args = rest.map((w, i) => [w, i]).filter(([w, i]) => !w.startsWith('-') && !skip.has(i)).map(([w]) => w);
         if (/^(grep|egrep|fgrep|zgrep|rg|ag|ack)$/.test(name) && !rest.some((w) => /^(-e|-f|--regexp|--file)/.test(w))) args = args.slice(1); // 첫 인자는 찾을 말
         for (const w of args) for (const b of bases) {

@@ -246,3 +246,21 @@ test('이름 설명 예외로 실행 도구를 숨기지 못한다', () => {
   assert.equal(decide('Bash', { command: `npm exec -- rg 홍길동 ${docs}` }, root), 'deny');
   assert.equal(decide('Bash', { command: `npx rg 홍길동 ${docs}` }, root), 'deny');
 });
+
+test('보안 검토 4: 따옴표 안 ; · -t 묶음 · tar 아무 낱말 · 실행 가능한 "설명" 명령 · 한 줄에 섞인 모르는 감싸는 말', () => {
+  const elsewhere = path.join(root, 'elsewhere');
+  fs.mkdirSync(elsewhere, { recursive: true });
+  for (const [c, w] of [
+    [`grep -r "x;y" ${docs}`, elsewhere], [`grep -r 'a|b' ${docs}`, elsewhere],
+    [`cp -tr /tmp/x ${docs}`, elsewhere], [`cp -rt /tmp/x ${docs}`, elsewhere], [`tar -c foo ${docs}`, elsewhere],
+    [`man -P "rg 홍길동 ${docs}" tar`, elsewhere], [`brew sh -c "grep -r 홍 ${docs}"`, elsewhere],
+    [`grep -r x /tmp; weirdwrap rg 홍 ${docs}`, elsewhere],
+  ]) assert.equal(decide('Bash', { command: c }, w), 'deny', c);
+  for (const c of ['grep -rn "TODO;" src', 'echo "a;b" | wc -c', `cp -r ${path.join(root, 'Desktop', 'proj')} /tmp/y`]) assert.equal(decide('Bash', { command: c }, elsewhere), 'allow', c);
+});
+
+test('man 은 옵션 없이만 설명으로 본다', () => {
+  assert.equal(decide('Bash', { command: 'man tar' }, root), 'allow');
+  assert.equal(decide('Bash', { command: `man -P "cat ${hr}/a.txt" tar` }, root), 'deny');
+  assert.equal(decide('Bash', { command: `nice -n 5 bash -c "rg 홍 ${docs}"` }, path.join(root, 'elsewhere')), 'deny');
+});
