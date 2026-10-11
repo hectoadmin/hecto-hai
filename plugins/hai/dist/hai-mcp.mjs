@@ -30368,7 +30368,7 @@ var require_fs = __commonJS({
 var require_files = __commonJS({
   "node_modules/mammoth/lib/docx/files.js"(exports) {
     var url3 = __require("url");
-    var os4 = __require("os");
+    var os5 = __require("os");
     var dirname = __require("path").dirname;
     var isAbsolutePath = __require("path").isAbsolute;
     var resolvePath2 = __require("path").resolve;
@@ -30410,7 +30410,7 @@ var require_files = __commonJS({
     }
     function uriToPath(uriString, platform) {
       if (!platform) {
-        platform = os4.platform();
+        platform = os5.platform();
       }
       var uri = url3.parse(uriString);
       if (isLocalFileUri(uri) || isRelativeUri(uri)) {
@@ -73151,6 +73151,8 @@ var init_dist = __esm({
 
 // src/index.js
 import fs6 from "node:fs/promises";
+import { readFileSync } from "node:fs";
+import os4 from "node:os";
 import path6 from "node:path";
 
 // node_modules/zod/v3/helpers/util.js
@@ -102509,6 +102511,10 @@ var config2 = {
   keepDomains: list(env("HAI_KEEP_DOMAINS", "")).map((d2) => d2.toLowerCase()),
   maxChars: Number(env("HAI_MAX_CHARS", "300000")),
   protectedDirs: list(env("HAI_PROTECTED_DIRS", "")),
+  rawDir: (() => {
+    const d2 = env("HAI_RAW_DIR", "~/Documents/HAI \uC6D0\uBB38");
+    return path.resolve(d2.startsWith("~") ? path.join(os.homedir(), d2.slice(1)) : d2);
+  })(),
   // 이 플러그인이 만든 원문 파일 목록·검색 색인을 두는 곳. 훅(guard.mjs)도 같은 경로를 읽는다
   dataDir: env("HAI_DATA_DIR", path.join(os.homedir(), ".hai-mcp")),
   services: {
@@ -103645,7 +103651,7 @@ server.registerTool("hai_mask_file", {
 }));
 server.registerTool("hai_restore", {
   title: "\uC2E4\uBA85\uC73C\uB85C \uB418\uB3CC\uB824 \uC800\uC7A5",
-  description: "hai_* \uACB0\uACFC\uB85C Claude \uAC00 \uB9CC\uB4E0 \uAE00(text) \uB610\uB294 \uADF8 \uAE00\uC744 \uC800\uC7A5\uD55C \uD30C\uC77C(in_path)\uC758 \uC790\uB9AC\uD45C\uC2DC\uB97C \uC6D0\uB798 \uAC12\uC73C\uB85C \uBC14\uAFD4 out_path \uC5D0\uB9CC \uC800\uC7A5\uD55C\uB2E4. \uC6D0\uB798 \uAC12\uC740 Claude \uC5D0 \uB3CC\uB824\uC8FC\uC9C0 \uC54A\uACE0, \uC800\uC7A5\uD55C \uD30C\uC77C\uC740 Claude \uAC00 \uB2E4\uC2DC \uC5F4\uC9C0 \uBABB\uD558\uAC8C \uB9C9\uD78C\uB2E4. \uAC19\uC740 \uC138\uC158(12\uC2DC\uAC04) \uC548\uC5D0\uC11C\uB9CC \uB41C\uB2E4.",
+  description: "hai_* \uACB0\uACFC\uB85C Claude \uAC00 \uB9CC\uB4E0 \uAE00(text) \uB610\uB294 \uADF8 \uAE00\uC744 \uC800\uC7A5\uD55C \uD30C\uC77C(in_path)\uC758 \uC790\uB9AC\uD45C\uC2DC\uB97C \uC6D0\uB798 \uAC12\uC73C\uB85C \uBC14\uAFD4 out_path \uC5D0\uB9CC \uC800\uC7A5\uD55C\uB2E4. out_path \uB97C \uC0AC\uC6A9\uC790\uAC00 \uB530\uB85C \uB9D0\uD558\uC9C0 \uC54A\uC558\uC73C\uBA74 \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354(hai_status \uC5D0 \uB098\uC634) \uC548\uC73C\uB85C \uD55C\uB2E4. \uC6D0\uB798 \uAC12\uC740 Claude \uC5D0 \uB3CC\uB824\uC8FC\uC9C0 \uC54A\uACE0, \uC800\uC7A5\uD55C \uD30C\uC77C\uC740 Claude \uAC00 \uB2E4\uC2DC \uC5F4\uC9C0 \uBABB\uD558\uAC8C \uB9C9\uD78C\uB2E4. \uAC19\uC740 \uC138\uC158(12\uC2DC\uAC04) \uC548\uC5D0\uC11C\uB9CC \uB41C\uB2E4.",
   inputSchema: {
     mask_id: external_exports.string(),
     text: external_exports.string().optional().describe("\uC790\uB9AC\uD45C\uC2DC\uAC00 \uB4E0 \uAE00"),
@@ -103675,14 +103681,14 @@ server.registerTool("hai_transcribe", {
     path: external_exports.string(),
     ...audioSchema,
     timestamps: external_exports.boolean().optional().describe("\uBB38\uC7A5\uB9C8\uB2E4 [mm:ss] \uC2DC\uAC01\uC744 \uBD99\uC778\uB2E4"),
-    out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uB179\uC74C \uC606 "<\uC774\uB984> \uBC1B\uC544\uC4F0\uAE30.txt")')
+    out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354\uC758 "<\uC774\uB984> \uBC1B\uC544\uC4F0\uAE30.txt")')
   }
 }, guard(async ({ path: p2, engine, terms, timestamps, out_path }, ex) => {
   const file2 = resolvePath(p2);
   if (kindOf(file2) !== "audio") throw new Error("\uB179\uC74C \uD30C\uC77C\uC774 \uC544\uB2D9\uB2C8\uB2E4(wav\xB7mp3\xB7m4a\xB7ogg\xB7flac \uB4F1)");
   progress(ex, "\uBC1B\uC544\uC4F0\uB294 \uC911");
   const { text, meta: meta3 } = await readText(file2, { engine, terms, timestamps });
-  const saved = await writeRaw(out_path ? resolvePath(out_path) : path6.join(path6.dirname(file2), `${path6.parse(file2).name} \uBC1B\uC544\uC4F0\uAE30.txt`), `${text}
+  const saved = await writeRaw(out_path ? resolvePath(out_path) : path6.join(config2.rawDir, `${path6.parse(file2).name} \uBC1B\uC544\uC4F0\uAE30.txt`), `${text}
 `);
   return ok(`\uC800\uC7A5: ${saved}
 ${dur(meta3?.seconds)} \uB179\uC74C \xB7 ${text.length.toLocaleString()}\uC790 \xB7 ${meta3?.engine === "qwen" ? "qwen3-asr" : "whisper-large-v3"}
@@ -103691,13 +103697,13 @@ ${dur(meta3?.seconds)} \uB179\uC74C \xB7 ${text.length.toLocaleString()}\uC790 \
 server.registerTool("hai_ocr", {
   title: "\uC2A4\uCE94\xB7\uC0AC\uC9C4\uC5D0\uC11C \uAE00\uC790 \uBF51\uAE30",
   description: "\uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4(png\xB7jpg\xB7tif)\uC744 HAI OCR(\uD45C\xB7\uB808\uC774\uC544\uC6C3 \uC778\uC2DD)\uB85C \uAE00\uB85C \uBC14\uAFD4 \uB0B4 PC \uD30C\uC77C\uB85C \uC800\uC7A5\uD55C\uB2E4. format: md(\uAE30\uBCF8, Markdown) \uB610\uB294 docx(\uACE0\uCE60 \uC218 \uC788\uB294 \uC6CC\uB4DC \uD30C\uC77C \u2014 \uC5EC\uB7EC \uCABD\uC740 \uCABD \uACBD\uACC4\uC5D0\uC11C \uC798\uB9B0 \uD45C\uB97C \uC774\uC5B4 \uD55C \uBC8C\uB85C). \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4. \uB0B4\uC6A9\uC744 \uBB3B\uAC70\uB098 \uB2E4\uB4EC\uC744 \uB54C\uB294 \uC6D0\uBCF8\uC774\uB098 \uC800\uC7A5 \uD30C\uC77C\uC5D0 hai_ask_file\xB7hai_mask_file \uC744 \uC4F4\uB2E4(\uADF8 \uB3C4\uAD6C\uB4E4\uB3C4 \uC2A4\uCE94\uBCF8\uC774\uBA74 OCR \uC744 \uC54C\uC544\uC11C \uD55C\uB2E4).",
-  inputSchema: { path: external_exports.string(), format: external_exports.enum(["md", "docx"]).optional(), out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBCF8 \uC606 "<\uC774\uB984> OCR.md" \uB610\uB294 ".docx")') }
+  inputSchema: { path: external_exports.string(), format: external_exports.enum(["md", "docx"]).optional(), out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354\uC758 "<\uC774\uB984> OCR.md" \uB610\uB294 ".docx")') }
 }, guard(async ({ path: p2, format, out_path }, ex) => {
   const file2 = resolvePath(p2);
   if (!["pdf", "image"].includes(kindOf(file2))) throw new Error("PDF \uB098 \uC774\uBBF8\uC9C0(png\xB7jpg\xB7tif\xB7bmp\xB7webp)\uB9CC \uB429\uB2C8\uB2E4");
   progress(ex, "OCR \uC911");
   const ext = format === "docx" ? ".docx" : ".md";
-  const target = out_path ? resolvePath(out_path) : path6.join(path6.dirname(file2), `${path6.parse(file2).name} OCR${ext}`);
+  const target = out_path ? resolvePath(out_path) : path6.join(config2.rawDir, `${path6.parse(file2).name} OCR${ext}`);
   if (format === "docx") {
     const { count, docx } = await ocr(file2, { docx: true });
     if (!docx) throw new Error("HAI \uAC00 \uC6CC\uB4DC \uD30C\uC77C\uC744 \uB3CC\uB824\uC8FC\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. format \uC5C6\uC774(Markdown) \uB2E4\uC2DC \uD574 \uBCF4\uC138\uC694.");
@@ -103778,6 +103784,8 @@ server.registerTool("hai_status", {
     `\uBCF4\uD638 \uD3F4\uB354: ${config2.protectedDirs.length ? config2.protectedDirs.join(", ") : "\uC5C6\uC74C(\uC124\uC815 \uAD8C\uC7A5)"}`
   ];
   if (!source) return ok([...lines, "\u2192 \uD0A4\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4. HAI \uD3EC\uD138(https://hai-gateway.idc.hectoai.co.kr/)\uC5D0 \uD5E5\uD1A0 \uC774\uBA54\uC77C\uB85C \uAC00\uC785 \u2192 API \uD0A4 \uAD00\uB9AC\uC5D0\uC11C \uBC1C\uAE09 \u2192 /plugin \uC5D0\uC11C hai \uC124\uC815\uC5D0 \uB123\uC73C\uC138\uC694."].join("\n"));
+  lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os4.homedir(), "~")}`);
+  lines.push(sandboxLine());
   const LABEL = { qwen: "Qwen(\uBD84\uC11D\xB7\uCD94\uB860)", gemma: "Gemma(\uB300\uD654\xB7\uC0AC\uC9C4)", embed: "\uBB38\uC11C \uAC80\uC0C9(KURE)", whisper: "\uBC1B\uC544\uC4F0\uAE30 whisper", asr: "\uBC1B\uC544\uC4F0\uAE30 qwen3-asr", ocr: "OCR(paddleocr)" };
   const rows = await probe();
   for (const r2 of rows) lines.push(`- ${LABEL[r2.name]}: ${r2.ok === null ? r2.note : r2.ok ? `\uB428 (${r2.model}, ${r2.ms}ms)` : `\uC548 \uB428 \u2014 ${r2.note}`}`);
@@ -103785,6 +103793,20 @@ server.registerTool("hai_status", {
   if (rows.some((r2) => r2.code === "HAI_UNREACHABLE")) lines.push("\u2192 \uC0AC\uB0B4\uB9DD(\uB610\uB294 \uD5C8\uC6A9\uB41C IP)\uC5D0\uC11C\uB9CC \uB429\uB2C8\uB2E4. \uB124\uD2B8\uC6CC\uD06C\uB97C \uD655\uC778\uD558\uC138\uC694.");
   return ok(lines.join("\n"));
 }));
+function sandboxLine() {
+  let st2 = {};
+  try {
+    st2 = JSON.parse(readFileSync(path6.join(os4.homedir(), ".claude", "settings.json"), "utf8"));
+  } catch {
+  }
+  const sb = st2.sandbox ?? {};
+  const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path6.resolve(String(d2).replace(/^~(?=\/|$)/, os4.homedir())));
+  const want = [...config2.protectedDirs.map((d2) => path6.resolve(d2.replace(/^~(?=\/|$)/, os4.homedir()))), config2.rawDir];
+  const covered = want.filter((w2) => deny.some((d2) => w2 === d2 || w2.startsWith(d2 + path6.sep)));
+  if (os4.platform() === "win32") return "\uC0CC\uB4DC\uBC15\uC2A4: Windows \uC5D0\uC11C\uB294 \uC9C0\uC6D0\uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4(\uAC00\uB4DC \uD6C5\uB9CC \uB3D9\uC791)";
+  if (!sb.enabled) return "\uC0CC\uB4DC\uBC15\uC2A4: \uAEBC\uC9D0 \u2014 /hai:protect \uB85C \uCF1C\uBA74 \uBCF4\uD638 \uD3F4\uB354\uB97C \uC6B4\uC601\uCCB4\uC81C \uC218\uC900\uC5D0\uC11C \uB9C9\uC2B5\uB2C8\uB2E4(\uAD8C\uC7A5)";
+  return covered.length === want.length ? `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uBCF4\uD638 \uD3F4\uB354\xB7\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354 \uC77D\uAE30 \uCC28\uB2E8\uB428(${covered.length}\uACF3)` : `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uC77D\uAE30 \uCC28\uB2E8\uC5D0 \uBE60\uC9C4 \uACF3 ${want.length - covered.length}\uACF3 \u2014 /hai:protect \uB85C \uCD94\uAC00\uD558\uC138\uC694`;
+}
 await server.connect(new StdioServerTransport());
 export {
   VERSION2 as VERSION

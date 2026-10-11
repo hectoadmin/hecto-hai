@@ -27,6 +27,13 @@
       "required": false,
       "default": ""
     },
+    "raw_dir": {
+      "type": "string",
+      "title": "원문 결과 폴더 (선택)",
+      "description": "받아쓰기·OCR·실명 복원 결과(가리지 않은 원문)를 모아 두는 폴더. Claude 가 이 폴더를 직접 열지 못하게 막습니다. 기본 ~/Documents/HAI 원문",
+      "required": false,
+      "default": "~/Documents/HAI 원문"
+    },
     "keep_domains": {
       "type": "string",
       "title": "가리지 않을 이메일 도메인 (선택)",

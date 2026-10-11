@@ -13,6 +13,8 @@
  * 가리기 전 원래 값은 이 프로세스 메모리(Vault)에만 있다. 원문 파일(받아쓰기·OCR·되돌린 결과)은 장부에 올라 훅이 Claude 의 직접 열람을 막는다.
  */
 import fs from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
@@ -220,7 +222,7 @@ server.registerTool('hai_mask_file', {
 
 server.registerTool('hai_restore', {
   title: '실명으로 되돌려 저장',
-  description: 'hai_* 결과로 Claude 가 만든 글(text) 또는 그 글을 저장한 파일(in_path)의 자리표시를 원래 값으로 바꿔 out_path 에만 저장한다. 원래 값은 Claude 에 돌려주지 않고, 저장한 파일은 Claude 가 다시 열지 못하게 막힌다. 같은 세션(12시간) 안에서만 된다.',
+  description: 'hai_* 결과로 Claude 가 만든 글(text) 또는 그 글을 저장한 파일(in_path)의 자리표시를 원래 값으로 바꿔 out_path 에만 저장한다. out_path 를 사용자가 따로 말하지 않았으면 원문 결과 폴더(hai_status 에 나옴) 안으로 한다. 원래 값은 Claude 에 돌려주지 않고, 저장한 파일은 Claude 가 다시 열지 못하게 막힌다. 같은 세션(12시간) 안에서만 된다.',
   inputSchema: { mask_id: z.string(), text: z.string().optional().describe('자리표시가 든 글'), in_path: z.string().optional().describe('또는 그 글이 든 파일'),
     out_path: z.string().describe('저장할 파일 경로'), overwrite: z.boolean().optional() },
 }, guard(async ({ mask_id, text, in_path, out_path, overwrite }) => {
@@ -242,26 +244,26 @@ server.registerTool('hai_transcribe', {
   title: '녹음 받아쓰기',
   description: '녹음 파일(wav·mp3·m4a·ogg·flac 등, 60분까지)을 HAI 로 받아써 내 PC 파일로 저장한다. 받아쓴 원문은 Claude 에 오지 않는다 — 요약·회의록은 저장된 파일이나 녹음 파일 자체에 hai_ask_file 을 쓴다. 받아쓰기 파일만 필요할 때 쓴다.',
   inputSchema: { path: z.string(), ...audioSchema, timestamps: z.boolean().optional().describe('문장마다 [mm:ss] 시각을 붙인다'),
-    out_path: z.string().optional().describe('저장 위치(기본: 녹음 옆 "<이름> 받아쓰기.txt")') },
+    out_path: z.string().optional().describe('저장 위치(기본: 원문 결과 폴더의 "<이름> 받아쓰기.txt")') },
 }, guard(async ({ path: p, engine, terms, timestamps, out_path }, ex) => {
   const file = resolvePath(p);
   if (kindOf(file) !== 'audio') throw new Error('녹음 파일이 아닙니다(wav·mp3·m4a·ogg·flac 등)');
   progress(ex, '받아쓰는 중');
   const { text, meta } = await readText(file, { engine, terms, timestamps });
-  const saved = await writeRaw(out_path ? resolvePath(out_path) : path.join(path.dirname(file), `${path.parse(file).name} 받아쓰기.txt`), `${text}\n`);
+  const saved = await writeRaw(out_path ? resolvePath(out_path) : path.join(config.rawDir, `${path.parse(file).name} 받아쓰기.txt`), `${text}\n`);
   return ok(`저장: ${saved}\n${dur(meta?.seconds)} 녹음 · ${text.length.toLocaleString()}자 · ${meta?.engine === 'qwen' ? 'qwen3-asr' : 'whisper-large-v3'}\n원문은 Claude 에 보이지 않습니다. 회의록·요약은 hai_ask_file(path="${saved}") 로.`);
 }));
 
 server.registerTool('hai_ocr', {
   title: '스캔·사진에서 글자 뽑기',
   description: '스캔 PDF·사진(png·jpg·tif)을 HAI OCR(표·레이아웃 인식)로 글로 바꿔 내 PC 파일로 저장한다. format: md(기본, Markdown) 또는 docx(고칠 수 있는 워드 파일 — 여러 쪽은 쪽 경계에서 잘린 표를 이어 한 벌로). 원문은 Claude 에 오지 않는다. 내용을 묻거나 다듬을 때는 원본이나 저장 파일에 hai_ask_file·hai_mask_file 을 쓴다(그 도구들도 스캔본이면 OCR 을 알아서 한다).',
-  inputSchema: { path: z.string(), format: z.enum(['md', 'docx']).optional(), out_path: z.string().optional().describe('저장 위치(기본: 원본 옆 "<이름> OCR.md" 또는 ".docx")') },
+  inputSchema: { path: z.string(), format: z.enum(['md', 'docx']).optional(), out_path: z.string().optional().describe('저장 위치(기본: 원문 결과 폴더의 "<이름> OCR.md" 또는 ".docx")') },
 }, guard(async ({ path: p, format, out_path }, ex) => {
   const file = resolvePath(p);
   if (!['pdf', 'image'].includes(kindOf(file))) throw new Error('PDF 나 이미지(png·jpg·tif·bmp·webp)만 됩니다');
   progress(ex, 'OCR 중');
   const ext = format === 'docx' ? '.docx' : '.md';
-  const target = out_path ? resolvePath(out_path) : path.join(path.dirname(file), `${path.parse(file).name} OCR${ext}`);
+  const target = out_path ? resolvePath(out_path) : path.join(config.rawDir, `${path.parse(file).name} OCR${ext}`);
   if (format === 'docx') {
     const { count, docx } = await ocr(file, { docx: true });
     if (!docx) throw new Error('HAI 가 워드 파일을 돌려주지 않았습니다. format 없이(Markdown) 다시 해 보세요.');
@@ -316,6 +318,8 @@ server.registerTool('hai_status', {
     `키: ${source ? (source === 'env' ? '플러그인 설정' : 'macOS 키체인') : '없음'}`,
     `보호 폴더: ${config.protectedDirs.length ? config.protectedDirs.join(', ') : '없음(설정 권장)'}`];
   if (!source) return ok([...lines, '→ 키가 없습니다. HAI 포털(https://hai-gateway.idc.hectoai.co.kr/)에 헥토 이메일로 가입 → API 키 관리에서 발급 → /plugin 에서 hai 설정에 넣으세요.'].join('\n'));
+  lines.push(`원문 결과 폴더: ${config.rawDir.replace(os.homedir(), '~')}`);
+  lines.push(sandboxLine());
   const LABEL = { qwen: 'Qwen(분석·추론)', gemma: 'Gemma(대화·사진)', embed: '문서 검색(KURE)', whisper: '받아쓰기 whisper', asr: '받아쓰기 qwen3-asr', ocr: 'OCR(paddleocr)' };
   const rows = await probe();
   for (const r of rows) lines.push(`- ${LABEL[r.name]}: ${r.ok === null ? r.note : r.ok ? `됨 (${r.model}, ${r.ms}ms)` : `안 됨 — ${r.note}`}`);
@@ -323,5 +327,19 @@ server.registerTool('hai_status', {
   if (rows.some((r) => r.code === 'HAI_UNREACHABLE')) lines.push('→ 사내망(또는 허용된 IP)에서만 됩니다. 네트워크를 확인하세요.');
   return ok(lines.join('\n'));
 }));
+
+/** Claude Code 샌드박스(OS 수준 읽기 차단)가 보호 폴더·원문 결과 폴더를 막고 있나 — ~/.claude/settings.json 만 본다 */
+function sandboxLine() {
+  let st = {};
+  try { st = JSON.parse(readFileSync(path.join(os.homedir(), '.claude', 'settings.json'), 'utf8')); } catch { /* 없음 */ }
+  const sb = st.sandbox ?? {};
+  const deny = (sb.filesystem?.denyRead ?? []).map((d) => path.resolve(String(d).replace(/^~(?=\/|$)/, os.homedir())));
+  const want = [...config.protectedDirs.map((d) => path.resolve(d.replace(/^~(?=\/|$)/, os.homedir()))), config.rawDir];
+  const covered = want.filter((w) => deny.some((d) => w === d || w.startsWith(d + path.sep)));
+  if (os.platform() === 'win32') return '샌드박스: Windows 에서는 지원되지 않습니다(가드 훅만 동작)';
+  if (!sb.enabled) return '샌드박스: 꺼짐 — /hai:protect 로 켜면 보호 폴더를 운영체제 수준에서 막습니다(권장)';
+  return covered.length === want.length ? `샌드박스: 켜짐 · 보호 폴더·원문 결과 폴더 읽기 차단됨(${covered.length}곳)`
+    : `샌드박스: 켜짐 · 읽기 차단에 빠진 곳 ${want.length - covered.length}곳 — /hai:protect 로 추가하세요`;
+}
 
 await server.connect(new StdioServerTransport());

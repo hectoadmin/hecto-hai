@@ -36,9 +36,12 @@
 |---|---|
 | HAI API 키 (필수) | 1에서 받은 키. PC 의 보안 저장소(키체인)에만 저장됩니다 |
 | 보호 폴더 (선택) | 예: `~/Documents/인사, ~/Documents/계약`. 이 폴더 파일은 Claude 가 직접 열지 못하고 HAI 도구로만 읽힙니다 |
+| 원문 결과 폴더 (선택) | 받아쓰기·OCR 결과(가리지 않은 원문)를 모으는 곳. 기본 `~/Documents/HAI 원문`. 이 폴더도 Claude 가 열지 못합니다 |
 | 가리지 않을 이메일 도메인 (선택) | 예: `hecto.co.kr`. 비우면 이메일을 전부 가립니다 |
 
 나중에 바꾸려면 `/plugin` → hai → 설정. 업데이트는 `/plugin marketplace update hecto`.
+
+4. **(권장) 운영체제 수준으로 막기** — `/hai:protect`. Claude Code 샌드박스의 읽기 차단(`sandbox.filesystem.denyRead`)에 보호 폴더·원문 결과 폴더를 넣습니다(사용자 동의 후 `~/.claude/settings.json` 수정). 그러면 명령을 어떻게 쓰든 Bash 가 그 폴더를 읽지 못합니다. macOS·Linux·WSL2 지원, Windows 는 미지원(가드 훅만 동작).
 
 ## 무엇을, 어떻게 가리나
 
@@ -48,14 +51,14 @@
 - **더 가리고 싶으면**: "거래처명이랑 계약 금액도 가려줘" — 그 유형을 더해 다시 가립니다
 - 같은 값은 문서 전체에서 같은 자리표시([이름1])가 되고, 원래 값은 메모리에만 있습니다
 - 사내 AI 가 응답하지 않으면 **가리다 만 글을 넘기지 않고 실패**합니다
-- 받아쓰기·OCR·실명 결과 파일은 장부(`~/.hai-mcp/raw-files.log`, 경로만)에 올라 Claude 가 다시 열지 못합니다
+- 받아쓰기·OCR 결과는 원문 결과 폴더에 모이고, 실명 결과 파일과 함께 장부(`~/.hai-mcp/raw-files.log`, 경로만)에도 올라 Claude 가 다시 열지 못합니다
 
 ## 한계
 
 - 자동 가림이라 **놓칠 수 있습니다.** 중요한 문서는 결과를 한 번 훑어보세요.
 - 사내 AI 는 긴 글의 **개수 세기·합계에 약합니다.** 집계는 "가려서 읽고 Claude 가 세 줘"로.
 - 읽는 형식: 문서 txt·md·csv(UTF-8·UTF-16·EUC-KR)·json·html·pdf(스캔 쪽은 OCR)·docx·xlsx·hwpx / 사진 png·jpg·tif·webp / 녹음 wav·mp3·ogg·flac·m4a 등(60분, m4a 는 macOS 내장 변환이나 ffmpeg). **옛 hwp·xls·doc 는 새 형식이나 PDF 로 저장**해서 씁니다.
-- 보호 폴더 차단은 **실수로 원본을 여는 것을 막는 안전망**입니다. Read·Grep·Glob 은 경로로 확실히 막고, Bash 는 명령을 셸처럼 풀어(따옴표·이스케이프·와일드카드·변수·명령 치환) 판단하며 판단할 수 없는 형태(인코딩한 글자·eval·base64 풀기)는 막습니다. 다만 파이썬 등으로 폴더 전체를 훑는 코드까지 글자만 보고 막을 수는 없습니다 — 원본이 Claude 에 갈 일 자체가 없게 하는 것은 HAI 도구(원문은 사내 AI 만 읽음)이고, 가드는 그 위의 이중 장치입니다.
+- 보호 폴더 차단은 두 겹입니다. ① 가드 훅(항상 켜짐): **실수로 원본을 여는 것을 막는 안전망**입니다. Read·Grep·Glob 은 경로로 확실히 막고, Bash 는 명령을 셸처럼 풀어(따옴표·이스케이프·와일드카드·변수·명령 치환) 판단하며 판단할 수 없는 형태(인코딩한 글자·eval·base64 풀기)는 막습니다. 다만 파이썬 등으로 폴더 전체를 훑는 코드까지 글자만 보고 막을 수는 없습니다. ② 샌드박스(`/hai:protect`로 켬): 운영체제가 읽기 자체를 막으므로 이 한계가 없습니다. 원본이 Claude 에 갈 일 자체가 없게 하는 중심은 HAI 도구(원문은 사내 AI 만 읽음)이고, 두 겹은 그 위의 장치입니다.
 - 실명 되돌리기는 같은 세션(12시간) 안에서만 됩니다.
 
 ## 구성 (개발자용)
@@ -67,7 +70,7 @@ plugins/hai/
   .mcp.json                       MCP 서버 등록 → dist/hai-mcp.mjs
   dist/                           묶은 서버 한 파일 + pdf.js 한글 CMap (커밋한다 — 플러그인은 npm install 을 안 한다)
   hooks/guard.mjs                 보호 폴더·원문 파일 Read·Grep·Glob·Bash 차단 (PreToolUse)
-  skills/guide|privacy|doc|minutes
+  skills/guide|privacy|doc|minutes|protect
   server/src                      config · hai(게이트웨이) · mask · ner · table · extract · office · search · ledger · index
   server/test                     가리기·표·형식·가드·매니페스트 (네트워크 없음)
 ```

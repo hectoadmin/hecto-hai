@@ -25,7 +25,7 @@ fs.writeFileSync(path.join(data, 'raw-files.log'), `${raw}\n${gone}\n`);
 function decide(tool_name, tool_input, cwd = root, protectedDirs = hr) {
   const out = execFileSync(process.execPath, [GUARD], {
     input: JSON.stringify({ tool_name, tool_input, cwd }),
-    env: { ...process.env, CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS: protectedDirs, HAI_DATA_DIR: data },
+    env: { ...process.env, CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS: protectedDirs, HAI_DATA_DIR: data, HAI_RAW_DIR: path.join(root, '없는 원문 폴더') },
   }).toString();
   return out ? JSON.parse(out).hookSpecificOutput.permissionDecision : 'allow';
 }
@@ -111,7 +111,7 @@ test('검토 3차: 내부 tmp·지운 원문 파일·이름만 보는 명령·�
 
 test('검토 3차: 상위 폴더 검색을 막을 때는 범위를 좁히라고 안내', () => {
   const out = execFileSync(process.execPath, [GUARD], { input: JSON.stringify({ tool_name: 'Glob', tool_input: { pattern: '**/*.pdf' }, cwd: root }),
-    env: { ...process.env, CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS: hr, HAI_DATA_DIR: data } }).toString();
+    env: { ...process.env, CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS: hr, HAI_DATA_DIR: data, HAI_RAW_DIR: path.join(root, '없는 원문 폴더') } }).toString();
   assert.match(JSON.parse(out).hookSpecificOutput.permissionDecisionReason, /더 좁은 폴더/);
 });
 
@@ -263,4 +263,30 @@ test('man 은 옵션 없이만 설명으로 본다', () => {
   assert.equal(decide('Bash', { command: 'man tar' }, root), 'allow');
   assert.equal(decide('Bash', { command: `man -P "cat ${hr}/a.txt" tar` }, root), 'deny');
   assert.equal(decide('Bash', { command: `nice -n 5 bash -c "rg 홍 ${docs}"` }, path.join(root, 'elsewhere')), 'deny');
+});
+
+test('검토 6차 재확인 2: 큰따옴표 안 명령 치환도 명령으로, cp -a, tar 목록·풀기·-C', () => {
+  for (const [c, w] of [
+    ['echo "$(rg 홍)"', docs], ['echo "$(grep -r 홍 .)"', docs], ['echo "`rg 홍`"', docs], ['x="$(rg 홍)"; echo $x', docs],
+    ['echo "$(tar cf - .)"', docs], [`echo "$(sh -c 'rg 홍')"`, docs], [`echo "$(grep -r 홍 ${docs})"`, root],
+    [`cp -a ${docs} /tmp/x`, path.join(root, 'elsewhere')],
+  ]) assert.equal(decide('Bash', { command: c }, w), 'deny', c);
+  const dl = path.join(root, 'Downloads');
+  fs.mkdirSync(dl, { recursive: true });
+  for (const c of [`tar tzf ${dl}/x.tgz`, `tar xzf ${dl}/x.tgz -C /tmp/out`, `tar czf ${docs}/proj.tgz -C ${path.join(root, 'Desktop')} proj`, "echo '$(rg 홍)'"]) {
+    assert.equal(decide('Bash', { command: c }, root, ''), 'allow', c);
+  }
+});
+
+test('원문 결과 폴더는 설정하지 않아도 보호 폴더처럼 막는다', () => {
+  const rawDir = path.join(root, 'HAI 원문');
+  fs.mkdirSync(rawDir, { recursive: true });
+  const run = (tool_name, tool_input) => {
+    const out = execFileSync(process.execPath, [GUARD], { input: JSON.stringify({ tool_name, tool_input, cwd: root }),
+      env: { ...process.env, CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS: '', HAI_DATA_DIR: data, HAI_RAW_DIR: rawDir } }).toString();
+    return out ? 'deny' : 'allow';
+  };
+  assert.equal(run('Read', { file_path: path.join(rawDir, '회의 받아쓰기.txt') }), 'deny');
+  assert.equal(run('Bash', { command: `cat "${rawDir}"/*.txt` }), 'deny');
+  assert.equal(run('Read', { file_path: path.join(root, 'Desktop', 'a.txt') }), 'allow');
 });

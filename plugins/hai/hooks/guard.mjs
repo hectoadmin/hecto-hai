@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * 원문 가드 (PreToolUse). Claude 가 Read·Grep·Glob·Bash 등으로 다음을 직접 열지 못하게 막고 HAI 도구를 쓰라고 돌려보낸다.
- *   1) 보호 폴더 — 플러그인 설정 protected_dirs
+ *   1) 보호 폴더 — 플러그인 설정 protected_dirs, 그리고 원문 결과 폴더(raw_dir, 기본 ~/Documents/HAI 원문)
  *   2) 이 플러그인이 만든 원문 파일 — 받아쓰기·OCR 결과, 실명으로 되돌린 결과물 (~/.hai-mcp/raw-files.log 장부, 지금 있는 파일만)
  *   3) ~/.hai-mcp/tmp (변환 중인 음성 — 직접 가리킬 때만, 이름·상위 폴더 검사에는 넣지 않는다: "tmp" 는 흔한 이름이다)
  * 경로는 NFC 로 맞추고, macOS·Windows 에서는 대소문자를 가리지 않는다(파일 시스템이 그렇다).
@@ -27,7 +27,10 @@ const key = (p) => norm(real(p));
 const tilde = (p) => (p.startsWith(HOME) ? `~${p.slice(HOME.length)}` : p);
 
 const opt = process.env.CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS ?? '';
-const userDirs = (opt.includes('${') ? [] : opt.split(',').map((s) => s.trim()).filter(Boolean))
+// 원문 결과 폴더(받아쓰기·OCR 기본 저장 곳)도 보호 폴더처럼 — 설정이 없으면 기본값. HAI_RAW_DIR 은 시험용
+const rawOpt = process.env.HAI_RAW_DIR ?? process.env.CLAUDE_PLUGIN_OPTION_RAW_DIR ?? '';
+const rawDir = rawOpt && !rawOpt.includes('${') ? rawOpt : path.join(HOME, 'Documents', 'HAI 원문');
+const userDirs = [...(opt.includes('${') ? [] : opt.split(',').map((s) => s.trim()).filter(Boolean)), ...(fs.existsSync(expand(rawDir)) ? [rawDir] : [])]
   .map((d) => { const p = real(expand(d)); return { shown: tilde(p), key: norm(p), dir: true, forms: [fold(p), fold(tilde(p))] }; });
 const internal = { shown: '~/.hai-mcp/tmp', key: key(path.join(DATA, 'tmp')), dir: true, internal: true };
 let raws = [];
@@ -96,9 +99,14 @@ function recursionOf(raw) {
   const has = (re) => ws.slice(1).some((w) => re.test(w));
   const R = /^(-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)$/;
   if (/^(grep|egrep|fgrep|zgrep)$/.test(c) && has(R)) return 'content';
-  if (/^(cp|scp)$/.test(c) && has(R)) return 'content';
+  if (/^(cp|scp)$/.test(c) && has(/^(-[a-zA-Z]*[rRa][a-zA-Z]*|--recursive|--archive)$/)) return 'content'; // cp -a 는 -R 을 품는다
   if (c === 'rsync' && has(/^(-[a-zA-Z]*[raR][a-zA-Z]*|--recursive|--archive)$/)) return 'content';
-  if (/^(rg|ag|ack|tar|zip|7z|ditto)$/.test(c)) return 'content';
+  if (c === 'tar') { // 만들기·덧붙이기만 폴더를 읽는다 — 목록 보기(t)·풀기(x)는 압축 파일 하나만
+    const key = ws.slice(1).find((w) => !w.startsWith('--')) ?? '';
+    const create = ws.slice(1).some((w) => /^--(create|append|update)$/.test(w)) || /^-?[a-zA-Z]*[cru]/.test(key);
+    return create ? 'content' : null;
+  }
+  if (/^(rg|ag|ack|zip|7z|ditto)$/.test(c)) return 'content';
   if (c === 'find') return has(/^(-exec|-execdir|-ok|-okdir|-delete)$/) ? 'content' : 'names';
   if (/^(tree|du)$/.test(c)) return 'names';
   if (c === 'ls' && has(/^-[a-zA-Z]*R/)) return 'names';
@@ -141,13 +149,29 @@ const unq = (s) => s.replace(/[\uE001-\uE004]/g, (c) => UNQUOTE[c]); // 원래 �
 
 const SEP = '\u0000SEP';
 /** 따옴표 밖의 ; & | 줄바꿈 ` $( ) 에서 명령을 나눈다 → [[단어…], …] (따옴표 안의 ; 는 나누지 않는다) */
-function shellCommands(cmd) {
+function shellCommands(cmd, depth = 0) {
   const out = [[]];
-  for (const w of shellWords(cmd, true)) { if (w === SEP) { if (out.at(-1).length) out.push([]); } else out.at(-1).push(w); }
+  const inner = [];
+  for (const w of shellWords(cmd, true, inner)) { if (w === SEP) { if (out.at(-1).length) out.push([]); } else out.at(-1).push(w); }
+  // 큰따옴표 안의 $(…)·`…` 는 bash 가 실행한다 — 따로 명령으로(작은따옴표 안은 글자)
+  if (depth < 4) for (const x of inner) out.push(...shellCommands(x, depth + 1));
   return out.filter((c) => c.length);
 }
 
-function shellWords(cmd, ops = false) {
+/** 큰따옴표 안 i 위치의 $( 에서 짝 ) 까지 → [안쪽 글자, 끝 다음 위치] */
+function matchParen(cmd, i) {
+  let d = 0, j = i;
+  for (; j < cmd.length; j++) {
+    const c = cmd[j];
+    if (c === '\\') { j++; continue; }
+    if (c === "'" ) { const k = cmd.indexOf("'", j + 1); if (k < 0) break; j = k; continue; }
+    if (c === '(') d++;
+    else if (c === ')' && --d === 0) return [cmd.slice(i + 1, j), j + 1];
+  }
+  return [cmd.slice(i + 1), cmd.length];
+}
+
+function shellWords(cmd, ops = false, inner = null) {
   const out = [];
   let cur = '', has = false;
   const push = () => { if (has) out.push(cur); cur = ''; has = false; };
@@ -173,7 +197,12 @@ function shellWords(cmd, ops = false) {
     if (c === "'") { const j = cmd.indexOf("'", i + 1); const e = j < 0 ? cmd.length : j; cur += lit(cmd.slice(i + 1, e)); has = true; i = e + 1; continue; }
     if (c === '"') {
       let j = i + 1;
-      while (j < cmd.length && cmd[j] !== '"') { if (cmd[j] === '\\' && /["\\$`]/.test(cmd[j + 1] ?? '')) { cur += cmd[j + 1]; j += 2; } else { cur += lit(cmd[j]); j++; } }
+      while (j < cmd.length && cmd[j] !== '"') {
+        if (cmd[j] === '\\' && /["\\$`]/.test(cmd[j + 1] ?? '')) { cur += cmd[j + 1]; j += 2; continue; }
+        if (cmd[j] === '$' && cmd[j + 1] === '(') { const [txt, e] = matchParen(cmd, j + 1); inner?.push(txt); cur += lit(`$(${txt})`); j = e; continue; }
+        if (cmd[j] === '`') { const e = cmd.indexOf('`', j + 1); const txt = cmd.slice(j + 1, e < 0 ? cmd.length : e); inner?.push(txt); cur += lit(`\`${txt}\``); j = e < 0 ? cmd.length : e + 1; continue; }
+        cur += lit(cmd[j]); j++;
+      }
       has = true; i = j + 1; continue;
     }
     if (c === '\n' || ';&|()`'.includes(c)) { sep(); i++; continue; }
@@ -431,9 +460,9 @@ function check(ev) {
         const c = unq(w.replace(/[*?[{].*$/, ''));
         return /[/~]/.test(c) || c === '.' || c === '..' || (c && bases.some((b) => fs.existsSync(expand(c, b))));
       });
-      const isPathArg = (w) => {
+      const isPathArg = (w, bs = bases) => {
         const c = unq(sub(w).replace(/[*?[{].*$/, ''));
-        return /[/~]/.test(c) || c === '.' || c === '..' || (c && bases.some((b) => fs.existsSync(expand(c, b))));
+        return /[/~]/.test(c) || c === '.' || c === '..' || (c && bs.some((b) => fs.existsSync(expand(c, b))));
       };
       const cwdScan = (kind) => { for (const b of bases) { const a = kind === 'content' ? ancestorOf(key(b)) : ancestorDirOf(key(b)); if (a) deny(a, `작업 폴더(${tilde(b)}) 아래를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true }); } };
       // 재귀 명령마다 — 제 인자에 경로가 없으면 작업 폴더를 훑는다(script -c 'rg 홍' /dev/null 의 /dev/null 은 rg 의 경로가 아니다)
@@ -474,9 +503,11 @@ function check(ev) {
         if (name === 'zip' && positional.length >= 2 && /\.zip$/i.test(positional[0][0])) skip.add(positional[0][1]);
         // tar: 첫 인자가 - 없는 키(czf)이거나 - 옵션 묶음에 f 가 있으면 그다음이 압축 파일 — 아무 낱말(foo)의 f 는 아니다
         if (name === 'tar') rest.forEach((w, i) => { if ((i === 0 && /^[a-zA-Z]*f[a-zA-Z]*$/.test(w) && /^[AcdrtuxzjJvpfOSkmhWlLbBCgGMNVZ]+$/.test(w)) || /^-[a-zA-Z]*f$/.test(w)) skip.add(i + 1); });
+        let cmdBases = bases;
+        if (name === 'tar') rest.forEach((w, i) => { if ((w === '-C' || w === '--directory') && rest[i + 1]) { skip.add(i + 1); cmdBases = [expand(rest[i + 1], cwd)]; } });
         let args = rest.map((w, i) => [w, i]).filter(([w, i]) => !w.startsWith('-') && !skip.has(i)).map(([w]) => w);
         if (/^(grep|egrep|fgrep|zgrep|rg|ag|ack)$/.test(name) && !rest.some((w) => /^(-e|-f|--regexp|--file)/.test(w))) args = args.slice(1); // 첫 인자는 찾을 말
-        for (const w of args) for (const b of bases) {
+        for (const w of args) for (const b of cmdBases) {
           const g = /[*?[{]/.test(w) ? globTargets(w, b) : [];
           for (const { t: tg, rel } of g) if (rel === 'ancestor' && !tg.internal && (kind === 'content' || tg.dir)) deny(tg, `${w} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
           const clean = w.replace(/[*?[{].*$/, '').replace(/\/+$/, '');
@@ -485,7 +516,7 @@ function check(ev) {
           const a = kind === 'content' ? ancestorOf(pp) : ancestorDirOf(pp);
           if (a) deny(a, `${tilde(pp)} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
         }
-        if (!args.some(isPathArg)) cwdScan(kind);
+        if (!args.some((w) => isPathArg(w, cmdBases))) cwdScan(kind);
       }
       // 위치로 찾은 재귀(감싸는 말을 모름)는 명령 전체에 경로가 없을 때
       if ((recContent || recNames) && !hasPathArg) cwdScan(recContent ? 'content' : 'names');
