@@ -2,10 +2,13 @@
   "mcpServers": {
     "hai": {
       "command": "node",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/dist/hai-mcp.mjs"],
+      "args": [
+        "${CLAUDE_PLUGIN_ROOT}/dist/hai-mcp.mjs"
+      ],
       "env": {
         "HAI_API_KEY": "${user_config.hai_api_key}",
-        "HAI_KEEP_DOMAINS": "${user_config.keep_domains}"
+        "HAI_KEEP_DOMAINS": "${user_config.keep_domains}",
+        "HAI_PROTECTED_DIRS": "${user_config.protected_dirs}"
       }
     }
   }

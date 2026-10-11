@@ -1,0 +1,22 @@
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: plugins/hai/server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: plugins/hai/server/package-lock.json
+      - run: npm ci
+      - run: npm test
+      # 플러그인은 npm install 을 안 하므로 묶은 dist/ 가 소스와 같아야 한다 — 소스만 고치고 빌드를 빠뜨리면 여기서 걸린다
+      - run: npm run build && git diff --exit-code -- ../dist || (echo "::error::dist/ 가 소스와 다릅니다. plugins/hai/server 에서 npm run build 후 같이 커밋하세요." && exit 1)

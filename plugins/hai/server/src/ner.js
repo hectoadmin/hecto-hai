@@ -3,7 +3,7 @@
  * 한 조각이라도 실패하면 전체를 실패시킨다(fail closed) — 덜 가린 원문이 Claude 로 가지 않게.
  */
 import { structured } from './hai.js';
-import { looseRegex } from './mask.js';
+import { looseRegex, TYPE_RE } from './mask.js';
 
 export const DEFAULT_TYPES = ['이름', '주소', '생년월일', '식별번호'];
 
@@ -41,9 +41,13 @@ export function chunk(text, size = 3500) {
   return out;
 }
 
-/** types: 찾을 유형 이름 배열. extra: { 유형: 설명 } 사용자가 더한 민감 유형(예: 거래처명) → [{text, type}] */
-export async function findSpans(text, { types = DEFAULT_TYPES, extra = {}, concurrency = 3 } = {}) {
-  const wanted = [...types.map((t) => [t, DESCRIBE[t] ?? t]), ...Object.entries(extra)];
+/**
+ * 기본 유형(DEFAULT_TYPES)은 항상 찾는다 — 빼는 옵션을 두면 실수 한 번에 실명이 그대로 나간다.
+ * extra: { 유형: 설명 } 사용자가 더한 민감 유형(예: 거래처명·금액) → [{text, type}]
+ */
+export async function findSpans(text, { extra = {}, concurrency = 3 } = {}) {
+  for (const t of Object.keys(extra)) if (!TYPE_RE.test(t)) throw new Error(`더 가릴 유형 이름은 한글·영문 1~12자(띄어쓰기·숫자 없이)여야 합니다: ${JSON.stringify(t)}`);
+  const wanted = [...DEFAULT_TYPES.map((t) => [t, DESCRIBE[t]]), ...Object.entries(extra).filter(([t]) => !DEFAULT_TYPES.includes(t))];
   const allowed = new Set(wanted.map(([t]) => t));
   const system = [
     '너는 개인정보 비식별화 도구다. 사용자가 준 문서에서 아래 유형에 해당하는 부분을 찾아, 문서에 적힌 글자 그대로 뽑는다.',
@@ -53,18 +57,29 @@ export async function findSpans(text, { types = DEFAULT_TYPES, extra = {}, concu
     `type 은 반드시 다음 중 하나: ${[...allowed].join(', ')}`,
   ].join('\n');
 
-  const parts = chunk(text);
+  // 조각 하나가 실패(응답이 잘림·JSON 깨짐)하면 반으로 나눠 다시 — 이름이 빽빽한 명단은 답이 길어 잘리기 쉽다. 600자까지 줄여도 실패면 전체 실패
+  async function spansOf(part) {
+    try {
+      const { data } = await structured({
+        name: 'sensitive_spans', schema: SCHEMA, maxTokens: 6000, timeoutMs: 290_000,
+        messages: [{ role: 'system', content: system }, { role: 'user', content: `<문서>\n${part}\n</문서>` }],
+      });
+      // 문서에 실제로 있는 조각만, 허용 유형만
+      return (data.items ?? []).filter((s) => allowed.has(s.type) && String(s.text).trim() && looseRegex(String(s.text).trim()).test(part));
+    } catch (err) {
+      if (err.code !== 'HAI_FAILED' || part.length < 1200) throw err;
+      const [a, b] = chunk(part, Math.ceil(part.length / 2) + 50);
+      return [...await spansOf(a), ...(b ? await spansOf(b) : [])];
+    }
+  }
+
+  const parts = chunk(text, 3000);
   const results = new Array(parts.length);
   let next = 0;
   async function worker() {
     while (next < parts.length) {
       const i = next++;
-      const { data } = await structured({
-        name: 'sensitive_spans', schema: SCHEMA, maxTokens: 1500,
-        messages: [{ role: 'system', content: system }, { role: 'user', content: `<문서>\n${parts[i]}\n</문서>` }],
-      });
-      // 문서에 실제로 있는 조각만, 허용 유형만
-      results[i] = (data.items ?? []).filter((s) => allowed.has(s.type) && String(s.text).trim() && looseRegex(String(s.text).trim()).test(parts[i]));
+      results[i] = await spansOf(parts[i]);
     }
   }
   await Promise.all(Array.from({ length: Math.min(concurrency, parts.length) }, worker));

@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { Vault, maskPatterns, maskSpans, residual } from '../src/mask.js';
+import { Vault, maskPatterns, maskSpans, residual, normalize } from '../src/mask.js';
 import { chunk } from '../src/ner.js';
 
 test('모양으로 아는 개인정보를 가린다', () => {
@@ -71,4 +71,48 @@ test('PDF 줄바꿈으로 끊긴 주소·전화번호도 가린다', () => {
 test('정규식 특수문자가 든 조각도 글자 그대로 찾는다', () => {
   const v = new Vault();
   assert.equal(maskSpans('담당 (주)홍길동[외] 와 홍.길동', [{ type: '이름', text: '홍.길동' }], v), '담당 (주)홍길동[외] 와 [이름1]');
+});
+
+test('검토에서 놓친 형식들 — 전각·줄표·국가번호·괄호·공백·별표·문맥 계좌·Amex', () => {
+  const cases = [
+    ['０１０－１２３４－５６７８', '[휴대전화1]'],
+    ['010–1234–5678', '[휴대전화1]'],
+    ['+82-10-1234-5678', '[휴대전화1]'],
+    ['+82 10 1234 5678', '[휴대전화1]'],
+    ['010)1234-5678', '[휴대전화1]'],
+    ['연락처 1023456789', '연락처 [휴대전화1]'], // 010-2345-6789 에서 엑셀이 앞 0 을 지움 (010-1xxx 는 쓰지 않는 번호대)
+    ['(02)1234-5678', '[전화번호1]'],
+    ['0212345678', '[전화번호1]'],
+    ['031-123-4567', '[전화번호1]'],
+    ['９００１０１－１２３４５６７', '[주민등록번호1]'],
+    ['900101 - 1234567', '[주민등록번호1]'],
+    ['900101-1******', '[주민등록번호1]'],
+    ['국민은행 110123456789', '국민은행 [계좌번호1]'],
+    ['계좌: 110 123 456789', '계좌: [계좌번호1]'],
+    ['11-12-123456-12', '[운전면허번호1]'],
+    ['면허번호 111212345612', '면허번호 [운전면허번호1]'],
+    ['m12345678', '[여권번호1]'],
+    ['3782 822463 10005', '[카드번호1]'],
+  ];
+  for (const [src, want] of cases) assert.equal(maskPatterns(normalize(src), new Vault()), want, src);
+});
+
+test('숫자·금액·날짜는 그대로 (지나치게 가리지 않는다)', () => {
+  const src = '금액 1000000000원, 1,234,567원, 2026-10-11, 2026.10.11, 사업자 214-86-12345, 수량 120, 버전 1.10.2';
+  assert.equal(maskPatterns(normalize(src), new Vault()), src);
+});
+
+test('번호류만 숫자로 비교 — 사번·여권은 글자까지 다르면 다른 값', () => {
+  const v = new Vault();
+  assert.notEqual(v.placeholder('식별번호', 'A1001'), v.placeholder('식별번호', 'B1001'));
+  assert.notEqual(v.placeholder('여권번호', 'M12345678'), v.placeholder('여권번호', 'S12345678'));
+  assert.equal(v.placeholder('휴대전화', '010-1234-5678'), v.placeholder('휴대전화', '+82 10 1234 5678'));
+});
+
+test('자리표시 유형 이름은 한글·영문만, 되돌리기와 맞는다', () => {
+  const v = new Vault();
+  assert.throws(() => v.placeholder('거래처 명', 'x'), /한글·영문/);
+  assert.throws(() => v.placeholder('2차협력사', 'x'), /한글·영문/);
+  const ph = v.placeholder('거래처명', '(주)가나다');
+  assert.equal(v.restore(`계약 상대 ${ph}`).text, '계약 상대 (주)가나다');
 });
