@@ -338,10 +338,20 @@ function relate(ps, ts) {
 /**
  * 글자 x 의 i 자리에서 경로 f 가 끝나나 — 뒤가 빗금·따옴표·공백 등. 공백 뒤로 글자가 이어지고 그렇게 이은 이름이 실제로 있으면(인사 → "인사 자료") 다른 폴더다
  */
+/** 글자 x 의 i 자리가 (그 줄에서) 따옴표 안인가 */
+function inQuotes(x, i) {
+  let q = null;
+  for (let k = x.lastIndexOf('\n', i - 1) + 1; k < i; k++) {
+    const c = x[k];
+    if (q) { if (c === q) q = null; } else if (c === "'" || c === '"') q = c;
+  }
+  return q !== null;
+}
 function endsAt(x, i, f) {
   const after = x.slice(i + f.length);
   if (!/^($|[/\s"'`)\]},;|])/.test(after)) return false;
-  if (/^[ \t]+[^\s/"'`;|,()]/.test(after)) {
+  // 이어진 이름 예외는 따옴표 안에서만 — 따옴표 밖 공백은 셸이 단어를 끊으므로(cat …/인사 자료 → …/인사 와 자료) 예외로 두면 피해 갈 수 있다
+  if (inQuotes(x, i) && /^[ \t]+[^\s/"'`;|,()]/.test(after)) {
     const ext = after.match(/^[^"'`;|,()\n/\\]*/)[0].replace(/\s+$/, '');
     if (exists(f + ext)) return false;
   }
@@ -358,9 +368,9 @@ function ancestorsOf(d) {
 const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const quotedIs = (txt, name) => new RegExp(`(['"])\\s*${escRe(name)}[/\\\\]?\\s*\\1`).test(txt);
 // 코드에서 홈 폴더를 가리키는 말
-const HOME_REF = /expanduser\(\s*['"]~|path\.home\(\)|homedir\(\)|\$env:userprofile|%userprofile%|\$home\b|\$\{home\}|getfolderpath|userprofile|(^|[\s'"(=,])~(?=[/\\'"\s),]|$)/i;
+const HOME_REF = /expanduser\(\s*(['"])~\1|path\.home\(\)|homedir\(\)|\$env:userprofile|%userprofile%|\$home\b|\$\{home\}|getfolderpath|userprofile|(['"])~\2/i;
 // 하위 폴더까지 훑는 코드
-const WALK = /rglob|os\.walk|\bwalk\(|walkdir|recursive\s*=\s*true|['"][^'"\n]*\*\*[^'"\n]*['"]|readdirsync\([^)]*recursive|filepath\.walk|files\.walk|dir\.glob/i;
+const WALK = /rglob|os\.walk|\bwalk\(|walkdir|recursive\s*=\s*true|\*\*[/\\]|[/\\]\*\*|readdirsync\([^)]*recursive|filepath\.walk|files\.walk|dir\.glob/i;
 
 /**
  * 코드(스크립트 파일·인라인 코드·PowerShell)가 경로를 조각으로 잇거나 상위 폴더를 하위까지 훑어 보호 폴더에 닿나.
@@ -368,25 +378,42 @@ const WALK = /rglob|os\.walk|\bwalk\(|walkdir|recursive\s*=\s*true|['"][^'"\n]*\
  *    (상위를 가리키지 않으면 그냥 낱말이다: df['부서'] == '인사' · git commit -m '인사')
  *  - 상위 폴더(또는 작업 폴더가 상위일 때 그 아래)를 하위까지 훑는 코드 — Path.home().rglob('*.txt')
  */
-function codeCheck(txt, where, cwd) {
+function codeCheck(txt, where, cwds = []) {
   const raw = fold(txt);
   const T = [...new Set([raw, canonText(txt)])];
   const walk = WALK.test(raw);
-  const cwdKey = cwd ? key(cwd) : null;
+  // 작업 폴더(cd 로 옮긴 곳 포함)가 보호 폴더의 상위면 코드 속 '인사' · os.walk('.') 는 그 아래를 가리킨다
+  const cwdKeys = [].concat(cwds).filter(Boolean).map((c) => key(c));
   for (const d of userDirs) {
     const ancs = ancestorsOf(d);
     const named = ancs.some((a) => {
-      for (const f of [a, fold(tilde(a))]) for (const x of T) for (let i = x.indexOf(f); i >= 0; i = x.indexOf(f, i + 1)) if (endsAt(x, i, f)) return true;
+      // 상위 경로가 거기서 끝나거나 보호 폴더 쪽(또는 와일드카드)으로 이어질 때만 — ~/Desktop/** 는 홈이 아니라 Desktop 이다
+      const toward = (x, i, f) => {
+        // 적힌 경로를 끝까지 따라간다 — 따옴표 안이면 따옴표까지(띄어쓰기 든 폴더), 밖이면 공백까지
+        const rest = x.slice(i + f.length).match(inQuotes(x, i) ? /^[^"'`\n]*/ : /^[^"'`\n\s]*/)[0];
+        let cur = a;
+        for (const seg of rest.split(/[/\\]+/).filter(Boolean)) {
+          if (/[*?[]/.test(seg)) return true;
+          cur = `${cur}/${fold(seg).replace(/\s+$/, '')}`;
+          if (cur === d.key) return true;
+          if (!ancs.includes(cur)) return false;
+        }
+        return true;
+      };
+      for (const f of [a, fold(tilde(a))]) for (const x of T) for (let i = x.indexOf(f); i >= 0; i = x.indexOf(f, i + 1)) if (endsAt(x, i, f) && toward(x, i, f)) return true;
       const b = P.basename(a);
       return b.length >= 2 && quotedIs(raw, b);
     });
     const homeRef = d.key.startsWith(`${fold(HOME)}/`) && HOME_REF.test(raw);
     const b = P.basename(d.key);
-    if (b.length >= 2 && quotedIs(raw, b) && (named || homeRef)) deny(d, `${where}에 그 폴더 이름이 경로 조각으로 들어 있음`);
-    if (!walk) continue;
-    // 홈 표현만 있고 홈 아래 다른 폴더('Desktop')를 따로 짚으면 그 폴더만 훑는 것으로 본다
-    const narrowed = homeRef && !named && [...raw.matchAll(/(['"])([^'"\n/\\]{1,60})\1/g)].some((m) => { const p = norm(P.join(HOME, m[2])); return !ancs.includes(p) && exists(p); });
-    if (named || (homeRef && !narrowed) || (cwdKey && ancs.includes(cwdKey))) deny(d, `${where}가 하위 폴더까지 훑는데 그 아래에 보호 폴더가 있음`, { scope: true });
+    // 작업 폴더가 바로 위 폴더면 '인사' 는 그 폴더다. 더 위(홈)에서는 흔한 낱말일 수 있어 상위를 함께 가리킬 때만
+    const inParent = cwdKeys.includes(P.dirname(d.key));
+    if (b.length >= 2 && quotedIs(raw, b) && (named || homeRef || inParent)) deny(d, `${where}에 그 폴더 이름이 경로 조각으로 들어 있음`);
+    // 작업 폴더 기준으로 훑는 코드(절대 경로 없이 os.walk('.') 등)는 작업 폴더가 상위일 때
+    const relWalk = !/(['"])\s*(\/|~|[a-z]:[\\/])/i.test(raw);
+    const inAnc = relWalk && cwdKeys.some((c) => ancs.includes(c));
+    // 홈을 훑는 코드는 다른 폴더 이름이 함께 보여도 막는다(그 이름은 코드가 마음대로 넣을 수 있다) — 좁히려면 경로를 그대로 적는다
+    if (walk && (named || homeRef || inAnc)) deny(d, `${where}가 하위 폴더까지 훑는데 그 아래에 보호 폴더가 있음. 훑을 폴더를 전체 경로로 적어 주세요`, { scope: true });
   }
 }
 
@@ -415,14 +442,16 @@ function textCheck(txt, { names = false, where = '명령' } = {}) {
 
 // 코드를 실행하는 프로그램(명령 자리에 올 때만) — 이걸로 스크립트 파일을 돌리면 그 파일 내용도 본다
 const INTERP = /^(python[\d.]*|pythonw|py|node|nodejs|deno|bun|tsx|ts-node|ruby|perl|php|rscript|bash|sh|zsh|dash|ksh|fish|pwsh|powershell|cscript|wscript|cmd|julia|lua|osascript|swift|java|go|dotnet)$/i;
-const RUNNERS = /^(uv|poetry|pipenv|npx|pnpm|conda|run|exec|dlx)$/i; // uv run python a.py · npx tsx a.ts
 const SCRIPT_EXT = /\.(py|pyw|ipynb|ps1|psm1|js|mjs|cjs|ts|rb|pl|php|r|sh|bash|zsh|bat|cmd|vbs|jl|lua|swift|java|go|cs|sql)$/i;
 /** 명령(단어 목록)이 코드를 실행하나 */
+// 이름을 말하기만 하는 명령 — 그 인자의 python 은 실행이 아니다(echo python · which node · git commit -m "python …")
+const DESCRIBE = /^(echo|printf|which|whereis|type|man|whatis|git|write-output|write-host|get-command|gcm|get-help|help)$/i;
 function runsCode(ws) {
-  let i = 0;
-  while (i < ws.length && RUNNERS.test(bn(ws[i]))) i++;
-  const h = ws[i] ?? '';
-  return INTERP.test(bn(h)) || (i === 0 && (/^(source|\.|&)$/.test(h) || SCRIPT_EXT.test(h)));
+  const h = ws[0] ?? '';
+  if (/^(source|\.|&)$/.test(h) || SCRIPT_EXT.test(h)) return true;
+  const nm = (w) => bn(w).replace(/\.exe$/i, '');
+  if (DESCRIBE.test(nm(h))) return false;
+  return ws.some((w) => INTERP.test(nm(w))); // find … -exec python a.py · xargs node · nice python …
 }
 /** 실행하는 스크립트 파일(python a.py · python -m a · ./a.sh · & .\a.ps1)의 내용에 보호 대상이 있으면 막는다 — Claude 가 스크립트를 써서 돌리는 경우 */
 function scriptCheck(ws, bases) {
@@ -437,7 +466,7 @@ function scriptCheck(ws, bases) {
     const body = fs.readFileSync(f, 'utf8').normalize('NFC');
     const where = `실행하는 스크립트(${P.basename(toP(f))})`;
     textCheck(body, { where });
-    codeCheck(body, where, b);
+    codeCheck(body, where, bases);
   }
 }
 
@@ -448,14 +477,16 @@ const PS_NAMES = new Set(['get-childitem', 'gci', 'ls', 'dir', 'test-path', 'get
   'get-location', 'pwd', 'gl', 'new-item', 'ni', 'mkdir', 'md', 'select-object', 'select', 'sort-object', 'sort', 'format-table', 'ft', 'format-list', 'fl', 'format-wide',
   'where-object', 'where', '?', 'foreach-object', '%', 'foreach', 'measure-object', 'measure', 'group-object', 'out-host', 'out-string', 'get-date', 'get-process', 'ps',
   'get-service', 'get-command', 'gcm', 'get-help', 'help', 'get-member', 'gm', 'get-psdrive', 'get-itemproperty', 'gp', 'get-variable', 'get-alias', 'clear-host', 'cls',
-  'exit', 'return', 'if', 'else', 'elseif', 'for', 'while', 'try', 'catch', 'finally', 'param', 'true', 'false', 'null']);
+  'exit', 'return', 'if', 'else', 'elseif', 'for', 'while', 'try', 'catch', 'finally', 'param', 'true', 'false', 'null', 'out-gridview', 'ogv']);
+// 사용자 앱으로 여는 것이 아니라 프로그램을 돌리는 Start-Process 대상
+const RUNNABLE = /\.(exe|com|bat|cmd|ps1|psm1|vbs|js|py|pyw|msi|lnk)$|^[^.]*$/i;
 // 하위 폴더까지 내려가는 것 — 이 명령에 -Recurse·-Depth·/s 가 붙을 때만
 const PS_WALKERS = new Set(['get-childitem', 'gci', 'ls', 'dir', 'copy-item', 'cp', 'copy', 'cpi', 'remove-item', 'rm', 'del', 'ri', 'rd', 'rmdir', 'erase', 'compress-archive', 'findstr', 'select-string', 'sls']);
 const PS_LISTERS = new Set(['get-childitem', 'gci', 'ls', 'dir']);
 // 경로를 글자로 숨길 수 있는 것 — 무엇을 여는지 알 수 없으니 보호 대상이 있을 때는 막는다
-const PS_OPAQUE = /(^|[^\w-])(invoke-expression|iex|frombase64string|unescapedatastring|newscriptblock|invokescript)(?![\w-])|\[char\]|\[char\[\]\]|\[regex\]::unescape|\[scriptblock\]::create|\.invokecommand\b|(powershell|pwsh)(\.exe)?\b[^|;\n]*\s-(e|ec|en|enc|enco|encod|encode|encoded|encodedcommand)\s/i;
+const PS_OPAQUE = /(^|[^\w-])(invoke-expression|iex|frombase64string|unescapedatastring|newscriptblock|invokescript)(?![\w-])|\[char\]|\[char\[\]\]|\[regex\]::unescape|\[scriptblock\]::create|getstring\(\s*(\[byte\[\]\]|@\(|\(\s*\[byte|\$\w+\s*\)\s*$)|\[byte\[\]\]\s*\(?\s*@?\(?\s*(0x)?\d|\.invokecommand\b|(powershell|pwsh)(\.exe)?\b[^|;\n]*\s-(e|ec|en|enc|enco|encod|encode|encoded|encodedcommand)\s/i;
 /** PowerShell 명령 이름 — 운영체제와 상관없이 대소문자를 가리지 않는다 */
-const psn = (w) => bn(w).toLowerCase();
+const psn = (w) => bn(w).toLowerCase().replace(/\.exe$/, '');
 const stripQ = (x) => x.replace(/^['"]|['"]$/g, '');
 const PS_ARG = String.raw`('[^']*'|"[^"]*"|[^\s'"()]+)`;
 
@@ -502,21 +533,30 @@ function psCheck(cmd0, cwd, where = 'PowerShell 명령') {
   const cmds = segs.filter((g) => g.length).map((g) => {
     const eq = g.map((t) => t.op).lastIndexOf('=');
     let ws = g.slice(eq + 1).filter((t) => !t.op);
-    if (ws[0] && !ws[0].q && /^[&.]$/.test(ws[0].w)) ws = ws.slice(1);
-    heads.push(ws[0]);
+    let called = false;
+    if (ws[0] && !ws[0].q && /^[&.]$/.test(ws[0].w)) { ws = ws.slice(1); called = true; }
+    // Start-Process 프로그램 -ArgumentList … — 프로그램을 돌리면(문서 열기가 아니면) 그 명령으로 본다
+    if (/^(start-process|start|saps)$/.test(psn(ws[0]?.w ?? ''))) {
+      const val = (re) => { const i = ws.findIndex((t) => !t.q && re.test(t.w)); return i > 0 ? ws[i + 1] : null; };
+      const fp = val(/^-filepath$/i) ?? ws.slice(1).find((t, i, a) => (t.q || !t.w.startsWith('-')) && !(i > 0 && !a[i - 1].q && /^-/.test(a[i - 1].w)));
+      if (fp && RUNNABLE.test(fp.w)) { const al = val(/^-(argumentlist|args)$/i); ws = [{ w: fp.w, q: false }, ...(al ? psWords(al.w).filter((t) => !t.op) : [])]; called = true; }
+    }
+    ws.called = called;
+    heads.push(ws[0] && { ...ws[0], called });
     return ws;
   });
-  const isName = (h) => !h || h.q || /^-?\d/.test(h.w) || PS_NAMES.has(psn(h.w));
-  const content = !heads.every(isName) || /\$\{[a-z]:/i.test(s);
+  // 따옴표 친 머리는 글자(출력)지만 & "C:\…\python.exe" 처럼 부르면 프로그램이다. .Count 같은 속성 보기는 이름 보기. 링크 만들기는 내용에 닿는 것
+  const isName = (h) => !h || (h.q && !h.called) || /^-?\d/.test(h.w) || /^\.(count|length|name|fullname|basename|extension|exists|lastwritetime|creationtime|mode|directoryname)$/i.test(h.w) || PS_NAMES.has(psn(h.w));
+  const content = !heads.every(isName) || /\$\{[a-z]:/i.test(s) || /-itemtype\s+['"]?(hardlink|symboliclink|junction)/i.test(s);
   const namesOnly = !content;
   const flag = (ws, re) => ws.slice(1).some((t) => !t.q && re.test(t.w));
   const recs = cmds.map((ws) => { const h = psn(ws[0]?.w ?? ''); return (PS_WALKERS.has(h) && flag(ws, /^-(r|re|rec|recu|recur|recurs|recurse|depth)(:.*)?$/i)) || (/^(dir|findstr|xcopy)$/.test(h) && flag(ws, /^\/s$/i)) || /^(robocopy|tree)$/.test(h); });
   const rec = recs.some(Boolean);
   textCheck(s, { names: namesOnly, where });
-  codeCheck(s, where, cwd);
   // 기준 폴더: 작업 폴더 + cd·Set-Location 으로 옮긴 곳
   const bases = [cwd];
   for (const ws of cmds) if (/^(cd|chdir|set-location|sl|push-location|pushd)$/.test(psn(ws[0]?.w ?? ''))) { const a = ws.slice(1).find((t) => t.q || !t.w.startsWith('-')); if (a) bases.push(expand(canonText(a.w), cwd)); }
+  codeCheck(s, where, bases);
   const tokOf = (t) => canonText(t.w.replace(/^-[a-z]+:/i, '').replace(/^(microsoft\.powershell\.core\\)?filesystem::/i, ''));
   const pathy = (w) => /^(~|\.{1,2}\/|\/)/.test(w) || w.includes('/') || /[*?[]/.test(w) || bases.some((b) => exists(expand(w, b)));
   let hasPath = false;
@@ -553,9 +593,10 @@ function psCheck(cmd0, cwd, where = 'PowerShell 명령') {
     if (a) deny(a, `작업 폴더(${tilde(b)}) 아래를 하위 폴더까지 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
   }
   // 스크립트 실행(.\a.ps1 · & a.ps1 · python a.py)
-  for (const g of segs) {
-    const ws = g.filter((t) => !t.op).map((t) => t.w.replace(/\\/g, '/'));
-    if (ws.length) scriptCheck(ws, bases);
+  for (const ws of cmds) if (ws.length) {
+    const w = ws.map((t) => t.w.replace(/\\/g, '/'));
+    scriptCheck(w, bases);
+    if (guarded() && runsCode(w)) codeCheck(w.join(' '), '실행하는 코드', bases);
   }
 }
 
@@ -696,7 +737,7 @@ function check(ev) {
       for (const c of cmds) {
         const ws = unwrap(c).map((w) => sub(unq(w)));
         scriptCheck(ws, bases);
-        if (guarded() && runsCode(ws)) codeCheck(c.map(unq).join(' '), '실행하는 코드', cwd);
+        if (guarded() && runsCode(ws)) codeCheck(c.map(unq).join(' '), '실행하는 코드', bases);
         const ps = ws.findIndex((w) => /^(powershell|pwsh)$/.test(bn(w)));
         if (ps >= 0) psCheck(ws.slice(ps + 1).filter((w) => !/^-(command|c|noprofile|nop|noninteractive|noni|executionpolicy|ep|bypass|nologo)$/i.test(w)).join(' '), cwd, '안에서 부르는 PowerShell 명령');
       }

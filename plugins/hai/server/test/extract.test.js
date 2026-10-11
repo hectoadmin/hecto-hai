@@ -4,7 +4,6 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import JSZip from 'jszip';
-import ExcelJS from 'exceljs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { readText, decode, toWav } from '../src/extract.js';
@@ -14,15 +13,8 @@ const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'hai-test-'));
 const put = async (name, data) => { const p = path.join(tmp, name); await fs.writeFile(p, data); return p; };
 
 test('엑셀: 시트·문자·숫자·날짜·빈칸 위치를 살린다, 숨긴 시트는 뺀다', async () => {
-  const wb = new ExcelJS.Workbook();
-  const ws = wb.addWorksheet('배차');
-  ws.addRow(['번호', '신청자', '연락처', '사용일', '금액']);
-  ws.addRow([1, '홍길동', '010-1234-5678', new Date(Date.UTC(2026, 9, 11)), 120000]);
-  ws.getCell('D2').numFmt = 'yyyy-mm-dd';
-  ws.getCell('B3').value = '빈칸 뒤';
-  ws.getCell('E3').value = { richText: [{ text: '굵게' }, { text: '&<특수>' }] };
-  const hidden = wb.addWorksheet('숨김'); hidden.state = 'hidden'; hidden.addRow(['보이면 안 됨']);
-  const p = await put('a.xlsx', Buffer.from(await wb.xlsx.writeBuffer()));
+  // fixtures/sheet.xlsx: 배차 시트(머리글, 홍길동 줄 — 날짜 서식 칸, B3·E3 만 채운 줄 — E3 는 서식 섞인 글자) + 숨긴 시트 '숨김'
+  const p = fileURLToPath(new URL('./fixtures/sheet.xlsx', import.meta.url));
   const { text } = await readText(p);
   assert.match(text, /## 시트: 배차/);
   assert.match(text, /1\t홍길동\t010-1234-5678\t2026-10-11\t120000/);

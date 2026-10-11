@@ -149,3 +149,37 @@ test('검토: 흔한 낱말·옵션은 막지 않는다 — 따옴표 안 "인�
     ['Bash', 'git add .', desk],
   ]) assert.equal(decide(tool, { command: c }, cwd), 'allow', c);
 });
+
+test('재검토: Start-Process·& "python.exe"·작업 폴더 기준 상대 경로·바이트 배열·find -exec 로도 못 피한다', () => {
+  const plain = path.join(desk, 'plain.py');
+  fs.writeFileSync(plain, `print(open(r'${raw}').read())\n`);
+  for (const [tool, c, cwd] of [
+    ['PowerShell', 'Start-Process python -ArgumentList plain.py -NoNewWindow -Wait', desk],
+    ['PowerShell', `Start-Process cmd -ArgumentList '/c type "${raw}"' -NoNewWindow -Wait`, desk],
+    ['PowerShell', `& "${path.join(desk, 'python.exe')}" -c "print(open(r'${raw}').read())"`, desk],
+    ['PowerShell', `python -c "import os; print(open(os.path.join('인사', 'a.txt')).read())"`, docs],
+    ['Bash', `cd '${docs}' && python3 -c "import os; os.chdir('인사'); print(open('a.txt').read())"`, root],
+    ['PowerShell', `Get-Content ([Text.Encoding]::UTF8.GetString([byte[]](0x2f,0x74)))`, root],
+    ['Bash', 'find . -name "*.py" -exec python3 plain.py \;', desk],
+    ['PowerShell', `New-Item -ItemType HardLink -Path x.txt -Target '${raw}'`, desk],
+  ]) assert.equal(decide(tool, { command: c }, cwd), 'deny', c);
+});
+
+test('재검토: 홈을 훑는 코드는 다른 폴더 이름을 끼워 넣어도 막는다', () => {
+  const f = path.join(desk, 'home_walk.py');
+  fs.writeFileSync(f, `from pathlib import Path\nfor p in Path.home().rglob('*.txt'):\n    if 'AppData' in p.parts or 'Desktop' in p.parts: continue\n    print(p)\n`);
+  assert.equal(decide('Bash', { command: 'python3 home_walk.py' }, desk, path.join(process.env.HOME ?? process.env.USERPROFILE, 'Documents', '인사')), 'deny');
+});
+
+test('재검토: 마크다운 ** 와 다른 곳을 훑는 코드는 홈에서도 막지 않는다', () => {
+  const home = path.dirname(docs); // 보호 폴더의 상위의 상위 = 작업 폴더가 상위인 상황
+  for (const [tool, c] of [
+    ['Bash', 'git commit -m "**중요** 수정"'],
+    ['PowerShell', 'Set-Content out.md "**제목**"'],
+    ['Bash', `python3 -c "print('**bold**')"`],
+    ['Bash', `python3 -c "import os; print(list(os.walk('${desk}')))"`],
+    ['Bash', `python3 -c "import glob; print(glob.glob('${desk}/**/*.py', recursive=True))"`],
+    ['Bash', 'python3 report.py'],
+    ['PowerShell', `(Get-ChildItem '${desk}').Count`],
+  ]) assert.equal(decide(tool, { command: c }, tool === 'Bash' && c.includes('report') ? desk : home), 'allow', c);
+});
