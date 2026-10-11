@@ -114,3 +114,17 @@ test('검토 3차: 상위 폴더 검색을 막을 때는 범위를 좁히라고 
     env: { ...process.env, CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS: hr, HAI_DATA_DIR: data } }).toString();
   assert.match(JSON.parse(out).hookSpecificOutput.permissionDecisionReason, /더 좁은 폴더/);
 });
+
+test('보안 검토: 셸 따옴표·이스케이프·와일드카드·중괄호·명령 치환으로 경로를 감춰도 막는다', () => {
+  for (const c of [
+    `cat ${docs}/인?/a.txt`, `cat ${docs}/인[사]/a.txt`, `cat ${docs}/\\인사/a.txt`, `cat ${docs}/인''사/a.txt`, `cat ${docs}/인""사/a.txt`,
+    `cat "${docs}/인"사/a.txt`, `cat ${docs}/{인사,x}/a.txt`, `D=${docs}; cat $D/인?/a.txt`, `cat $(ls -d ${docs}/인*)/a.txt`,
+    `cat "${docs}/회의 받아쓰"기.txt`, `cat ${docs}/회의?받아쓰기.txt`,
+  ]) assert.equal(decide('Bash', { command: c }), 'deny', c);
+});
+
+test('보안 검토: 셸 단어 풀기가 평범한 명령을 막지 않는다', () => {
+  for (const [c, w] of [['echo "hello world" | wc -c', root], [`ls "${docs}"`, root], ['git log --oneline -5', root], [`python3 -c "print(1+1)"`, root], ['cat notes.md', path.join(root, 'elsewhere')]]) {
+    assert.equal(decide('Bash', { command: c }, w), 'allow', c);
+  }
+});

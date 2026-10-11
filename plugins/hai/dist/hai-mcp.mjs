@@ -102731,9 +102731,9 @@ var luhn = (digits) => {
 };
 var onlyDigits = (s2) => s2.replace(/\D/g, "");
 var validDate = (mm, dd) => +mm >= 1 && +mm <= 12 && +dd >= 1 && +dd <= 31;
-var normalize = (s2) => String(s2 ?? "").normalize("NFKC").replace(/[\u0000\u00AD\u200B-\u200D\u2060\uFEFF]/g, "").replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g, "-");
-var SEP = String.raw`\s*[-.)]?\s*`;
-var SEP1 = String.raw`(?:\s*[-.)]\s*|\s+)`;
+var normalize = (s2) => String(s2 ?? "").normalize("NFKC").replace(/[\p{Cf}\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F\u034F\u115F\u1160\u3164\uFFA0\uFE00-\uFE0F\u{E0100}-\u{E01EF}]/gu, "").replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g, "-");
+var SEP = String.raw`\s*[-.)/_·]?\s*`;
+var SEP1 = String.raw`(?:\s*[-.)/_·]\s*|\s+)`;
 var CTX_ACCOUNT = "(?:\uACC4\uC88C|\uC740\uD589|\uC785\uAE08|\uC1A1\uAE08|\uC608\uAE08\uC8FC?|\uD1B5\uC7A5|account|bank)";
 var PATTERNS = [
   ["\uC774\uBA54\uC77C", /[A-Za-z0-9._%+-]+@([A-Za-z0-9.-]+\.[A-Za-z]{2,})/g],

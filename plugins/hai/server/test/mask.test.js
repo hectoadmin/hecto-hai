@@ -129,3 +129,11 @@ test('검토 3차: 숫자 조각은 다른 숫자·자리표시 안을 바꾸지
   assert.equal(maskPatterns(normalize('금액 1050000000'), new Vault()), '금액 1050000000');
   assert.equal(maskPatterns(normalize('연락처 1050001234'), new Vault()), '연락처 [휴대전화1]');
 });
+
+test('보안 검토: 서식 문자 전부·한글 채움 문자로 끊어도, 빗금·밑줄·가운뎃점 구분자도 가린다', () => {
+  for (const z of ['⁡', '͏', '᠎', '‪', '‮', '️', 'ㅤ', '​', '­', '\u0007']) {
+    assert.equal(maskPatterns(normalize(`010${z}-2345-6789`), new Vault()), '[휴대전화1]', JSON.stringify(z));
+  }
+  for (const s of ['010/2345/6789', '010_2345_6789', '010·2345·6789']) assert.equal(maskPatterns(normalize(s), new Vault()), '[휴대전화1]', s);
+  assert.equal(maskPatterns(normalize('2026/10/11 · 1/2/3'), new Vault()), '2026/10/11 · 1/2/3');
+});
