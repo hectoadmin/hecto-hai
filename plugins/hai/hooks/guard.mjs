@@ -69,7 +69,8 @@ function deny(t, why, { scope = false } = {}) {
  */
 const WRAPPERS = { time: [], sudo: ['-u', '-g', '-h', '-p', '-C'], doas: ['-u'], command: [], builtin: [], exec: ['-a'], nohup: [], env: ['-u', '-S', '-C'],
   nice: ['-n'], ionice: ['-c', '-n', '-p'], timeout: ['-s', '-k', '--signal', '--kill-after'], stdbuf: ['-i', '-o', '-e'], caffeinate: ['-t', '-w'],
-  xargs: ['-I', '-i', '-n', '-P', '-L', '-l', '-s', '-d', '-E', '-a'], unbuffer: [], chronic: [], gtimeout: ['-s', '-k'] };
+  xargs: ['-I', '-i', '-n', '-P', '-L', '-l', '-s', '-d', '-E', '-a'], unbuffer: [], chronic: [], gtimeout: ['-s', '-k'],
+  taskset: ['-c', '-p'], chrt: ['-p'], flock: ['-w', '-E', '-c'], parallel: ['-j', '-S'], nocache: [], torsocks: [] };
 function unwrap(ws) {
   let i = 0;
   for (let guard = 0; guard < 20 && i < ws.length; guard++) {
@@ -82,6 +83,9 @@ function unwrap(ws) {
     while (i < ws.length && unq(ws[i]).startsWith('-')) { const o = unq(ws[i]); i += withArg.includes(o) ? 2 : 1; } // 옵션(값 받는 것은 값까지)
     if (c === 'env') while (i < ws.length && /^[A-Za-z_]\w*=/.test(unq(ws[i]))) i++;
     if (/^g?timeout$/.test(c) && i < ws.length && /^\d/.test(unq(ws[i]))) i++;  // timeout 10 grep …
+    if (c === 'taskset' && i < ws.length && /^(0x)?[\da-f,-]+$/i.test(unq(ws[i]))) i++;  // taskset 0x1 grep …
+    if (c === 'chrt' && i < ws.length && /^\d+$/.test(unq(ws[i]))) i++;
+    if (c === 'flock' && i < ws.length) i++;                                     // flock 잠금파일 grep …
   }
   return ws.slice(i);
 }
@@ -302,18 +306,24 @@ function check(ev) {
       for (let depth = 0, k = 0; depth < 2; depth++) {
         const end = cmds.length;
         for (; k < end; k++) {
-          const ws = unwrap(cmds[k]);
-          const i = ws.findIndex((w) => unq(w) === '-c');
-          if (/^(ba|z|da|k)?sh$/.test(path.basename(unq(ws[0] ?? ''))) && i > 0 && ws[i + 1]) cmds.push(...split(unq(ws[i + 1])));
+          const raw = cmds[k].map(unq);
+          const ws = unwrap(cmds[k]).map(unq);
+          const head = path.basename(ws[0] ?? '');
+          const i = ws.indexOf('-c');
+          if (/^((ba|z|da|k|c|tc|fi)?sh|su|script)$/.test(head) && i > 0 && ws[i + 1]) cmds.push(...split(ws[i + 1]));
+          const S = raw.findIndex((w) => w === '-S' || w.startsWith('--split-string'));
+          if (path.basename(raw[0] ?? '') === 'env' && S >= 0) cmds.push(...split(raw[S].includes('=') ? raw[S].split('=').slice(1).join('=') : (raw[S + 1] ?? '')));
+          if (head === 'watch') cmds.push(...split(ws.slice(1).filter((w) => !w.startsWith('-')).join(' ')));
         }
       }
+      const words = shellWords(shell);
       if (guarded()) {
-        const op = cmds.find(opaque);
+        const bareAll = words.map((w) => path.basename(w));
+        const op = cmds.find(opaque) ?? (bareAll.some((w) => w === 'eval' || w === 'uudecode') || (bareAll.includes('base64') && words.some((w) => /^(-d|-D|--decode)$/.test(w))) || (bareAll.includes('xxd') && words.some((w) => /^-r/.test(w))) ? [bareAll.find((w) => /^(eval|uudecode|base64|xxd)$/.test(w))] : null);
         if (op) deny(userDirs[0] ?? raws[0], `${unq(op[0])} 가 든 명령은 어떤 파일을 여는지 확인할 수 없음`);
         const inner = [...shell.matchAll(/\$\(([^()]*)\)|`([^`]*)`/g)].map((m) => m[1] ?? m[2]);
         if (inner.some((x) => ENCODED.test(x))) deny(userDirs[0] ?? raws[0], '명령 치환 안에서 이스케이프로 글자를 만드는 명령은 어떤 파일을 여는지 확인할 수 없음');
       }
-      const words = shellWords(shell);
       // 변수: VAR=값, for X in 목록, 환경 변수는 그 값. $(…)·read 로 정한 것만 "모르는 값"(그 폴더의 아무 파일 = *)
       const vars = {}, unknown = new Set();
       words.forEach((w, i) => {
@@ -337,6 +347,11 @@ function check(ev) {
       // 명령 치환·프로세스 치환이 있으면 안에서 무엇이든 돌 수 있다 — echo "$(cat 원문)" 은 이름 보기가 아니다
       const namesOnly = !/\$\(|`|[<>]\(/.test(shell) && segsFirst.length > 0 && segsFirst.every((c) => NAMES_ONLY.has(path.basename(unq(c))));
       const recs = cmds.map(recursionOf);
+      // 위치와 상관없이 — 감싸는 말을 다 알 수는 없으니 따옴표 밖 단어 어디에든 훑는 명령 이름이 있으면 그 명령으로 본다
+      const bare = words.map((w) => path.basename(w));
+      const anyR = words.some((w) => /^(-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)$/.test(w));
+      if (bare.some((w) => /^(rg|ag|ack|tar|7z|ditto)$/.test(w)) || (bare.some((w) => /^(grep|egrep|fgrep|zgrep|cp|scp|rsync|zip)$/.test(w)) && anyR)
+        || (bare.includes('find') && words.some((w) => /^(-exec|-execdir|-ok|-okdir|-delete)$/.test(w)))) recs.push('content');
       let recContent = recs.includes('content');
       let recNames = !recContent && recs.includes('names');
       // 따옴표 밖 와일드카드로 하위 폴더까지 내려가면(*/x · **/x) — 이름만 보는 명령(ls -d */)이 아니면 내용을 읽는 재귀
@@ -348,8 +363,11 @@ function check(ev) {
         const ws = unwrap(raw).map(unq);
         const c = path.basename(ws[0] ?? '');
         const args = ws.slice(1).filter((w) => !w.startsWith('-'));
-        if (/^(cp|scp|rsync|ditto|mv)$/.test(c) && args.length >= 2) dests.add(args.at(-1));
-        if (c === 'zip' && args.length >= 2) dests.add(args[0]);
+        const once = (x) => args.filter((y) => y === x).length === 1;
+        // -t/--target-directory 가 있으면 마지막 인자가 받는 곳이 아니다(cp -t /tmp/x 원본) — 그런 꼴은 받는 곳을 빼 주지 않는다
+        const targetOpt = ws.some((w) => /^(-[a-zA-Z]*t[a-zA-Z]*|--target-directory(=.*)?)$/.test(w));
+        if (/^(cp|scp|rsync|ditto|mv)$/.test(c) && args.length >= 2 && !targetOpt && once(args.at(-1))) dests.add(args.at(-1));
+        if (c === 'zip' && args.length >= 2 && /\.zip$/i.test(args[0]) && once(args[0])) dests.add(args[0]);
       }
       // 재귀로 훑는 명령의 기준 폴더 아래에 보호 대상이 있나 — 내용을 읽으면 원문 파일까지, 이름만 보면 보호 폴더만
       const under = (p) => (recContent ? ancestorOf(p) : recNames ? ancestorDirOf(p) : null);
@@ -404,7 +422,22 @@ function check(ev) {
         const c = unq(w.replace(/[*?[{].*$/, ''));
         return /[/~]/.test(c) || c === '.' || c === '..' || (c && bases.some((b) => fs.existsSync(expand(c, b))));
       });
-      if ((recContent || recNames) && !hasPathArg) for (const b of bases) { const a = under(key(b)); if (a) deny(a, `작업 폴더(${tilde(b)}) 아래를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true }); }
+      const isPathArg = (w) => {
+        const c = unq(sub(w).replace(/[*?[{].*$/, ''));
+        return /[/~]/.test(c) || c === '.' || c === '..' || (c && bases.some((b) => fs.existsSync(expand(c, b))));
+      };
+      const cwdScan = (kind) => { for (const b of bases) { const a = kind === 'content' ? ancestorOf(key(b)) : ancestorDirOf(key(b)); if (a) deny(a, `작업 폴더(${tilde(b)}) 아래를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true }); } };
+      // 재귀 명령마다 — 제 인자에 경로가 없으면 작업 폴더를 훑는다(script -c 'rg 홍' /dev/null 의 /dev/null 은 rg 의 경로가 아니다)
+      for (const c of cmds) {
+        const kind = recursionOf(c);
+        if (!kind) continue;
+        const args = unwrap(c).slice(1).filter((w) => !unq(w).startsWith('-'));
+        // grep 계열은 첫 인자가 찾을 말이다
+        const paths = /^(grep|egrep|fgrep|zgrep|rg|ag|ack)$/.test(path.basename(unq(unwrap(c)[0] ?? ''))) ? args.slice(1) : args;
+        if (!paths.some(isPathArg)) cwdScan(kind);
+      }
+      // 위치로 찾은 재귀(감싸는 말을 모름)는 명령 전체에 경로가 없을 때
+      if ((recContent || recNames) && !hasPathArg) cwdScan(recContent ? 'content' : 'names');
       break;
     }
   }

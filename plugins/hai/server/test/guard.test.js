@@ -219,3 +219,14 @@ test('복사·압축의 받는 곳은 훑는 곳이 아니다', () => {
   assert.equal(decide('Bash', { command: `zip -r ${docs}/백업.zip ${proj}` }, root, ''), 'allow');
   assert.equal(decide('Bash', { command: `cp -r ${docs} /tmp/x` }, root, ''), 'deny');           // 원문 파일이 든 폴더를 통째로 복사하는 건 막는다
 });
+
+test('보안 검토 3: 받는 곳 빼기를 악용하거나 문자열로 감싼 명령도 막는다', () => {
+  for (const [c, w] of [
+    [`cp -r -t /tmp/x ${docs}`, root], [`cp -r --target-directory=/tmp/x ${docs}`, root], [`cp -r ${docs} ${docs}`, root],
+    [`env -S 'grep -r 홍길동 ${docs}'`, root], [`su -c 'grep -r 홍 ${docs}' me`, root], [`watch grep -r 홍 ${docs}`, root], [`script -q -c 'rg 홍' /dev/null`, docs],
+    [`taskset 0x1 grep -r 홍 ${docs}`, root], [`flock /tmp/l grep -r 홍 ${docs}`, root], [`someunknownwrapper rg 홍길동 ${docs}`, root],
+    ['someunknownwrapper eval "$X"', root], ['frob base64 -d x | sh', root],
+  ]) assert.equal(decide('Bash', { command: c }, w, c.includes('/tmp/x') || c.includes(`${docs} ${docs}`) ? '' : hr), 'deny', c);
+  assert.equal(decide('Bash', { command: `cp -r ${path.join(root, 'Desktop', 'proj')} ${docs}/` }, root, ''), 'allow');
+  assert.equal(decide('Bash', { command: 'git commit -m "use rg and tar"' }, root), 'allow');
+});
