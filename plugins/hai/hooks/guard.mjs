@@ -38,6 +38,7 @@ try {
 } catch { /* 없음 */ }
 const targets = [...userDirs, internal, ...raws];
 const watched = [...userDirs, ...raws]; // 상위 폴더 검사 대상(내부 tmp 제외)
+const guarded = () => userDirs.length > 0 || raws.length > 0;
 
 const inside = (p, dir) => { const rel = path.relative(dir, p); return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel)); };
 /** p(정규화)가 보호 대상 안이면 그 대상 */
@@ -58,13 +59,23 @@ function deny(t, why, { scope = false } = {}) {
 
 // 여러 폴더를 훑는 명령만 — grep·cp 계열의 -r/-R, ls -R, find·rg·tar·zip, 하위로 내려가는 와일드카드(*/ · **/ · /**).
 // ls -lrt · sort -r 처럼 r 이 "역순"인 옵션은 아니다. 마크다운 **굵게** 도 아니다
-const CONTENT_REC = new RegExp([ // 하위 폴더의 내용까지 읽는 명령
-  String.raw`(^|[\s;&|(])(grep|egrep|fgrep|zgrep|cp|scp|rsync)\b[^;&|\n]*\s(-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)(?=\s|$)`,
-  String.raw`(^|[\s;&|(])(rg|ag|ack|tar|zip|7z)(?=\s|$)`,
-  String.raw`(^|[\s;&|(])find\b[^;&\n]*(-exec|-execdir|-ok|-delete|\|\s*xargs)`,
-  String.raw`\*\*\/|\/\*\*|(^|\s)\*\*(\s|$)|(^|[\s/])\*\/`,
-].join('|'));
-const NAME_REC = /(^|[\s;&|(])(find|tree|du)(?=\s|$)|(^|[\s;&|(])ls\b[^;&|\n]*\s-[a-zA-Z]*R/; // 하위 폴더의 이름만 보는 명령
+/**
+ * 명령 하나(첫 단어 + 인자)가 하위 폴더를 훑나 → 'content'(내용까지 읽음) | 'names'(이름만) | null.
+ * 명령 글자 전체가 아니라 명령 자리의 첫 단어로 본다 — 커밋 메시지 속 "find"·CSS 주석 속 별표-빗금에 걸리지 않게
+ */
+function recursionOf(ws) {
+  const c = path.basename(unq(ws[0] ?? ''));
+  const has = (re) => ws.slice(1).some((w) => re.test(w));
+  const R = /^(-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)$/;
+  if (/^(grep|egrep|fgrep|zgrep)$/.test(c) && has(R)) return 'content';
+  if (/^(cp|scp)$/.test(c) && has(R)) return 'content';
+  if (c === 'rsync' && has(/^(-[a-zA-Z]*[raR][a-zA-Z]*|--recursive|--archive)$/)) return 'content';
+  if (/^(rg|ag|ack|tar|zip|7z|ditto)$/.test(c)) return 'content';
+  if (c === 'find') return has(/^(-exec|-execdir|-ok|-okdir|-delete)$/) ? 'content' : 'names';
+  if (/^(tree|du)$/.test(c)) return 'names';
+  if (c === 'ls' && has(/^-[a-zA-Z]*R/)) return 'names';
+  return null;
+}
 /** 셸 와일드카드(*, ?) → 정규식 (한 폴더 안 이름만) */
 function globRe(g) {
   let re = '';
@@ -78,7 +89,14 @@ function globRe(g) {
   try { return new RegExp(`^${re}$`, FOLD ? 'iu' : 'u'); } catch { return /^$/; }
 }
 // 경로를 글자로 숨길 수 있는 형태: \x·\u·8진 이스케이프, eval, base64·xxd·uudecode 풀기
-const OPAQUE = /\\x[0-9a-fA-F]{1,2}|\\u[0-9a-fA-F]{2,4}|\\U[0-9a-fA-F]{4,8}|\\[0-3][0-7]{2}|(^|[\s;&|(`])(eval|source|uudecode)\b|\bbase64\s+(-d|-D|--decode)\b|\bxxd\s+-r\b|\bopenssl\s+(enc|base64)\b/;
+// 경로를 글자로 숨길 수 있는 명령(명령 자리의 첫 단어로 본다): eval, base64·xxd·uudecode·openssl 풀기
+function opaque(ws) {
+  const c = path.basename(unq(ws[0] ?? ''));
+  const has = (re) => ws.slice(1).some((w) => re.test(w));
+  return c === 'eval' || c === 'uudecode' || (c === 'base64' && has(/^(-d|-D|--decode)$/)) || (c === 'xxd' && has(/^-r/)) || (c === 'openssl' && has(/^(enc|base64)$/));
+}
+// 명령 치환 안에서 만든 글자(\x·\u·8진 이스케이프) — printf '\xec…' 로 경로를 만들 수 있다
+const ENCODED = /\\x[0-9a-fA-F]{1,2}|\\u[0-9a-fA-F]{2,4}|\\U[0-9a-fA-F]{4,8}|\\[0-3][0-7]{2}/;
 // 내용을 읽지 않고 이름·속성만 보거나 사용자에게 여는 명령
 const NAMES_ONLY = new Set(['ls', 'stat', 'du', 'file', 'echo', 'pwd', 'mkdir', 'touch', 'open', 'which', 'cd', 'xattr', 'mdls']);
 
@@ -128,11 +146,46 @@ function shellWords(cmd) {
   return out;
 }
 
-/** {a,b} 펼치기(겹치지 않은 것, 최대 64개) */
+/** heredoc 본문을 떼어 낸다 → { shell: 본문 뺀 명령, bodies: [본문] } — 본문은 셸이 펼치지 않는 글자(따옴표 안처럼 본다) */
+function splitHeredocs(cmd) {
+  const lines = cmd.split('\n');
+  const shell = [], bodies = [];
+  let pending = [];
+  let body = null;
+  for (const line of lines) {
+    if (body) {
+      const d = pending[0];
+      if (line.replace(d.strip ? /^\t+/ : /^$/, '') === d.tag) { bodies.push(body.join('\n')); body = null; pending.shift(); if (pending.length) body = []; continue; }
+      body.push(line);
+      continue;
+    }
+    shell.push(line);
+    for (const m of line.matchAll(/<<(-?)\s*(['"]?)([A-Za-z_][\w.-]*)\2/g)) pending.push({ tag: m[3], strip: m[1] === '-' });
+    if (pending.length) body = [];
+  }
+  if (body?.length) bodies.push(body.join('\n'));
+  return { shell: shell.join('\n'), bodies };
+}
+
+/** {a,b} 펼치기 — 펼치는 중에 64개에서 멈춘다(그룹이 많아도 지수로 늘지 않게). 넘치면 truncated */
+const BRACE_MAX = 64;
 function braces(w) {
-  const m = w.match(/^(.*?)\{([^{}]*,[^{}]*)\}(.*)$/s);
-  if (!m) return [w];
-  return m[2].split(',').flatMap((x) => braces(m[1] + x + m[3])).slice(0, 64);
+  let list = [w], truncated = false;
+  for (let guard = 0; guard < 32; guard++) {
+    const next = [];
+    let changed = false;
+    for (const x of list) {
+      const m = x.match(/^(.*?)\{([^{}]*,[^{}]*)\}(.*)$/s);
+      if (!m) { next.push(x); continue; }
+      changed = true;
+      for (const alt of m[2].split(',')) { if (next.length >= BRACE_MAX) { truncated = true; break; } next.push(m[1] + alt + m[3]); }
+      if (truncated) break;
+    }
+    list = next;
+    if (!changed || truncated) break;
+  }
+  braces.truncated = truncated;
+  return list;
 }
 
 /**
@@ -141,7 +194,9 @@ function braces(w) {
  */
 function globTargets(word, base) {
   const out = [];
-  for (const w of braces(word)) {
+  const all = braces(word);
+  if (braces.truncated && guarded()) throw Object.assign(new Error('braces'), { tooMany: true });
+  for (const w of all) {
     let segs = fold(expand(w, base)).split(path.sep).filter(Boolean);
     // 와일드카드 앞의 고정된 부분은 실제 경로(심볼릭 링크 풀기)로 — 대상 키가 realpath 다
     const k = segs.findIndex((x) => /[*?[]/.test(x));
@@ -158,21 +213,30 @@ function globTargets(word, base) {
   }
   return out;
 }
-/** 패턴 조각들과 대상 경로 조각들의 관계. ** 는 0개 이상의 아무 조각 */
-function relate(ps, ts, i = 0, j = 0) {
-  if (i === ps.length) return j === ts.length ? 'equal' : 'ancestor';
-  if (ps[i] === '**') return relate(ps, ts, i + 1, j) || (j < ts.length ? relate(ps, ts, i, j + 1) : null) || 'ancestor';
-  if (j === ts.length) return 'inside';
-  const ok = typeof ps[i] === 'string' ? ps[i] === ts[j] : ps[i].test(ts[j]);
-  return ok ? relate(ps, ts, i + 1, j + 1) : null;
+/** 패턴 조각들과 대상 경로 조각들의 관계. ** 는 0개 이상의 아무 조각. (i, j) 를 기억해 ** 가 여럿이어도 조각 수의 곱 이내로 끝난다 */
+function relate(ps, ts) {
+  const memo = new Map();
+  const go = (i, j) => {
+    const k = i * (ts.length + 1) + j;
+    if (memo.has(k)) return memo.get(k);
+    let r;
+    if (i === ps.length) r = j === ts.length ? 'equal' : 'ancestor';
+    else if (ps[i] === '**') r = go(i + 1, j) || (j < ts.length ? go(i, j + 1) : null) || 'ancestor';
+    else if (j === ts.length) r = 'inside';
+    else r = (typeof ps[i] === 'string' ? ps[i] === ts[j] : ps[i].test(ts[j])) ? go(i + 1, j + 1) : null;
+    memo.set(k, r);
+    return r;
+  };
+  return go(0, 0);
 }
 
 let input = '';
 process.stdin.on('data', (d) => (input += d)).on('end', () => {
-  const guarded = userDirs.length || raws.length;
   let ev;
-  try { ev = JSON.parse(input); } catch { if (guarded) deny(userDirs[0] ?? raws[0], '훅 입력을 읽지 못해 안전하게 막음'); process.exit(0); }
-  try { check(ev); } catch { if (guarded) deny(userDirs[0] ?? raws[0], '검사 중 오류가 나 안전하게 막음'); }
+  try { ev = JSON.parse(input); } catch { if (guarded()) deny(userDirs[0] ?? raws[0], '훅 입력을 읽지 못해 안전하게 막음'); process.exit(0); }
+  try { check(ev); } catch (err) {
+    if (guarded()) deny(userDirs[0] ?? raws[0], err?.tooMany ? '중괄호 펼침이 너무 많아 확인할 수 없음' : '검사 중 오류가 나 안전하게 막음');
+  }
   process.exit(0);
 });
 
@@ -203,26 +267,58 @@ function check(ev) {
     }
     case 'Bash': {
       const cmd = String(t.command ?? '').normalize('NFC');
-      // 글자로 확인할 수 없는 형태(인코딩한 바이트·eval·base64 풀기) — 보호 대상이 있는 동안은 막는다
-      if ((userDirs.length || raws.length) && OPAQUE.test(cmd)) deny(userDirs[0] ?? raws[0], '인코딩된 글자·eval·base64 풀기가 든 명령은 어떤 파일을 여는지 확인할 수 없음');
       const inCwd = hit(key(cwd));
       if (inCwd && !inCwd.internal) deny(inCwd, '작업 폴더가 그 안');
-      const words = shellWords(cmd);
-      // VAR=값 은 뒤 단어의 $VAR·${VAR} 에 넣는다 (D=~/Documents; cat $D/인사/a.txt)
-      const vars = {};
-      for (const w of words) { const m = w.match(/^([A-Za-z_]\w*)=(.*)$/s); if (m) vars[m[1]] = m[2]; }
-      // 값을 모르는 변수($f — 명령 치환으로 정한 것 등)는 * 로 — "그 폴더의 어떤 파일이든" 으로 본다
-      const sub = (w) => w.replace(/\$\{?([A-Za-z_]\w*)\}?/g, (all, n) => (n === 'HOME' ? HOME : vars[n] || '*')); // f=$(…) 는 값이 빈 것으로 읽힌다 — 모르는 값
-      // 셸 단어 + 그 안의 조각(python -c "open('…')" 의 경로처럼 따옴표·괄호 안) — 옵션(-x)은 뺀다.
-      // 따옴표 안의 * ? [ { 는 글자지만, / 가 든 조각(glob.glob('~/x/*'))은 와일드카드로 본다
-      const pieces = [...new Set(words.map(sub).flatMap((w) => [w, ...w.split(/[=<>|;&()`'",\s]/)])
-        .map((x) => x.replace(/^[A-Za-z_]\w*=/, '').trim()).filter((x) => x && !x.startsWith('-') && x !== '/')
-        .map((x) => (x.includes('/') ? unq(x) : x)))];
-      const segs = cmd.split(/\|\||&&|[|;&\n]/).map((seg) => shellWords(seg)[0]).filter(Boolean);
+      const { shell, bodies } = splitHeredocs(cmd);
+      // 명령 하나하나(; && || | 줄바꿈, $( ) ` 안도 따로) — 첫 단어로 무엇을 하는지 본다
+      const cmds = shell.split(/\|\||&&|[|;&\n`]|\$\(|\)/).map((seg) => shellWords(seg)).filter((ws) => ws.length);
+      if (guarded()) {
+        const op = cmds.find(opaque);
+        if (op) deny(userDirs[0] ?? raws[0], `${unq(op[0])} 가 든 명령은 어떤 파일을 여는지 확인할 수 없음`);
+        const inner = [...shell.matchAll(/\$\(([^()]*)\)|`([^`]*)`/g)].map((m) => m[1] ?? m[2]);
+        if (inner.some((x) => ENCODED.test(x))) deny(userDirs[0] ?? raws[0], '명령 치환 안에서 이스케이프로 글자를 만드는 명령은 어떤 파일을 여는지 확인할 수 없음');
+      }
+      const words = shellWords(shell);
+      // 변수: VAR=값, for X in 목록, 환경 변수는 그 값. $(…)·read 로 정한 것만 "모르는 값"(그 폴더의 아무 파일 = *)
+      const vars = {}, unknown = new Set();
+      words.forEach((w, i) => {
+        const m = w.match(/^([A-Za-z_]\w*)=(.*)$/s);
+        if (m) { if (m[2] === '') unknown.add(m[1]); else vars[m[1]] = m[2]; } // f=$(…) 는 값이 빈 것으로 읽힌다
+        if (w === 'read') for (const x of words.slice(i + 1)) { if (/^[A-Za-z_]\w*$/.test(x)) unknown.add(x); else if (!x.startsWith('-')) break; }
+        if (w === 'for' && words[i + 2] === 'in') {
+          const items = [];
+          for (const x of words.slice(i + 3)) { if (x === 'do') break; items.push(x); }
+          if (items.length === 1) vars[words[i + 1]] = items[0]; else unknown.add(words[i + 1]);
+        }
+      });
+      const sub = (w) => w.replace(/\$\{?([A-Za-z_]\w*)\}?/g, (all, n) => {
+        if (n === 'HOME') return HOME;
+        if (n === 'PWD') return cwd;
+        if (vars[n] !== undefined) return vars[n];
+        if (unknown.has(n)) return '*';
+        return process.env[n] ?? all; // PATH·TMPDIR 등은 실제 값, 모르는 건 글자 그대로(어떤 파일과도 맞지 않음)
+      });
+      const segsFirst = cmds.map((ws) => ws[0]);
       // 명령 치환·프로세스 치환이 있으면 안에서 무엇이든 돌 수 있다 — echo "$(cat 원문)" 은 이름 보기가 아니다
-      const namesOnly = !/\$\(|`|[<>]\(/.test(cmd) && segs.length > 0 && segs.every((c) => NAMES_ONLY.has(path.basename(unq(c))));
+      const namesOnly = !/\$\(|`|[<>]\(/.test(shell) && segsFirst.length > 0 && segsFirst.every((c) => NAMES_ONLY.has(path.basename(unq(c))));
+      const recs = cmds.map(recursionOf);
+      let recContent = recs.includes('content');
+      let recNames = !recContent && recs.includes('names');
+      // 따옴표 밖 와일드카드로 하위 폴더까지 내려가면(*/x · **/x) — 이름만 보는 명령(ls -d */)이 아니면 내용을 읽는 재귀
+      const unquotedGlobs = words.map(sub).filter((w) => /[*?[{]/.test(w));
+      if (!namesOnly && unquotedGlobs.some((w) => /\*\*|\*\//.test(w))) recContent = true;
+      // 재귀로 훑는 명령의 기준 폴더 아래에 보호 대상이 있나 — 내용을 읽으면 원문 파일까지, 이름만 보면 보호 폴더만
+      const under = (p) => (recContent ? ancestorOf(p) : recNames ? ancestorDirOf(p) : null);
 
-      // 1) 글자 검사 — 셸이 풀어 쓴 단어(따옴표 이어 붙이기·\ 이스케이프 풀림)와 원래 명령 어디에든 원문 파일 이름·보호 폴더 경로가 보이면
+      // 조각: 셸 단어(+ 그 안의 python -c "open('…')" 같은 조각) + heredoc 본문의 조각(글자 그대로). 옵션(-x)은 뺀다.
+      // 따옴표·heredoc 안의 * ? [ { 는 글자지만, 실제 폴더로 시작하는 경로 모양 조각(glob.glob('~/x/*'))은 와일드카드로 본다
+      const quotedPath = (x) => (/^(~|\.{1,2}\/|\/[^/*?[{-])/.test(unq(x)) ? unq(x) : x);
+      const pieces = [...new Set([
+        ...words.map(sub).flatMap((w) => [w, ...w.split(/[=<>|;&()`'",\s]/).map(quotedPath)]),
+        ...bodies.flatMap((b) => lit(b).split(/[=<>|;&()`'",\s]/).map(quotedPath)),
+      ].map((x) => x.replace(/^[A-Za-z_]\w*=/, '').trim()).filter((x) => x && !x.startsWith('-') && x !== '/'))];
+
+      // 1) 글자 검사 — 원래 명령과 셸이 풀어 쓴 조각 어디에든 원문 파일 이름·보호 폴더 경로가 보이면(따옴표·heredoc·python 안이라도)
       const texts = [fold(cmd.replace(/\\(.)/g, '$1')), fold(unq(pieces.join('\n')))];
       if (!namesOnly) for (const r of raws) if (r.base.length >= 4 && texts.some((x) => x.includes(r.base))) deny(r, '명령에 그 파일 이름이 들어 있음');
       for (const d of userDirs) for (const f of d.forms) for (const x of texts) {
@@ -233,13 +329,9 @@ function check(ev) {
       // 2) 경로 검사 — cd 로 옮겨 간 폴더도 상대 경로의 기준으로 (cd ~/Documents && cat 인사/a.txt)
       const bases = [cwd];
       words.forEach((w, i) => { if ((w === 'cd' || w === 'pushd') && words[i + 1]) bases.push(expand(sub(words[i + 1]), cwd)); });
-      const recContent = CONTENT_REC.test(cmd);
-      const recNames = !recContent && NAME_REC.test(cmd);
-      // 재귀로 훑는 명령의 기준 폴더 아래에 보호 대상이 있나 — 내용을 읽으면 원문 파일까지, 이름만 보면 보호 폴더만
-      const under = (p) => (recContent ? ancestorOf(p) : recNames ? ancestorDirOf(p) : null);
       for (const w of pieces) {
         for (const b of bases) {
-          // 와일드카드·중괄호는 실제 파일로 펼쳐서 본다 (인?/a.txt · 인[사] · {인사,x} · *쓰기.txt · $(ls -d 인*))
+          // 와일드카드·중괄호는 보호 대상과 직접 맞춰 본다 (인?/a.txt · 인[사] · {인사,x} · *쓰기.txt · $(ls -d 인*))
           if (/[*?[{]/.test(w)) {
             for (const { t: tg, rel } of globTargets(w, b)) {
               if (tg.internal && rel === 'ancestor') continue;
@@ -263,8 +355,11 @@ function check(ev) {
         }
       }
       // 경로 없이 재귀로 훑는 명령(grep -r 홍길동 / rg 홍길동 / find -name …)은 기준 폴더 아래 전체를 본다.
-      // 경로를 준 명령(find ~/Desktop)은 위에서 그 경로로 판단했다. 와일드카드로 시작하는 단어(*/*.txt)는 경로를 준 것으로 보지 않는다
-      const hasPathArg = pieces.some((w) => { const c = w.replace(/[*?[{].*$/, ''); return /[/~]/.test(c) || c === '.' || c === '..'; });
+      // 경로를 준 명령은 위에서 그 경로로 판단했다 — 실제로 있는 폴더 이름(Desktop)도 경로로 친다. 와일드카드로 시작하는 단어(*/*.txt)는 아니다
+      const hasPathArg = pieces.some((w) => {
+        const c = unq(w.replace(/[*?[{].*$/, ''));
+        return /[/~]/.test(c) || c === '.' || c === '..' || (c && bases.some((b) => fs.existsSync(expand(c, b))));
+      });
       if ((recContent || recNames) && !hasPathArg) for (const b of bases) { const a = under(key(b)); if (a) deny(a, `작업 폴더(${tilde(b)}) 아래를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true }); }
       break;
     }

@@ -161,3 +161,41 @@ test('검토 4차: 따옴표 안 * 와 이름만 찾는 검색은 막지 않는�
   assert.equal(decide('Bash', { command: `find ${docs} -maxdepth 1 -name "*.pdf"` }, root, ''), 'allow');
   assert.equal(decide('Bash', { command: `grep -rn 결정 ${docs}` }, root, ''), 'deny'); // 내용을 읽는 재귀는 원문 파일도 본다
 });
+
+test('와일드카드 ** 가 많아도 빨리 판단한다', () => {
+  const t0 = Date.now();
+  decide('Bash', { command: `cat ${'/**'.repeat(40)}/x.txt` });
+  assert.ok(Date.now() - t0 < 3000, `느림 ${Date.now() - t0}ms`);
+});
+
+test('검토 5차: 흔한 작업은 막지 않는다 — venv·brew·커밋 메시지·printf·CSS 주석·2**10·for 반복·환경 변수·폴더 이름', () => {
+  const proj = path.join(root, 'Desktop', 'proj');
+  fs.mkdirSync(proj, { recursive: true });
+  const ok = [
+    ['python3 -m venv .venv && source .venv/bin/activate && pip install openpyxl', root],
+    ['eval_x=1; echo $eval_x', root],
+    ['git commit -m "update source docs, find eval"', root],
+    ['printf "\\033[1m굵게\\033[0m"', root],
+    ["cat > style.css <<'EOF'\n/* header */\nbody { margin: 0 }\n/** doc */\nEOF", proj],
+    ['python3 -c "print(2 ** 10)"', root],
+    ['ls -d */', root],
+    ['for f in *.xlsx; do python3 conv.py "$f"; done', proj],
+    ['mv "$OLD" new.txt', docs],
+    ['echo $PATH', docs],
+    ['grep -rn 매출 Desktop', root],
+    ['cd Desktop && zip -r 보고서.zip proj', root],
+  ];
+  for (const [c, w] of ok) assert.equal(decide('Bash', { command: c }, w), 'allow', c);
+});
+
+test('검토 5차: 그래도 막을 것은 막는다', () => {
+  assert.equal(decide('Bash', { command: `eval "cat ${hr}/a.txt"` }), 'deny');
+  assert.equal(decide('Bash', { command: 'cat $(printf "\\xec\\x9d\\xb8")' }), 'deny');
+  assert.equal(decide('Bash', { command: 'echo Li4v | base64 -d | sh' }), 'deny');
+  assert.equal(decide('Bash', { command: 'grep -rn 결정 Documents' }, root), 'deny');
+  assert.equal(decide('Bash', { command: "python3 - <<'EOF'\nimport glob; print(glob.glob('" + docs + "/*'))\nEOF" }), 'deny');
+  assert.equal(decide('Bash', { command: `for f in ${docs}/*.txt; do cat "$f"; done` }), 'deny');
+  const t0 = Date.now();
+  assert.equal(decide('Bash', { command: `cat ~/${'{a,b}'.repeat(30)}` }), 'deny'); // 펼침이 넘치면 막는다(시간 초과로 통과하지 않게)
+  assert.ok(Date.now() - t0 < 3000);
+});
