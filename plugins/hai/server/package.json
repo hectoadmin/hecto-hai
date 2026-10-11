@@ -1,6 +1,6 @@
 {
   "name": "hai-mcp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "description": "HAI(사내 Qwen) MCP 서버 — 로컬 파일을 Qwen 이 먼저 읽고 가려서 Claude 에 넘긴다",

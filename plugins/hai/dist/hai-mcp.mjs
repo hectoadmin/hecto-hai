@@ -73151,7 +73151,7 @@ var init_dist = __esm({
 
 // src/index.js
 import fs6 from "node:fs/promises";
-import { readFileSync } from "node:fs";
+import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import os4 from "node:os";
 import path6 from "node:path";
 
@@ -102505,15 +102505,34 @@ var env = (k2, d2) => {
   return v2 && !v2.includes("${") ? v2 : d2;
 };
 var list = (v2) => v2.split(",").map((s2) => s2.trim()).filter(Boolean);
+function resolveUserPath(d2) {
+  let s2 = String(d2).trim().replace(/\$env:(\w+)|%(\w+)%/gi, (all, a2, b2) => process.env[a2 ?? b2] ?? all);
+  if (os.platform() === "win32") s2 = s2.replace(/^\/(?:cygdrive\/)?([a-zA-Z])(?=\/|$)/, (_4, c2) => `${c2.toUpperCase()}:\\`);
+  return path.resolve(s2.startsWith("~") ? path.join(os.homedir(), s2.slice(1)) : s2);
+}
+function documentsDir() {
+  if (os.platform() === "win32") {
+    try {
+      const out = execFileSync(
+        "powershell.exe",
+        ["-NoProfile", "-NonInteractive", "-Command", "[Console]::OutputEncoding=[Text.Encoding]::UTF8; [Environment]::GetFolderPath('MyDocuments')"],
+        { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], windowsHide: true, timeout: 1e4 }
+      ).trim();
+      if (out && path.isAbsolute(out)) return out;
+    } catch {
+    }
+  }
+  return path.join(os.homedir(), "Documents");
+}
 var config2 = {
   baseUrl: env("HAI_BASE_URL", "https://hai-gateway.idc.hectoai.co.kr").replace(/\/+$/, ""),
   timeoutMs: Number(env("HAI_TIMEOUT_MS", "120000")),
   keepDomains: list(env("HAI_KEEP_DOMAINS", "")).map((d2) => d2.toLowerCase()),
   maxChars: Number(env("HAI_MAX_CHARS", "300000")),
-  protectedDirs: list(env("HAI_PROTECTED_DIRS", "")),
+  protectedDirs: list(env("HAI_PROTECTED_DIRS", "")).map(resolveUserPath),
   rawDir: (() => {
-    const d2 = env("HAI_RAW_DIR", "~/Documents/HAI \uC6D0\uBB38");
-    return path.resolve(d2.startsWith("~") ? path.join(os.homedir(), d2.slice(1)) : d2);
+    const d2 = env("HAI_RAW_DIR", "");
+    return d2 ? resolveUserPath(d2) : path.join(documentsDir(), "HAI \uC6D0\uBB38");
   })(),
   // 이 플러그인이 만든 원문 파일 목록·검색 색인을 두는 곳. 훅(guard.mjs)도 같은 경로를 읽는다
   dataDir: env("HAI_DATA_DIR", path.join(os.homedir(), ".hai-mcp")),
@@ -103092,7 +103111,7 @@ function decode3(buf) {
 function resolvePath(p2) {
   const s2 = String(p2 ?? "").trim();
   if (!s2) throw new Error("\uD30C\uC77C \uACBD\uB85C\uAC00 \uBE44\uC5C8\uC2B5\uB2C8\uB2E4");
-  return path4.resolve(s2.startsWith("~") ? path4.join(os3.homedir(), s2.slice(1)) : s2);
+  return resolveUserPath(s2);
 }
 var kindOf = (file2) => {
   const ext = path4.extname(file2).toLowerCase();
@@ -103201,22 +103220,53 @@ async function ocrPages(file2) {
   return { text: pages.length > 1 ? pages.map((t2, i2) => `[${i2 + 1}\uCABD]
 ${t2}`).join("\n\n") : pages[0] ?? "", via: "ocr", meta: { pages: pages.length } };
 }
+var WIN_TO_WAV = `$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Runtime.WindowsRuntime
+$m = [System.WindowsRuntimeSystemExtensions].GetMethods() | Where-Object { $_.Name -eq 'AsTask' -and $_.GetParameters().Count -eq 1 }
+$asOp = $m | Where-Object { $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation\`1' } | Select-Object -First 1
+$asProg = $m | Where-Object { $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncActionWithProgress\`1' } | Select-Object -First 1
+function Op($op, [Type]$t) { $task = $asOp.MakeGenericMethod($t).Invoke($null, @($op)); [void]$task.Wait(-1); $task.Result }
+$null = [Windows.Storage.StorageFile, Windows.Storage, ContentType=WindowsRuntime]
+$null = [Windows.Storage.StorageFolder, Windows.Storage, ContentType=WindowsRuntime]
+$null = [Windows.Media.Transcoding.MediaTranscoder, Windows.Media.Transcoding, ContentType=WindowsRuntime]
+$null = [Windows.Media.MediaProperties.MediaEncodingProfile, Windows.Media.MediaProperties, ContentType=WindowsRuntime]
+$src = Op ([Windows.Storage.StorageFile]::GetFileFromPathAsync($env:HAI_SRC)) ([Windows.Storage.StorageFile])
+$dir = Op ([Windows.Storage.StorageFolder]::GetFolderFromPathAsync($env:HAI_OUT_DIR)) ([Windows.Storage.StorageFolder])
+$dst = Op ($dir.CreateFileAsync($env:HAI_OUT_NAME, [Windows.Storage.CreationCollisionOption]::ReplaceExisting)) ([Windows.Storage.StorageFile])
+$p = [Windows.Media.MediaProperties.MediaEncodingProfile]::CreateWav([Windows.Media.MediaProperties.AudioEncodingQuality]::Low)
+$p.Audio.SampleRate = 16000; $p.Audio.ChannelCount = 1; $p.Audio.BitsPerSample = 16; $p.Audio.Bitrate = 256000
+$tc = New-Object Windows.Media.Transcoding.MediaTranscoder
+$prep = Op ($tc.PrepareFileTranscodeAsync($src, $dst, $p)) ([Windows.Media.Transcoding.PrepareTranscodeResult])
+if (-not $prep.CanTranscode) { throw "CanTranscode=false: $($prep.FailureReason)" }
+$task = $asProg.MakeGenericMethod([double]).Invoke($null, @($prep.TranscodeAsync())); [void]$task.Wait(-1)`;
 async function toWav(file2) {
   const dir = path4.join(await ensureDataDir(), "tmp");
   await fs4.mkdir(dir, { recursive: true, mode: 448 });
-  const out = path4.join(dir, `${randomUUID2()}.wav`);
+  const name = `${randomUUID2()}.wav`;
+  const out = path4.join(dir, name);
   const tries = [];
   if (os3.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file2, out]]);
+  if (os3.platform() === "win32") {
+    tries.push([
+      "powershell.exe",
+      ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-EncodedCommand", Buffer.from(WIN_TO_WAV, "utf16le").toString("base64")],
+      { env: { ...process.env, HAI_SRC: path4.resolve(file2), HAI_OUT_DIR: dir, HAI_OUT_NAME: name }, windowsHide: true }
+    ]);
+  }
   tries.push(["ffmpeg", ["-y", "-loglevel", "error", "-i", file2, "-ac", "1", "-ar", "16000", out]]);
-  for (const [cmd, args] of tries) {
+  let why = "";
+  for (const [cmd, args, opts] of tries) {
     try {
-      await run(cmd, args, { timeout: 3e5 });
-      return out;
-    } catch {
+      await run(cmd, args, { timeout: 3e5, ...opts });
+      if ((await fs4.stat(out)).size > 44) return out;
+    } catch (err) {
+      if (process.env.HAI_DEBUG) why += `${cmd}: ${String(err?.stderr || err?.message).slice(0, 300)}
+`;
     }
   }
   await fs4.rm(out, { force: true });
-  throw new HaiError("HAI_BAD_INPUT", `${path4.extname(file2)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694.`);
+  if (why) process.stderr.write(why);
+  throw new HaiError("HAI_BAD_INPUT", `${path4.extname(file2)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694${os3.platform() === "win32" ? "(winget install Gyan.FFmpeg)" : ""}.`);
 }
 var mmss = (sec) => {
   const s2 = Math.floor(Number(sec) || 0);
@@ -103428,7 +103478,7 @@ function maskTable(text, vault, format) {
 }
 
 // src/index.js
-var VERSION2 = "0.2.0";
+var VERSION2 = "0.3.0";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -103801,11 +103851,16 @@ function sandboxLine() {
   }
   const sb = st2.sandbox ?? {};
   const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path6.resolve(String(d2).replace(/^~(?=\/|$)/, os4.homedir())));
-  const want = [...config2.protectedDirs.map((d2) => path6.resolve(d2.replace(/^~(?=\/|$)/, os4.homedir()))), config2.rawDir];
+  const want = [...config2.protectedDirs, config2.rawDir];
   const covered = want.filter((w2) => deny.some((d2) => w2 === d2 || w2.startsWith(d2 + path6.sep)));
-  if (os4.platform() === "win32") return "\uC0CC\uB4DC\uBC15\uC2A4: Windows \uC5D0\uC11C\uB294 \uC9C0\uC6D0\uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4(\uAC00\uB4DC \uD6C5\uB9CC \uB3D9\uC791)";
+  if (os4.platform() === "win32") return "\uBCF4\uD638: Windows \uB294 \uC0CC\uB4DC\uBC15\uC2A4\uAC00 \uC5C6\uC5B4 \uAC00\uB4DC \uD6C5(\uBA85\uB839 \uAE00\uC790 \uAC80\uC0AC)\uB9CC \uB3D9\uC791\uD569\uB2C8\uB2E4 \u2014 /hai:protect \uB85C \uAE30\uBCF8 \uB3C4\uAD6C \uCC28\uB2E8 \uADDC\uCE59\uC744 \uB354\uD558\uACE0, \uBBFC\uAC10\uD55C \uD3F4\uB354\uC5D0\uC11C Claude \uB97C \uC2DC\uC791\uD558\uC9C0 \uB9C8\uC138\uC694";
   if (!sb.enabled) return "\uC0CC\uB4DC\uBC15\uC2A4: \uAEBC\uC9D0 \u2014 /hai:protect \uB85C \uCF1C\uBA74 \uBCF4\uD638 \uD3F4\uB354\uB97C \uC6B4\uC601\uCCB4\uC81C \uC218\uC900\uC5D0\uC11C \uB9C9\uC2B5\uB2C8\uB2E4(\uAD8C\uC7A5)";
   return covered.length === want.length ? `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uBCF4\uD638 \uD3F4\uB354\xB7\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354 \uC77D\uAE30 \uCC28\uB2E8\uB428(${covered.length}\uACF3)` : `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uC77D\uAE30 \uCC28\uB2E8\uC5D0 \uBE60\uC9C4 \uACF3 ${want.length - covered.length}\uACF3 \u2014 /hai:protect \uB85C \uCD94\uAC00\uD558\uC138\uC694`;
+}
+try {
+  mkdirSync(config2.dataDir, { recursive: true, mode: 448 });
+  writeFileSync(path6.join(config2.dataDir, "raw-dir"), config2.rawDir);
+} catch {
 }
 await server.connect(new StdioServerTransport());
 export {

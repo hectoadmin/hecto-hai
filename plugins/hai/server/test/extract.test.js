@@ -5,7 +5,9 @@ import os from 'node:os';
 import path from 'node:path';
 import JSZip from 'jszip';
 import ExcelJS from 'exceljs';
-import { readText, decode } from '../src/extract.js';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { readText, decode, toWav } from '../src/extract.js';
 import { excelDate } from '../src/office.js';
 
 const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'hai-test-'));
@@ -77,4 +79,20 @@ test('검토 2차: UTF-16 텍스트(엑셀 "유니코드 텍스트")', async () 
   const { text, table } = await readText(await put('u16.txt', le));
   assert.equal(text, '이름\t연락처\n홍길동\t010-2345-6789');
   assert.equal(table, undefined);
+});
+
+// macOS·Windows 는 기본 내장 도구로, 그 밖은 ffmpeg 가 있을 때만
+const canConvert = process.platform === 'darwin' || process.platform === 'win32' || (() => { try { execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' }); return true; } catch { return false; } })();
+test('음성 변환: m4a → 16kHz 모노 wav (macOS afconvert · Windows 기본 미디어 엔진 · ffmpeg)', { skip: !canConvert && 'ffmpeg 없음' }, async () => {
+  const out = await toWav(fileURLToPath(new URL('./fixtures/hello.m4a', import.meta.url)));
+  try {
+    const b = await fs.readFile(out);
+    assert.equal(b.toString('latin1', 0, 4), 'RIFF');
+    let i = 12, fmt = null;
+    while (i + 8 <= b.length && !fmt) { const id = b.toString('latin1', i, i + 4); const n = b.readUInt32LE(i + 4); if (id === 'fmt ') fmt = i + 8; i += 8 + n + (n % 2); }
+    assert.ok(fmt, 'fmt 조각 없음');
+    assert.equal(b.readUInt16LE(fmt + 2), 1, '모노');
+    assert.equal(b.readUInt32LE(fmt + 4), 16000, '16kHz');
+    assert.ok(b.length > 20000, `너무 짧음 ${b.length}`);
+  } finally { await fs.rm(out, { force: true }); }
 });

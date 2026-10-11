@@ -6,7 +6,8 @@
  *   HAI_KEEP_DOMAINS   가리지 않을 이메일 도메인, 쉼표 구분 (기본 없음 = 이메일 전부 가림)
  *   HAI_MAX_CHARS      파일 한 개 최대 글자 수 (기본 300000)
  *   HAI_PROTECTED_DIRS 보호 폴더(점검 화면에 보여 주는 용도 — 막는 건 훅)
- *   HAI_RAW_DIR        원문 결과(받아쓰기·OCR) 기본 저장 폴더 (기본 ~/Documents/HAI 원문) — 한곳에 모아 훅·샌드박스 규칙 하나로 막는다
+ *   HAI_RAW_DIR        원문 결과(받아쓰기·OCR) 기본 저장 폴더 (기본 문서 폴더/HAI 원문, Windows 는 OneDrive 문서일 수 있음) — 한곳에 모아 훅·샌드박스 규칙 하나로 막는다.
+ *                      정한 곳은 dataDir/raw-dir 에 적어 둔다 — 훅이 같은 곳을 막게
  * 서비스 이름은 HAI 연동 가이드 v2.10(2026-10) 기준.
  */
 import { execFileSync } from 'node:child_process';
@@ -17,13 +18,32 @@ import path from 'node:path';
 const env = (k, d) => { const v = (process.env[k] ?? '').trim(); return v && !v.includes('${') ? v : d; };
 const list = (v) => v.split(',').map((s) => s.trim()).filter(Boolean);
 
+/** ~ · %USERPROFILE% · $env:USERPROFILE 를 푼 절대 경로. Windows 에서는 Git Bash 꼴(/c/Users/…)도 C:\Users\… 로 */
+export function resolveUserPath(d) {
+  let s = String(d).trim().replace(/\$env:(\w+)|%(\w+)%/gi, (all, a, b) => process.env[a ?? b] ?? all);
+  if (os.platform() === 'win32') s = s.replace(/^\/(?:cygdrive\/)?([a-zA-Z])(?=\/|$)/, (_, c) => `${c.toUpperCase()}:\\`);
+  return path.resolve(s.startsWith('~') ? path.join(os.homedir(), s.slice(1)) : s);
+}
+
+/** 사용자의 "문서" 폴더 — Windows 는 OneDrive 로 옮겨져 있을 수 있어 운영체제에 묻는다(한글 경로가 깨지지 않게 UTF-8 로) */
+function documentsDir() {
+  if (os.platform() === 'win32') {
+    try {
+      const out = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', "[Console]::OutputEncoding=[Text.Encoding]::UTF8; [Environment]::GetFolderPath('MyDocuments')"],
+        { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], windowsHide: true, timeout: 10_000 }).trim();
+      if (out && path.isAbsolute(out)) return out;
+    } catch { /* 기본값 */ }
+  }
+  return path.join(os.homedir(), 'Documents');
+}
+
 export const config = {
   baseUrl: env('HAI_BASE_URL', 'https://hai-gateway.idc.hectoai.co.kr').replace(/\/+$/, ''),
   timeoutMs: Number(env('HAI_TIMEOUT_MS', '120000')),
   keepDomains: list(env('HAI_KEEP_DOMAINS', '')).map((d) => d.toLowerCase()),
   maxChars: Number(env('HAI_MAX_CHARS', '300000')),
-  protectedDirs: list(env('HAI_PROTECTED_DIRS', '')),
-  rawDir: (() => { const d = env('HAI_RAW_DIR', '~/Documents/HAI 원문'); return path.resolve(d.startsWith('~') ? path.join(os.homedir(), d.slice(1)) : d); })(),
+  protectedDirs: list(env('HAI_PROTECTED_DIRS', '')).map(resolveUserPath),
+  rawDir: (() => { const d = env('HAI_RAW_DIR', ''); return d ? resolveUserPath(d) : path.join(documentsDir(), 'HAI 원문'); })(),
   // 이 플러그인이 만든 원문 파일 목록·검색 색인을 두는 곳. 훅(guard.mjs)도 같은 경로를 읽는다
   dataDir: env('HAI_DATA_DIR', path.join(os.homedir(), '.hai-mcp')),
   services: {

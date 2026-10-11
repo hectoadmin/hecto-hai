@@ -3,7 +3,7 @@
  *   텍스트류(txt·md·csv·tsv·json·log·html·xml — UTF-8 아니면 EUC-KR), docx, xlsx, hwpx
  *   pdf     글자층이 있으면 그대로, 스캔본(글자가 거의 없음)이면 HAI OCR
  *   이미지  HAI OCR (png·jpg·tif·bmp·webp)
- *   음성    HAI 받아쓰기 (wav·mp3·ogg·flac 은 그대로, m4a·aac·aiff·caf·mp4·mov 는 macOS afconvert/ffmpeg 로 wav 변환)
+ *   음성    HAI 받아쓰기 (wav·mp3·ogg·flac 은 그대로, m4a·aac·aiff·caf·mp4·mov 는 wav 로 변환: macOS afconvert, Windows 기본 미디어 엔진, 그 밖은 ffmpeg)
  * OCR·받아쓰기 결과는 같은 파일(경로·수정 시각·크기)이면 메모리에 두고 다시 쓴다 — 가리기 → 묻기를 이어서 해도 한 번만 돈다.
  * 옛 한글(.hwp)·옛 엑셀(.xls)·옛 워드(.doc)는 못 읽는다 — 새 형식이나 PDF 로 저장해서 쓴다.
  */
@@ -14,7 +14,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { config } from './config.js';
+import { config, resolveUserPath } from './config.js';
 import { readXlsx, readHwpx } from './office.js';
 import { ocr, transcribe, HaiError } from './hai.js';
 import { ensureDataDir } from './ledger.js';
@@ -41,7 +41,7 @@ export function decode(buf) {
 export function resolvePath(p) {
   const s = String(p ?? '').trim();
   if (!s) throw new Error('파일 경로가 비었습니다');
-  return path.resolve(s.startsWith('~') ? path.join(os.homedir(), s.slice(1)) : s);
+  return resolveUserPath(s);
 }
 
 export const kindOf = (file) => {
@@ -154,19 +154,53 @@ async function ocrPages(file) {
   return { text: pages.length > 1 ? pages.map((t, i) => `[${i + 1}쪽]\n${t}`).join('\n\n') : (pages[0] ?? ''), via: 'ocr', meta: { pages: pages.length } };
 }
 
-/** HAI 가 받지 않는 음성(m4a 등) → 16kHz 모노 wav. macOS 는 기본 내장 afconvert, 그 밖은 ffmpeg */
-async function toWav(file) {
+/**
+ * Windows 기본 미디어 엔진(Media Foundation)으로 wav 변환 — ffmpeg 없이. Windows PowerShell 5.1 의 WinRT 로 MediaTranscoder 를 부른다.
+ * 경로는 환경 변수로 넘긴다(따옴표·한글 이름이 명령 글자에 섞이지 않게)
+ */
+const WIN_TO_WAV = `$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Runtime.WindowsRuntime
+$m = [System.WindowsRuntimeSystemExtensions].GetMethods() | Where-Object { $_.Name -eq 'AsTask' -and $_.GetParameters().Count -eq 1 }
+$asOp = $m | Where-Object { $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncOperation\`1' } | Select-Object -First 1
+$asProg = $m | Where-Object { $_.GetParameters()[0].ParameterType.Name -eq 'IAsyncActionWithProgress\`1' } | Select-Object -First 1
+function Op($op, [Type]$t) { $task = $asOp.MakeGenericMethod($t).Invoke($null, @($op)); [void]$task.Wait(-1); $task.Result }
+$null = [Windows.Storage.StorageFile, Windows.Storage, ContentType=WindowsRuntime]
+$null = [Windows.Storage.StorageFolder, Windows.Storage, ContentType=WindowsRuntime]
+$null = [Windows.Media.Transcoding.MediaTranscoder, Windows.Media.Transcoding, ContentType=WindowsRuntime]
+$null = [Windows.Media.MediaProperties.MediaEncodingProfile, Windows.Media.MediaProperties, ContentType=WindowsRuntime]
+$src = Op ([Windows.Storage.StorageFile]::GetFileFromPathAsync($env:HAI_SRC)) ([Windows.Storage.StorageFile])
+$dir = Op ([Windows.Storage.StorageFolder]::GetFolderFromPathAsync($env:HAI_OUT_DIR)) ([Windows.Storage.StorageFolder])
+$dst = Op ($dir.CreateFileAsync($env:HAI_OUT_NAME, [Windows.Storage.CreationCollisionOption]::ReplaceExisting)) ([Windows.Storage.StorageFile])
+$p = [Windows.Media.MediaProperties.MediaEncodingProfile]::CreateWav([Windows.Media.MediaProperties.AudioEncodingQuality]::Low)
+$p.Audio.SampleRate = 16000; $p.Audio.ChannelCount = 1; $p.Audio.BitsPerSample = 16; $p.Audio.Bitrate = 256000
+$tc = New-Object Windows.Media.Transcoding.MediaTranscoder
+$prep = Op ($tc.PrepareFileTranscodeAsync($src, $dst, $p)) ([Windows.Media.Transcoding.PrepareTranscodeResult])
+if (-not $prep.CanTranscode) { throw "CanTranscode=false: $($prep.FailureReason)" }
+$task = $asProg.MakeGenericMethod([double]).Invoke($null, @($prep.TranscodeAsync())); [void]$task.Wait(-1)`;
+
+/** HAI 가 받지 않는 음성(m4a 등) → 16kHz 모노 wav. macOS 는 afconvert, Windows 는 기본 미디어 엔진, 그 밖은 ffmpeg (모두 없으면 ffmpeg 안내) */
+export async function toWav(file) {
   const dir = path.join(await ensureDataDir(), 'tmp');
   await fs.mkdir(dir, { recursive: true, mode: 0o700 });
-  const out = path.join(dir, `${randomUUID()}.wav`); // 여러 파일을 동시에 받아쓸 때 겹치지 않게
+  const name = `${randomUUID()}.wav`; // 여러 파일을 동시에 받아쓸 때 겹치지 않게
+  const out = path.join(dir, name);
   const tries = [];
   if (os.platform() === 'darwin') tries.push(['afconvert', ['-f', 'WAVE', '-d', 'LEI16@16000', '-c', '1', file, out]]);
+  if (os.platform() === 'win32') {
+    tries.push(['powershell.exe', ['-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-EncodedCommand', Buffer.from(WIN_TO_WAV, 'utf16le').toString('base64')],
+      { env: { ...process.env, HAI_SRC: path.resolve(file), HAI_OUT_DIR: dir, HAI_OUT_NAME: name }, windowsHide: true }]);
+  }
   tries.push(['ffmpeg', ['-y', '-loglevel', 'error', '-i', file, '-ac', '1', '-ar', '16000', out]]);
-  for (const [cmd, args] of tries) {
-    try { await run(cmd, args, { timeout: 300_000 }); return out; } catch { /* 다음 */ }
+  let why = '';
+  for (const [cmd, args, opts] of tries) {
+    try {
+      await run(cmd, args, { timeout: 300_000, ...opts });
+      if ((await fs.stat(out)).size > 44) return out;
+    } catch (err) { if (process.env.HAI_DEBUG) why += `${cmd}: ${String(err?.stderr || err?.message).slice(0, 300)}\n`; }
   }
   await fs.rm(out, { force: true });
-  throw new HaiError('HAI_BAD_INPUT', `${path.extname(file)} 음성을 변환하지 못했습니다. wav·mp3 로 저장해서 넣거나 ffmpeg 를 설치하세요.`);
+  if (why) process.stderr.write(why);
+  throw new HaiError('HAI_BAD_INPUT', `${path.extname(file)} 음성을 변환하지 못했습니다. wav·mp3 로 저장해서 넣거나 ffmpeg 를 설치하세요${os.platform() === 'win32' ? '(winget install Gyan.FFmpeg)' : ''}.`);
 }
 
 const mmss = (sec) => { const s = Math.floor(Number(sec) || 0); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
