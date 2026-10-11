@@ -290,3 +290,19 @@ test('원문 결과 폴더는 설정하지 않아도 보호 폴더처럼 막는�
   assert.equal(run('Bash', { command: `cat "${rawDir}"/*.txt` }), 'deny');
   assert.equal(run('Read', { file_path: path.join(root, 'Desktop', 'a.txt') }), 'allow');
 });
+
+test('원문 결과 폴더: 이름 보기·크기·셸 설정 eval 은 괜찮고, 내용 읽기·모르는 eval 은 막는다', () => {
+  const rawDir = path.join(root, 'Documents', 'HAI 원문');
+  fs.mkdirSync(rawDir, { recursive: true });
+  fs.writeFileSync(path.join(rawDir, '회의 받아쓰기.txt'), 'x');
+  const run = (tool_name, tool_input, cwd = root) => {
+    const out = execFileSync(process.execPath, [GUARD], { input: JSON.stringify({ tool_name, tool_input, cwd }),
+      env: { ...process.env, CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS: '', HAI_DATA_DIR: data, HAI_RAW_DIR: rawDir } }).toString();
+    return out ? 'deny' : 'allow';
+  };
+  for (const [t, i] of [['Bash', { command: `ls "${rawDir}"` }], ['Bash', { command: `open "${rawDir}"` }], ['Bash', { command: `du -sh ${docs}/*` }],
+    ['Bash', { command: `find ${docs} -name "*.pdf"` }], ['Glob', { pattern: '*.txt', path: rawDir }], ['Bash', { command: 'eval "$(/opt/homebrew/bin/brew shellenv)"' }],
+    ['Bash', { command: 'eval "$(pyenv init -)"' }]]) assert.equal(run(t, i), 'allow', JSON.stringify(i));
+  for (const [t, i] of [['Bash', { command: `cat "${rawDir}"/*.txt` }], ['Read', { file_path: path.join(rawDir, '회의 받아쓰기.txt') }],
+    ['Bash', { command: `grep -r 결정 ${docs}` }], ['Grep', { pattern: '결정', path: rawDir }], ['Bash', { command: 'eval "$(cat x)"' }]]) assert.equal(run(t, i), 'deny', JSON.stringify(i));
+});

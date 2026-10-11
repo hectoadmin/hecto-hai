@@ -30,8 +30,9 @@ const opt = process.env.CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS ?? '';
 // 원문 결과 폴더(받아쓰기·OCR 기본 저장 곳)도 보호 폴더처럼 — 설정이 없으면 기본값. HAI_RAW_DIR 은 시험용
 const rawOpt = process.env.HAI_RAW_DIR ?? process.env.CLAUDE_PLUGIN_OPTION_RAW_DIR ?? '';
 const rawDir = rawOpt && !rawOpt.includes('${') ? rawOpt : path.join(HOME, 'Documents', 'HAI 원문');
-const userDirs = [...(opt.includes('${') ? [] : opt.split(',').map((s) => s.trim()).filter(Boolean)), ...(fs.existsSync(expand(rawDir)) ? [rawDir] : [])]
-  .map((d) => { const p = real(expand(d)); return { shown: tilde(p), key: norm(p), dir: true, forms: [fold(p), fold(tilde(p))] }; });
+const userDirs = [...(opt.includes('${') ? [] : opt.split(',').map((s) => s.trim()).filter(Boolean)).map((d) => [d, false]), ...(fs.existsSync(expand(rawDir)) ? [[rawDir, true]] : [])]
+  // rawdir: 원문 결과 폴더 — 파일 이름은 Claude 가 만든 것이라 이름만 보는 명령(ls·open·find·Glob)은 괜찮고, 내용 읽기만 막는다
+  .map(([d, rawdir]) => { const p = real(expand(d)); return { shown: tilde(p), key: norm(p), dir: true, rawdir, forms: [fold(p), fold(tilde(p))] }; });
 const internal = { shown: '~/.hai-mcp/tmp', key: key(path.join(DATA, 'tmp')), dir: true, internal: true };
 let raws = [];
 try {
@@ -49,7 +50,7 @@ const hit = (p) => targets.find((t) => (t.dir ? inside(p, t.key) : p === t.key))
 /** p 가 보호 대상을 품은 상위 폴더면 그 대상 */
 const ancestorOf = (p) => watched.find((t) => t.key !== p && inside(t.key, p));
 /** 이름만 보는 검색용 — 원문 파일은 이름을 Claude 가 이미 알고(자기가 만들었다) 내용이 나가지 않으니 보호 폴더만 */
-const ancestorDirOf = (p) => userDirs.find((t) => t.key !== p && inside(t.key, p));
+const ancestorDirOf = (p) => userDirs.find((t) => !t.rawdir && t.key !== p && inside(t.key, p));
 
 function deny(t, why, { scope = false } = {}) {
   const what = t.dir ? `${t.shown} 은 보호 폴더입니다` : `${t.shown} 은 HAI 가 만든 원문 파일입니다(실명·받아쓰기 원문)`;
@@ -108,7 +109,7 @@ function recursionOf(raw) {
   }
   if (/^(rg|ag|ack|zip|7z|ditto)$/.test(c)) return 'content';
   if (c === 'find') return has(/^(-exec|-execdir|-ok|-okdir|-delete)$/) ? 'content' : 'names';
-  if (/^(tree|du)$/.test(c)) return 'names';
+  if (c === 'tree') return 'names'; // du 는 크기만 본다
   if (c === 'ls' && has(/^-[a-zA-Z]*R/)) return 'names';
   return null;
 }
@@ -126,16 +127,19 @@ function globRe(g) {
 }
 // 경로를 글자로 숨길 수 있는 형태: \x·\u·8진 이스케이프, eval, base64·xxd·uudecode 풀기
 // 경로를 글자로 숨길 수 있는 명령(명령 자리의 첫 단어로 본다): eval, base64·xxd·uudecode·openssl 풀기
+// 셸 설정에 흔한 eval "$(…)" — 내용이 정해진 도구들이라 경로를 숨길 수 없다
+const SAFE_EVAL = /^\$\(\s*(\S*\/)?(brew shellenv|(py|rb|nod|go)env init -?|pyenv virtualenv-init -|conda shell\.\w+ hook|direnv hook \w+|ssh-agent( -s)?|fnm env[^()]*|zoxide init \w+|starship init \w+|mise activate \w+|rtx activate \w+)\s*\)$/;
 function opaque(raw) {
   const ws = unwrap(raw);
   const c = path.basename(unq(ws[0] ?? ''));
+  if (c === 'eval' && ws.length === 2 && SAFE_EVAL.test(unq(ws[1]))) return false;
   const has = (re) => ws.slice(1).some((w) => re.test(w));
   return c === 'eval' || c === 'uudecode' || (c === 'base64' && has(/^(-d|-D|--decode)$/)) || (c === 'xxd' && has(/^-r/)) || (c === 'openssl' && has(/^(enc|base64)$/));
 }
 // 명령 치환 안에서 만든 글자(\x·\u·8진 이스케이프) — printf '\xec…' 로 경로를 만들 수 있다
 const ENCODED = /\\x[0-9a-fA-F]{1,2}|\\u[0-9a-fA-F]{2,4}|\\U[0-9a-fA-F]{4,8}|\\[0-3][0-7]{2}/;
 // 내용을 읽지 않고 이름·속성만 보거나 사용자에게 여는 명령
-const NAMES_ONLY = new Set(['ls', 'stat', 'du', 'file', 'echo', 'pwd', 'mkdir', 'touch', 'open', 'which', 'cd', 'xattr', 'mdls']);
+const NAMES_ONLY = new Set(['ls', 'stat', 'du', 'df', 'file', 'echo', 'pwd', 'mkdir', 'touch', 'open', 'which', 'cd', 'xattr', 'mdls']);
 
 
 /**
@@ -325,7 +329,7 @@ function check(ev) {
     case 'Grep': case 'Glob': {
       const p = abs(t.path ?? cwd);
       const h = hit(p);
-      if (h) deny(h, `${ev.tool_name} 차단`);
+      if (h && !(ev.tool_name === 'Glob' && (h.rawdir || !h.dir))) deny(h, `${ev.tool_name} 차단`);
       // 상위 폴더를 훑는 검색 — Grep 은 내용을 읽으니 원문 파일까지, Glob 은 이름만 보니 보호 폴더만(** 이거나 그 이름이 패턴에 있을 때)
       const a = ev.tool_name === 'Grep' ? ancestorOf(p) : ancestorDirOf(p);
       if (a && (ev.tool_name === 'Grep' || /\*\*/.test(t.pattern ?? '') || fold(t.pattern ?? '').includes(path.basename(a.key)))) {
@@ -359,7 +363,9 @@ function check(ev) {
       }
       const words = shellWords(shell);
       if (guarded()) {
-        const bareAll = words.map((w) => path.basename(w));
+        // 셸 설정 eval(brew shellenv 등) 명령은 빼고 본다
+        const safeEval = (c) => { const ws = unwrap(c).map(unq); return path.basename(ws[0] ?? '') === 'eval' && ws.length === 2 && SAFE_EVAL.test(ws[1]); };
+        const bareAll = cmds.filter((c) => !safeEval(c)).flat().map((w) => path.basename(unq(w)));
         const op = cmds.find(opaque) ?? (bareAll.some((w) => w === 'eval' || w === 'uudecode') || (bareAll.includes('base64') && words.some((w) => /^(-d|-D|--decode)$/.test(w))) || (bareAll.includes('xxd') && words.some((w) => /^-r/.test(w))) ? [bareAll.find((w) => /^(eval|uudecode|base64|xxd)$/.test(w))] : null);
         if (op) deny(userDirs[0] ?? raws[0], `${unq(op[0])} 가 든 명령은 어떤 파일을 여는지 확인할 수 없음`);
         const inner = [...shell.matchAll(/\$\(([^()]*)\)|`([^`]*)`/g)].map((m) => m[1] ?? m[2]);
@@ -421,7 +427,7 @@ function check(ev) {
       // 1) 글자 검사 — 원래 명령과 셸이 풀어 쓴 조각 어디에든 원문 파일 이름·보호 폴더 경로가 보이면(따옴표·heredoc·python 안이라도)
       const texts = [fold(cmd.replace(/\\(.)/g, '$1')), fold(unq(pieces.join('\n')))];
       if (!namesOnly) for (const r of raws) if (r.base.length >= 4 && texts.some((x) => x.includes(r.base))) deny(r, '명령에 그 파일 이름이 들어 있음');
-      for (const d of userDirs) for (const f of d.forms) for (const x of texts) {
+      for (const d of userDirs) if (!(namesOnly && d.rawdir)) for (const f of d.forms) for (const x of texts) {
         const i = x.indexOf(f);
         if (i >= 0 && /^($|[/\s"'`)\]}])/.test(x.slice(i + f.length))) deny(d, '명령에 그 폴더 경로가 들어 있음');
       }
@@ -435,22 +441,22 @@ function check(ev) {
           if (/[*?[{]/.test(w)) {
             for (const { t: tg, rel } of globTargets(w, b)) {
               if (tg.internal && rel === 'ancestor') continue;
-              if (rel === 'equal' || (rel === 'inside' && tg.dir)) { if (!(namesOnly && !tg.dir)) deny(tg, '와일드카드가 그 안을 가리킴'); }
-              else if (rel === 'ancestor' && !tg.internal && (recContent || (recNames && tg.dir))) deny(tg, `와일드카드(${unq(w)})로 훑는 범위 아래에 보호 대상이 있음`, { scope: true });
+              if (rel === 'equal' || (rel === 'inside' && tg.dir)) { if (!(namesOnly && (!tg.dir || tg.rawdir))) deny(tg, '와일드카드가 그 안을 가리킴'); }
+              else if (rel === 'ancestor' && !tg.internal && (recContent || (recNames && tg.dir && !tg.rawdir))) deny(tg, `와일드카드(${unq(w)})로 훑는 범위 아래에 보호 대상이 있음`, { scope: true });
             }
           }
           const clean = unq(w.replace(/[*?[{].*$/, '')).replace(/\/+$/, '');
           if (!clean) continue; // "*.pdf" 같은 이름 패턴(find -name 값 등) — 경로 없는 재귀는 아래 작업 폴더 검사가 맡는다
           const p = key(expand(clean, b));
           const h = hit(p);
-          if (h && !(namesOnly && !h.dir)) deny(h, '명령이 그 안을 가리킴'); // 원문 파일에 ls -l·open 은 괜찮다
+          if (h && !(namesOnly && (!h.dir || h.rawdir))) deny(h, '명령이 그 안을 가리킴'); // 원문 파일·원문 결과 폴더에 ls -l·open 은 괜찮다
           const a = fallback && under(p);
           if (a) deny(a, `${tilde(p)} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
         }
         // 기준 폴더를 모르는 상대 경로라도 경로 조각에 보호 폴더 이름이 그대로 있으면(…/인사/…) — 사용자 보호 폴더만
         if (w.includes('/')) {
           const parts = fold(unq(w)).split('/');
-          const tg = userDirs.find((d) => path.basename(d.key).length >= 2 && parts.includes(path.basename(d.key)));
+          const tg = userDirs.find((d) => !(namesOnly && d.rawdir) && path.basename(d.key).length >= 2 && parts.includes(path.basename(d.key)));
           if (tg) deny(tg, '명령에 그 폴더 이름이 경로로 들어 있음');
         }
       }
@@ -509,7 +515,7 @@ function check(ev) {
         if (/^(grep|egrep|fgrep|zgrep|rg|ag|ack)$/.test(name) && !rest.some((w) => /^(-e|-f|--regexp|--file)/.test(w))) args = args.slice(1); // 첫 인자는 찾을 말
         for (const w of args) for (const b of cmdBases) {
           const g = /[*?[{]/.test(w) ? globTargets(w, b) : [];
-          for (const { t: tg, rel } of g) if (rel === 'ancestor' && !tg.internal && (kind === 'content' || tg.dir)) deny(tg, `${w} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
+          for (const { t: tg, rel } of g) if (rel === 'ancestor' && !tg.internal && (kind === 'content' || (tg.dir && !tg.rawdir))) deny(tg, `${w} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
           const clean = w.replace(/[*?[{].*$/, '').replace(/\/+$/, '');
           if (!clean) continue;
           const pp = key(expand(clean, b));
