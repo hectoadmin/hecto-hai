@@ -102741,7 +102741,7 @@ var PATTERNS = [
   ["\uC8FC\uBBFC\uB4F1\uB85D\uBC88\uD638", new RegExp(String.raw`(?<![\d*])\d{2}(\d{2})(\d{2})\s*-?\s*[1-8][\d*]{6}(?![\d*])`, "g"), (m2) => validDate(m2[1], m2[2])],
   ["\uCE74\uB4DC\uBC88\uD638", new RegExp(String.raw`(?<!\d)(?:\d{4}${SEP}\d{4}${SEP}\d{4}${SEP}\d{4}|3[47]\d{2}${SEP}\d{6}${SEP}\d{5})(?!\d)`, "g"), (m2) => luhn(onlyDigits(m2[0]))],
   // +82 10-…, 010-…, 엑셀이 앞 0 을 지운 10xxxxxxxx
-  ["\uD734\uB300\uC804\uD654", new RegExp(String.raw`(?<![\d+])(?:\+?\s*82${SEP}0?1[016789]|01[016789])${SEP}\d{3,4}${SEP}\d{4}(?!\d)|(?<![\d.,])10[2-9]\d{7}(?![\d.,])`, "g")],
+  ["\uD734\uB300\uC804\uD654", new RegExp(String.raw`(?<![\d+])(?:\+?\s*82${SEP}0?1[016789]|01[016789])${SEP}\d{3,4}${SEP}\d{4}(?!\d)|(?<![\d.,])10[2-9]\d{7}(?![\d.,])`, "g"), (m2) => !/^10[2-9]\d{7}$/.test(m2[0]) || !/0{5}$/.test(m2[0])],
   ["\uC804\uD654\uBC88\uD638", new RegExp(String.raw`(?<![\d+])(?:\+?\s*82${SEP}0?|\(0|0)(?:2|[3-6][1-5]|70)(?:\)\s*|${SEP})\d{3,4}${SEP}\d{4}(?!\d)`, "g"), (m2) => {
     const n2 = onlyDigits(m2[0]).replace(/^82/, "0");
     return n2.length >= 9 && n2.length <= 11;
@@ -102789,16 +102789,19 @@ var Vault = class {
   summary() {
     return Object.fromEntries(this.count);
   }
-  /** 자리표시를 원래 값으로. 모르는 자리표시는 그대로 둔다 → { text, restored } */
+  /** 자리표시를 원래 값으로. 모르는 자리표시는 그대로 두고 센다 → { text, restored, unknown } */
   restore(text) {
-    let restored = 0;
-    const out = String(text).replace(/\[([가-힣A-Za-z]{1,12})(\d{1,5})\]/g, (ph) => {
+    let restored = 0, unknown2 = 0;
+    const out = String(text).replace(/\[([가-힣A-Za-z]{1,12})(\d{1,5})\]/g, (ph, type) => {
       const v2 = this.toOriginal.get(ph);
-      if (v2 === void 0) return ph;
+      if (v2 === void 0) {
+        if (this.count.has(type) || /이름|번호|주소|전화|이메일|정보/.test(type)) unknown2++;
+        return ph;
+      }
       restored++;
       return v2;
     });
-    return { text: out, restored };
+    return { text: out, restored, unknown: unknown2 };
   }
 };
 function maskPatterns(text, vault, { keepDomains = [] } = {}) {
@@ -102815,8 +102818,11 @@ function maskPatterns(text, vault, { keepDomains = [] } = {}) {
   return out;
 }
 function looseRegex(fragment) {
-  const chars = [...normalize(fragment).replace(/\s+/g, "")].map((c2) => c2.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  return new RegExp(chars.join("\\s*"), "g");
+  const f2 = normalize(fragment).replace(/\s+/g, "");
+  const chars = [...f2].map((c2) => c2.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const head = /^\d/.test(f2) ? "(?<![\\d\\p{L}])" : "";
+  const tail = /\d$/.test(f2) ? "(?![\\d\\]])" : "";
+  return new RegExp(head + chars.join("\\s*") + tail, "gu");
 }
 function maskSpans(text, spans2, vault) {
   let out = text;
@@ -103092,7 +103098,7 @@ async function readText(p2, opts = {}) {
   if (DENY.some((re2) => re2.test(file2))) throw new Error(`\uBE44\uBC00\uAC12 \uD30C\uC77C\uB85C \uBCF4\uC774\uB294 \uACBD\uB85C\uB294 \uC77D\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4: ${path4.basename(file2)}`);
   const st2 = await fs4.stat(file2).catch(() => null);
   if (!st2?.isFile()) throw new Error(`\uD30C\uC77C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4: ${file2}`);
-  const key2 = `${file2}|${st2.mtimeMs}|${st2.size}|${opts.ocr ? 1 : 0}|${opts.engine ?? ""}|${opts.terms ?? ""}|${opts.timestamps ? 1 : 0}`;
+  const key2 = `${file2}|${st2.mtimeMs}|${st2.size}|${opts.ocr ? 1 : opts.noOcr ? 2 : 0}|${opts.engine ?? ""}|${opts.terms ?? ""}|${opts.timestamps ? 1 : 0}`;
   let hit = cache.get(key2);
   if (!hit) {
     hit = await extract(file2, st2, opts);
@@ -103119,19 +103125,23 @@ async function extract(file2, st2, opts) {
   if (ext === ".hwpx") return { text: await readHwpx(await fs4.readFile(file2)), via: "text" };
   if (ext === ".pdf") {
     if (opts.ocr) return ocrPages(file2);
-    const pages = await pdfPages(file2);
-    const blank = pages.map((t2, i2) => t2.replace(/\s/g, "").length < 20 ? i2 : -1).filter((i2) => i2 >= 0);
-    if (!blank.length) return { text: joinPages(pages), via: "text", meta: { pages: pages.length } };
-    if (blank.length === pages.length) return ocrPages(file2);
+    const { texts: pages, imageOnly } = await pdfPages(file2);
+    const scan = imageOnly.map((v2, i2) => v2 ? i2 : -1).filter((i2) => i2 >= 0);
+    if (!scan.length) return { text: joinPages(pages), via: "text", meta: { pages: pages.length } };
+    if (opts.noOcr) {
+      for (const i2 of scan) pages[i2] = "(\uC2A4\uCE94 \uCABD \u2014 \uC77D\uC9C0 \uC54A\uC74C)";
+      return { text: joinPages(pages), via: "text", meta: { pages: pages.length, skippedScan: scan.length } };
+    }
+    if (scan.length === pages.length) return ocrPages(file2);
     try {
       const scanned = await ocr(file2);
       if (scanned.length === pages.length) {
-        for (const i2 of blank) pages[i2] = scanned[i2];
-        return { text: joinPages(pages), via: "ocr", meta: { pages: pages.length, ocrPages: blank.length } };
+        for (const i2 of scan) pages[i2] = scanned[i2];
+        return { text: joinPages(pages), via: "ocr", meta: { pages: pages.length, ocrPages: scan.length } };
       }
     } catch {
     }
-    for (const i2 of blank) pages[i2] = "(\uC774 \uCABD\uC740 \uC2A4\uCE94 \uC774\uBBF8\uC9C0\uB77C \uAE00\uC790\uB97C \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4)";
+    for (const i2 of scan) pages[i2] = "(\uC774 \uCABD\uC740 \uC2A4\uCE94 \uC774\uBBF8\uC9C0\uB77C \uAE00\uC790\uB97C \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4)";
     return { text: joinPages(pages), via: "text", meta: { pages: pages.length } };
   }
   if (IMAGE.has(ext)) return ocrPages(file2);
@@ -103152,7 +103162,7 @@ async function extract(file2, st2, opts) {
   throw new Error(`\uC9C0\uC6D0\uD558\uC9C0 \uC54A\uB294 \uD615\uC2DD\uC785\uB2C8\uB2E4(${ext || "\uD655\uC7A5\uC790 \uC5C6\uC74C"}). \uB429\uB2C8\uB2E4: \uBB38\uC11C txt\xB7md\xB7csv\xB7json\xB7pdf\xB7docx\xB7xlsx\xB7hwpx / \uC774\uBBF8\uC9C0 png\xB7jpg / \uC74C\uC131 wav\xB7mp3\xB7m4a \uB4F1`);
 }
 async function pdfPages(file2) {
-  const { extractText: extractText2, getDocumentProxy: getDocumentProxy2 } = await Promise.resolve().then(() => (init_dist(), dist_exports));
+  const { extractText: extractText2, getDocumentProxy: getDocumentProxy2, getResolvedPDFJS: getResolvedPDFJS2 } = await Promise.resolve().then(() => (init_dist(), dist_exports));
   const assets = fileURLToPath(new URL("./pdfjs/", import.meta.url));
   const pdf = await getDocumentProxy2(new Uint8Array(await fs4.readFile(file2)), {
     cMapUrl: `${assets}cmaps/`,
@@ -103161,7 +103171,19 @@ async function pdfPages(file2) {
     verbosity: 0
   });
   try {
-    return (await extractText2(pdf, { mergePages: false })).text;
+    const texts2 = (await extractText2(pdf, { mergePages: false })).text;
+    const { OPS } = await getResolvedPDFJS2();
+    const IMG = new Set([OPS.paintImageXObject, OPS.paintInlineImageXObject, OPS.paintImageMaskXObject, OPS.paintImageXObjectRepeat].filter((x2) => x2 !== void 0));
+    const imageOnly = [];
+    for (let i2 = 0; i2 < texts2.length; i2++) {
+      if (texts2[i2].replace(/\s/g, "").length >= 20) {
+        imageOnly.push(false);
+        continue;
+      }
+      const ops = await (await pdf.getPage(i2 + 1)).getOperatorList();
+      imageOnly.push(ops.fnArray.some((f2) => IMG.has(f2)));
+    }
+    return { texts: texts2, imageOnly };
   } finally {
     await pdf.destroy?.();
   }
@@ -103265,7 +103287,7 @@ async function buildIndex(dir, { media = false, rebuild = false } = {}) {
     const prev = idx.files[f2];
     if (prev && prev.mtime === st2.mtimeMs && prev.size === st2.size) continue;
     try {
-      const { text } = await readText(f2);
+      const { text } = await readText(f2, { noOcr: !media });
       const parts = spans(text);
       const vecs = await embed(parts.map((s2) => text.slice(s2.start, s2.end)));
       idx.files[f2] = { mtime: st2.mtimeMs, size: st2.size, chunks: parts.map((s2, i2) => ({ ...s2, v: pack(vecs[i2]) })) };
@@ -103294,7 +103316,7 @@ async function search(dir, query, { topK = 5, media = false, rebuild = false } =
     if (hits.some((x2) => x2.file === h2.file && Math.abs(x2.start - h2.start) < CHUNK)) continue;
     let text;
     try {
-      ({ text } = await readText(h2.file));
+      ({ text } = await readText(h2.file, { noOcr: !media }));
     } catch {
       continue;
     }
@@ -103413,9 +103435,10 @@ function newVault() {
 function vaultOf(id) {
   if (!id) return newVault();
   const v2 = vaults.get(id);
-  if (!v2) throw new Error(`mask_id ${id} \uB97C \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4(MCP \uC11C\uBC84\uAC00 \uB2E4\uC2DC \uC2DC\uC791\uB410\uAC70\uB098 12\uC2DC\uAC04\uC774 \uC9C0\uB0AC\uC2B5\uB2C8\uB2E4). mask_id \uC5C6\uC774 \uB2E4\uC2DC \uBD80\uB974\uC138\uC694.`);
+  if (!v2) throw new Error(`mask_id ${id} \uB97C \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4(MCP \uC11C\uBC84\uAC00 \uB2E4\uC2DC \uC2DC\uC791\uB410\uAC70\uB098 12\uC2DC\uAC04\uC774 \uC9C0\uB0AC\uC2B5\uB2C8\uB2E4). mask_id \uC5C6\uC774 \uB2E4\uC2DC \uBD80\uB974\uBA74 \uC0C8 \uBC88\uD638\uB85C \uAC00\uB9BD\uB2C8\uB2E4 \u2014 \uC774\uC804 \uACB0\uACFC\uC640 \uC11E\uC9C0 \uB9C8\uC138\uC694.`);
   return v2;
 }
+var maskIdSchema = external_exports.string().optional().describe("\uC55E \uACB0\uACFC\uC758 mask_id \u2014 \uB118\uAE30\uBA74 \uAC19\uC740 \uC0AC\uB78C\xB7\uAC12\uC774 \uAC19\uC740 \uC790\uB9AC\uD45C\uC2DC\uAC00 \uB41C\uB2E4. \uC5EC\uB7EC \uB3C4\uAD6C \uACB0\uACFC\uB97C \uD55C \uAE00\uB85C \uD569\uCE60 \uAC70\uBA74 \uAF2D \uB118\uAE34\uB2E4");
 var ok = (text) => ({ content: [{ type: "text", text }] });
 var fail = (err) => ({ isError: true, content: [{ type: "text", text: err instanceof HaiError ? `[${err.code}] ${err.message}` : String(err?.message ?? err) }] });
 var guard = (fn2) => async (args, extra) => {
@@ -103425,7 +103448,7 @@ var guard = (fn2) => async (args, extra) => {
     return fail(err);
   }
 };
-var counts = (v2) => Object.entries(v2.summary()).map(([t2, n2]) => `${t2} ${n2}`).join(", ") || "\uC5C6\uC74C";
+var counts = (v2, reused) => (Object.entries(v2.summary()).map(([t2, n2]) => `${t2} ${n2}`).join(", ") || "\uC5C6\uC74C") + (reused ? " (\uC774 mask_id \uB204\uC801)" : "");
 var via = { text: "", ocr: " \xB7 OCR \uB85C \uC77D\uC74C", stt: " \xB7 \uBC1B\uC544\uC4F0\uAE30\uB85C \uC77D\uC74C" };
 var dur = (sec) => {
   const s2 = Math.round(Number(sec) || 0);
@@ -103525,19 +103548,20 @@ server.registerTool("hai_ask_file", {
     model: modelSchema,
     thinking: thinkingSchema,
     extra: extraSchema,
+    mask_id: maskIdSchema,
     ...audioSchema
   }
-}, guard(async ({ path: p2, instruction, model, thinking, extra, engine, terms }, ex) => {
+}, guard(async ({ path: p2, instruction, model, thinking, extra, mask_id, engine, terms }, ex) => {
   progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911");
   const { file: file2, text, via: how, meta: meta3 } = await readText(p2, { engine, terms });
   progress(ex, "HAI \uAC00 \uC77D\uB294 \uC911");
   const answer = await askText(text, instruction, { model, thinking }, (m2) => progress(ex, m2));
-  const vault = newVault();
+  const vault = vaultOf(mask_id);
   const masked = await maskAll(answer, vault, extra);
   const len = how === "stt" ? `${dur(meta3?.seconds)} \uB179\uC74C` : `${text.length.toLocaleString()}\uC790`;
   return ok([
     `mask_id: ${vault.id}`,
-    `\uD30C\uC77C: ${path6.basename(file2)} (${len}${via[how]}) \xB7 \uC6D0\uBB38\uC740 HAI \uB9CC \uC77D\uC74C \xB7 \uB2F5\uC5D0\uC11C \uAC00\uB9B0 \uAC83: ${counts(vault)}`,
+    `\uD30C\uC77C: ${path6.basename(file2)} (${len}${via[how]}) \xB7 \uC6D0\uBB38\uC740 HAI \uB9CC \uC77D\uC74C \xB7 \uB2F5\uC5D0\uC11C \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)}`,
     "--- \uB2F5 ---",
     await inlineOrFile(`${vault.id}-\uB2F5.md`, masked)
   ].join("\n"));
@@ -103552,9 +103576,10 @@ server.registerTool("hai_ask_files", {
     pattern: external_exports.string().optional().describe('dir \uC77C \uB54C \uD30C\uC77C \uC774\uB984\uC5D0 \uB4E4\uC5B4\uAC04 \uAE00\uC790\uB85C \uAC70\uB974\uAE30. \uC608: "\uACC4\uC57D"'),
     max_files: external_exports.number().int().min(1).max(100).optional().describe("\uCD5C\uB300 \uD30C\uC77C \uC218(\uAE30\uBCF8 30)"),
     model: modelSchema,
-    extra: extraSchema
+    extra: extraSchema,
+    mask_id: maskIdSchema
   }
-}, guard(async ({ instruction, dir, paths, pattern, max_files, model, extra }, ex) => {
+}, guard(async ({ instruction, dir, paths, pattern, max_files, model, extra, mask_id }, ex) => {
   let files = (paths ?? []).map(resolvePath);
   if (dir) {
     const d2 = resolvePath(dir);
@@ -103562,8 +103587,11 @@ server.registerTool("hai_ask_files", {
     const want = pattern?.normalize("NFC");
     files.push(...names.filter((n2) => SUPPORTED.includes(path6.extname(n2).toLowerCase()) && (!want || n2.normalize("NFC").includes(want))).sort().map((n2) => path6.join(d2, n2)));
   }
-  files = [...new Set(files)].slice(0, max_files ?? 30);
+  const all = [...new Set(files)];
+  const limit = max_files ?? 30;
+  files = all.slice(0, limit);
   if (!files.length) throw new Error("\uC77D\uC744 \uD30C\uC77C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4(\uC9C0\uC6D0 \uD615\uC2DD\uC778\uC9C0, pattern \uC774 \uB9DE\uB294\uC9C0 \uD655\uC778)");
+  const cut = all.length > files.length ? ` \xB7 \uC804\uCCB4 ${all.length}\uAC1C \uC911 \uC55E ${files.length}\uAC1C\uB9CC \uC77D\uC74C(\uC774\uB984\uC21C) \u2014 \uB098\uBA38\uC9C0\uB294 max_files(\uCD5C\uB300 100)\uB97C \uB298\uB9AC\uAC70\uB098 pattern \uC73C\uB85C \uB098\uB220\uC11C` : "";
   const results = new Array(files.length);
   let next = 0, done = 0;
   async function worker() {
@@ -103581,12 +103609,12 @@ server.registerTool("hai_ask_files", {
   await Promise.all([worker(), worker()]);
   const body = results.map((r2, i2) => `### ${i2 + 1}. ${path6.basename(r2.file)}
 ${r2.error ? `(\uC77D\uC9C0 \uBABB\uD568: ${r2.error})` : r2.answer}`).join("\n\n");
-  const vault = newVault();
+  const vault = vaultOf(mask_id);
   const masked = await maskAll(body, vault, extra);
   const bad = results.filter((r2) => r2.error).length;
   return ok([
     `mask_id: ${vault.id}`,
-    `\uD30C\uC77C ${files.length}\uAC1C (\uC2E4\uD328 ${bad}) \xB7 \uC6D0\uBB38\uC740 HAI \uB9CC \uC77D\uC74C \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault)}`,
+    `\uD30C\uC77C ${files.length}\uAC1C (\uC2E4\uD328 ${bad})${cut} \xB7 \uC6D0\uBB38\uC740 HAI \uB9CC \uC77D\uC74C \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)}`,
     "--- \uD30C\uC77C\uBCC4 \uB2F5 ---",
     await inlineOrFile(`${vault.id}-\uC5EC\uB7EC\uD30C\uC77C.md`, masked)
   ].join("\n"));
@@ -103599,7 +103627,7 @@ server.registerTool("hai_mask_file", {
     "\uAC19\uC740 \uBB38\uC11C\uB97C \uB2E4\uC2DC \uAC00\uB9B4 \uB54C\uB294 mask_id \uB97C \uB118\uACA8 \uBC88\uD638\uB97C \uB9DE\uCD98\uB2E4. \uACB0\uACFC\uBB3C\uC744 \uC2E4\uBA85\uC73C\uB85C \uB0A8\uAE30\uB824\uBA74 hai_restore.",
     "\uC790\uB3D9 \uAC00\uB9BC\uC774\uB77C \uB193\uCE60 \uC218 \uC788\uB2E4 \u2014 \uC2E4\uBA85\xB7\uC5F0\uB77D\uCC98\uAC00 \uBCF4\uC774\uBA74 \uC0AC\uC6A9\uC790\uC5D0\uAC8C \uC54C\uB9AC\uACE0 extra \uB85C \uC720\uD615\uC744 \uB354\uD574 \uB2E4\uC2DC \uBD80\uB978\uB2E4."
   ].join(" "),
-  inputSchema: { path: external_exports.string(), extra: extraSchema, mask_id: external_exports.string().optional(), ...audioSchema }
+  inputSchema: { path: external_exports.string(), extra: extraSchema, mask_id: maskIdSchema, ...audioSchema }
 }, guard(async ({ path: p2, extra, mask_id, engine, terms }, ex) => {
   progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911");
   const { file: file2, text, via: how, table } = await readText(p2, { engine, terms });
@@ -103609,7 +103637,7 @@ server.registerTool("hai_mask_file", {
   return ok([
     `mask_id: ${vault.id}`,
     `\uD30C\uC77C: ${path6.basename(file2)} (${text.length.toLocaleString()}\uC790${via[how]})`,
-    `\uAC00\uB9B0 \uAC83(\uC11C\uB85C \uB2E4\uB978 \uAC12 \uC218): ${counts(vault)}`,
+    `\uAC00\uB9B0 \uAC83(\uC11C\uB85C \uB2E4\uB978 \uAC12 \uC218): ${counts(vault, mask_id)}`,
     "--- \uAC00\uB9B0 \uBCF8\uBB38 ---",
     await inlineOrFile(`${vault.id}-${path6.parse(file2).name.replace(/[^\w가-힣.-]/g, "_").slice(0, 40)}.md`, masked)
   ].join("\n"));
@@ -103625,14 +103653,19 @@ server.registerTool("hai_restore", {
     overwrite: external_exports.boolean().optional()
   }
 }, guard(async ({ mask_id, text, in_path, out_path, overwrite }) => {
-  const vault = vaultOf(mask_id);
+  if (!mask_id?.trim()) throw new Error("mask_id \uAC00 \uD544\uC694\uD569\uB2C8\uB2E4 \u2014 \uADF8 \uAE00\uC744 \uB9CC\uB4E4 \uB54C \uBC1B\uC740 \uACB0\uACFC \uB9E8 \uC704\uC758 mask_id \uB97C \uB118\uAE30\uC138\uC694.");
+  const vault = vaults.get(mask_id);
+  if (!vault) throw new Error(`mask_id ${mask_id} \uB97C \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4(MCP \uC11C\uBC84\uAC00 \uB2E4\uC2DC \uC2DC\uC791\uB410\uAC70\uB098 12\uC2DC\uAC04\uC774 \uC9C0\uB0AC\uC2B5\uB2C8\uB2E4). \uC2E4\uBA85\uC73C\uB85C \uB418\uB3CC\uB9B4 \uC218 \uC5C6\uC73C\uB2C8, \uC6D0\uBCF8\uC744 \uB2E4\uC2DC \uAC00\uB824(hai_mask_file \uB4F1) \uCD08\uC548\uC744 \uC0C8\uB85C \uB9CC\uB4E4\uC5B4\uC57C \uD569\uB2C8\uB2E4.`);
   if (!text && !in_path) throw new Error("text \uB098 in_path \uC911 \uD558\uB098\uAC00 \uD544\uC694\uD569\uB2C8\uB2E4");
   const src = text ?? await fs6.readFile(resolvePath(in_path), "utf8");
   const file2 = resolvePath(out_path);
   if (!overwrite && await fs6.stat(file2).then(() => true, () => false)) throw new Error(`\uC774\uBBF8 \uC788\uB294 \uD30C\uC77C\uC785\uB2C8\uB2E4: ${file2} \u2014 \uB36E\uC5B4\uC4F0\uB824\uBA74 overwrite: true`);
-  const { text: restored, restored: n2 } = vault.restore(src);
+  const { text: restored, restored: n2, unknown: unknown2 } = vault.restore(src);
+  if (!n2) throw new Error(`\uC774 mask_id \uB85C \uB418\uB3CC\uB9B4 \uC790\uB9AC\uD45C\uC2DC\uAC00 \uD558\uB098\uB3C4 \uC5C6\uC2B5\uB2C8\uB2E4${unknown2 ? `(\uBAA8\uB974\uB294 \uC790\uB9AC\uD45C\uC2DC ${unknown2}\uACF3 \u2014 \uB2E4\uB978 mask_id \uC758 \uACB0\uACFC\uB85C \uBCF4\uC785\uB2C8\uB2E4)` : ""}. \uC800\uC7A5\uD558\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4.`);
   const saved = await writeRaw(file2, restored, { overwrite: true });
-  return ok(`\uC800\uC7A5: ${saved} (\uC790\uB9AC\uD45C\uC2DC ${n2}\uACF3 \uBCF5\uC6D0). \uC2E4\uBA85\uC774 \uB4E0 \uD30C\uC77C\uC774\uB77C Claude \uB294 \uC774 \uD30C\uC77C\uC744 \uB2E4\uC2DC \uC5F4\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4 \u2014 \uD655\uC778\uC740 \uC0AC\uC6A9\uC790\uAC00 \uC9C1\uC811 \uD558\uC138\uC694.`);
+  const warn2 = unknown2 ? `
+\uC8FC\uC758: \uC774 mask_id \uC5D0 \uC5C6\uB294 \uC790\uB9AC\uD45C\uC2DC ${unknown2}\uACF3\uC740 \uADF8\uB300\uB85C \uB0A8\uC558\uC2B5\uB2C8\uB2E4(\uB2E4\uB978 \uACB0\uACFC\uC5D0\uC11C \uC628 \uAC83) \u2014 \uADF8 \uBD80\uBD84\uC740 \uC2E4\uBA85\uC774 \uC544\uB2D9\uB2C8\uB2E4.` : "";
+  return ok(`\uC800\uC7A5: ${saved} (\uC790\uB9AC\uD45C\uC2DC ${n2}\uACF3 \uBCF5\uC6D0). \uC2E4\uBA85\uC774 \uB4E0 \uD30C\uC77C\uC774\uB77C Claude \uB294 \uC774 \uD30C\uC77C\uC744 \uB2E4\uC2DC \uC5F4\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4 \u2014 \uD655\uC778\uC740 \uC0AC\uC6A9\uC790\uAC00 \uC9C1\uC811 \uD558\uC138\uC694.${warn2}`);
 }));
 server.registerTool("hai_transcribe", {
   title: "\uB179\uC74C \uBC1B\uC544\uC4F0\uAE30",
@@ -103684,10 +103717,11 @@ server.registerTool("hai_search", {
     query: external_exports.string(),
     dir: external_exports.string().describe("\uCC3E\uC744 \uD3F4\uB354(\uD558\uC704 \uD3F4\uB354 \uD3EC\uD568, \uCD5C\uB300 400\uAC1C \uD30C\uC77C)"),
     top_k: external_exports.number().int().min(1).max(20).optional(),
-    media: external_exports.boolean().optional().describe("\uC0AC\uC9C4\xB7\uB179\uC74C\uAE4C\uC9C0 \uC0C9\uC778(OCR\xB7\uBC1B\uC544\uC4F0\uAE30\uB77C \uC624\uB798 \uAC78\uB9BC)"),
-    rebuild: external_exports.boolean().optional().describe("\uC0C9\uC778\uC744 \uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC")
+    media: external_exports.boolean().optional().describe("\uC0AC\uC9C4\xB7\uB179\uC74C\xB7\uC2A4\uCE94 PDF \uAE4C\uC9C0 \uC0C9\uC778(OCR\xB7\uBC1B\uC544\uC4F0\uAE30\uB77C \uC624\uB798 \uAC78\uB9BC)"),
+    rebuild: external_exports.boolean().optional().describe("\uC0C9\uC778\uC744 \uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC"),
+    mask_id: maskIdSchema
   }
-}, guard(async ({ query, dir, top_k, media, rebuild }, ex) => {
+}, guard(async ({ query, dir, top_k, media, rebuild, mask_id }, ex) => {
   progress(ex, "\uC0C9\uC778 \uD655\uC778 \uC911");
   const r2 = await search(resolvePath(dir), query, { topK: top_k ?? 5, media, rebuild });
   const root2 = resolvePath(dir);
@@ -103697,11 +103731,11 @@ ${h2.text.trim()}`).join("\n\n") || "\uCC3E\uC740 \uAD6C\uC808\uC774 \uC5C6\uC2B
 
 ### \uC77D\uC9C0 \uBABB\uD55C \uD30C\uC77C ${r2.failed.length}\uAC1C
 ${r2.failed.slice(0, 10).map((f2) => `- ${path6.relative(root2, f2.file)}: ${f2.why.split(root2).join("\u2026")}`).join("\n")}` : "";
-  const vault = newVault();
+  const vault = vaultOf(mask_id);
   const masked = await maskAll(hits + failed, vault);
   return ok([
     `mask_id: ${vault.id}`,
-    `\uC0C9\uC778: \uD30C\uC77C ${r2.files}\uAC1C \xB7 \uC870\uAC01 ${r2.chunks}\uAC1C (\uC774\uBC88\uC5D0 \uC0C8\uB85C \uC77D\uC74C ${r2.updated}) \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault)}`,
+    `\uC0C9\uC778: \uD30C\uC77C ${r2.files}\uAC1C \xB7 \uC870\uAC01 ${r2.chunks}\uAC1C (\uC774\uBC88\uC5D0 \uC0C8\uB85C \uC77D\uC74C ${r2.updated}) \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)}`,
     "--- \uCC3E\uC740 \uAD6C\uC808 ---",
     await inlineOrFile(`${vault.id}-\uAC80\uC0C9.md`, masked)
   ].join("\n"));
@@ -103715,20 +103749,21 @@ server.registerTool("hai_chat", {
     model: modelSchema,
     thinking: thinkingSchema,
     images: external_exports.array(external_exports.string()).max(8).optional().describe("\uB85C\uCEEC \uC774\uBBF8\uC9C0 \uACBD\uB85C(png\xB7jpg\xB7webp). \uC0AC\uC9C4\xB7\uCC28\uD2B8\xB7\uD654\uBA74 \uC774\uD574"),
-    max_tokens: external_exports.number().int().min(16).max(8e3).optional()
+    max_tokens: external_exports.number().int().min(16).max(8e3).optional(),
+    mask_id: maskIdSchema
   }
-}, guard(async ({ prompt, system, model, thinking, images, max_tokens }) => {
+}, guard(async ({ prompt, system, model, thinking, images, max_tokens, mask_id }) => {
   const files = (images ?? []).map(resolvePath);
   const messages = [...system ? [{ role: "system", content: system }] : [], { role: "user", content: prompt }];
   const r2 = await chat({ messages, model: model ?? (files.length ? "gemma" : "qwen"), thinking, images: files, maxTokens: max_tokens ?? 2e3, temperature: 0.3, timeoutMs: 29e4 });
   if (!files.length) return ok(`${r2.content}
 
 (\uBAA8\uB378: ${r2.model})`);
-  const vault = newVault();
+  const vault = vaultOf(mask_id);
   return ok(`mask_id: ${vault.id}
 ${await maskAll(r2.content, vault)}
 
-(\uBAA8\uB378: ${r2.model} \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault)})`);
+(\uBAA8\uB378: ${r2.model} \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)})`);
 }));
 server.registerTool("hai_status", {
   title: "HAI \uC5F0\uACB0 \uC810\uAC80",

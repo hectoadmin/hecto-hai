@@ -53,14 +53,14 @@ const cache = new Map(); // `${경로}|${mtime}|${size}|${옵션}` → { text, v
 
 /**
  * → { file, text, via: 'text'|'ocr'|'stt', meta, table?: 'csv'|'tsv' (표라서 열 단위로 가릴 수 있음) }
- * opts: { ocr: true 면 PDF 도 강제로 OCR, engine/terms: 받아쓰기 옵션, timestamps: 받아쓰기에 [mm:ss] 붙이기 }
+ * opts: { ocr: true 면 PDF 도 강제로 OCR, noOcr: true 면 PDF 스캔 쪽 OCR 을 건너뜀(색인용), engine/terms: 받아쓰기 옵션, timestamps: 받아쓰기에 [mm:ss] 붙이기 }
  */
 export async function readText(p, opts = {}) {
   const file = resolvePath(p);
   if (DENY.some((re) => re.test(file))) throw new Error(`비밀값 파일로 보이는 경로는 읽지 않습니다: ${path.basename(file)}`);
   const st = await fs.stat(file).catch(() => null);
   if (!st?.isFile()) throw new Error(`파일이 없습니다: ${file}`);
-  const key = `${file}|${st.mtimeMs}|${st.size}|${opts.ocr ? 1 : 0}|${opts.engine ?? ''}|${opts.terms ?? ''}|${opts.timestamps ? 1 : 0}`;
+  const key = `${file}|${st.mtimeMs}|${st.size}|${opts.ocr ? 1 : opts.noOcr ? 2 : 0}|${opts.engine ?? ''}|${opts.terms ?? ''}|${opts.timestamps ? 1 : 0}`;
   let hit = cache.get(key);
   if (!hit) {
     hit = await extract(file, st, opts);
@@ -88,19 +88,24 @@ async function extract(file, st, opts) {
   if (ext === '.hwpx') return { text: await readHwpx(await fs.readFile(file)), via: 'text' };
   if (ext === '.pdf') {
     if (opts.ocr) return ocrPages(file);
-    const pages = await pdfPages(file);
-    const blank = pages.map((t, i) => (t.replace(/\s/g, '').length < 20 ? i : -1)).filter((i) => i >= 0);
-    if (!blank.length) return { text: joinPages(pages), via: 'text', meta: { pages: pages.length } };
-    if (blank.length === pages.length) return ocrPages(file); // 전부 스캔
-    // 섞인 PDF(표지·서명면만 글자, 본문은 스캔) — 빈 쪽만 OCR 결과로 채운다
+    const { texts: pages, imageOnly } = await pdfPages(file);
+    // OCR 할 쪽: 글자가 거의 없고 그림(스캔)이 있는 쪽 — 표지 한 줄·쪽번호만 있는 쪽 때문에 문서 전체를 OCR 하지 않게
+    const scan = imageOnly.map((v, i) => (v ? i : -1)).filter((i) => i >= 0);
+    if (!scan.length) return { text: joinPages(pages), via: 'text', meta: { pages: pages.length } };
+    if (opts.noOcr) { // 검색 색인 등: 오래 걸리는 OCR 은 건너뛰고 알린다
+      for (const i of scan) pages[i] = '(스캔 쪽 — 읽지 않음)';
+      return { text: joinPages(pages), via: 'text', meta: { pages: pages.length, skippedScan: scan.length } };
+    }
+    if (scan.length === pages.length) return ocrPages(file); // 전부 스캔
+    // 섞인 PDF(표지·서명면만 글자, 본문은 스캔) — 스캔 쪽만 OCR 결과로 채운다
     try {
       const scanned = await ocr(file);
       if (scanned.length === pages.length) {
-        for (const i of blank) pages[i] = scanned[i];
-        return { text: joinPages(pages), via: 'ocr', meta: { pages: pages.length, ocrPages: blank.length } };
+        for (const i of scan) pages[i] = scanned[i];
+        return { text: joinPages(pages), via: 'ocr', meta: { pages: pages.length, ocrPages: scan.length } };
       }
     } catch { /* 아래에서 알린다 */ }
-    for (const i of blank) pages[i] = '(이 쪽은 스캔 이미지라 글자를 읽지 못했습니다)';
+    for (const i of scan) pages[i] = '(이 쪽은 스캔 이미지라 글자를 읽지 못했습니다)';
     return { text: joinPages(pages), via: 'text', meta: { pages: pages.length } };
   }
   if (IMAGE.has(ext)) return ocrPages(file);
@@ -121,14 +126,25 @@ async function extract(file, st, opts) {
   throw new Error(`지원하지 않는 형식입니다(${ext || '확장자 없음'}). 됩니다: 문서 txt·md·csv·json·pdf·docx·xlsx·hwpx / 이미지 png·jpg / 음성 wav·mp3·m4a 등`);
 }
 
+/** → { texts: 쪽별 글자, imageOnly: 쪽별 "글자는 거의 없고 그림이 있음"(스캔 쪽) } */
 async function pdfPages(file) {
-  const { extractText, getDocumentProxy } = await import('unpdf');
+  const { extractText, getDocumentProxy, getResolvedPDFJS } = await import('unpdf');
   // 묶은 파일(dist/hai-mcp.mjs) 옆 pdfjs/ 의 CMap·표준 글꼴 — 없으면 한글(CID) 글자가 빠진다. Node 의 pdf.js 는 file:// 이 아니라 경로를 받는다
   const assets = fileURLToPath(new URL('./pdfjs/', import.meta.url));
   const pdf = await getDocumentProxy(new Uint8Array(await fs.readFile(file)), {
     cMapUrl: `${assets}cmaps/`, cMapPacked: true, standardFontDataUrl: `${assets}standard_fonts/`, verbosity: 0 });
-  try { return (await extractText(pdf, { mergePages: false })).text; }
-  finally { await pdf.destroy?.(); }
+  try {
+    const texts = (await extractText(pdf, { mergePages: false })).text;
+    const { OPS } = await getResolvedPDFJS();
+    const IMG = new Set([OPS.paintImageXObject, OPS.paintInlineImageXObject, OPS.paintImageMaskXObject, OPS.paintImageXObjectRepeat].filter((x) => x !== undefined));
+    const imageOnly = [];
+    for (let i = 0; i < texts.length; i++) {
+      if (texts[i].replace(/\s/g, '').length >= 20) { imageOnly.push(false); continue; }
+      const ops = await (await pdf.getPage(i + 1)).getOperatorList();
+      imageOnly.push(ops.fnArray.some((f) => IMG.has(f)));
+    }
+    return { texts, imageOnly };
+  } finally { await pdf.destroy?.(); }
 }
 
 const joinPages = (pages) => pages.map((t, i) => `[${i + 1}쪽]\n${t}`).join('\n\n');

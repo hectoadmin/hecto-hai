@@ -122,3 +122,10 @@ test('검토 2차: 보이지 않는 글자로 끊어도 가린다', () => {
     assert.equal(maskPatterns(normalize(src), new Vault()), '[휴대전화1]', JSON.stringify(src));
   }
 });
+
+test('검토 3차: 숫자 조각은 다른 숫자·자리표시 안을 바꾸지 않고, 0 다섯 개로 끝나는 10자리는 금액', () => {
+  const v = new Vault();
+  assert.equal(maskSpans('2010년 계약, 금액 10 만원, [이름10]', [{ type: '금액', text: '10' }], v), '2010년 계약, 금액 [금액1] 만원, [이름10]');
+  assert.equal(maskPatterns(normalize('금액 1050000000'), new Vault()), '금액 1050000000');
+  assert.equal(maskPatterns(normalize('연락처 1050001234'), new Vault()), '연락처 [휴대전화1]');
+});

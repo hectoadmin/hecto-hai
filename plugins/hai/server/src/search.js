@@ -71,7 +71,7 @@ export async function buildIndex(dir, { media = false, rebuild = false } = {}) {
     const prev = idx.files[f];
     if (prev && prev.mtime === st.mtimeMs && prev.size === st.size) continue;
     try {
-      const { text } = await readText(f);
+      const { text } = await readText(f, { noOcr: !media });
       const parts = spans(text);
       const vecs = await embed(parts.map((s) => text.slice(s.start, s.end)));
       idx.files[f] = { mtime: st.mtimeMs, size: st.size, chunks: parts.map((s, i) => ({ ...s, v: pack(vecs[i]) })) };
@@ -101,7 +101,7 @@ export async function search(dir, query, { topK = 5, media = false, rebuild = fa
     if (hits.length >= topK) break;
     if (hits.some((x) => x.file === h.file && Math.abs(x.start - h.start) < CHUNK)) continue; // 같은 자리 겹침 빼기
     let text;
-    try { ({ text } = await readText(h.file)); } catch { continue; } // 색인 뒤 지워지거나 바뀐 파일 — 오류(전체 경로 포함)를 내보내지 않고 건너뛴다
+    try { ({ text } = await readText(h.file, { noOcr: !media })); } catch { continue; } // 색인 뒤 지워지거나 바뀐 파일 — 오류(전체 경로 포함)를 내보내지 않고 건너뛴다
     hits.push({ ...h, text: text.slice(h.start, h.end) });
   }
   return { hits, files: built.files, chunks: built.chunks, updated: built.updated, failed: built.failed };

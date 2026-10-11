@@ -15,7 +15,12 @@ fs.writeFileSync(path.join(hr, 'a.txt'), 'x');
 const data = path.join(root, '.hai-mcp');
 fs.mkdirSync(data, { recursive: true });
 const raw = path.join(docs, '회의 받아쓰기.txt');
-fs.writeFileSync(path.join(data, 'raw-files.log'), `${raw}\n`);
+fs.writeFileSync(raw, 'x');
+const gone = path.join(root, 'Desktop', '지운 받아쓰기.txt'); // 장부엔 있지만 지운 파일
+fs.mkdirSync(path.join(root, 'Desktop'), { recursive: true });
+const spaced = path.join(docs, '인사 자료');
+fs.mkdirSync(spaced, { recursive: true });
+fs.writeFileSync(path.join(data, 'raw-files.log'), `${raw}\n${gone}\n`);
 
 function decide(tool_name, tool_input, cwd = root, protectedDirs = hr) {
   const out = execFileSync(process.execPath, [GUARD], {
@@ -82,4 +87,30 @@ test('보호 폴더 설정이 없거나 채워지지 않으면 원문 파일만 
   assert.equal(decide('Read', { file_path: path.join(hr, 'a.txt') }, root, ''), 'allow');
   assert.equal(decide('Read', { file_path: path.join(hr, 'a.txt') }, root, '${user_config.protected_dirs}'), 'allow');
   assert.equal(decide('Read', { file_path: raw }, root, ''), 'deny');
+});
+
+test('검토 3차: 공백 든 이름·따옴표·python·heredoc 으로 원문 파일을 읽으면 막는다', () => {
+  const esc = raw.replace(/ /g, '\\ ');
+  assert.equal(decide('Bash', { command: `cat ${esc}` }), 'deny');
+  assert.equal(decide('Bash', { command: `python3 -c "print(open('${raw}').read())"` }), 'deny');
+  assert.equal(decide('Bash', { command: "python3 - <<'EOF'\nprint(open('회의 받아쓰기.txt').read())\nEOF" }, docs), 'deny');
+  assert.equal(decide('Bash', { command: `cat ${path.join(spaced, 'a.txt').replace(/ /g, '\\ ')}` }, root, spaced), 'deny');
+  assert.equal(decide('Bash', { command: `cat "${path.join(spaced, 'a.txt')}"` }, root, spaced), 'deny');
+});
+
+test('검토 3차: 내부 tmp·지운 원문 파일·이름만 보는 명령·마크다운은 막지 않는다', () => {
+  assert.equal(decide('Bash', { command: 'ls /tmp' }, root, ''), 'allow');
+  assert.equal(decide('Bash', { command: 'cat /tmp/build.log' }, root, ''), 'allow');
+  assert.equal(decide('Bash', { command: 'python3 ~/work/tmp/a.py' }, root, ''), 'allow');
+  assert.equal(decide('Bash', { command: `grep -rn 결정 ${path.join(root, 'Desktop')}` }, root, ''), 'allow');
+  assert.equal(decide('Grep', { pattern: '결정', path: path.join(root, 'Desktop') }, root, ''), 'allow');
+  assert.equal(decide('Bash', { command: `ls -l "${raw}"` }), 'allow');
+  assert.equal(decide('Bash', { command: `open "${raw}"` }), 'allow');
+  assert.equal(decide('Bash', { command: "cat > /tmp/x.md <<'EOF'\n**굵게** a / b\nEOF" }), 'allow');
+});
+
+test('검토 3차: 상위 폴더 검색을 막을 때는 범위를 좁히라고 안내', () => {
+  const out = execFileSync(process.execPath, [GUARD], { input: JSON.stringify({ tool_name: 'Glob', tool_input: { pattern: '**/*.pdf' }, cwd: root }),
+    env: { ...process.env, CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS: hr, HAI_DATA_DIR: data } }).toString();
+  assert.match(JSON.parse(out).hookSpecificOutput.permissionDecisionReason, /더 좁은 폴더/);
 });

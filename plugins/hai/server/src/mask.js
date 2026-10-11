@@ -36,7 +36,7 @@ export const PATTERNS = [
   ['주민등록번호', new RegExp(String.raw`(?<![\d*])\d{2}(\d{2})(\d{2})\s*-?\s*[1-8][\d*]{6}(?![\d*])`, 'g'), (m) => validDate(m[1], m[2])],
   ['카드번호', new RegExp(String.raw`(?<!\d)(?:\d{4}${SEP}\d{4}${SEP}\d{4}${SEP}\d{4}|3[47]\d{2}${SEP}\d{6}${SEP}\d{5})(?!\d)`, 'g'), (m) => luhn(onlyDigits(m[0]))],
   // +82 10-…, 010-…, 엑셀이 앞 0 을 지운 10xxxxxxxx
-  ['휴대전화', new RegExp(String.raw`(?<![\d+])(?:\+?\s*82${SEP}0?1[016789]|01[016789])${SEP}\d{3,4}${SEP}\d{4}(?!\d)|(?<![\d.,])10[2-9]\d{7}(?![\d.,])`, 'g')],
+  ['휴대전화', new RegExp(String.raw`(?<![\d+])(?:\+?\s*82${SEP}0?1[016789]|01[016789])${SEP}\d{3,4}${SEP}\d{4}(?!\d)|(?<![\d.,])10[2-9]\d{7}(?![\d.,])`, 'g'), (m) => !/^10[2-9]\d{7}$/.test(m[0]) || !/0{5}$/.test(m[0])],
   ['전화번호', new RegExp(String.raw`(?<![\d+])(?:\+?\s*82${SEP}0?|\(0|0)(?:2|[3-6][1-5]|70)(?:\)\s*|${SEP})\d{3,4}${SEP}\d{4}(?!\d)`, 'g'), (m) => { const n = onlyDigits(m[0]).replace(/^82/, '0'); return n.length >= 9 && n.length <= 11; }],
   ['운전면허번호', new RegExp(String.raw`(?<!\d)\d{2}${SEP1}\d{2}${SEP1}\d{6}${SEP1}\d{2}(?!\d)|(?<=면허[^\n\d]{0,15})\d{12}(?!\d)`, 'g')],
   ['여권번호', /\b[MSRODG]\d{8}\b|\b[MSRODG]\d{3}[A-Z]\d{4}\b/gi],
@@ -83,16 +83,16 @@ export class Vault {
   /** 유형별 가린 개수(서로 다른 값 기준) — 결과에 싣는 건 이것뿐 */
   summary() { return Object.fromEntries(this.count); }
 
-  /** 자리표시를 원래 값으로. 모르는 자리표시는 그대로 둔다 → { text, restored } */
+  /** 자리표시를 원래 값으로. 모르는 자리표시는 그대로 두고 센다 → { text, restored, unknown } */
   restore(text) {
-    let restored = 0;
-    const out = String(text).replace(/\[([가-힣A-Za-z]{1,12})(\d{1,5})\]/g, (ph) => {
+    let restored = 0, unknown = 0;
+    const out = String(text).replace(/\[([가-힣A-Za-z]{1,12})(\d{1,5})\]/g, (ph, type) => {
       const v = this.toOriginal.get(ph);
-      if (v === undefined) return ph;
+      if (v === undefined) { if (this.count.has(type) || /이름|번호|주소|전화|이메일|정보/.test(type)) unknown++; return ph; }
       restored++;
       return v;
     });
-    return { text: out, restored };
+    return { text: out, restored, unknown };
   }
 }
 
@@ -111,10 +111,16 @@ export function maskPatterns(text, vault, { keepDomains = [] } = {}) {
   return out;
 }
 
-/** 조각 글자 사이에 공백·줄바꿈이 끼어도 찾는 정규식 — PDF 는 "서울특별시 마포\n구 …" 처럼 줄이 단어 중간에서 끊긴다 */
+/**
+ * 조각 글자 사이에 공백·줄바꿈이 끼어도 찾는 정규식 — PDF 는 "서울특별시 마포\n구 …" 처럼 줄이 단어 중간에서 끊긴다.
+ * 숫자로 시작·끝나는 조각("10", "1,200")은 앞뒤가 숫자·글자가 아닐 때만 — "2010년" 안의 10, "[이름10]" 안의 10 을 바꾸지 않게
+ */
 export function looseRegex(fragment) {
-  const chars = [...normalize(fragment).replace(/\s+/g, '')].map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  return new RegExp(chars.join('\\s*'), 'g');
+  const f = normalize(fragment).replace(/\s+/g, '');
+  const chars = [...f].map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const head = /^\d/.test(f) ? '(?<![\\d\\p{L}])' : '';
+  const tail = /\d$/.test(f) ? '(?![\\d\\]])' : '';
+  return new RegExp(head + chars.join('\\s*') + tail, 'gu');
 }
 
 /** Qwen 이 찾은 원문 조각을 문서 전체에서 바꾼다(긴 것 먼저). 원문에 실제로 있는 조각만 → 바꾼 텍스트 */

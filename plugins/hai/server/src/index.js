@@ -38,17 +38,19 @@ function newVault() {
   vaults.set(v.id, v);
   return v;
 }
+/** mask_id 가 있으면 그 번호표에 이어 쓴다 — 여러 도구 결과를 섞어 한 글로 만들어도 [이름1] 이 같은 사람이다 */
 function vaultOf(id) {
   if (!id) return newVault();
   const v = vaults.get(id);
-  if (!v) throw new Error(`mask_id ${id} 를 찾을 수 없습니다(MCP 서버가 다시 시작됐거나 12시간이 지났습니다). mask_id 없이 다시 부르세요.`);
+  if (!v) throw new Error(`mask_id ${id} 를 찾을 수 없습니다(MCP 서버가 다시 시작됐거나 12시간이 지났습니다). mask_id 없이 다시 부르면 새 번호로 가립니다 — 이전 결과와 섞지 마세요.`);
   return v;
 }
+const maskIdSchema = z.string().optional().describe('앞 결과의 mask_id — 넘기면 같은 사람·값이 같은 자리표시가 된다. 여러 도구 결과를 한 글로 합칠 거면 꼭 넘긴다');
 
 const ok = (text) => ({ content: [{ type: 'text', text }] });
 const fail = (err) => ({ isError: true, content: [{ type: 'text', text: err instanceof HaiError ? `[${err.code}] ${err.message}` : String(err?.message ?? err) }] });
 const guard = (fn) => async (args, extra) => { try { return await fn(args, extra); } catch (err) { return fail(err); } };
-const counts = (v) => Object.entries(v.summary()).map(([t, n]) => `${t} ${n}`).join(', ') || '없음';
+const counts = (v, reused) => (Object.entries(v.summary()).map(([t, n]) => `${t} ${n}`).join(', ') || '없음') + (reused ? ' (이 mask_id 누적)' : '');
 const via = { text: '', ocr: ' · OCR 로 읽음', stt: ' · 받아쓰기로 읽음' };
 const dur = (sec) => { const s = Math.round(Number(sec) || 0); return s < 60 ? `${s}초` : `${Math.floor(s / 60)}분${s % 60 ? ` ${s % 60}초` : ''}`; };
 
@@ -132,16 +134,16 @@ server.registerTool('hai_ask_file', {
     '요약·조항 찾기·회의록 작성·목록 뽑기에 쓴다. 정확한 개수·합계가 필요하면 hai_mask_file 로 받아 직접 센다(LLM 은 긴 글의 개수를 자주 틀린다).',
   ].join(' '),
   inputSchema: { path: z.string(), instruction: z.string().describe('HAI 에 시킬 일. 예: "계약 기간·해지 조건·위약금을 조항 번호와 함께 표로", "회의록: 안건·결정·할 일(담당·기한)"'),
-    model: modelSchema, thinking: thinkingSchema, extra: extraSchema, ...audioSchema },
-}, guard(async ({ path: p, instruction, model, thinking, extra, engine, terms }, ex) => {
+    model: modelSchema, thinking: thinkingSchema, extra: extraSchema, mask_id: maskIdSchema, ...audioSchema },
+}, guard(async ({ path: p, instruction, model, thinking, extra, mask_id, engine, terms }, ex) => {
   progress(ex, '파일 읽는 중');
   const { file, text, via: how, meta } = await readText(p, { engine, terms });
   progress(ex, 'HAI 가 읽는 중');
   const answer = await askText(text, instruction, { model, thinking }, (m) => progress(ex, m));
-  const vault = newVault();
+  const vault = vaultOf(mask_id);
   const masked = await maskAll(answer, vault, extra);
   const len = how === 'stt' ? `${dur(meta?.seconds)} 녹음` : `${text.length.toLocaleString()}자`;
-  return ok([`mask_id: ${vault.id}`, `파일: ${path.basename(file)} (${len}${via[how]}) · 원문은 HAI 만 읽음 · 답에서 가린 것: ${counts(vault)}`, '--- 답 ---',
+  return ok([`mask_id: ${vault.id}`, `파일: ${path.basename(file)} (${len}${via[how]}) · 원문은 HAI 만 읽음 · 답에서 가린 것: ${counts(vault, mask_id)}`, '--- 답 ---',
     await inlineOrFile(`${vault.id}-답.md`, masked)].join('\n'));
 }));
 
@@ -154,9 +156,9 @@ server.registerTool('hai_ask_files', {
     paths: z.array(z.string()).optional().describe('또는 파일 경로 목록'),
     pattern: z.string().optional().describe('dir 일 때 파일 이름에 들어간 글자로 거르기. 예: "계약"'),
     max_files: z.number().int().min(1).max(100).optional().describe('최대 파일 수(기본 30)'),
-    model: modelSchema, extra: extraSchema,
+    model: modelSchema, extra: extraSchema, mask_id: maskIdSchema,
   },
-}, guard(async ({ instruction, dir, paths, pattern, max_files, model, extra }, ex) => {
+}, guard(async ({ instruction, dir, paths, pattern, max_files, model, extra, mask_id }, ex) => {
   let files = (paths ?? []).map(resolvePath);
   if (dir) {
     const d = resolvePath(dir);
@@ -164,8 +166,11 @@ server.registerTool('hai_ask_files', {
     const want = pattern?.normalize('NFC'); // macOS 파일 이름은 NFD 로 올 수 있다
     files.push(...names.filter((n) => SUPPORTED.includes(path.extname(n).toLowerCase()) && (!want || n.normalize('NFC').includes(want))).sort().map((n) => path.join(d, n)));
   }
-  files = [...new Set(files)].slice(0, max_files ?? 30);
+  const all = [...new Set(files)];
+  const limit = max_files ?? 30;
+  files = all.slice(0, limit);
   if (!files.length) throw new Error('읽을 파일이 없습니다(지원 형식인지, pattern 이 맞는지 확인)');
+  const cut = all.length > files.length ? ` · 전체 ${all.length}개 중 앞 ${files.length}개만 읽음(이름순) — 나머지는 max_files(최대 100)를 늘리거나 pattern 으로 나눠서` : '';
   const results = new Array(files.length);
   let next = 0, done = 0;
   async function worker() {
@@ -182,10 +187,10 @@ server.registerTool('hai_ask_files', {
   }
   await Promise.all([worker(), worker()]);
   const body = results.map((r, i) => `### ${i + 1}. ${path.basename(r.file)}\n${r.error ? `(읽지 못함: ${r.error})` : r.answer}`).join('\n\n');
-  const vault = newVault();
+  const vault = vaultOf(mask_id);
   const masked = await maskAll(body, vault, extra); // 파일 이름에 든 실명도 같이 가린다
   const bad = results.filter((r) => r.error).length;
-  return ok([`mask_id: ${vault.id}`, `파일 ${files.length}개 (실패 ${bad}) · 원문은 HAI 만 읽음 · 가린 것: ${counts(vault)}`, '--- 파일별 답 ---',
+  return ok([`mask_id: ${vault.id}`, `파일 ${files.length}개 (실패 ${bad})${cut} · 원문은 HAI 만 읽음 · 가린 것: ${counts(vault, mask_id)}`, '--- 파일별 답 ---',
     await inlineOrFile(`${vault.id}-여러파일.md`, masked)].join('\n'));
 }));
 
@@ -197,7 +202,7 @@ server.registerTool('hai_mask_file', {
     '같은 문서를 다시 가릴 때는 mask_id 를 넘겨 번호를 맞춘다. 결과물을 실명으로 남기려면 hai_restore.',
     '자동 가림이라 놓칠 수 있다 — 실명·연락처가 보이면 사용자에게 알리고 extra 로 유형을 더해 다시 부른다.',
   ].join(' '),
-  inputSchema: { path: z.string(), extra: extraSchema, mask_id: z.string().optional(), ...audioSchema },
+  inputSchema: { path: z.string(), extra: extraSchema, mask_id: maskIdSchema, ...audioSchema },
 }, guard(async ({ path: p, extra, mask_id, engine, terms }, ex) => {
   progress(ex, '파일 읽는 중');
   const { file, text, via: how, table } = await readText(p, { engine, terms });
@@ -207,7 +212,7 @@ server.registerTool('hai_mask_file', {
   return ok([
     `mask_id: ${vault.id}`,
     `파일: ${path.basename(file)} (${text.length.toLocaleString()}자${via[how]})`,
-    `가린 것(서로 다른 값 수): ${counts(vault)}`,
+    `가린 것(서로 다른 값 수): ${counts(vault, mask_id)}`,
     '--- 가린 본문 ---',
     await inlineOrFile(`${vault.id}-${path.parse(file).name.replace(/[^\w가-힣.-]/g, '_').slice(0, 40)}.md`, masked),
   ].join('\n'));
@@ -219,14 +224,18 @@ server.registerTool('hai_restore', {
   inputSchema: { mask_id: z.string(), text: z.string().optional().describe('자리표시가 든 글'), in_path: z.string().optional().describe('또는 그 글이 든 파일'),
     out_path: z.string().describe('저장할 파일 경로'), overwrite: z.boolean().optional() },
 }, guard(async ({ mask_id, text, in_path, out_path, overwrite }) => {
-  const vault = vaultOf(mask_id);
+  if (!mask_id?.trim()) throw new Error('mask_id 가 필요합니다 — 그 글을 만들 때 받은 결과 맨 위의 mask_id 를 넘기세요.');
+  const vault = vaults.get(mask_id);
+  if (!vault) throw new Error(`mask_id ${mask_id} 를 찾을 수 없습니다(MCP 서버가 다시 시작됐거나 12시간이 지났습니다). 실명으로 되돌릴 수 없으니, 원본을 다시 가려(hai_mask_file 등) 초안을 새로 만들어야 합니다.`);
   if (!text && !in_path) throw new Error('text 나 in_path 중 하나가 필요합니다');
   const src = text ?? await fs.readFile(resolvePath(in_path), 'utf8');
   const file = resolvePath(out_path);
   if (!overwrite && await fs.stat(file).then(() => true, () => false)) throw new Error(`이미 있는 파일입니다: ${file} — 덮어쓰려면 overwrite: true`);
-  const { text: restored, restored: n } = vault.restore(src);
+  const { text: restored, restored: n, unknown } = vault.restore(src);
+  if (!n) throw new Error(`이 mask_id 로 되돌릴 자리표시가 하나도 없습니다${unknown ? `(모르는 자리표시 ${unknown}곳 — 다른 mask_id 의 결과로 보입니다)` : ''}. 저장하지 않았습니다.`);
   const saved = await writeRaw(file, restored, { overwrite: true });
-  return ok(`저장: ${saved} (자리표시 ${n}곳 복원). 실명이 든 파일이라 Claude 는 이 파일을 다시 열지 않습니다 — 확인은 사용자가 직접 하세요.`);
+  const warn = unknown ? `\n주의: 이 mask_id 에 없는 자리표시 ${unknown}곳은 그대로 남았습니다(다른 결과에서 온 것) — 그 부분은 실명이 아닙니다.` : '';
+  return ok(`저장: ${saved} (자리표시 ${n}곳 복원). 실명이 든 파일이라 Claude 는 이 파일을 다시 열지 않습니다 — 확인은 사용자가 직접 하세요.${warn}`);
 }));
 
 server.registerTool('hai_transcribe', {
@@ -268,17 +277,17 @@ server.registerTool('hai_search', {
   title: '내 문서에서 찾기',
   description: '폴더의 문서들을 HAI 한국어 임베딩(KURE)으로 색인해 질문과 뜻이 가까운 구절을 찾는다. 키워드가 달라도 찾는다("임대료 인상" → "차임 증액"). 찾은 구절은 가려서 돌려준다. 처음엔 색인에 시간이 걸리고 다음부터는 바뀐 파일만 다시 읽는다.',
   inputSchema: { query: z.string(), dir: z.string().describe('찾을 폴더(하위 폴더 포함, 최대 400개 파일)'), top_k: z.number().int().min(1).max(20).optional(),
-    media: z.boolean().optional().describe('사진·녹음까지 색인(OCR·받아쓰기라 오래 걸림)'), rebuild: z.boolean().optional().describe('색인을 처음부터 다시') },
-}, guard(async ({ query, dir, top_k, media, rebuild }, ex) => {
+    media: z.boolean().optional().describe('사진·녹음·스캔 PDF 까지 색인(OCR·받아쓰기라 오래 걸림)'), rebuild: z.boolean().optional().describe('색인을 처음부터 다시'), mask_id: maskIdSchema },
+}, guard(async ({ query, dir, top_k, media, rebuild, mask_id }, ex) => {
   progress(ex, '색인 확인 중');
   const r = await search(resolvePath(dir), query, { topK: top_k ?? 5, media, rebuild });
   const root = resolvePath(dir);
   const hits = r.hits.map((h, i) => `### ${i + 1}. ${path.relative(root, h.file)} (유사도 ${h.score.toFixed(2)})\n${h.text.trim()}`).join('\n\n') || '찾은 구절이 없습니다.';
   // 읽지 못한 파일 이름·사유(경로가 들어 있다)도 가리기를 거친다 — 파일 이름에 실명이 흔하다
   const failed = r.failed.length ? `\n\n### 읽지 못한 파일 ${r.failed.length}개\n${r.failed.slice(0, 10).map((f) => `- ${path.relative(root, f.file)}: ${f.why.split(root).join('…')}`).join('\n')}` : '';
-  const vault = newVault();
+  const vault = vaultOf(mask_id);
   const masked = await maskAll(hits + failed, vault);
-  return ok([`mask_id: ${vault.id}`, `색인: 파일 ${r.files}개 · 조각 ${r.chunks}개 (이번에 새로 읽음 ${r.updated}) · 가린 것: ${counts(vault)}`, '--- 찾은 구절 ---',
+  return ok([`mask_id: ${vault.id}`, `색인: 파일 ${r.files}개 · 조각 ${r.chunks}개 (이번에 새로 읽음 ${r.updated}) · 가린 것: ${counts(vault, mask_id)}`, '--- 찾은 구절 ---',
     await inlineOrFile(`${vault.id}-검색.md`, masked)].join('\n'));
 }));
 
@@ -287,14 +296,14 @@ server.registerTool('hai_chat', {
   description: '사내 AI 에 바로 묻는다. 문장 다듬기·공문체·번역·두 번째 의견·사진 설명(images). 여기 넣는 글은 이미 Claude 가 본 글이다 — 민감한 파일은 hai_ask_file 을 쓴다. images 를 주면 답의 개인정보를 가린다.',
   inputSchema: { prompt: z.string(), system: z.string().optional(), model: modelSchema, thinking: thinkingSchema,
     images: z.array(z.string()).max(8).optional().describe('로컬 이미지 경로(png·jpg·webp). 사진·차트·화면 이해'),
-    max_tokens: z.number().int().min(16).max(8000).optional() },
-}, guard(async ({ prompt, system, model, thinking, images, max_tokens }) => {
+    max_tokens: z.number().int().min(16).max(8000).optional(), mask_id: maskIdSchema },
+}, guard(async ({ prompt, system, model, thinking, images, max_tokens, mask_id }) => {
   const files = (images ?? []).map(resolvePath);
   const messages = [...(system ? [{ role: 'system', content: system }] : []), { role: 'user', content: prompt }];
   const r = await chat({ messages, model: model ?? (files.length ? 'gemma' : 'qwen'), thinking, images: files, maxTokens: max_tokens ?? 2000, temperature: 0.3, timeoutMs: 290_000 });
   if (!files.length) return ok(`${r.content}\n\n(모델: ${r.model})`);
-  const vault = newVault();
-  return ok(`mask_id: ${vault.id}\n${await maskAll(r.content, vault)}\n\n(모델: ${r.model} · 가린 것: ${counts(vault)})`);
+  const vault = vaultOf(mask_id);
+  return ok(`mask_id: ${vault.id}\n${await maskAll(r.content, vault)}\n\n(모델: ${r.model} · 가린 것: ${counts(vault, mask_id)})`);
 }));
 
 server.registerTool('hai_status', {
