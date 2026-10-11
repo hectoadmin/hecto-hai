@@ -18,7 +18,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { config, apiKey } from './config.js';
-import { chat, probe, HaiError } from './hai.js';
+import { chat, probe, ocr, HaiError } from './hai.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
 import { findSpans, chunk } from './ner.js';
 import { readText, resolvePath, kindOf, SUPPORTED } from './extract.js';
@@ -245,14 +245,22 @@ server.registerTool('hai_transcribe', {
 
 server.registerTool('hai_ocr', {
   title: '스캔·사진에서 글자 뽑기',
-  description: '스캔 PDF·사진(png·jpg·tif)을 HAI OCR(표·레이아웃 인식, Markdown)로 글로 바꿔 내 PC 파일로 저장한다. 원문은 Claude 에 오지 않는다. 내용을 묻거나 다듬을 때는 원본이나 저장 파일에 hai_ask_file·hai_mask_file 을 쓴다(그 도구들도 스캔본이면 OCR 을 알아서 한다).',
-  inputSchema: { path: z.string(), out_path: z.string().optional().describe('저장 위치(기본: 원본 옆 "<이름> OCR.md")') },
-}, guard(async ({ path: p, out_path }, ex) => {
+  description: '스캔 PDF·사진(png·jpg·tif)을 HAI OCR(표·레이아웃 인식)로 글로 바꿔 내 PC 파일로 저장한다. format: md(기본, Markdown) 또는 docx(고칠 수 있는 워드 파일 — 여러 쪽은 쪽 경계에서 잘린 표를 이어 한 벌로). 원문은 Claude 에 오지 않는다. 내용을 묻거나 다듬을 때는 원본이나 저장 파일에 hai_ask_file·hai_mask_file 을 쓴다(그 도구들도 스캔본이면 OCR 을 알아서 한다).',
+  inputSchema: { path: z.string(), format: z.enum(['md', 'docx']).optional(), out_path: z.string().optional().describe('저장 위치(기본: 원본 옆 "<이름> OCR.md" 또는 ".docx")') },
+}, guard(async ({ path: p, format, out_path }, ex) => {
   const file = resolvePath(p);
   if (!['pdf', 'image'].includes(kindOf(file))) throw new Error('PDF 나 이미지(png·jpg·tif·bmp·webp)만 됩니다');
   progress(ex, 'OCR 중');
+  const ext = format === 'docx' ? '.docx' : '.md';
+  const target = out_path ? resolvePath(out_path) : path.join(path.dirname(file), `${path.parse(file).name} OCR${ext}`);
+  if (format === 'docx') {
+    const { count, docx } = await ocr(file, { docx: true });
+    if (!docx) throw new Error('HAI 가 워드 파일을 돌려주지 않았습니다. format 없이(Markdown) 다시 해 보세요.');
+    const saved = await writeRaw(target, docx);
+    return ok(`저장: ${saved}\n${count}쪽 → 워드(docx) · 원문은 Claude 에 보이지 않습니다. 워드로 열어 고치세요.`);
+  }
   const { text, meta } = await readText(file, { ocr: true });
-  const saved = await writeRaw(out_path ? resolvePath(out_path) : path.join(path.dirname(file), `${path.parse(file).name} OCR.md`), `${text}\n`);
+  const saved = await writeRaw(target, `${text}\n`);
   return ok(`저장: ${saved}\n${meta?.pages ?? 1}쪽 · ${text.length.toLocaleString()}자 · 원문은 Claude 에 보이지 않습니다.`);
 }));
 

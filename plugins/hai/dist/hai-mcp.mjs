@@ -102654,25 +102654,39 @@ async function transcribe(file2, { engine = "whisper", terms, timestamps = false
   const { data } = await call(service, "/v1/audio/transcriptions", { body: form, timeoutMs: 3e5, retries: 3 });
   return { text: String(data.text ?? "").trim(), seconds: data.usage?.audio_seconds ?? data.duration, segments: data.segments };
 }
-async function ocr(file2, { waitMs = 15 * 6e4 } = {}) {
+async function ocr(file2, { waitMs = 15 * 6e4, docx = false } = {}) {
   const form = new FormData();
   form.set("file", new Blob([await fs.readFile(file2)]), path2.basename(file2));
+  if (docx) form.set("outputFormats", JSON.stringify(["docx"]));
   const { data } = await call(config2.services.ocr, "/layout-parsing/async", { body: form, timeoutMs: 12e4, retries: 3 });
   const jobId = data.result?.jobId;
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(String(jobId))) throw new HaiError("HAI_FAILED", "OCR \uC791\uC5C5 \uBC88\uD638\uB97C \uBC1B\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4");
   const until = Date.now() + waitMs;
-  while (Date.now() < until) {
+  let results;
+  while (Date.now() < until && !results) {
     const t0 = Date.now();
     try {
       const { data: r2 } = await call(config2.services.ocr, `/layout-parsing/async/${jobId}/result?wait=60`, { method: "GET", timeoutMs: 9e4, retries: 1 });
       if (r2.errorCode && r2.errorCode !== 0) throw new HaiError("HAI_FAILED", `OCR \uC2E4\uD328(\uC624\uB958 \uCF54\uB4DC ${r2.errorCode})`);
-      return (r2.result?.layoutParsingResults ?? []).map((pg) => String(pg.markdown?.text ?? ""));
+      results = r2.result?.layoutParsingResults ?? [];
     } catch (err) {
       if (err?.status !== 409) throw err;
       if (Date.now() - t0 < 3e3) await sleep(3e3);
     }
   }
-  throw new HaiError("HAI_TIMEOUT", `OCR \uC774 ${Math.round(waitMs / 6e4)}\uBD84 \uC548\uC5D0 \uB05D\uB098\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4`);
+  if (!results) throw new HaiError("HAI_TIMEOUT", `OCR \uC774 ${Math.round(waitMs / 6e4)}\uBD84 \uC548\uC5D0 \uB05D\uB098\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4`);
+  const pages = results.map((pg) => String(pg.markdown?.text ?? ""));
+  if (!docx) return pages;
+  const b64 = (pg) => pg?.exports?.docx?.content;
+  if (results.length <= 1) return { pages, count: results.length, docx: b64(results[0]) ? Buffer.from(b64(results[0]), "base64") : null };
+  const slim = results.map(({ exports, ...pg }) => pg);
+  const { data: rs2 } = await call(config2.services.ocr, "/restructure-pages", {
+    body: { pages: slim, mergeTables: true, relevelTitles: true, concatenatePages: true, prettifyMarkdown: false, returnMarkdownImages: false, outputFormats: ["docx"] },
+    timeoutMs: 29e4
+  });
+  const merged = rs2.result?.layoutParsingResults ?? [];
+  const doc = merged.map(b64).find(Boolean);
+  return { pages: merged.length ? merged.map((pg) => String(pg.markdown?.text ?? "")) : pages, count: results.length, docx: doc ? Buffer.from(doc, "base64") : null };
 }
 async function probe() {
   const rows = [];
@@ -103642,14 +103656,23 @@ ${dur(meta3?.seconds)} \uB179\uC74C \xB7 ${text.length.toLocaleString()}\uC790 \
 }));
 server.registerTool("hai_ocr", {
   title: "\uC2A4\uCE94\xB7\uC0AC\uC9C4\uC5D0\uC11C \uAE00\uC790 \uBF51\uAE30",
-  description: "\uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4(png\xB7jpg\xB7tif)\uC744 HAI OCR(\uD45C\xB7\uB808\uC774\uC544\uC6C3 \uC778\uC2DD, Markdown)\uB85C \uAE00\uB85C \uBC14\uAFD4 \uB0B4 PC \uD30C\uC77C\uB85C \uC800\uC7A5\uD55C\uB2E4. \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4. \uB0B4\uC6A9\uC744 \uBB3B\uAC70\uB098 \uB2E4\uB4EC\uC744 \uB54C\uB294 \uC6D0\uBCF8\uC774\uB098 \uC800\uC7A5 \uD30C\uC77C\uC5D0 hai_ask_file\xB7hai_mask_file \uC744 \uC4F4\uB2E4(\uADF8 \uB3C4\uAD6C\uB4E4\uB3C4 \uC2A4\uCE94\uBCF8\uC774\uBA74 OCR \uC744 \uC54C\uC544\uC11C \uD55C\uB2E4).",
-  inputSchema: { path: external_exports.string(), out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBCF8 \uC606 "<\uC774\uB984> OCR.md")') }
-}, guard(async ({ path: p2, out_path }, ex) => {
+  description: "\uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4(png\xB7jpg\xB7tif)\uC744 HAI OCR(\uD45C\xB7\uB808\uC774\uC544\uC6C3 \uC778\uC2DD)\uB85C \uAE00\uB85C \uBC14\uAFD4 \uB0B4 PC \uD30C\uC77C\uB85C \uC800\uC7A5\uD55C\uB2E4. format: md(\uAE30\uBCF8, Markdown) \uB610\uB294 docx(\uACE0\uCE60 \uC218 \uC788\uB294 \uC6CC\uB4DC \uD30C\uC77C \u2014 \uC5EC\uB7EC \uCABD\uC740 \uCABD \uACBD\uACC4\uC5D0\uC11C \uC798\uB9B0 \uD45C\uB97C \uC774\uC5B4 \uD55C \uBC8C\uB85C). \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4. \uB0B4\uC6A9\uC744 \uBB3B\uAC70\uB098 \uB2E4\uB4EC\uC744 \uB54C\uB294 \uC6D0\uBCF8\uC774\uB098 \uC800\uC7A5 \uD30C\uC77C\uC5D0 hai_ask_file\xB7hai_mask_file \uC744 \uC4F4\uB2E4(\uADF8 \uB3C4\uAD6C\uB4E4\uB3C4 \uC2A4\uCE94\uBCF8\uC774\uBA74 OCR \uC744 \uC54C\uC544\uC11C \uD55C\uB2E4).",
+  inputSchema: { path: external_exports.string(), format: external_exports.enum(["md", "docx"]).optional(), out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBCF8 \uC606 "<\uC774\uB984> OCR.md" \uB610\uB294 ".docx")') }
+}, guard(async ({ path: p2, format, out_path }, ex) => {
   const file2 = resolvePath(p2);
   if (!["pdf", "image"].includes(kindOf(file2))) throw new Error("PDF \uB098 \uC774\uBBF8\uC9C0(png\xB7jpg\xB7tif\xB7bmp\xB7webp)\uB9CC \uB429\uB2C8\uB2E4");
   progress(ex, "OCR \uC911");
+  const ext = format === "docx" ? ".docx" : ".md";
+  const target = out_path ? resolvePath(out_path) : path6.join(path6.dirname(file2), `${path6.parse(file2).name} OCR${ext}`);
+  if (format === "docx") {
+    const { count, docx } = await ocr(file2, { docx: true });
+    if (!docx) throw new Error("HAI \uAC00 \uC6CC\uB4DC \uD30C\uC77C\uC744 \uB3CC\uB824\uC8FC\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. format \uC5C6\uC774(Markdown) \uB2E4\uC2DC \uD574 \uBCF4\uC138\uC694.");
+    const saved2 = await writeRaw(target, docx);
+    return ok(`\uC800\uC7A5: ${saved2}
+${count}\uCABD \u2192 \uC6CC\uB4DC(docx) \xB7 \uC6D0\uBB38\uC740 Claude \uC5D0 \uBCF4\uC774\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC6CC\uB4DC\uB85C \uC5F4\uC5B4 \uACE0\uCE58\uC138\uC694.`);
+  }
   const { text, meta: meta3 } = await readText(file2, { ocr: true });
-  const saved = await writeRaw(out_path ? resolvePath(out_path) : path6.join(path6.dirname(file2), `${path6.parse(file2).name} OCR.md`), `${text}
+  const saved = await writeRaw(target, `${text}
 `);
   return ok(`\uC800\uC7A5: ${saved}
 ${meta3?.pages ?? 1}\uCABD \xB7 ${text.length.toLocaleString()}\uC790 \xB7 \uC6D0\uBB38\uC740 Claude \uC5D0 \uBCF4\uC774\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.`);

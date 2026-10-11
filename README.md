@@ -12,6 +12,7 @@
 | 엑셀 명단 집계 | "주차등록.xlsx 가려서 읽고 부서별 인원 세줘" | 열 단위 가리기 |
 | 회의 녹음 → 회의록 | `/hai:minutes 회의.m4a` | Whisper · Qwen3-ASR |
 | 스캔 계약서·사진 읽기 | "스캔본.pdf 에서 계약 기간만 뽑아줘" | PaddleOCR |
+| 스캔본을 고칠 수 있는 워드로 | "스캔본.pdf 워드 파일로 바꿔줘" | PaddleOCR(docx, 쪽 경계 표 잇기) |
 | 폴더 문서 모아 보기 | "계약서 폴더 전부 만기일·자동갱신 표로" | Qwen |
 | 내 문서에서 뜻으로 찾기 | "~/Documents/계약 에서 위약금 조항 찾아줘" | KURE(한국어 임베딩) |
 | 사진·차트 설명, 문장 다듬기 | "이 사진 뭐가 문제인지 HAI 한테 물어봐줘" | Gemma · Qwen |
@@ -87,7 +88,7 @@ HAI_API_KEY=... node scripts/call.mjs hai_mask_file '{"path":"~/a.pdf"}' hai_res
 | `hai_mask_file` | 가린 본문 | 표 열 → 정규식 → qwen-llm |
 | `hai_restore` | 자리표시 → 실명, 로컬 파일로만 | — |
 | `hai_transcribe` | 녹음 → 받아쓰기 파일 | whisper-large-v3 · qwen3-asr |
-| `hai_ocr` | 스캔·사진 → Markdown 파일 | paddleocr-api |
+| `hai_ocr` | 스캔·사진 → Markdown·워드(docx) 파일 | paddleocr-api (+restructure-pages) |
 | `hai_search` | 폴더 의미 검색(색인은 `~/.hai-mcp/index`) | kure-embedding |
 | `hai_chat` | 바로 묻기·사진 이해·추론 모드 | qwen-llm·gemma-llm |
 | `hai_status` | 키·서비스 점검 | 전체 |

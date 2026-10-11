@@ -141,27 +141,45 @@ export async function transcribe(file, { engine = 'whisper', terms, timestamps =
 
 // ── 문서 OCR ─────────────────────────────────────────────────────────
 
-/** PDF·이미지 → 페이지별 Markdown 배열. 비동기 제출 후 ?wait=60 으로 기다린다(최대 waitMs) */
-export async function ocr(file, { waitMs = 15 * 60_000 } = {}) {
+/**
+ * PDF·이미지 → 페이지별 Markdown 배열. 비동기 제출 후 ?wait=60 으로 기다린다(최대 waitMs).
+ * docx: true 면 { pages, count: 원래 쪽수, docx: Buffer } — 한 쪽은 그 쪽의 DOCX, 여러 쪽은 /restructure-pages 로 쪽 경계에서 잘린 표를 잇고 한 벌로 합친 DOCX
+ */
+export async function ocr(file, { waitMs = 15 * 60_000, docx = false } = {}) {
   const form = new FormData();
   form.set('file', new Blob([await fs.readFile(file)]), path.basename(file));
+  if (docx) form.set('outputFormats', JSON.stringify(['docx']));
   const { data } = await call(config.services.ocr, '/layout-parsing/async', { body: form, timeoutMs: 120_000, retries: 3 });
   const jobId = data.result?.jobId;
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(String(jobId))) throw new HaiError('HAI_FAILED', 'OCR 작업 번호를 받지 못했습니다');
   const until = Date.now() + waitMs;
-  while (Date.now() < until) {
+  let results;
+  while (Date.now() < until && !results) {
     const t0 = Date.now();
     try {
       const { data: r } = await call(config.services.ocr, `/layout-parsing/async/${jobId}/result?wait=60`, { method: 'GET', timeoutMs: 90_000, retries: 1 });
       if (r.errorCode && r.errorCode !== 0) throw new HaiError('HAI_FAILED', `OCR 실패(오류 코드 ${r.errorCode})`);
-      return (r.result?.layoutParsingResults ?? []).map((pg) => String(pg.markdown?.text ?? ''));
+      results = r.result?.layoutParsingResults ?? [];
     } catch (err) {
       if (err?.status !== 409) throw err; // 409 = 아직 처리 중
       // wait 를 무시하고 바로 409 가 오면 쉬지 않고 두드리게 된다 — 최소 3초 간격
       if (Date.now() - t0 < 3000) await sleep(3000);
     }
   }
-  throw new HaiError('HAI_TIMEOUT', `OCR 이 ${Math.round(waitMs / 60000)}분 안에 끝나지 않았습니다`);
+  if (!results) throw new HaiError('HAI_TIMEOUT', `OCR 이 ${Math.round(waitMs / 60000)}분 안에 끝나지 않았습니다`);
+  const pages = results.map((pg) => String(pg.markdown?.text ?? ''));
+  if (!docx) return pages;
+  const b64 = (pg) => pg?.exports?.docx?.content;
+  if (results.length <= 1) return { pages, count: results.length, docx: b64(results[0]) ? Buffer.from(b64(results[0]), 'base64') : null };
+  // 여러 쪽: 표 잇기·제목 수준 맞추기·한 벌로 합치기. 쪽마다 붙은 DOCX·이미지는 빼고 보낸다(본문 크기)
+  const slim = results.map(({ exports, ...pg }) => pg);
+  const { data: rs } = await call(config.services.ocr, '/restructure-pages', {
+    body: { pages: slim, mergeTables: true, relevelTitles: true, concatenatePages: true, prettifyMarkdown: false, returnMarkdownImages: false, outputFormats: ['docx'] },
+    timeoutMs: 290_000,
+  });
+  const merged = rs.result?.layoutParsingResults ?? [];
+  const doc = merged.map(b64).find(Boolean);
+  return { pages: merged.length ? merged.map((pg) => String(pg.markdown?.text ?? '')) : pages, count: results.length, docx: doc ? Buffer.from(doc, 'base64') : null };
 }
 
 // ── 점검 ─────────────────────────────────────────────────────────────
