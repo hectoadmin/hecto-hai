@@ -8,6 +8,7 @@
  * 옛 한글(.hwp)·옛 엑셀(.xls)·옛 워드(.doc)는 못 읽는다 — 새 형식이나 PDF 로 저장해서 쓴다.
  */
 import { execFile } from 'node:child_process';
+import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -29,8 +30,10 @@ export const SUPPORTED = [...TEXT, '.pdf', '.docx', '.xlsx', '.xlsm', '.hwpx', .
 // 비밀 파일은 HAI 로도 보내지 않는다
 const DENY = [/(^|[\\/])\.env(\.|$)/i, /\.(pem|key|p12|pfx|jks|keystore|kdbx)$/i, /(^|[\\/])id_(rsa|ed25519|ecdsa)/i, /credentials/i, /(^|[\\/])\.ssh[\\/]/, /(^|[\\/])\.aws[\\/]/, /(^|[\\/])\.gnupg[\\/]/, /Keychains[\\/]/];
 
-/** UTF-8(BOM 포함)이 아니면 EUC-KR(CP949) — 엑셀에서 "CSV 로 저장"하면 EUC-KR 이다 */
+/** UTF-16(BOM — 엑셀 "유니코드 텍스트"·메모장 유니코드) → UTF-8(BOM 포함) → 아니면 EUC-KR(CP949, 엑셀 "CSV 로 저장") */
 export function decode(buf) {
+  if (buf[0] === 0xff && buf[1] === 0xfe) return new TextDecoder('utf-16le').decode(buf.subarray(2));
+  if (buf[0] === 0xfe && buf[1] === 0xff) return new TextDecoder('utf-16be').decode(buf.subarray(2));
   try { return new TextDecoder('utf-8', { fatal: true }).decode(buf).replace(/^﻿/, ''); }
   catch { return new TextDecoder('euc-kr').decode(buf); }
 }
@@ -84,13 +87,21 @@ async function extract(file, st, opts) {
   if (ext === '.xlsx' || ext === '.xlsm') return { text: await readXlsx(await fs.readFile(file)), via: 'text', table: 'tsv' };
   if (ext === '.hwpx') return { text: await readHwpx(await fs.readFile(file)), via: 'text' };
   if (ext === '.pdf') {
-    if (!opts.ocr) {
-      const pages = await pdfPages(file);
-      const chars = pages.join('').replace(/\s/g, '').length;
-      // 쪽당 글자가 거의 없으면 스캔본 — OCR 로
-      if (chars >= Math.max(40, pages.length * 30)) return { text: pages.map((t, i) => `[${i + 1}쪽]\n${t}`).join('\n\n'), via: 'text', meta: { pages: pages.length } };
-    }
-    return ocrPages(file);
+    if (opts.ocr) return ocrPages(file);
+    const pages = await pdfPages(file);
+    const blank = pages.map((t, i) => (t.replace(/\s/g, '').length < 20 ? i : -1)).filter((i) => i >= 0);
+    if (!blank.length) return { text: joinPages(pages), via: 'text', meta: { pages: pages.length } };
+    if (blank.length === pages.length) return ocrPages(file); // 전부 스캔
+    // 섞인 PDF(표지·서명면만 글자, 본문은 스캔) — 빈 쪽만 OCR 결과로 채운다
+    try {
+      const scanned = await ocr(file);
+      if (scanned.length === pages.length) {
+        for (const i of blank) pages[i] = scanned[i];
+        return { text: joinPages(pages), via: 'ocr', meta: { pages: pages.length, ocrPages: blank.length } };
+      }
+    } catch { /* 아래에서 알린다 */ }
+    for (const i of blank) pages[i] = '(이 쪽은 스캔 이미지라 글자를 읽지 못했습니다)';
+    return { text: joinPages(pages), via: 'text', meta: { pages: pages.length } };
   }
   if (IMAGE.has(ext)) return ocrPages(file);
   if (AUDIO.has(ext)) {
@@ -120,6 +131,8 @@ async function pdfPages(file) {
   finally { await pdf.destroy?.(); }
 }
 
+const joinPages = (pages) => pages.map((t, i) => `[${i + 1}쪽]\n${t}`).join('\n\n');
+
 async function ocrPages(file) {
   const pages = await ocr(file);
   return { text: pages.length > 1 ? pages.map((t, i) => `[${i + 1}쪽]\n${t}`).join('\n\n') : (pages[0] ?? ''), via: 'ocr', meta: { pages: pages.length } };
@@ -129,7 +142,7 @@ async function ocrPages(file) {
 async function toWav(file) {
   const dir = path.join(await ensureDataDir(), 'tmp');
   await fs.mkdir(dir, { recursive: true, mode: 0o700 });
-  const out = path.join(dir, `${process.pid}-${Date.now()}.wav`);
+  const out = path.join(dir, `${randomUUID()}.wav`); // 여러 파일을 동시에 받아쓸 때 겹치지 않게
   const tries = [];
   if (os.platform() === 'darwin') tries.push(['afconvert', ['-f', 'WAVE', '-d', 'LEI16@16000', '-c', '1', file, out]]);
   tries.push(['ffmpeg', ['-y', '-loglevel', 'error', '-i', file, '-ac', '1', '-ar', '16000', out]]);

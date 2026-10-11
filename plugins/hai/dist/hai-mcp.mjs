@@ -9411,25 +9411,25 @@ var require_lib = __commonJS({
     var element;
     var channel;
     var draining;
-    var queue2 = [];
+    var queue = [];
     function nextTick() {
       draining = true;
       var i2, oldQueue;
-      var len = queue2.length;
+      var len = queue.length;
       while (len) {
-        oldQueue = queue2;
-        queue2 = [];
+        oldQueue = queue;
+        queue = [];
         i2 = -1;
         while (++i2 < len) {
           oldQueue[i2]();
         }
-        len = queue2.length;
+        len = queue.length;
       }
       draining = false;
     }
     module.exports = immediate;
     function immediate(task) {
-      if (queue2.push(task) === 1 && !draining) {
+      if (queue.push(task) === 1 && !draining) {
         scheduleDrain();
       }
     }
@@ -102543,10 +102543,11 @@ function apiKey() {
 import fs from "node:fs/promises";
 import path2 from "node:path";
 var HaiError = class extends Error {
-  constructor(code, message) {
+  constructor(code, message, status) {
     super(message);
     this.name = "HaiError";
     this.code = code;
+    this.status = status;
   }
 };
 function key() {
@@ -102584,7 +102585,7 @@ async function call(service, p2, { method = "POST", body, timeoutMs = config2.ti
     }
     if (!res.ok) {
       const code = res.status === 401 || res.status === 403 ? "HAI_KEY_INVALID" : res.status === 404 ? "HAI_NOT_FOUND" : "HAI_FAILED";
-      throw new HaiError(code, `HAI(${service}) ${res.status} ${safeReason(res.status, data)}`);
+      throw new HaiError(code, `HAI(${service}) ${res.status} ${safeReason(res.status, data)}`, res.status);
     }
     if (data === null) throw new HaiError("HAI_FAILED", `HAI(${service}) \uC751\uB2F5\uC774 JSON \uC774 \uC544\uB2D9\uB2C8\uB2E4 (${res.status})`);
     return { data, headers: res.headers };
@@ -102616,7 +102617,7 @@ async function chat({ messages, model = "qwen", thinking = false, images = [], t
   if (responseFormat) body.response_format = responseFormat;
   const { data } = await call(service, "/v1/chat/completions", { body, timeoutMs });
   const choice = data.choices?.[0] ?? {};
-  const content = String(choice.message?.content ?? "").replace(/<think>[\s\S]*?(<\/think>|$)/g, "").trim();
+  const content = String(choice.message?.content ?? "").replace(/<think>[\s\S]*?(<\/think>|$)/g, "").replace(/^[\s\S]*<\/think>/, "").trim();
   return { content, model: data.model, finish: choice.finish_reason };
 }
 async function structured({ schema, name, ...rest2 }) {
@@ -102661,12 +102662,14 @@ async function ocr(file2, { waitMs = 15 * 6e4 } = {}) {
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(String(jobId))) throw new HaiError("HAI_FAILED", "OCR \uC791\uC5C5 \uBC88\uD638\uB97C \uBC1B\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4");
   const until = Date.now() + waitMs;
   while (Date.now() < until) {
+    const t0 = Date.now();
     try {
       const { data: r2 } = await call(config2.services.ocr, `/layout-parsing/async/${jobId}/result?wait=60`, { method: "GET", timeoutMs: 9e4, retries: 1 });
       if (r2.errorCode && r2.errorCode !== 0) throw new HaiError("HAI_FAILED", `OCR \uC2E4\uD328(\uC624\uB958 \uCF54\uB4DC ${r2.errorCode})`);
       return (r2.result?.layoutParsingResults ?? []).map((pg) => String(pg.markdown?.text ?? ""));
     } catch (err) {
-      if (!(err instanceof HaiError) || !/ 409 /.test(err.message)) throw err;
+      if (err?.status !== 409) throw err;
+      if (Date.now() - t0 < 3e3) await sleep(3e3);
     }
   }
   throw new HaiError("HAI_TIMEOUT", `OCR \uC774 ${Math.round(waitMs / 6e4)}\uBD84 \uC548\uC5D0 \uB05D\uB098\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4`);
@@ -102714,7 +102717,7 @@ var luhn = (digits) => {
 };
 var onlyDigits = (s2) => s2.replace(/\D/g, "");
 var validDate = (mm, dd) => +mm >= 1 && +mm <= 12 && +dd >= 1 && +dd <= 31;
-var normalize = (s2) => String(s2 ?? "").normalize("NFKC").replace(/[‐-―−﹘﹣－]/g, "-");
+var normalize = (s2) => String(s2 ?? "").normalize("NFKC").replace(/[\u0000\u00AD\u200B-\u200D\u2060\uFEFF]/g, "").replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g, "-");
 var SEP = String.raw`\s*[-.)]?\s*`;
 var SEP1 = String.raw`(?:\s*[-.)]\s*|\s+)`;
 var CTX_ACCOUNT = "(?:\uACC4\uC88C|\uC740\uD589|\uC785\uAE08|\uC1A1\uAE08|\uC608\uAE08\uC8FC?|\uD1B5\uC7A5|account|bank)";
@@ -102835,17 +102838,18 @@ var DESCRIBE = {
   \uC0DD\uB144\uC6D4\uC77C: "\uAC1C\uC778\uC758 \uC0DD\uB144\uC6D4\uC77C\xB7\uB098\uC774\uB97C \uD2B9\uC815\uD558\uB294 \uB0A0\uC9DC",
   \uC2DD\uBCC4\uBC88\uD638: "\uC0AC\uBC88\xB7\uD559\uBC88\xB7\uD68C\uC6D0\uBC88\uD638\xB7\uCC28\uB7C9\uBC88\uD638\uCC98\uB7FC \uD2B9\uC815 \uAC1C\uC778\uC744 \uAC00\uB9AC\uD0A4\uB294 \uBC88\uD638"
 };
-var SCHEMA = {
+var schemaFor = (types) => ({
   type: "object",
   properties: {
     items: {
       type: "array",
-      items: { type: "object", properties: { text: { type: "string" }, type: { type: "string" } }, required: ["text", "type"], additionalProperties: false }
+      items: { type: "object", properties: { text: { type: "string" }, type: { type: "string", enum: types } }, required: ["text", "type"], additionalProperties: false }
     }
   },
   required: ["items"],
   additionalProperties: false
-};
+});
+var FALLBACK_TYPE = "\uBBFC\uAC10\uC815\uBCF4";
 function chunk(text, size2 = 3500) {
   const out = [];
   let rest2 = text;
@@ -102863,29 +102867,32 @@ async function findSpans(text, { extra = {}, concurrency = 3 } = {}) {
   for (const t2 of Object.keys(extra)) if (!TYPE_RE.test(t2)) throw new Error(`\uB354 \uAC00\uB9B4 \uC720\uD615 \uC774\uB984\uC740 \uD55C\uAE00\xB7\uC601\uBB38 1~12\uC790(\uB744\uC5B4\uC4F0\uAE30\xB7\uC22B\uC790 \uC5C6\uC774)\uC5EC\uC57C \uD569\uB2C8\uB2E4: ${JSON.stringify(t2)}`);
   const wanted = [...DEFAULT_TYPES.map((t2) => [t2, DESCRIBE[t2]]), ...Object.entries(extra).filter(([t2]) => !DEFAULT_TYPES.includes(t2))];
   const allowed = new Set(wanted.map(([t2]) => t2));
+  allowed.add(FALLBACK_TYPE);
   const system = [
     "\uB108\uB294 \uAC1C\uC778\uC815\uBCF4 \uBE44\uC2DD\uBCC4\uD654 \uB3C4\uAD6C\uB2E4. \uC0AC\uC6A9\uC790\uAC00 \uC900 \uBB38\uC11C\uC5D0\uC11C \uC544\uB798 \uC720\uD615\uC5D0 \uD574\uB2F9\uD558\uB294 \uBD80\uBD84\uC744 \uCC3E\uC544, \uBB38\uC11C\uC5D0 \uC801\uD78C \uAE00\uC790 \uADF8\uB300\uB85C \uBF51\uB294\uB2E4.",
     ...wanted.map(([t2, d2]) => `- ${t2}: ${d2}`),
     "\uADDC\uCE59: \uBB38\uC11C\uC5D0 \uC5C6\uB294 \uAE00\uC790\uB97C \uB9CC\uB4E4\uC9C0 \uC54A\uB294\uB2E4. \uACE0\uCE58\uAC70\uB098 \uC694\uC57D\uD558\uC9C0 \uC54A\uB294\uB2E4. [\uD734\uB300\uC804\uD6541] \uCC98\uB7FC \uB300\uAD04\uD638\uB85C \uC774\uBBF8 \uAC00\uB9B0 \uBD80\uBD84\uC740 \uBB34\uC2DC\uD55C\uB2E4.",
     "\uAC19\uC740 \uAC12\uC774 \uC5EC\uB7EC \uBC88 \uB098\uC624\uBA74 \uD55C \uBC88\uB9CC \uC4F4\uB2E4. \uD574\uB2F9\uD558\uB294 \uAC83\uC774 \uC5C6\uC73C\uBA74 \uBE48 \uBC30\uC5F4.",
+    `- ${FALLBACK_TYPE}: \uC704\uC5D0 \uB531 \uB9DE\uC9C0 \uC54A\uC9C0\uB9CC \uD2B9\uC815 \uAC1C\uC778\uC744 \uC54C\uC544\uBCFC \uC218 \uC788\uB294 \uC815\uBCF4`,
     `type \uC740 \uBC18\uB4DC\uC2DC \uB2E4\uC74C \uC911 \uD558\uB098: ${[...allowed].join(", ")}`
   ].join("\n");
   async function spansOf(part) {
     try {
       const { data } = await structured({
         name: "sensitive_spans",
-        schema: SCHEMA,
+        schema: schemaFor([...allowed]),
         maxTokens: 6e3,
         timeoutMs: 29e4,
         messages: [{ role: "system", content: system }, { role: "user", content: `<\uBB38\uC11C>
 ${part}
 </\uBB38\uC11C>` }]
       });
-      return (data.items ?? []).filter((s2) => allowed.has(s2.type) && String(s2.text).trim() && looseRegex(String(s2.text).trim()).test(part));
+      return (data.items ?? []).filter((s2) => String(s2.text ?? "").trim() && looseRegex(String(s2.text).trim()).test(part)).map((s2) => allowed.has(s2.type) ? s2 : { ...s2, type: FALLBACK_TYPE });
     } catch (err) {
       if (err.code !== "HAI_FAILED" || part.length < 1200) throw err;
-      const [a2, b2] = chunk(part, Math.ceil(part.length / 2) + 50);
-      return [...await spansOf(a2), ...b2 ? await spansOf(b2) : []];
+      const out = [];
+      for (const piece of chunk(part, Math.ceil(part.length / 2) + 50)) out.push(...await spansOf(piece));
+      return out;
     }
   }
   const parts = chunk(text, 3e3);
@@ -102903,6 +102910,7 @@ ${part}
 
 // src/extract.js
 import { execFile } from "node:child_process";
+import { randomUUID as randomUUID2 } from "node:crypto";
 import fs4 from "node:fs/promises";
 import os3 from "node:os";
 import path4 from "node:path";
@@ -102988,18 +102996,10 @@ async function readHwpx(buf) {
 // src/ledger.js
 import fs2 from "node:fs/promises";
 import path3 from "node:path";
-var LEDGER = () => path3.join(config2.dataDir, "raw-files.json");
-var MAX = 2e3;
+var LEDGER = () => path3.join(config2.dataDir, "raw-files.log");
 async function ensureDataDir() {
   await fs2.mkdir(config2.dataDir, { recursive: true, mode: 448 });
   return config2.dataDir;
-}
-async function rawFiles() {
-  try {
-    return JSON.parse(await fs2.readFile(LEDGER(), "utf8")).files ?? [];
-  } catch {
-    return [];
-  }
 }
 async function realish(file2) {
   const abs = path3.resolve(file2);
@@ -103013,21 +103013,11 @@ async function realish(file2) {
     return abs;
   }
 }
-var queue = Promise.resolve();
-function addRaw(file2) {
-  const job = queue.then(() => addRawNow(file2));
-  queue = job.catch(() => {
-  });
-  return job;
-}
-async function addRawNow(file2) {
+async function addRaw(file2) {
   await ensureDataDir();
-  const p2 = await realish(file2);
-  const files = (await rawFiles()).filter((f2) => f2 !== p2);
-  files.push(p2);
-  const tmp = `${LEDGER()}.${process.pid}.tmp`;
-  await fs2.writeFile(tmp, JSON.stringify({ note: "hai \uD50C\uB7EC\uADF8\uC778\uC774 \uB9CC\uB4E0 \uC6D0\uBB38 \uD30C\uC77C \u2014 Claude \uAC00 \uC9C1\uC811 \uC5F4\uC9C0 \uBABB\uD558\uAC8C \uD6C5\uC774 \uB9C9\uB294\uB2E4", files: files.slice(-MAX) }), { mode: 384 });
-  await fs2.rename(tmp, LEDGER());
+  const p2 = (await realish(file2)).replace(/\n/g, " ");
+  await fs2.appendFile(LEDGER(), `${p2}
+`, { mode: 384 });
 }
 async function freePath(p2) {
   const { dir, name, ext } = path3.parse(p2);
@@ -103065,6 +103055,8 @@ var AUDIO = /* @__PURE__ */ new Set([...AUDIO_OK, ...AUDIO_CONVERT]);
 var SUPPORTED = [...TEXT, ".pdf", ".docx", ".xlsx", ".xlsm", ".hwpx", ...IMAGE, ...AUDIO];
 var DENY = [/(^|[\\/])\.env(\.|$)/i, /\.(pem|key|p12|pfx|jks|keystore|kdbx)$/i, /(^|[\\/])id_(rsa|ed25519|ecdsa)/i, /credentials/i, /(^|[\\/])\.ssh[\\/]/, /(^|[\\/])\.aws[\\/]/, /(^|[\\/])\.gnupg[\\/]/, /Keychains[\\/]/];
 function decode3(buf) {
+  if (buf[0] === 255 && buf[1] === 254) return new TextDecoder("utf-16le").decode(buf.subarray(2));
+  if (buf[0] === 254 && buf[1] === 255) return new TextDecoder("utf-16be").decode(buf.subarray(2));
   try {
     return new TextDecoder("utf-8", { fatal: true }).decode(buf).replace(/^﻿/, "");
   } catch {
@@ -103112,13 +103104,21 @@ async function extract(file2, st2, opts) {
   if (ext === ".xlsx" || ext === ".xlsm") return { text: await readXlsx(await fs4.readFile(file2)), via: "text", table: "tsv" };
   if (ext === ".hwpx") return { text: await readHwpx(await fs4.readFile(file2)), via: "text" };
   if (ext === ".pdf") {
-    if (!opts.ocr) {
-      const pages = await pdfPages(file2);
-      const chars = pages.join("").replace(/\s/g, "").length;
-      if (chars >= Math.max(40, pages.length * 30)) return { text: pages.map((t2, i2) => `[${i2 + 1}\uCABD]
-${t2}`).join("\n\n"), via: "text", meta: { pages: pages.length } };
+    if (opts.ocr) return ocrPages(file2);
+    const pages = await pdfPages(file2);
+    const blank = pages.map((t2, i2) => t2.replace(/\s/g, "").length < 20 ? i2 : -1).filter((i2) => i2 >= 0);
+    if (!blank.length) return { text: joinPages(pages), via: "text", meta: { pages: pages.length } };
+    if (blank.length === pages.length) return ocrPages(file2);
+    try {
+      const scanned = await ocr(file2);
+      if (scanned.length === pages.length) {
+        for (const i2 of blank) pages[i2] = scanned[i2];
+        return { text: joinPages(pages), via: "ocr", meta: { pages: pages.length, ocrPages: blank.length } };
+      }
+    } catch {
     }
-    return ocrPages(file2);
+    for (const i2 of blank) pages[i2] = "(\uC774 \uCABD\uC740 \uC2A4\uCE94 \uC774\uBBF8\uC9C0\uB77C \uAE00\uC790\uB97C \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4)";
+    return { text: joinPages(pages), via: "text", meta: { pages: pages.length } };
   }
   if (IMAGE.has(ext)) return ocrPages(file2);
   if (AUDIO.has(ext)) {
@@ -103152,6 +103152,8 @@ async function pdfPages(file2) {
     await pdf.destroy?.();
   }
 }
+var joinPages = (pages) => pages.map((t2, i2) => `[${i2 + 1}\uCABD]
+${t2}`).join("\n\n");
 async function ocrPages(file2) {
   const pages = await ocr(file2);
   return { text: pages.length > 1 ? pages.map((t2, i2) => `[${i2 + 1}\uCABD]
@@ -103160,7 +103162,7 @@ ${t2}`).join("\n\n") : pages[0] ?? "", via: "ocr", meta: { pages: pages.length }
 async function toWav(file2) {
   const dir = path4.join(await ensureDataDir(), "tmp");
   await fs4.mkdir(dir, { recursive: true, mode: 448 });
-  const out = path4.join(dir, `${process.pid}-${Date.now()}.wav`);
+  const out = path4.join(dir, `${randomUUID2()}.wav`);
   const tries = [];
   if (os3.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file2, out]]);
   tries.push(["ffmpeg", ["-y", "-loglevel", "error", "-i", file2, "-ac", "1", "-ar", "16000", out]]);
@@ -103276,26 +103278,38 @@ async function search(dir, query, { topK = 5, media = false, rebuild = false } =
   for (const h2 of scored) {
     if (hits.length >= topK) break;
     if (hits.some((x2) => x2.file === h2.file && Math.abs(x2.start - h2.start) < CHUNK)) continue;
-    const { text } = await readText(h2.file);
+    let text;
+    try {
+      ({ text } = await readText(h2.file));
+    } catch {
+      continue;
+    }
     hits.push({ ...h2, text: text.slice(h2.start, h2.end) });
   }
   return { hits, files: built.files, chunks: built.chunks, updated: built.updated, failed: built.failed };
 }
 
 // src/table.js
+var ROLE = "(\uACE0\uAC1D|\uC9C1\uC6D0|\uC0AC\uC6D0|\uC784\uC9C1\uC6D0|\uC2E0\uCCAD|\uB2F4\uB2F9|\uC791\uC131|\uB300\uC0C1|\uC218\uB839|\uC608\uAE08|\uC784\uB300|\uC784\uCC28|\uBCF4\uD638|\uC6B4\uC804|\uCC38\uC11D|\uCC38\uAC00|\uC694\uCCAD|\uC218\uAC15|\uAD50\uC721|\uB300\uD45C|\uACC4\uC57D|\uBCF4\uC99D|\uC5F0\uB300\uBCF4\uC99D|\uC785\uC8FC|\uBC29\uBB38|\uBBFC\uC6D0|\uC81C\uBCF4|\uD53C\uD574|\uAC00\uD574)";
 var HEADER_TYPES = [
   [/주민(등록)?번호|resident/i, "\uC8FC\uBBFC\uB4F1\uB85D\uBC88\uD638"],
-  [/외국인등록|여권/i, "\uC5EC\uAD8C\uBC88\uD638"],
-  [/(휴대|핸드)폰|휴대전화|연락처|전화|mobile|phone|tel/i, "\uC804\uD654\uBC88\uD638"],
-  [/e-?mail|이메일|메일/i, "\uC774\uBA54\uC77C"],
-  [/계좌/i, "\uACC4\uC88C\uBC88\uD638"],
+  [/외국인등록번호|여권번호|passport/i, "\uC5EC\uAD8C\uBC88\uD638"],
+  [/(휴대|핸드)폰|휴대전화|연락처|전화번호|^전화$|\b(tel|phone|mobile|cell)\b/i, "\uC804\uD654\uBC88\uD638"],
+  [/^(e-?mail|이메일|메일|메일주소|전자우편)(주소)?$|^이메일|e-?mail ?(address)?$/i, "\uC774\uBA54\uC77C"],
+  [/계좌(번호)?$|^계좌|account ?no/i, "\uACC4\uC88C\uBC88\uD638"],
   [/카드번호/i, "\uCE74\uB4DC\uBC88\uD638"],
-  [/생년월일|생일|birth/i, "\uC0DD\uB144\uC6D4\uC77C"],
-  [/(^|[^회])사(번|원번호)|직원번호|임직원번호|회원번호|학번|employee.?(id|no)/i, "\uC2DD\uBCC4\uBC88\uD638"],
-  [/차량번호|차번|번호판|plate/i, "\uC2DD\uBCC4\uBC88\uD638"],
+  [/생년월일|^생일$|birth/i, "\uC0DD\uB144\uC6D4\uC77C"],
+  [/^(사번|사원번호|직원번호|임직원번호|회원번호|학번)$|employee ?(id|no)/i, "\uC2DD\uBCC4\uBC88\uD638"],
+  [/차량번호|^차번$|번호판|plate/i, "\uC2DD\uBCC4\uBC88\uD638"],
   [/주소|거주지|address/i, "\uC8FC\uC18C"],
-  [/^(성명|이름|name|성함)$|성명|이름|(신청|담당|작성|대상|수령|예금|임대|임차|보호|운전|참석|요청)(자|인)$|직원명|사원명|고객명|환자명|^(대상자|신청자|담당자|작성자|수령인|예금주)/i, "\uC774\uB984"]
+  [new RegExp(`^(\uD55C\uAE00|\uC601\uBB38|\uAD6D\uBB38)?(\uC131\uBA85|\uC774\uB984|\uC131\uD568)$|^(full ?)?name$|^${ROLE}((\uC790|\uC778|\uC0DD|\uC8FC)(\uBA85|\uC774\uB984|\uC131\uBA85)?|\uBA85|\uC774\uB984|\uC131\uBA85)$`, "i"), "\uC774\uB984"]
 ];
+function headerRow(cells) {
+  const filled = cells.map((c2) => String(c2 ?? "").trim()).filter(Boolean);
+  if (filled.length < 2 || filled.some((c2) => c2.length > 20 || /^[\d\s,.\-:/]+$/.test(c2))) return null;
+  const types = cells.map(headerType);
+  return types.some(Boolean) ? types : null;
+}
 function headerType(cell) {
   const h2 = String(cell ?? "").replace(/\s+/g, "").trim();
   if (!h2 || h2.length > 20) return null;
@@ -103322,10 +103336,24 @@ function parseCsvLine(line, sep = ",") {
   out.push(cur);
   return out;
 }
+function csvRows(text) {
+  const rows = [];
+  let cur = null;
+  for (const line of text.split("\n")) {
+    cur = cur === null ? line : `${cur}
+${line}`;
+    if ((cur.match(/"/g)?.length ?? 0) % 2 === 0) {
+      rows.push(cur);
+      cur = null;
+    }
+  }
+  if (cur !== null) rows.push(cur);
+  return rows;
+}
 var csvCell = (v2, sep) => /["\n]/.test(v2) || v2.includes(sep) ? `"${v2.replace(/"/g, '""')}"` : v2;
 function maskTable(text, vault, format) {
   const sep = format === "csv" ? "," : "	";
-  const lines = text.split("\n");
+  const lines = format === "csv" ? csvRows(text) : text.split("\n");
   const columns = [];
   let colTypes = null;
   const out = lines.map((line) => {
@@ -103336,8 +103364,8 @@ function maskTable(text, vault, format) {
     if (!line.trim()) return line;
     const cells = sep === "," ? parseCsvLine(line, sep) : line.split(sep);
     if (!colTypes) {
-      const types = cells.map(headerType);
-      if (types.some(Boolean)) {
+      const types = headerRow(cells);
+      if (types) {
         colTypes = types;
         types.forEach((t2, i2) => t2 && columns.push({ header: cells[i2].trim(), type: t2 }));
       }
@@ -103389,10 +103417,13 @@ var dur = (sec) => {
   const s2 = Math.round(Number(sec) || 0);
   return s2 < 60 ? `${s2}\uCD08` : `${Math.floor(s2 / 60)}\uBD84${s2 % 60 ? ` ${s2 % 60}\uCD08` : ""}`;
 };
-function progress(extra, message, done, total) {
+var steps = /* @__PURE__ */ new WeakMap();
+function progress(extra, message) {
   const token = extra?._meta?.progressToken;
   if (token === void 0) return;
-  extra.sendNotification({ method: "notifications/progress", params: { progressToken: token, progress: done, ...total ? { total } : {}, message } }).catch(() => {
+  const n2 = (steps.get(extra) ?? 0) + 1;
+  steps.set(extra, n2);
+  extra.sendNotification({ method: "notifications/progress", params: { progressToken: token, progress: n2, message } }).catch(() => {
   });
 }
 async function maskAll(text, vault, extra = {}, { table } = {}) {
@@ -103432,7 +103463,7 @@ ${text}
   const parts = chunk(text, 4e4);
   const notes = [];
   for (const [i2, part] of parts.entries()) {
-    onStep?.(`${i2 + 1}/${parts.length} \uC870\uAC01 \uC77D\uB294 \uC911`, i2, parts.length);
+    onStep?.(`${i2 + 1}/${parts.length} \uC870\uAC01 \uC77D\uB294 \uC911`);
     const r2 = await chat({ ...opt, messages: [
       { role: "system", content: SYSTEM_ASK },
       { role: "user", content: `<\uBB38\uC11C \uC870\uAC01 ${i2 + 1}/${parts.length}>
@@ -103483,10 +103514,10 @@ server.registerTool("hai_ask_file", {
     ...audioSchema
   }
 }, guard(async ({ path: p2, instruction, model, thinking, extra, engine, terms }, ex) => {
-  progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911", 0);
+  progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911");
   const { file: file2, text, via: how, meta: meta3 } = await readText(p2, { engine, terms });
-  progress(ex, "HAI \uAC00 \uC77D\uB294 \uC911", 1);
-  const answer = await askText(text, instruction, { model, thinking }, (m2, d2, t2) => progress(ex, m2, d2, t2));
+  progress(ex, "HAI \uAC00 \uC77D\uB294 \uC911");
+  const answer = await askText(text, instruction, { model, thinking }, (m2) => progress(ex, m2));
   const vault = newVault();
   const masked = await maskAll(answer, vault, extra);
   const len = how === "stt" ? `${dur(meta3?.seconds)} \uB179\uC74C` : `${text.length.toLocaleString()}\uC790`;
@@ -103514,7 +103545,8 @@ server.registerTool("hai_ask_files", {
   if (dir) {
     const d2 = resolvePath(dir);
     const names = (await fs6.readdir(d2, { withFileTypes: true })).filter((e2) => e2.isFile() && !e2.name.startsWith(".") && !e2.name.startsWith("~$")).map((e2) => e2.name);
-    files.push(...names.filter((n2) => SUPPORTED.includes(path6.extname(n2).toLowerCase()) && (!pattern || n2.includes(pattern))).sort().map((n2) => path6.join(d2, n2)));
+    const want = pattern?.normalize("NFC");
+    files.push(...names.filter((n2) => SUPPORTED.includes(path6.extname(n2).toLowerCase()) && (!want || n2.normalize("NFC").includes(want))).sort().map((n2) => path6.join(d2, n2)));
   }
   files = [...new Set(files)].slice(0, max_files ?? 30);
   if (!files.length) throw new Error("\uC77D\uC744 \uD30C\uC77C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4(\uC9C0\uC6D0 \uD615\uC2DD\uC778\uC9C0, pattern \uC774 \uB9DE\uB294\uC9C0 \uD655\uC778)");
@@ -103529,7 +103561,7 @@ server.registerTool("hai_ask_files", {
       } catch (err) {
         results[i2] = { file: files[i2], error: err instanceof HaiError ? err.code : String(err.message).slice(0, 100) };
       }
-      progress(ex, `${++done}/${files.length} \uD30C\uC77C`, done, files.length);
+      progress(ex, `${++done}/${files.length} \uD30C\uC77C`);
     }
   }
   await Promise.all([worker(), worker()]);
@@ -103555,10 +103587,10 @@ server.registerTool("hai_mask_file", {
   ].join(" "),
   inputSchema: { path: external_exports.string(), extra: extraSchema, mask_id: external_exports.string().optional(), ...audioSchema }
 }, guard(async ({ path: p2, extra, mask_id, engine, terms }, ex) => {
-  progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911", 0);
+  progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911");
   const { file: file2, text, via: how, table } = await readText(p2, { engine, terms });
   const vault = vaultOf(mask_id);
-  progress(ex, "\uAC1C\uC778\uC815\uBCF4 \uCC3E\uB294 \uC911", 1);
+  progress(ex, "\uAC1C\uC778\uC815\uBCF4 \uCC3E\uB294 \uC911");
   const masked = await maskAll(text, vault, extra, { table });
   return ok([
     `mask_id: ${vault.id}`,
@@ -103600,7 +103632,7 @@ server.registerTool("hai_transcribe", {
 }, guard(async ({ path: p2, engine, terms, timestamps, out_path }, ex) => {
   const file2 = resolvePath(p2);
   if (kindOf(file2) !== "audio") throw new Error("\uB179\uC74C \uD30C\uC77C\uC774 \uC544\uB2D9\uB2C8\uB2E4(wav\xB7mp3\xB7m4a\xB7ogg\xB7flac \uB4F1)");
-  progress(ex, "\uBC1B\uC544\uC4F0\uB294 \uC911", 0);
+  progress(ex, "\uBC1B\uC544\uC4F0\uB294 \uC911");
   const { text, meta: meta3 } = await readText(file2, { engine, terms, timestamps });
   const saved = await writeRaw(out_path ? resolvePath(out_path) : path6.join(path6.dirname(file2), `${path6.parse(file2).name} \uBC1B\uC544\uC4F0\uAE30.txt`), `${text}
 `);
@@ -103615,7 +103647,7 @@ server.registerTool("hai_ocr", {
 }, guard(async ({ path: p2, out_path }, ex) => {
   const file2 = resolvePath(p2);
   if (!["pdf", "image"].includes(kindOf(file2))) throw new Error("PDF \uB098 \uC774\uBBF8\uC9C0(png\xB7jpg\xB7tif\xB7bmp\xB7webp)\uB9CC \uB429\uB2C8\uB2E4");
-  progress(ex, "OCR \uC911", 0);
+  progress(ex, "OCR \uC911");
   const { text, meta: meta3 } = await readText(file2, { ocr: true });
   const saved = await writeRaw(out_path ? resolvePath(out_path) : path6.join(path6.dirname(file2), `${path6.parse(file2).name} OCR.md`), `${text}
 `);
@@ -103633,17 +103665,20 @@ server.registerTool("hai_search", {
     rebuild: external_exports.boolean().optional().describe("\uC0C9\uC778\uC744 \uCC98\uC74C\uBD80\uD130 \uB2E4\uC2DC")
   }
 }, guard(async ({ query, dir, top_k, media, rebuild }, ex) => {
-  progress(ex, "\uC0C9\uC778 \uD655\uC778 \uC911", 0);
+  progress(ex, "\uC0C9\uC778 \uD655\uC778 \uC911");
   const r2 = await search(resolvePath(dir), query, { topK: top_k ?? 5, media, rebuild });
-  const body = r2.hits.map((h2, i2) => `### ${i2 + 1}. ${path6.relative(resolvePath(dir), h2.file)} (\uC720\uC0AC\uB3C4 ${h2.score.toFixed(2)})
+  const root2 = resolvePath(dir);
+  const hits = r2.hits.map((h2, i2) => `### ${i2 + 1}. ${path6.relative(root2, h2.file)} (\uC720\uC0AC\uB3C4 ${h2.score.toFixed(2)})
 ${h2.text.trim()}`).join("\n\n") || "\uCC3E\uC740 \uAD6C\uC808\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.";
-  const vault = newVault();
-  const masked = await maskAll(body, vault);
   const failed = r2.failed.length ? `
-\uC77D\uC9C0 \uBABB\uD55C \uD30C\uC77C ${r2.failed.length}\uAC1C: ${r2.failed.slice(0, 5).map((f2) => `${path6.basename(f2.file)}(${f2.why})`).join(", ")}` : "";
+
+### \uC77D\uC9C0 \uBABB\uD55C \uD30C\uC77C ${r2.failed.length}\uAC1C
+${r2.failed.slice(0, 10).map((f2) => `- ${path6.relative(root2, f2.file)}: ${f2.why.split(root2).join("\u2026")}`).join("\n")}` : "";
+  const vault = newVault();
+  const masked = await maskAll(hits + failed, vault);
   return ok([
     `mask_id: ${vault.id}`,
-    `\uC0C9\uC778: \uD30C\uC77C ${r2.files}\uAC1C \xB7 \uC870\uAC01 ${r2.chunks}\uAC1C (\uC774\uBC88\uC5D0 \uC0C8\uB85C \uC77D\uC74C ${r2.updated}) \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault)}${failed}`,
+    `\uC0C9\uC778: \uD30C\uC77C ${r2.files}\uAC1C \xB7 \uC870\uAC01 ${r2.chunks}\uAC1C (\uC774\uBC88\uC5D0 \uC0C8\uB85C \uC77D\uC74C ${r2.updated}) \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault)}`,
     "--- \uCC3E\uC740 \uAD6C\uC808 ---",
     await inlineOrFile(`${vault.id}-\uAC80\uC0C9.md`, masked)
   ].join("\n"));

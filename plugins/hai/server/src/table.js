@@ -4,20 +4,29 @@
  * 엑셀은 office.js 가 "## 시트: 이름" 아래 탭 구분으로 펼친 글, CSV 는 쉼표(따옴표 규칙 포함).
  */
 
-/** 머리글 → 자리표시 유형. 위에서부터 먼저 맞는 것 */
+/** 머리글 → 자리표시 유형. 위에서부터 먼저 맞는 것. 글자 일부만 맞아도 되는 넓은 규칙은 피한다("회사이름"·"Hotel"·"메일링동의") */
+const ROLE = '(고객|직원|사원|임직원|신청|담당|작성|대상|수령|예금|임대|임차|보호|운전|참석|참가|요청|수강|교육|대표|계약|보증|연대보증|입주|방문|민원|제보|피해|가해)';
 const HEADER_TYPES = [
   [/주민(등록)?번호|resident/i, '주민등록번호'],
-  [/외국인등록|여권/i, '여권번호'],
-  [/(휴대|핸드)폰|휴대전화|연락처|전화|mobile|phone|tel/i, '전화번호'],
-  [/e-?mail|이메일|메일/i, '이메일'],
-  [/계좌/i, '계좌번호'],
+  [/외국인등록번호|여권번호|passport/i, '여권번호'],
+  [/(휴대|핸드)폰|휴대전화|연락처|전화번호|^전화$|\b(tel|phone|mobile|cell)\b/i, '전화번호'],
+  [/^(e-?mail|이메일|메일|메일주소|전자우편)(주소)?$|^이메일|e-?mail ?(address)?$/i, '이메일'],
+  [/계좌(번호)?$|^계좌|account ?no/i, '계좌번호'],
   [/카드번호/i, '카드번호'],
-  [/생년월일|생일|birth/i, '생년월일'],
-  [/(^|[^회])사(번|원번호)|직원번호|임직원번호|회원번호|학번|employee.?(id|no)/i, '식별번호'],
-  [/차량번호|차번|번호판|plate/i, '식별번호'],
+  [/생년월일|^생일$|birth/i, '생년월일'],
+  [/^(사번|사원번호|직원번호|임직원번호|회원번호|학번)$|employee ?(id|no)/i, '식별번호'],
+  [/차량번호|^차번$|번호판|plate/i, '식별번호'],
   [/주소|거주지|address/i, '주소'],
-  [/^(성명|이름|name|성함)$|성명|이름|(신청|담당|작성|대상|수령|예금|임대|임차|보호|운전|참석|요청)(자|인)$|직원명|사원명|고객명|환자명|^(대상자|신청자|담당자|작성자|수령인|예금주)/i, '이름'],
+  [new RegExp(`^(한글|영문|국문)?(성명|이름|성함)$|^(full ?)?name$|^${ROLE}((자|인|생|주)(명|이름|성명)?|명|이름|성명)$`, 'i'), '이름'],
 ];
+
+/** 머리글 줄로 볼까: 칸이 2개 이상, 칸이 다 짧고 숫자가 아니며, 아는 머리글이 하나 이상 — 제목 한 칸짜리 줄("임직원 연락처 명단")은 아니다 */
+function headerRow(cells) {
+  const filled = cells.map((c) => String(c ?? '').trim()).filter(Boolean);
+  if (filled.length < 2 || filled.some((c) => c.length > 20 || /^[\d\s,.\-:/]+$/.test(c))) return null;
+  const types = cells.map(headerType);
+  return types.some(Boolean) ? types : null;
+}
 
 export function headerType(cell) {
   const h = String(cell ?? '').replace(/\s+/g, '').trim();
@@ -44,6 +53,17 @@ export function parseCsvLine(line, sep = ',') {
   out.push(cur);
   return out;
 }
+/** CSV 를 논리 행으로 — 따옴표 안의 줄바꿈("주소\n2층")은 한 행 */
+export function csvRows(text) {
+  const rows = [];
+  let cur = null;
+  for (const line of text.split('\n')) {
+    cur = cur === null ? line : `${cur}\n${line}`;
+    if ((cur.match(/"/g)?.length ?? 0) % 2 === 0) { rows.push(cur); cur = null; }
+  }
+  if (cur !== null) rows.push(cur);
+  return rows;
+}
 const csvCell = (v, sep) => (/["\n]/.test(v) || v.includes(sep) ? `"${v.replace(/"/g, '""')}"` : v);
 
 /**
@@ -52,7 +72,7 @@ const csvCell = (v, sep) => (/["\n]/.test(v) || v.includes(sep) ? `"${v.replace(
  */
 export function maskTable(text, vault, format) {
   const sep = format === 'csv' ? ',' : '\t';
-  const lines = text.split('\n');
+  const lines = format === 'csv' ? csvRows(text) : text.split('\n');
   const columns = [];
   let colTypes = null; // 현재 표(시트)의 열 → 유형
   const out = lines.map((line) => {
@@ -60,8 +80,8 @@ export function maskTable(text, vault, format) {
     if (!line.trim()) return line;
     const cells = sep === ',' ? parseCsvLine(line, sep) : line.split(sep);
     if (!colTypes) {
-      const types = cells.map(headerType);
-      if (types.some(Boolean)) {
+      const types = headerRow(cells);
+      if (types) {
         colTypes = types;
         types.forEach((t, i) => t && columns.push({ header: cells[i].trim(), type: t }));
       }

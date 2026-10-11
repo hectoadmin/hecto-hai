@@ -58,11 +58,23 @@ test('옛 형식·비밀 파일은 거절한다', async () => {
   await assert.rejects(readText(await put('id_rsa', 'x')), /비밀값/);
 });
 
-test('원문 장부: 동시에 여러 개를 올려도 하나도 잃지 않는다', async () => {
+test('원문 장부: 동시에 여러 개를(다른 프로세스에서도) 올려도 하나도 잃지 않는다', async () => {
   process.env.HAI_DATA_DIR = await fs.mkdtemp(path.join(os.tmpdir(), 'hai-ledger-'));
   const { addRaw, rawFiles } = await import(`../src/ledger.js?${Date.now()}`);
   const { config } = await import('../src/config.js');
   config.dataDir = process.env.HAI_DATA_DIR;
   await Promise.all(Array.from({ length: 20 }, (_, i) => addRaw(path.join(tmp, `raw-${i}.txt`))));
-  assert.equal((await rawFiles()).length, 20);
+  // 다른 프로세스 둘이 100개씩 동시에
+  const { spawn } = await import('node:child_process');
+  const script = `import('${new URL('../src/ledger.js', import.meta.url).href}').then(async ({ addRaw }) => { await Promise.all(Array.from({ length: 100 }, (_, i) => addRaw('${tmp}/p' + process.argv[1] + '-' + i))); })`;
+  await Promise.all(['a', 'b'].map((tag) => new Promise((res, rej) => spawn(process.execPath, ['-e', script, tag], { env: process.env, stdio: 'inherit' }).on('exit', (c) => (c ? rej(new Error(`exit ${c}`)) : res())))));
+  assert.equal((await rawFiles()).length, 220);
+});
+
+test('검토 2차: UTF-16 텍스트(엑셀 "유니코드 텍스트")', async () => {
+  const le = Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from('이름\t연락처\n홍길동\t010-2345-6789', 'utf16le')]);
+  assert.equal(decode(le), '이름\t연락처\n홍길동\t010-2345-6789');
+  const { text, table } = await readText(await put('u16.txt', le));
+  assert.equal(text, '이름\t연락처\n홍길동\t010-2345-6789');
+  assert.equal(table, undefined);
 });

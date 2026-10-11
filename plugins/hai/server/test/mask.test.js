@@ -116,3 +116,9 @@ test('자리표시 유형 이름은 한글·영문만, 되돌리기와 맞는다
   const ph = v.placeholder('거래처명', '(주)가나다');
   assert.equal(v.restore(`계약 상대 ${ph}`).text, '계약 상대 (주)가나다');
 });
+
+test('검토 2차: 보이지 않는 글자로 끊어도 가린다', () => {
+  for (const src of ['010\u200B-2345-6789', '0\u00001\u00000-2345-6789', '010-23\u00AD45-6789', '010\u2060-2345-6789']) {
+    assert.equal(maskPatterns(normalize(src), new Vault()), '[휴대전화1]', JSON.stringify(src));
+  }
+});

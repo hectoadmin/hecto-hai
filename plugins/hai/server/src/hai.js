@@ -13,7 +13,7 @@ import path from 'node:path';
 import { config, apiKey } from './config.js';
 
 export class HaiError extends Error {
-  constructor(code, message) { super(message); this.name = 'HaiError'; this.code = code; }
+  constructor(code, message, status) { super(message); this.name = 'HaiError'; this.code = code; this.status = status; }
 }
 
 function key() {
@@ -47,7 +47,7 @@ async function call(service, p, { method = 'POST', body, timeoutMs = config.time
     let data; try { data = JSON.parse(text); } catch { data = null; }
     if (!res.ok) {
       const code = res.status === 401 || res.status === 403 ? 'HAI_KEY_INVALID' : res.status === 404 ? 'HAI_NOT_FOUND' : 'HAI_FAILED';
-      throw new HaiError(code, `HAI(${service}) ${res.status} ${safeReason(res.status, data)}`);
+      throw new HaiError(code, `HAI(${service}) ${res.status} ${safeReason(res.status, data)}`, res.status);
     }
     if (data === null) throw new HaiError('HAI_FAILED', `HAI(${service}) 응답이 JSON 이 아닙니다 (${res.status})`);
     return { data, headers: res.headers };
@@ -89,7 +89,8 @@ export async function chat({ messages, model = 'qwen', thinking = false, images 
   const { data } = await call(service, '/v1/chat/completions', { body, timeoutMs });
   const choice = data.choices?.[0] ?? {};
   // 추론 내용(message.reasoning, 혹은 본문 속 <think>)은 답이 아니다 — 문서 내용이 섞여 나갈 수 있어 버린다
-  const content = String(choice.message?.content ?? '').replace(/<think>[\s\S]*?(<\/think>|$)/g, '').trim();
+  // 여는 태그 없이 "…</think>답" 으로 오는 경우도 있다
+  const content = String(choice.message?.content ?? '').replace(/<think>[\s\S]*?(<\/think>|$)/g, '').replace(/^[\s\S]*<\/think>/, '').trim();
   return { content, model: data.model, finish: choice.finish_reason };
 }
 
@@ -149,12 +150,15 @@ export async function ocr(file, { waitMs = 15 * 60_000 } = {}) {
   if (!/^[A-Za-z0-9_-]{8,64}$/.test(String(jobId))) throw new HaiError('HAI_FAILED', 'OCR 작업 번호를 받지 못했습니다');
   const until = Date.now() + waitMs;
   while (Date.now() < until) {
+    const t0 = Date.now();
     try {
       const { data: r } = await call(config.services.ocr, `/layout-parsing/async/${jobId}/result?wait=60`, { method: 'GET', timeoutMs: 90_000, retries: 1 });
       if (r.errorCode && r.errorCode !== 0) throw new HaiError('HAI_FAILED', `OCR 실패(오류 코드 ${r.errorCode})`);
       return (r.result?.layoutParsingResults ?? []).map((pg) => String(pg.markdown?.text ?? ''));
     } catch (err) {
-      if (!(err instanceof HaiError) || !/ 409 /.test(err.message)) throw err; // 409 = 아직 처리 중
+      if (err?.status !== 409) throw err; // 409 = 아직 처리 중
+      // wait 를 무시하고 바로 409 가 오면 쉬지 않고 두드리게 된다 — 최소 3초 간격
+      if (Date.now() - t0 < 3000) await sleep(3000);
     }
   }
   throw new HaiError('HAI_TIMEOUT', `OCR 이 ${Math.round(waitMs / 60000)}분 안에 끝나지 않았습니다`);

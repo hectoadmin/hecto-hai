@@ -17,8 +17,13 @@ const luhn = (digits) => {
 const onlyDigits = (s) => s.replace(/\D/g, '');
 const validDate = (mm, dd) => +mm >= 1 && +mm <= 12 && +dd >= 1 && +dd <= 31;
 
-/** 전각 → 반각(NFKC), 여러 가지 줄표·빼기 → '-' */
-export const normalize = (s) => String(s ?? '').normalize('NFKC').replace(/[‐-―−﹘﹣－]/g, '-');
+/**
+ * 전각 → 반각(NFKC), 여러 가지 줄표·빼기 → '-',
+ * 보이지 않는 글자(NUL·소프트 하이픈·폭 없는 공백·줄바꿈 금지) 지우기 — "010(폭 없는 공백)-1234" 로 피해 가지 못하게
+ */
+export const normalize = (s) => String(s ?? '').normalize('NFKC')
+  .replace(/[\u0000\u00AD\u200B-\u200D\u2060\uFEFF]/g, '')
+  .replace(/[\u2010-\u2015\u2212\uFE58\uFE63\uFF0D]/g, '-');
 
 const SEP = String.raw`\s*[-.)]?\s*`;            // 010-1234 · 010.1234 · 010)1234 · 010 1234 · 010 - 1234
 const SEP1 = String.raw`(?:\s*[-.)]\s*|\s+)`;    // 구분자가 꼭 있어야 하는 자리

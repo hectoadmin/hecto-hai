@@ -47,13 +47,13 @@
 - **더 가리고 싶으면**: "거래처명이랑 계약 금액도 가려줘" — 그 유형을 더해 다시 가립니다
 - 같은 값은 문서 전체에서 같은 자리표시([이름1])가 되고, 원래 값은 메모리에만 있습니다
 - 사내 AI 가 응답하지 않으면 **가리다 만 글을 넘기지 않고 실패**합니다
-- 받아쓰기·OCR·실명 결과 파일은 장부(`~/.hai-mcp/raw-files.json`, 경로만)에 올라 Claude 가 다시 열지 못합니다
+- 받아쓰기·OCR·실명 결과 파일은 장부(`~/.hai-mcp/raw-files.log`, 경로만)에 올라 Claude 가 다시 열지 못합니다
 
 ## 한계
 
 - 자동 가림이라 **놓칠 수 있습니다.** 중요한 문서는 결과를 한 번 훑어보세요.
 - 사내 AI 는 긴 글의 **개수 세기·합계에 약합니다.** 집계는 "가려서 읽고 Claude 가 세 줘"로.
-- 읽는 형식: 문서 txt·md·csv·json·html·pdf·docx·xlsx·hwpx / 사진 png·jpg·tif·webp / 녹음 wav·mp3·ogg·flac·m4a 등(60분, m4a 는 macOS 내장 변환이나 ffmpeg). **옛 hwp·xls·doc 는 새 형식이나 PDF 로 저장**해서 씁니다.
+- 읽는 형식: 문서 txt·md·csv(UTF-8·UTF-16·EUC-KR)·json·html·pdf(스캔 쪽은 OCR)·docx·xlsx·hwpx / 사진 png·jpg·tif·webp / 녹음 wav·mp3·ogg·flac·m4a 등(60분, m4a 는 macOS 내장 변환이나 ffmpeg). **옛 hwp·xls·doc 는 새 형식이나 PDF 로 저장**해서 씁니다.
 - 보호 폴더 차단은 최선 노력입니다. Claude 가 일부러 우회하는 경우까지 막지는 못합니다.
 - 실명 되돌리기는 같은 세션(12시간) 안에서만 됩니다.
 
@@ -83,7 +83,7 @@ HAI_API_KEY=... node scripts/call.mjs hai_mask_file '{"path":"~/a.pdf"}' hai_res
 | 도구 | 하는 일 | HAI 서비스 |
 |---|---|---|
 | `hai_ask_file` | 파일을 사내 AI 만 읽고 답(가림) | qwen-llm·gemma-llm (+OCR·STT 자동) |
-| `hai_ask_files` | 여러 파일에 같은 질문 | qwen-llm |
+| `hai_ask_files` | 여러 파일에 같은 질문 | qwen-llm·gemma-llm (+OCR·STT 자동) |
 | `hai_mask_file` | 가린 본문 | 표 열 → 정규식 → qwen-llm |
 | `hai_restore` | 자리표시 → 실명, 로컬 파일로만 | — |
 | `hai_transcribe` | 녹음 → 받아쓰기 파일 | whisper-large-v3 · qwen3-asr |

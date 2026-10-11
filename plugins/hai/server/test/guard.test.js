@@ -15,7 +15,7 @@ fs.writeFileSync(path.join(hr, 'a.txt'), 'x');
 const data = path.join(root, '.hai-mcp');
 fs.mkdirSync(data, { recursive: true });
 const raw = path.join(docs, '회의 받아쓰기.txt');
-fs.writeFileSync(path.join(data, 'raw-files.json'), JSON.stringify({ files: [raw] }));
+fs.writeFileSync(path.join(data, 'raw-files.log'), `${raw}\n`);
 
 function decide(tool_name, tool_input, cwd = root, protectedDirs = hr) {
   const out = execFileSync(process.execPath, [GUARD], {
@@ -62,6 +62,20 @@ test('Bash: 상관없는 명령은 통과 — 이름이 글자로만 나오거�
   assert.equal(decide('Bash', { command: 'ls *.txt' }, docs), 'allow');
   assert.equal(decide('Bash', { command: 'npm test' }, docs), 'allow');
   assert.equal(decide('Bash', { command: `ls ${docs}` }), 'allow');
+});
+
+test('검토 2차: 한 폴더 와일드카드로 원문 파일을 읽으면 막고, 역순 옵션·경로를 준 명령은 통과', () => {
+  assert.equal(decide('Bash', { command: `cat ${docs}/*.txt` }), 'deny');
+  assert.equal(decide('Bash', { command: 'head -50 *받아쓰기*' }, docs), 'deny');
+  assert.equal(decide('Bash', { command: 'grep -l 결정 *.txt' }, docs), 'deny');
+  assert.equal(decide('Bash', { command: 'cat *.md' }, docs), 'allow');
+  assert.equal(decide('Bash', { command: `ls -lrt ${path.join(root, 'Desktop')}` }, root), 'allow');
+  assert.equal(decide('Bash', { command: 'sort -r x.txt' }, root), 'allow');
+  assert.equal(decide('Bash', { command: `find ${path.join(root, 'Desktop')} -name "*.pdf"` }, root), 'allow');
+  assert.equal(decide('Bash', { command: `cp -r ${path.join(root, 'a')} ${path.join(root, 'b')}` }, root), 'allow');
+  assert.equal(decide('Bash', { command: 'find . -name "*.txt"' }, root), 'deny');
+  assert.equal(decide('Bash', { command: 'rg 홍길동' }, root), 'deny');
+  assert.equal(decide('Bash', { command: 'ls -R' }, docs), 'deny');
 });
 
 test('보호 폴더 설정이 없거나 채워지지 않으면 원문 파일만 막는다', () => {

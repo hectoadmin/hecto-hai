@@ -100,7 +100,8 @@ export async function search(dir, query, { topK = 5, media = false, rebuild = fa
   for (const h of scored) {
     if (hits.length >= topK) break;
     if (hits.some((x) => x.file === h.file && Math.abs(x.start - h.start) < CHUNK)) continue; // 같은 자리 겹침 빼기
-    const { text } = await readText(h.file);
+    let text;
+    try { ({ text } = await readText(h.file)); } catch { continue; } // 색인 뒤 지워지거나 바뀐 파일 — 오류(전체 경로 포함)를 내보내지 않고 건너뛴다
     hits.push({ ...h, text: text.slice(h.start, h.end) });
   }
   return { hits, files: built.files, chunks: built.chunks, updated: built.updated, failed: built.failed };

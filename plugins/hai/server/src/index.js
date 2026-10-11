@@ -52,11 +52,14 @@ const counts = (v) => Object.entries(v.summary()).map(([t, n]) => `${t} ${n}`).j
 const via = { text: '', ocr: ' · OCR 로 읽음', stt: ' · 받아쓰기로 읽음' };
 const dur = (sec) => { const s = Math.round(Number(sec) || 0); return s < 60 ? `${s}초` : `${Math.floor(s / 60)}분${s % 60 ? ` ${s % 60}초` : ''}`; };
 
-/** 진행 알림(클라이언트가 progressToken 을 줬을 때만) */
-function progress(extra, message, done, total) {
+/** 진행 알림(클라이언트가 progressToken 을 줬을 때만). progress 값은 호출 안에서 늘기만 해야 한다(MCP 규격) → 단계마다 +1 */
+const steps = new WeakMap();
+function progress(extra, message) {
   const token = extra?._meta?.progressToken;
   if (token === undefined) return;
-  extra.sendNotification({ method: 'notifications/progress', params: { progressToken: token, progress: done, ...(total ? { total } : {}), message } }).catch(() => {});
+  const n = (steps.get(extra) ?? 0) + 1;
+  steps.set(extra, n);
+  extra.sendNotification({ method: 'notifications/progress', params: { progressToken: token, progress: n, message } }).catch(() => {});
 }
 
 /** (표면 열 단위) → 정규식 → Qwen 순서로 가린다. Qwen 이 실패하면 전체 실패(fail closed) */
@@ -94,7 +97,7 @@ async function askText(text, instruction, { model, thinking } = {}, onStep) {
   const parts = chunk(text, 40_000);
   const notes = [];
   for (const [i, part] of parts.entries()) {
-    onStep?.(`${i + 1}/${parts.length} 조각 읽는 중`, i, parts.length);
+    onStep?.(`${i + 1}/${parts.length} 조각 읽는 중`);
     const r = await chat({ ...opt, messages: [{ role: 'system', content: SYSTEM_ASK },
       { role: 'user', content: `<문서 조각 ${i + 1}/${parts.length}>\n${part}\n</문서 조각>\n\n최종 요청: ${instruction}\n이 조각에서 요청과 관련된 내용만 근거와 함께 뽑아라. 없으면 "없음".` }] });
     if (!/^\s*없음\s*$/.test(r.content)) notes.push(`[조각 ${i + 1}]\n${r.content}`);
@@ -131,10 +134,10 @@ server.registerTool('hai_ask_file', {
   inputSchema: { path: z.string(), instruction: z.string().describe('HAI 에 시킬 일. 예: "계약 기간·해지 조건·위약금을 조항 번호와 함께 표로", "회의록: 안건·결정·할 일(담당·기한)"'),
     model: modelSchema, thinking: thinkingSchema, extra: extraSchema, ...audioSchema },
 }, guard(async ({ path: p, instruction, model, thinking, extra, engine, terms }, ex) => {
-  progress(ex, '파일 읽는 중', 0);
+  progress(ex, '파일 읽는 중');
   const { file, text, via: how, meta } = await readText(p, { engine, terms });
-  progress(ex, 'HAI 가 읽는 중', 1);
-  const answer = await askText(text, instruction, { model, thinking }, (m, d, t) => progress(ex, m, d, t));
+  progress(ex, 'HAI 가 읽는 중');
+  const answer = await askText(text, instruction, { model, thinking }, (m) => progress(ex, m));
   const vault = newVault();
   const masked = await maskAll(answer, vault, extra);
   const len = how === 'stt' ? `${dur(meta?.seconds)} 녹음` : `${text.length.toLocaleString()}자`;
@@ -158,7 +161,8 @@ server.registerTool('hai_ask_files', {
   if (dir) {
     const d = resolvePath(dir);
     const names = (await fs.readdir(d, { withFileTypes: true })).filter((e) => e.isFile() && !e.name.startsWith('.') && !e.name.startsWith('~$')).map((e) => e.name);
-    files.push(...names.filter((n) => SUPPORTED.includes(path.extname(n).toLowerCase()) && (!pattern || n.includes(pattern))).sort().map((n) => path.join(d, n)));
+    const want = pattern?.normalize('NFC'); // macOS 파일 이름은 NFD 로 올 수 있다
+    files.push(...names.filter((n) => SUPPORTED.includes(path.extname(n).toLowerCase()) && (!want || n.normalize('NFC').includes(want))).sort().map((n) => path.join(d, n)));
   }
   files = [...new Set(files)].slice(0, max_files ?? 30);
   if (!files.length) throw new Error('읽을 파일이 없습니다(지원 형식인지, pattern 이 맞는지 확인)');
@@ -173,7 +177,7 @@ server.registerTool('hai_ask_files', {
       } catch (err) {
         results[i] = { file: files[i], error: err instanceof HaiError ? err.code : String(err.message).slice(0, 100) };
       }
-      progress(ex, `${++done}/${files.length} 파일`, done, files.length);
+      progress(ex, `${++done}/${files.length} 파일`);
     }
   }
   await Promise.all([worker(), worker()]);
@@ -195,10 +199,10 @@ server.registerTool('hai_mask_file', {
   ].join(' '),
   inputSchema: { path: z.string(), extra: extraSchema, mask_id: z.string().optional(), ...audioSchema },
 }, guard(async ({ path: p, extra, mask_id, engine, terms }, ex) => {
-  progress(ex, '파일 읽는 중', 0);
+  progress(ex, '파일 읽는 중');
   const { file, text, via: how, table } = await readText(p, { engine, terms });
   const vault = vaultOf(mask_id);
-  progress(ex, '개인정보 찾는 중', 1);
+  progress(ex, '개인정보 찾는 중');
   const masked = await maskAll(text, vault, extra, { table });
   return ok([
     `mask_id: ${vault.id}`,
@@ -233,7 +237,7 @@ server.registerTool('hai_transcribe', {
 }, guard(async ({ path: p, engine, terms, timestamps, out_path }, ex) => {
   const file = resolvePath(p);
   if (kindOf(file) !== 'audio') throw new Error('녹음 파일이 아닙니다(wav·mp3·m4a·ogg·flac 등)');
-  progress(ex, '받아쓰는 중', 0);
+  progress(ex, '받아쓰는 중');
   const { text, meta } = await readText(file, { engine, terms, timestamps });
   const saved = await writeRaw(out_path ? resolvePath(out_path) : path.join(path.dirname(file), `${path.parse(file).name} 받아쓰기.txt`), `${text}\n`);
   return ok(`저장: ${saved}\n${dur(meta?.seconds)} 녹음 · ${text.length.toLocaleString()}자 · ${meta?.engine === 'qwen' ? 'qwen3-asr' : 'whisper-large-v3'}\n원문은 Claude 에 보이지 않습니다. 회의록·요약은 hai_ask_file(path="${saved}") 로.`);
@@ -246,7 +250,7 @@ server.registerTool('hai_ocr', {
 }, guard(async ({ path: p, out_path }, ex) => {
   const file = resolvePath(p);
   if (!['pdf', 'image'].includes(kindOf(file))) throw new Error('PDF 나 이미지(png·jpg·tif·bmp·webp)만 됩니다');
-  progress(ex, 'OCR 중', 0);
+  progress(ex, 'OCR 중');
   const { text, meta } = await readText(file, { ocr: true });
   const saved = await writeRaw(out_path ? resolvePath(out_path) : path.join(path.dirname(file), `${path.parse(file).name} OCR.md`), `${text}\n`);
   return ok(`저장: ${saved}\n${meta?.pages ?? 1}쪽 · ${text.length.toLocaleString()}자 · 원문은 Claude 에 보이지 않습니다.`);
@@ -258,13 +262,15 @@ server.registerTool('hai_search', {
   inputSchema: { query: z.string(), dir: z.string().describe('찾을 폴더(하위 폴더 포함, 최대 400개 파일)'), top_k: z.number().int().min(1).max(20).optional(),
     media: z.boolean().optional().describe('사진·녹음까지 색인(OCR·받아쓰기라 오래 걸림)'), rebuild: z.boolean().optional().describe('색인을 처음부터 다시') },
 }, guard(async ({ query, dir, top_k, media, rebuild }, ex) => {
-  progress(ex, '색인 확인 중', 0);
+  progress(ex, '색인 확인 중');
   const r = await search(resolvePath(dir), query, { topK: top_k ?? 5, media, rebuild });
-  const body = r.hits.map((h, i) => `### ${i + 1}. ${path.relative(resolvePath(dir), h.file)} (유사도 ${h.score.toFixed(2)})\n${h.text.trim()}`).join('\n\n') || '찾은 구절이 없습니다.';
+  const root = resolvePath(dir);
+  const hits = r.hits.map((h, i) => `### ${i + 1}. ${path.relative(root, h.file)} (유사도 ${h.score.toFixed(2)})\n${h.text.trim()}`).join('\n\n') || '찾은 구절이 없습니다.';
+  // 읽지 못한 파일 이름·사유(경로가 들어 있다)도 가리기를 거친다 — 파일 이름에 실명이 흔하다
+  const failed = r.failed.length ? `\n\n### 읽지 못한 파일 ${r.failed.length}개\n${r.failed.slice(0, 10).map((f) => `- ${path.relative(root, f.file)}: ${f.why.split(root).join('…')}`).join('\n')}` : '';
   const vault = newVault();
-  const masked = await maskAll(body, vault);
-  const failed = r.failed.length ? `\n읽지 못한 파일 ${r.failed.length}개: ${r.failed.slice(0, 5).map((f) => `${path.basename(f.file)}(${f.why})`).join(', ')}` : '';
-  return ok([`mask_id: ${vault.id}`, `색인: 파일 ${r.files}개 · 조각 ${r.chunks}개 (이번에 새로 읽음 ${r.updated}) · 가린 것: ${counts(vault)}${failed}`, '--- 찾은 구절 ---',
+  const masked = await maskAll(hits + failed, vault);
+  return ok([`mask_id: ${vault.id}`, `색인: 파일 ${r.files}개 · 조각 ${r.chunks}개 (이번에 새로 읽음 ${r.updated}) · 가린 것: ${counts(vault)}`, '--- 찾은 구절 ---',
     await inlineOrFile(`${vault.id}-검색.md`, masked)].join('\n'));
 }));
 
