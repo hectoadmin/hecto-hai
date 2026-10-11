@@ -252,6 +252,22 @@ function shellWords(cmd, ops = false, inner = null) {
   return out;
 }
 
+/** 줄의 각 글자가 셸 코드인가(따옴표 안·주석이 아닌가) — bash 기준 */
+function codeMask(line) {
+  const m = [];
+  let q = null, comment = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (comment) { m.push(false); continue; }
+    if (q) { m.push(false); if (c === '\\' && q === '"') { m.push(false); i++; continue; } if (c === q) q = null; continue; }
+    if (c === '\\') { m.push(true, true); i++; continue; }
+    if (c === "'" || c === '"') { q = c; m.push(false); continue; }
+    if (c === '#' && (i === 0 || /[\s;|&(]/.test(line[i - 1]))) { comment = true; m.push(false); continue; }
+    m.push(true);
+  }
+  return m;
+}
+
 /** heredoc 본문을 떼어 낸다 → { shell: 본문 뺀 명령, bodies: [본문] } — 본문은 셸이 펼치지 않는 글자(따옴표 안처럼 본다) */
 function splitHeredocs(cmd) {
   const lines = cmd.split('\n');
@@ -266,7 +282,9 @@ function splitHeredocs(cmd) {
       continue;
     }
     shell.push(line);
-    for (const m of line.matchAll(/<<(-?)\s*(['"]?)([A-Za-z_][\w.-]*)\2/g)) pending.push({ tag: m[3], strip: m[1] === '-' });
+    // 따옴표 안·주석 속 << 는 heredoc 이 아니다(# see <<EOF 뒤 줄을 본문으로 착각해 실제 명령을 놓치지 않게)
+    const code = codeMask(line);
+    for (const m of line.matchAll(/<<(-?)\s*(['"]?)([A-Za-z_][\w.-]*)\2/g)) if (code[m.index]) pending.push({ tag: m[3], strip: m[1] === '-' });
     if (pending.length) body = [];
   }
   if (body?.length) bodies.push(body.join('\n'));
@@ -520,40 +538,78 @@ function psWords(s) {
 }
 
 /**
- * PowerShell 글자를 PowerShell 처럼 정리 — 주석(# … 줄 끝, <# … #>)을 빼고, 여러 줄 문자열(@' … '@ · @" … "@)은 한 단어의 따옴표 글자로.
- * 이걸 안 하면 주석 속 it's 의 ' 가 뒤 명령을 문자열로 삼켜 검사를 피한다
+ * PowerShell 글자를 PowerShell 처럼 정리 → { text, subs }
+ *  - 주석(# … 줄 끝, <# … #>)을 뺀다 — 주석 속 it's 의 ' 가 뒤 명령을 문자열로 삼켜 검사를 피하지 않게
+ *  - 여러 줄 문자열(@' … '@ · @" … "@)은 한 단어의 따옴표 글자로
+ *  - 백틱 이스케이프: 따옴표 밖 `' `" `; 같은 기호는 글자일 뿐(따옴표·구분이 아니다), 큰따옴표 안 `" · "" 도 글자
+ *  - 큰따옴표·@" 안의 $( … ) 는 PowerShell 이 실행한다 — subs 로 따로 돌려준다
  */
+const PS_LIT = '\uE00A'; // 이스케이프된 기호 자리(따옴표·구분으로 읽지 않는 글자)
+function psSub(s, i, subs) { // s[i] === '$' && s[i+1] === '(' → 짝 ) 다음 위치
+  let d = 0, j = i + 1;
+  for (; j < s.length; j++) {
+    const c = s[j];
+    if (c === '`') { j++; continue; }
+    if (c === "'") { const k = s.indexOf("'", j + 1); if (k < 0) break; j = k; continue; }
+    if (c === '(') d++;
+    else if (c === ')' && --d === 0) break;
+  }
+  subs.push(s.slice(i + 2, j));
+  return j + 1;
+}
 function psClean(s) {
   let out = '';
+  const subs = [];
+  const dq = (body) => { // 큰따옴표 안 글자 → 이스케이프 풀기, $( ) 꺼내기
+    let t = '';
+    for (let k = 0; k < body.length;) {
+      if (body[k] === '`') { const x = body[k + 1] ?? ''; t += x === '"' || x === "'" ? PS_LIT : x; k += 2; continue; }
+      if (body[k] === '"' && body[k + 1] === '"') { t += PS_LIT; k += 2; continue; }
+      if (body[k] === '$' && body[k + 1] === '(') { const e = psSub(body, k, subs); t += body.slice(k, e); k = e; continue; }
+      t += body[k]; k++;
+    }
+    return t;
+  };
   for (let i = 0; i < s.length;) {
     const c = s[i];
     if (c === '@' && (s[i + 1] === "'" || s[i + 1] === '"') && /^[ \t]*\r?\n/.test(s.slice(i + 2))) {
       const q = s[i + 1];
       const nl = s.indexOf('\n', i + 2);
-      const m = s.slice(nl + 1).match(new RegExp(`(^|\\n)[ \\t]*${q}@`));
+      const m = s.slice(nl + 1).match(new RegExp(`(^|\\n)${q}@`)); // 닫는 '@ 는 줄 맨 앞
       const end = m ? nl + 1 + m.index + m[0].length : s.length;
-      const body = m ? s.slice(nl + 1, nl + 1 + m.index) : s.slice(nl + 1);
+      let body = m ? s.slice(nl + 1, nl + 1 + m.index) : s.slice(nl + 1);
+      if (q === '"') body = dq(body);
       out += `'${body.replace(/'/g, "''")}'`;
       i = end;
       continue;
     }
+    if (c === '`') { const x = s[i + 1] ?? ''; out += x === '\n' ? ' ' : /[\s'"#;|&(){}<>,=@$]/.test(x) ? PS_LIT : x; i += 2; continue; }
     if (c === "'") { let j = i + 1; for (; j < s.length; j++) { if (s[j] === "'") { if (s[j + 1] === "'") { j++; continue; } break; } } out += s.slice(i, j + 1); i = j + 1; continue; }
-    if (c === '"') { let j = i + 1; for (; j < s.length && s[j] !== '"'; j++) if (s[j] === '`') j++; out += s.slice(i, j + 1); i = j + 1; continue; }
+    if (c === '"') {
+      let j = i + 1;
+      for (; j < s.length; j++) { if (s[j] === '`') { j++; continue; } if (s[j] === '"') { if (s[j + 1] === '"') { j++; continue; } break; } if (s[j] === '$' && s[j + 1] === '(') { j = psSub(s, j, []) - 1; } }
+      out += `"${dq(s.slice(i + 1, j))}"`;
+      i = j + 1;
+      continue;
+    }
     if (c === '<' && s[i + 1] === '#') { const e = s.indexOf('#>', i + 2); i = e < 0 ? s.length : e + 2; out += ' '; continue; }
     if (c === '#' && (i === 0 || /[\s;|({]/.test(s[i - 1]))) { const e = s.indexOf('\n', i); i = e < 0 ? s.length : e; continue; }
     out += c; i++;
   }
-  return out;
+  return { text: out, subs };
 }
 
 function psCheck(cmd0, cwd, where = 'PowerShell 명령', depth = 0) {
   // PowerShell 은 둥근 따옴표(‘ ’ ‚ ‛ · “ ” „)도 따옴표로 읽는다 — 같은 꼴로 맞춰야 띄어쓰기 든 경로가 쪼개지지 않는다
   let s = String(cmd0).normalize('NFC').replace(/[\u2018\u2019\u201A\u201B]/g, "'").replace(/[\u201C\u201D\u201E]/g, '"')
     .replace(/(^|[\s(;|{])[\u2013\u2014\u2015](?=[A-Za-z])/g, '$1-'); // –Recurse · —Path 도 옵션이다
-  s = psClean(s);
+  const cleaned = psClean(s);
+  s = cleaned.text;
+  // 문자열 안의 $( … ) 는 따로 명령으로
+  if (depth < 3) for (const x of cleaned.subs) psCheck(x, cwd, '문자열 안에서 실행하는 PowerShell 명령', depth + 1);
   if (guarded() && PS_OPAQUE.test(s)) deny(userDirs[0] ?? raws[0], `${where}에 글자를 풀거나 만들어 실행하는 부분(iex·base64·[char]·-EncodedCommand)이 있어 어떤 파일을 여는지 확인할 수 없음. 설치 명령(irm … | iex)이면 사용자가 직접 실행하세요`);
   // 백틱 이스케이프, 문자열 잇기('C:\Users\' + '인사'), 변수($d = '…'), Join-Path·[IO.Path]::Combine 을 풀어서 본다
-  s = s.replace(/`(.)/gs, '$1').replace(/(['"])\s*\+\s*(['"])/g, '');
+  s = s.replace(/(['"])\s*\+\s*(['"])/g, ''); // 백틱은 psClean 이 풀었다
   for (let k = 0; k < 3; k++) {
     const vars = {};
     for (const m of s.matchAll(/\$([A-Za-z_]\w*)\s*=\s*(?:(['"])(.*?)\2|([^\s;|]+))/g)) vars[m[1].toLowerCase()] = m[3] ?? m[4];
