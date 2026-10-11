@@ -258,3 +258,17 @@ test('파서 차이: 이스케이프된 따옴표, 문자열 안 $( ), 주석·�
   assert.equal(ps(`Write-Output "오늘: $(Get-Date)"`), 'allow');
   assert.equal(decide('Bash', { command: `cat <<'EOF'\n${hr}\nEOF` }), 'deny'); // 진짜 heredoc 본문의 보호 폴더 경로는 그대로 막는다
 });
+
+test('재검토: heredoc 으로 넘긴 코드, <<< here-string, } , 뒤 PowerShell 주석', () => {
+  for (const [tool, c] of [
+    ['Bash', `python3 - <<'PY'\nimport os\nprint(open(os.path.join('${docs}','인사','a.txt')).read())\nPY`],
+    ['Bash', `python3 - <<'PY'\nimport os\nfor r,_,fs in os.walk('${docs}'):\n    print(r)\nPY`],
+    ['Bash', `python3 <<EOF\nfrom pathlib import Path\nfor p in Path('${docs}').rglob('*.txt'): print(p.read_text())\nEOF`],
+    ['Bash', `cat <<< hello\ngrep -r 홍길동 '${docs}'`],
+    ['Bash', `tr a-z A-Z <<< 'x'\ngrep -r 홍길동 '${docs}'`],
+    ['PowerShell', `Get-Date }# it's\nGet-ChildItem '${docs}' -Recurse | Select-String 홍길동`],
+    ['PowerShell', `$x = 1,# it's\n2\nGet-ChildItem '${docs}' -Recurse | Select-String 홍길동`],
+  ]) assert.equal(decide(tool, { command: c }), 'deny', c);
+  assert.equal(decide('Bash', { command: `python3 - <<'PY'\nprint(sum(range(10)))\nPY` }), 'allow');
+  assert.equal(decide('Bash', { command: `cat <<'EOF' > ${path.join(desk, 'n.md')}\n# 보고서\n**굵게**\nEOF` }), 'allow');
+});

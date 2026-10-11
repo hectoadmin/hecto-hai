@@ -284,7 +284,7 @@ function splitHeredocs(cmd) {
     shell.push(line);
     // 따옴표 안·주석 속 << 는 heredoc 이 아니다(# see <<EOF 뒤 줄을 본문으로 착각해 실제 명령을 놓치지 않게)
     const code = codeMask(line);
-    for (const m of line.matchAll(/<<(-?)\s*(['"]?)([A-Za-z_][\w.-]*)\2/g)) if (code[m.index]) pending.push({ tag: m[3], strip: m[1] === '-' });
+    for (const m of line.matchAll(/(?<!<)<<(?!<)(-?)\s*(['"]?)([A-Za-z_][\w.-]*)\2/g)) if (code[m.index] && !/\$\(\([^)]*$/.test(line.slice(0, m.index))) pending.push({ tag: m[3], strip: m[1] === '-' }); // <<< 는 here-string, $(( a<<b )) 는 산수
     if (pending.length) body = [];
   }
   if (body?.length) bodies.push(body.join('\n'));
@@ -593,7 +593,7 @@ function psClean(s) {
       continue;
     }
     if (c === '<' && s[i + 1] === '#') { const e = s.indexOf('#>', i + 2); i = e < 0 ? s.length : e + 2; out += ' '; continue; }
-    if (c === '#' && (i === 0 || /[\s;|({]/.test(s[i - 1]))) { const e = s.indexOf('\n', i); i = e < 0 ? s.length : e; continue; }
+    if (c === '#' && (i === 0 || /[\s;|({}),]/.test(s[i - 1]))) { const e = s.indexOf('\n', i); i = e < 0 ? s.length : e; continue; }
     out += c; i++;
   }
   return { text: out, subs };
@@ -842,6 +842,8 @@ function check(ev) {
       const bases = [cwd];
       words.forEach((w, i) => { if ((w === 'cd' || w === 'pushd') && words[i + 1]) bases.push(expand(sub(words[i + 1]), cwd)); });
       // 코드를 돌리는 명령 — 스크립트 파일 내용, 인라인 코드 속 '인사' 같은 경로 조각, 안에서 부르는 PowerShell 까지
+      // heredoc 으로 코드를 넘기면(python3 - <<'PY' … PY) 그 본문이 실행하는 코드다
+      if (guarded() && bodies.length && cmds.some((c) => runsCode(unwrap(c).map((w) => sub(unq(w)))))) for (const b of bodies) { textCheck(b, { where: '넘겨 실행하는 코드' }); codeCheck(b, '넘겨 실행하는 코드', bases); }
       for (const c of cmds) {
         const ws = unwrap(c).map((w) => sub(unq(w)));
         scriptCheck(ws, bases);
