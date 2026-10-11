@@ -199,3 +199,15 @@ test('검토 5차: 그래도 막을 것은 막는다', () => {
   assert.equal(decide('Bash', { command: `cat ~/${'{a,b}'.repeat(30)}` }), 'deny'); // 펼침이 넘치면 막는다(시간 초과로 통과하지 않게)
   assert.ok(Date.now() - t0 < 3000);
 });
+
+test('검토 6차: 감싸는 말(LC_ALL=C·time·sudo·env·timeout·xargs·bash -c)을 붙여도 진짜 명령으로 판단', () => {
+  for (const [c, w] of [
+    [`LC_ALL=C grep -r 홍길동 ${docs}`, root], ['time rg 홍길동', root], ['sudo grep -r 홍길동 .', docs], ['ls | xargs rg 홍길동', docs],
+    [`time tar czf /tmp/x.tgz ${docs}`, root], ['command eval "$X"', root], ['time base64 -d <<< Li4v | sh', root],
+    [`env A=1 timeout 5 grep -rn 홍 ${docs}`, root], [`xargs -I {} grep -r x ${docs}`, root], [`bash -c 'grep -r 홍길동 ${docs}'`, root],
+    [`sh -c "cat ${hr}/a.txt"`, root],
+  ]) assert.equal(decide('Bash', { command: c }, w), 'deny', c);
+  for (const [c, w] of [['LC_ALL=C sort x.txt', root], ['time npm test', docs], ['sudo -u nobody ls /tmp', root], ['bash -c "echo hi"', root], ['env FOO=1 node app.js', docs]]) {
+    assert.equal(decide('Bash', { command: c }, w), 'allow', c);
+  }
+});

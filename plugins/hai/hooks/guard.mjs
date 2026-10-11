@@ -63,7 +63,31 @@ function deny(t, why, { scope = false } = {}) {
  * 명령 하나(첫 단어 + 인자)가 하위 폴더를 훑나 → 'content'(내용까지 읽음) | 'names'(이름만) | null.
  * 명령 글자 전체가 아니라 명령 자리의 첫 단어로 본다 — 커밋 메시지 속 "find"·CSS 주석 속 별표-빗금에 걸리지 않게
  */
-function recursionOf(ws) {
+/**
+ * 앞에 붙은 감싸는 말을 벗긴다 — LC_ALL=C grep …, time rg …, sudo -u x zip …, env A=1 find …, timeout 5 grep …, ls | xargs -I{} rg …
+ * 이걸 안 하면 진짜 명령(grep -r)을 못 보고 통과시킨다
+ */
+const WRAPPERS = { time: [], sudo: ['-u', '-g', '-h', '-p', '-C'], doas: ['-u'], command: [], builtin: [], exec: ['-a'], nohup: [], env: ['-u', '-S', '-C'],
+  nice: ['-n'], ionice: ['-c', '-n', '-p'], timeout: ['-s', '-k', '--signal', '--kill-after'], stdbuf: ['-i', '-o', '-e'], caffeinate: ['-t', '-w'],
+  xargs: ['-I', '-i', '-n', '-P', '-L', '-l', '-s', '-d', '-E', '-a'], unbuffer: [], chronic: [], gtimeout: ['-s', '-k'] };
+function unwrap(ws) {
+  let i = 0;
+  for (let guard = 0; guard < 20 && i < ws.length; guard++) {
+    const w = unq(ws[i]);
+    if (/^[A-Za-z_]\w*=/.test(w)) { i++; continue; }           // LC_ALL=C
+    const c = path.basename(w);
+    if (!(c in WRAPPERS)) break;
+    i++;
+    const withArg = WRAPPERS[c];
+    while (i < ws.length && unq(ws[i]).startsWith('-')) { const o = unq(ws[i]); i += withArg.includes(o) ? 2 : 1; } // 옵션(값 받는 것은 값까지)
+    if (c === 'env') while (i < ws.length && /^[A-Za-z_]\w*=/.test(unq(ws[i]))) i++;
+    if (/^g?timeout$/.test(c) && i < ws.length && /^\d/.test(unq(ws[i]))) i++;  // timeout 10 grep …
+  }
+  return ws.slice(i);
+}
+
+function recursionOf(raw) {
+  const ws = unwrap(raw);
   const c = path.basename(unq(ws[0] ?? ''));
   const has = (re) => ws.slice(1).some((w) => re.test(w));
   const R = /^(-[a-zA-Z]*[rR][a-zA-Z]*|--recursive)$/;
@@ -90,7 +114,8 @@ function globRe(g) {
 }
 // 경로를 글자로 숨길 수 있는 형태: \x·\u·8진 이스케이프, eval, base64·xxd·uudecode 풀기
 // 경로를 글자로 숨길 수 있는 명령(명령 자리의 첫 단어로 본다): eval, base64·xxd·uudecode·openssl 풀기
-function opaque(ws) {
+function opaque(raw) {
+  const ws = unwrap(raw);
   const c = path.basename(unq(ws[0] ?? ''));
   const has = (re) => ws.slice(1).some((w) => re.test(w));
   return c === 'eval' || c === 'uudecode' || (c === 'base64' && has(/^(-d|-D|--decode)$/)) || (c === 'xxd' && has(/^-r/)) || (c === 'openssl' && has(/^(enc|base64)$/));
@@ -271,7 +296,17 @@ function check(ev) {
       if (inCwd && !inCwd.internal) deny(inCwd, '작업 폴더가 그 안');
       const { shell, bodies } = splitHeredocs(cmd);
       // 명령 하나하나(; && || | 줄바꿈, $( ) ` 안도 따로) — 첫 단어로 무엇을 하는지 본다
-      const cmds = shell.split(/\|\||&&|[|;&\n`]|\$\(|\)/).map((seg) => shellWords(seg)).filter((ws) => ws.length);
+      const split = (txt) => txt.split(/\|\||&&|[|;&\n`]|\$\(|\)/).map((seg) => shellWords(seg)).filter((ws) => ws.length);
+      const cmds = split(shell);
+      // bash -c '…' · sh -c "…" 안의 명령도 같은 규칙으로(두 겹까지)
+      for (let depth = 0, k = 0; depth < 2; depth++) {
+        const end = cmds.length;
+        for (; k < end; k++) {
+          const ws = unwrap(cmds[k]);
+          const i = ws.findIndex((w) => unq(w) === '-c');
+          if (/^(ba|z|da|k)?sh$/.test(path.basename(unq(ws[0] ?? ''))) && i > 0 && ws[i + 1]) cmds.push(...split(unq(ws[i + 1])));
+        }
+      }
       if (guarded()) {
         const op = cmds.find(opaque);
         if (op) deny(userDirs[0] ?? raws[0], `${unq(op[0])} 가 든 명령은 어떤 파일을 여는지 확인할 수 없음`);
@@ -298,7 +333,7 @@ function check(ev) {
         if (unknown.has(n)) return '*';
         return process.env[n] ?? all; // PATH·TMPDIR 등은 실제 값, 모르는 건 글자 그대로(어떤 파일과도 맞지 않음)
       });
-      const segsFirst = cmds.map((ws) => ws[0]);
+      const segsFirst = cmds.map((ws) => unwrap(ws)[0] ?? ws[0]);
       // 명령 치환·프로세스 치환이 있으면 안에서 무엇이든 돌 수 있다 — echo "$(cat 원문)" 은 이름 보기가 아니다
       const namesOnly = !/\$\(|`|[<>]\(/.test(shell) && segsFirst.length > 0 && segsFirst.every((c) => NAMES_ONLY.has(path.basename(unq(c))));
       const recs = cmds.map(recursionOf);
