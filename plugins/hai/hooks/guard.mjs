@@ -369,6 +369,8 @@ const escRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const quotedIs = (txt, name) => new RegExp(`(['"])\\s*${escRe(name)}[/\\\\]?\\s*\\1`).test(txt);
 // 코드에서 홈 폴더를 가리키는 말
 const HOME_REF = /expanduser\(\s*(['"])~\1|path\.home\(\)|homedir\(\)|\$env:userprofile|%userprofile%|\$home\b|\$\{home\}|getfolderpath|userprofile|(['"])~\2/i;
+// 작업 폴더 기준으로 훑는 코드
+const REL_WALK = /os\.walk\(\s*(['"]\.{0,2}[/\\]?['"]|os\.getcwd\(\)|os\.curdir)|path\(\s*(['"]\.?['"])?\s*\)\s*\.(rglob|glob|walk)|path\.cwd\(\)|\b(i?glob|glob\.glob)\(\s*r?['"](\*\*|\.[/\\])|walkdir\(\s*['"]\.|readdirsync\(\s*['"]\.|filepath\.walk\(\s*"\./i;
 // 하위 폴더까지 훑는 코드
 const WALK = /rglob|os\.walk|\bwalk\(|walkdir|recursive\s*=\s*true|\*\*[/\\]|[/\\]\*\*|readdirsync\([^)]*recursive|filepath\.walk|files\.walk|dir\.glob/i;
 
@@ -391,26 +393,31 @@ function codeCheck(txt, where, cwds = []) {
       const toward = (x, i, f) => {
         // 적힌 경로를 끝까지 따라간다 — 따옴표 안이면 따옴표까지(띄어쓰기 든 폴더), 밖이면 공백까지
         const rest = x.slice(i + f.length).match(inQuotes(x, i) ? /^[^"'`\n]*/ : /^[^"'`\n\s]*/)[0];
-        let cur = a;
-        for (const seg of rest.split(/[/\\]+/).filter(Boolean)) {
-          if (/[*?[]/.test(seg)) return true;
-          cur = `${cur}/${fold(seg).replace(/\s+$/, '')}`;
-          if (cur === d.key) return true;
-          if (!ancs.includes(cur)) return false;
-        }
-        return true;
+        if (f === '~' && !rest) return false; // 홈 그대로('~')는 아래 홈 표현 검사가 맡는다
+        // .·.. 를 풀고 와일드카드 앞까지 — 그 경로가 보호 폴더이거나 그 상위(그 아래를 훑을 수 있다)면 보호 폴더 쪽
+        const segs = rest.split(/[/\\]+/).filter(Boolean);
+        const w = segs.findIndex((x) => /[*?[]/.test(x));
+        const fixed = P.normalize(`${a}/${(w >= 0 ? segs.slice(0, w) : segs).map((x) => fold(x).replace(/\s+$/, '')).join('/')}`).replace(/(.)\/+$/, '$1');
+        return fixed === d.key || ancs.includes(fixed) || fixed.startsWith(`${d.key}/`);
       };
       for (const f of [a, fold(tilde(a))]) for (const x of T) for (let i = x.indexOf(f); i >= 0; i = x.indexOf(f, i + 1)) if (endsAt(x, i, f) && toward(x, i, f)) return true;
       const b = P.basename(a);
       return b.length >= 2 && quotedIs(raw, b);
     });
-    const homeRef = d.key.startsWith(`${fold(HOME)}/`) && HOME_REF.test(raw);
+    // 홈 표현마다 — 바로 뒤에 다른 폴더를 붙였으면(Path.home() / 'Desktop' · join(expanduser('~'), 'Desktop')) 그 폴더다. 하나라도 홈 그대로면 홈
+    const homeRef = d.key.startsWith(`${fold(HOME)}/`) && [...raw.matchAll(new RegExp(HOME_REF.source, 'gi'))].some((m) => {
+      const j = raw.slice(m.index + m[0].length).match(/^\s*\)?\s*(?:\/|,)\s*(['"])([^'"\n]+)\1/);
+      if (!j) return true;
+      const sub = norm(P.join(HOME, j[2].split(/[/\\]/)[0]));
+      return sub === d.key || ancs.includes(sub);
+    });
     const b = P.basename(d.key);
     // 작업 폴더가 바로 위 폴더면 '인사' 는 그 폴더다. 더 위(홈)에서는 흔한 낱말일 수 있어 상위를 함께 가리킬 때만
     const inParent = cwdKeys.includes(P.dirname(d.key));
     if (b.length >= 2 && quotedIs(raw, b) && (named || homeRef || inParent)) deny(d, `${where}에 그 폴더 이름이 경로 조각으로 들어 있음`);
     // 작업 폴더 기준으로 훑는 코드(절대 경로 없이 os.walk('.') 등)는 작업 폴더가 상위일 때
-    const relWalk = !/(['"])\s*(\/|~|[a-z]:[\\/])/i.test(raw);
+    // 작업 폴더를 훑는 꼴(os.walk('.') · Path().rglob · Path.cwd() · glob('**…'))이 있으면 다른 절대 경로가 함께 있어도 그 꼴로 본다
+    const relWalk = REL_WALK.test(raw) || !/(['"])\s*(\/|~|[a-z]:[\\/])/i.test(raw);
     const inAnc = relWalk && cwdKeys.some((c) => ancs.includes(c));
     // 홈을 훑는 코드는 다른 폴더 이름이 함께 보여도 막는다(그 이름은 코드가 마음대로 넣을 수 있다) — 좁히려면 경로를 그대로 적는다
     if (walk && (named || homeRef || inAnc)) deny(d, `${where}가 하위 폴더까지 훑는데 그 아래에 보호 폴더가 있음. 훑을 폴더를 전체 경로로 적어 주세요`, { scope: true });

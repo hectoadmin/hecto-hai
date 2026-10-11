@@ -167,8 +167,12 @@ test('재검토: Start-Process·& "python.exe"·작업 폴더 기준 상대 경�
 
 test('재검토: 홈을 훑는 코드는 다른 폴더 이름을 끼워 넣어도 막는다', () => {
   const f = path.join(desk, 'home_walk.py');
-  fs.writeFileSync(f, `from pathlib import Path\nfor p in Path.home().rglob('*.txt'):\n    if 'AppData' in p.parts or 'Desktop' in p.parts: continue\n    print(p)\n`);
-  assert.equal(decide('Bash', { command: 'python3 home_walk.py' }, desk, path.join(process.env.HOME ?? process.env.USERPROFILE, 'Documents', '인사')), 'deny');
+  fs.writeFileSync(f, `from pathlib import Path\nfor p in Path.home().rglob('*.txt'):\n    if 'AppData' in p.parts or 'Desktop' in p.parts: continue\n    print(p)\nout = Path.home() / 'Desktop' / 'result.txt'\n`);
+  const homeHr = path.join(process.env.HOME ?? process.env.USERPROFILE, 'Documents', '인사');
+  assert.equal(decide('Bash', { command: 'python3 home_walk.py' }, desk, homeHr), 'deny');
+  const g = path.join(desk, 'desk_walk.py'); // 홈 바로 뒤에 다른 폴더를 붙여 그 폴더만 훑는다
+  fs.writeFileSync(g, `import os\nfrom pathlib import Path\nfor p in (Path.home() / 'Desktop').rglob('*.txt'): print(p)\nfor r, _, _ in os.walk(os.path.join(os.path.expanduser('~'), 'Downloads')): print(r)\n`);
+  assert.equal(decide('Bash', { command: 'python3 desk_walk.py' }, desk, homeHr), 'allow');
 });
 
 test('재검토: 마크다운 ** 와 다른 곳을 훑는 코드는 홈에서도 막지 않는다', () => {
@@ -182,4 +186,10 @@ test('재검토: 마크다운 ** 와 다른 곳을 훑는 코드는 홈에서도
     ['Bash', 'python3 report.py'],
     ['PowerShell', `(Get-ChildItem '${desk}').Count`],
   ]) assert.equal(decide(tool, { command: c }, tool === 'Bash' && c.includes('report') ? desk : home), 'allow', c);
+});
+
+test('보안 검토: 절대 경로를 끼워 넣거나 .. 로 돌아가도 상위 폴더 훑기를 막는다', () => {
+  assert.equal(decide('Bash', { command: `python3 -c "import os\nlog = '/tmp/x.log'\nfor r, _, f in os.walk('.'): print(f)"` }, docs), 'deny');
+  assert.equal(decide('Bash', { command: `python3 -c "from pathlib import Path\nfor p in Path('${desk}/..').rglob('*.txt'): print(p.read_text())"` }, desk), 'deny');
+  assert.equal(decide('Bash', { command: `python3 -c "import os\nfor r, _, f in os.walk('${docs}/../Desktop'): print(f)"` }, desk), 'allow');
 });
