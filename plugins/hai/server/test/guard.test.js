@@ -211,3 +211,11 @@ test('검토 6차: 감싸는 말(LC_ALL=C·time·sudo·env·timeout·xargs·bash
     assert.equal(decide('Bash', { command: c }, w), 'allow', c);
   }
 });
+
+test('복사·압축의 받는 곳은 훑는 곳이 아니다', () => {
+  const proj = path.join(root, 'Desktop', 'proj');
+  fs.mkdirSync(proj, { recursive: true });
+  assert.equal(decide('Bash', { command: `cp -r ${proj} ${docs}/` }, root, ''), 'allow');       // docs 에 원문 파일이 있어도
+  assert.equal(decide('Bash', { command: `zip -r ${docs}/백업.zip ${proj}` }, root, ''), 'allow');
+  assert.equal(decide('Bash', { command: `cp -r ${docs} /tmp/x` }, root, ''), 'deny');           // 원문 파일이 든 폴더를 통째로 복사하는 건 막는다
+});

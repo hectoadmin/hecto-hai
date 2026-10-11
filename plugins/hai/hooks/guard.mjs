@@ -342,6 +342,15 @@ function check(ev) {
       // 따옴표 밖 와일드카드로 하위 폴더까지 내려가면(*/x · **/x) — 이름만 보는 명령(ls -d */)이 아니면 내용을 읽는 재귀
       const unquotedGlobs = words.map(sub).filter((w) => /[*?[{]/.test(w));
       if (!namesOnly && unquotedGlobs.some((w) => /\*\*|\*\//.test(w))) recContent = true;
+      // 복사·압축의 "받는 곳"은 훑는 곳이 아니다(cp -r 폴더 ~/Desktop/ — 바탕화면에 원문 파일이 있어도 읽지 않는다)
+      const dests = new Set();
+      for (const raw of cmds) {
+        const ws = unwrap(raw).map(unq);
+        const c = path.basename(ws[0] ?? '');
+        const args = ws.slice(1).filter((w) => !w.startsWith('-'));
+        if (/^(cp|scp|rsync|ditto|mv)$/.test(c) && args.length >= 2) dests.add(args.at(-1));
+        if (c === 'zip' && args.length >= 2) dests.add(args[0]);
+      }
       // 재귀로 훑는 명령의 기준 폴더 아래에 보호 대상이 있나 — 내용을 읽으면 원문 파일까지, 이름만 보면 보호 폴더만
       const under = (p) => (recContent ? ancestorOf(p) : recNames ? ancestorDirOf(p) : null);
 
@@ -379,7 +388,7 @@ function check(ev) {
           const p = key(expand(clean, b));
           const h = hit(p);
           if (h && !(namesOnly && !h.dir)) deny(h, '명령이 그 안을 가리킴'); // 원문 파일에 ls -l·open 은 괜찮다
-          const a = under(p);
+          const a = !dests.has(unq(w)) && under(p);
           if (a) deny(a, `${tilde(p)} 를 재귀로 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
         }
         // 기준 폴더를 모르는 상대 경로라도 경로 조각에 보호 폴더 이름이 그대로 있으면(…/인사/…) — 사용자 보호 폴더만
