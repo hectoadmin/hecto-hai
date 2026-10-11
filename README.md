@@ -1,5 +1,7 @@
 # hecto-hai — 사내 AI(HAI)를 Claude 에 연결하는 플러그인
 
+**사용법 문서: https://hectoadmin.github.io/hecto-hai** (설치·따라 하기·문제 해결)
+
 문서·스캔본·녹음을 **사내 AI 가 먼저 읽고**, Claude 에는 개인정보를 가린 글이나 사내 AI 의 답만 넘깁니다.
 "보안 때문에 Claude 에 파일을 못 넣는다"는 경우와, 사내 AI 가 있어도 어떻게 쓸지 모르는 경우를 위해 만들었습니다.
 

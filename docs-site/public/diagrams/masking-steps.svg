@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 300" width="760" height="300" role="img" aria-label="개인정보를 가리는 순서" font-family="&#x27;Noto Sans KR&#x27;, &#x27;Apple SD Gothic Neo&#x27;, &#x27;Malgun Gothic&#x27;, sans-serif">
+<title>개인정보를 가리는 순서</title>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B6B6B"/></marker></defs>
+<rect x="20" y="40" width="160" height="70" fill="#FFFFFF" stroke="#101010" stroke-width="1.5"/>
+<rect x="20" y="40" width="26" height="26" fill="#101010"/>
+<text x="33" y="53" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="central">1</text>
+<text x="100.0" y="64.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">표 열 가리기</text>
+<text x="100.0" y="85.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">성명·연락처 열</text>
+<rect x="205" y="40" width="160" height="70" fill="#FFFFFF" stroke="#101010" stroke-width="1.5"/>
+<rect x="205" y="40" width="26" height="26" fill="#101010"/>
+<text x="218" y="53" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="central">2</text>
+<text x="285.0" y="64.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">모양으로</text>
+<text x="285.0" y="85.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">주민번호·전화·계좌</text>
+<rect x="390" y="40" width="160" height="70" fill="#FFFFFF" stroke="#101010" stroke-width="1.5"/>
+<rect x="390" y="40" width="26" height="26" fill="#101010"/>
+<text x="403" y="53" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="central">3</text>
+<text x="470.0" y="64.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">사내 AI 가 찾기</text>
+<text x="470.0" y="85.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">이름·주소·생년월일</text>
+<rect x="575" y="40" width="160" height="70" fill="#F1F1F0" stroke="#6B6B6B" stroke-width="1.5"/>
+<rect x="575" y="40" width="26" height="26" fill="#101010"/>
+<text x="588" y="53" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="central">4</text>
+<text x="655.0" y="64.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">남은 것 검사</text>
+<text x="655.0" y="85.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">하나라도 남으면</text>
+<rect x="390" y="200" width="160" height="70" fill="#FF6114" stroke="#FF6114" stroke-width="1.5"/>
+<text x="470.0" y="224.875" fill="#000000" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">[이름1] 자리표시</text>
+<text x="470.0" y="245.125" fill="#000000" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">Claude 에게</text>
+<rect x="575" y="200" width="160" height="70" fill="#101010" stroke="#101010" stroke-width="1.5"/>
+<text x="655.0" y="235.0" fill="#FFFFFF" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">넘기지 않고 실패</text>
+<path d="M 180,75.0 L 205,75.0" fill="none" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#head)"/>
+<path d="M 365,75.0 L 390,75.0" fill="none" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#head)"/>
+<path d="M 550,75.0 L 575,75.0" fill="none" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#head)"/>
+<path d="M 620,110 L 620,150 L 470,150 L 470,200" fill="none" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#head)"/>
+<rect x="510.0" y="138" width="70" height="24" fill="#FFFFFF" stroke="#E4E4E4" stroke-width="1"/>
+<text x="545.0" y="150" fill="#6B6B6B" font-size="13" text-anchor="middle" dominant-baseline="central">깨끗하면</text>
+<path d="M 690,110 L 690,200" fill="none" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#head)"/>
+<rect x="661.5" y="158" width="57" height="24" fill="#FFFFFF" stroke="#E4E4E4" stroke-width="1"/>
+<text x="690.0" y="170" fill="#6B6B6B" font-size="13" text-anchor="middle" dominant-baseline="central">남으면</text>
+</svg>

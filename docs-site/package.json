@@ -1,0 +1,23 @@
+{
+  "name": "hecto-hai-docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^15.5.25",
+    "nextra": "^3.0.0",
+    "nextra-theme-docs": "^3.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "overrides": {
+    "@xmldom/xmldom": "^0.9.12",
+    "postcss": "^8.5.23",
+    "sharp": "^0.35.4"
+  }
+}

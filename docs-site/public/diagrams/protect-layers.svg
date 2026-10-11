@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" width="760" height="330" role="img" aria-label="원본을 지키는 세 겹" font-family="&#x27;Noto Sans KR&#x27;, &#x27;Apple SD Gothic Neo&#x27;, &#x27;Malgun Gothic&#x27;, sans-serif">
+<title>원본을 지키는 세 겹</title>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B6B6B"/></marker></defs>
+<rect x="30" y="30" width="700" height="70" fill="#FFF0E8" stroke="#FF6114" stroke-width="1.5"/>
+<text x="380.0" y="54.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">1. HAI 도구 — 원문은 사내 AI 만 읽는다</text>
+<text x="380.0" y="75.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">모든 PC · 가장 중요한 겹</text>
+<rect x="30" y="130" width="700" height="70" fill="#FFFFFF" stroke="#101010" stroke-width="1.5"/>
+<text x="380.0" y="154.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">2. 보호 훅 — Read·Grep·Bash·PowerShell 이 보호 폴더를 열면 막는다</text>
+<text x="380.0" y="175.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">모든 PC · 명령 글자를 보고 판단(실수 방지 안전망)</text>
+<rect x="30" y="230" width="340" height="70" fill="#FF6114" stroke="#FF6114" stroke-width="1.5"/>
+<text x="200.0" y="254.875" fill="#000000" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">3. 샌드박스 (Mac·Linux)</text>
+<text x="200.0" y="275.125" fill="#000000" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">운영체제가 읽기 자체를 막음 · /hai:protect</text>
+<rect x="390" y="230" width="340" height="70" fill="#F1F1F0" stroke="#6B6B6B" stroke-width="1.5"/>
+<text x="560.0" y="254.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">3. Windows</text>
+<text x="560.0" y="275.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">기본 도구 차단 규칙 + 명령 실행 확인</text>
+</svg>
