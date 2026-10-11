@@ -128,3 +128,36 @@ test('보안 검토: 셸 단어 풀기가 평범한 명령을 막지 않는다',
     assert.equal(decide('Bash', { command: c }, w), 'allow', c);
   }
 });
+
+test('보안 검토 2: $\'…\' 이스케이프·eval·base64 로 숨긴 경로는 막는다', () => {
+  const enc = [...Buffer.from('인사')].map((b) => `\\x${b.toString(16)}`).join('');
+  assert.equal(decide('Bash', { command: `cat ${docs}/$'${enc}'/a.txt` }), 'deny');
+  assert.equal(decide('Bash', { command: `eval "cat $X"` }), 'deny');
+  assert.equal(decide('Bash', { command: `cat $(echo Li4v | base64 -d)` }), 'deny');
+});
+
+test('보안 검토 2: 아주 넓은 와일드카드도 빨리 판단하고, 파일이 많아도 놓치지 않는다', () => {
+  const t0 = Date.now();
+  assert.equal(decide('Bash', { command: 'cat /*/*/*/*/*/*/*/*.txt' }), 'allow');
+  assert.ok(Date.now() - t0 < 3000, `느림 ${Date.now() - t0}ms`);
+  const pad = path.join(docs, 'pad');
+  fs.mkdirSync(pad, { recursive: true });
+  for (let i = 0; i < 600; i++) fs.writeFileSync(path.join(pad, `회의 ${String(i).padStart(3, '0')}.txt`), '');
+  assert.equal(decide('Bash', { command: `cat ${docs}/회의*` }), 'deny'); // 원문 파일 "회의 받아쓰기.txt" 가 600개 뒤에 있어도
+});
+
+test('검토 4차: 명령 치환 안의 cat, 값을 모르는 변수로 원문 파일을 열면 막는다', () => {
+  assert.equal(decide('Bash', { command: `echo "$(cat ${raw.replace(/ /g, '\\ ')})"` }), 'deny');
+  assert.equal(decide('Bash', { command: `echo \`cat ${docs}/*.txt\`` }), 'deny');
+  assert.equal(decide('Bash', { command: `f=$(ls -t ${docs} | head -1); cat ${docs}/"$f"` }), 'deny');
+});
+
+test('검토 4차: 따옴표 안 * 와 이름만 찾는 검색은 막지 않는다', () => {
+  assert.equal(decide('Bash', { command: 'python3 -c "print(3 * 4)"' }), 'allow');
+  assert.equal(decide('Bash', { command: 'sqlite3 a.db "SELECT * FROM t"' }), 'allow');
+  assert.equal(decide('Bash', { command: `awk '{print $1 * 2}' ${path.join(root, 'Desktop', 'a.csv')}` }, docs), 'allow');
+  // 원문 파일만 있는 폴더(보호 폴더 없음)에서 이름 찾기
+  assert.equal(decide('Glob', { pattern: '**/*.xlsx', path: docs }, root, ''), 'allow');
+  assert.equal(decide('Bash', { command: `find ${docs} -maxdepth 1 -name "*.pdf"` }, root, ''), 'allow');
+  assert.equal(decide('Bash', { command: `grep -rn 결정 ${docs}` }, root, ''), 'deny'); // 내용을 읽는 재귀는 원문 파일도 본다
+});

@@ -69,12 +69,14 @@ export async function buildIndex(dir, { media = false, rebuild = false } = {}) {
     const st = await fs.stat(f).catch(() => null);
     if (!st) continue;
     const prev = idx.files[f];
-    if (prev && prev.mtime === st.mtimeMs && prev.size === st.size) continue;
+    // media 를 바꿔 다시 찾으면 PDF 는 다시 읽는다(스캔 쪽 OCR 여부가 달라 조각 위치가 달라진다)
+    const sameMode = !f.toLowerCase().endsWith('.pdf') || Boolean(prev?.media) === Boolean(media);
+    if (prev && prev.mtime === st.mtimeMs && prev.size === st.size && sameMode) continue;
     try {
       const { text } = await readText(f, { noOcr: !media });
       const parts = spans(text);
       const vecs = await embed(parts.map((s) => text.slice(s.start, s.end)));
-      idx.files[f] = { mtime: st.mtimeMs, size: st.size, chunks: parts.map((s, i) => ({ ...s, v: pack(vecs[i]) })) };
+      idx.files[f] = { mtime: st.mtimeMs, size: st.size, media: Boolean(media), chunks: parts.map((s, i) => ({ ...s, v: pack(vecs[i]) })) };
       updated++;
     } catch (err) {
       failed.push({ file: f, why: String(err.message).slice(0, 120) });

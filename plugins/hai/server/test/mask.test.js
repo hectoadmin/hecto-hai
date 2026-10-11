@@ -137,3 +137,9 @@ test('보안 검토: 서식 문자 전부·한글 채움 문자로 끊어도, �
   for (const s of ['010/2345/6789', '010_2345_6789', '010·2345·6789']) assert.equal(maskPatterns(normalize(s), new Vault()), '[휴대전화1]', s);
   assert.equal(maskPatterns(normalize('2026/10/11 · 1/2/3'), new Vault()), '2026/10/11 · 1/2/3');
 });
+
+test('검토 4차: 글자에 붙은 숫자 조각도 가린다(자리표시 안은 빼고)', () => {
+  const v = new Vault();
+  assert.equal(maskSpans('사번20231234 홍길동, [식별번호1]0', [{ type: '식별번호', text: '20231234' }], v), '사번[식별번호1] 홍길동, [식별번호1]0');
+  assert.equal(maskSpans('금1,200,000원', [{ type: '금액', text: '1,200,000' }], new Vault()), '금[금액1]원');
+});

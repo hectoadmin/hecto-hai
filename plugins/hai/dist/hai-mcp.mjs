@@ -102820,7 +102820,7 @@ function maskPatterns(text, vault, { keepDomains = [] } = {}) {
 function looseRegex(fragment) {
   const f2 = normalize(fragment).replace(/\s+/g, "");
   const chars = [...f2].map((c2) => c2.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
-  const head = /^\d/.test(f2) ? "(?<![\\d\\p{L}])" : "";
+  const head = /^\d/.test(f2) ? "(?<!\\d)(?<!\\[[\uAC00-\uD7A3A-Za-z]{1,12})" : "";
   const tail = /\d$/.test(f2) ? "(?![\\d\\]])" : "";
   return new RegExp(head + chars.join("\\s*") + tail, "gu");
 }
@@ -103285,12 +103285,13 @@ async function buildIndex(dir, { media = false, rebuild = false } = {}) {
     const st2 = await fs5.stat(f2).catch(() => null);
     if (!st2) continue;
     const prev = idx.files[f2];
-    if (prev && prev.mtime === st2.mtimeMs && prev.size === st2.size) continue;
+    const sameMode = !f2.toLowerCase().endsWith(".pdf") || Boolean(prev?.media) === Boolean(media);
+    if (prev && prev.mtime === st2.mtimeMs && prev.size === st2.size && sameMode) continue;
     try {
       const { text } = await readText(f2, { noOcr: !media });
       const parts = spans(text);
       const vecs = await embed(parts.map((s2) => text.slice(s2.start, s2.end)));
-      idx.files[f2] = { mtime: st2.mtimeMs, size: st2.size, chunks: parts.map((s2, i2) => ({ ...s2, v: pack(vecs[i2]) })) };
+      idx.files[f2] = { mtime: st2.mtimeMs, size: st2.size, media: Boolean(media), chunks: parts.map((s2, i2) => ({ ...s2, v: pack(vecs[i2]) })) };
       updated++;
     } catch (err) {
       failed.push({ file: f2, why: String(err.message).slice(0, 120) });

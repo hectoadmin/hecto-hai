@@ -114,12 +114,12 @@ export function maskPatterns(text, vault, { keepDomains = [] } = {}) {
 
 /**
  * 조각 글자 사이에 공백·줄바꿈이 끼어도 찾는 정규식 — PDF 는 "서울특별시 마포\n구 …" 처럼 줄이 단어 중간에서 끊긴다.
- * 숫자로 시작·끝나는 조각("10", "1,200")은 앞뒤가 숫자·글자가 아닐 때만 — "2010년" 안의 10, "[이름10]" 안의 10 을 바꾸지 않게
+ * 숫자로 시작·끝나는 조각("10", "1,200")은 앞뒤가 숫자가 아니고 자리표시 안이 아닐 때만 — "2010년" 안의 10, "[이름10]" 안의 10 을 바꾸지 않게
  */
 export function looseRegex(fragment) {
   const f = normalize(fragment).replace(/\s+/g, '');
   const chars = [...f].map((c) => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  const head = /^\d/.test(f) ? '(?<![\\d\\p{L}])' : '';
+  const head = /^\d/.test(f) ? '(?<!\\d)(?<!\\[[가-힣A-Za-z]{1,12})' : ''; // 앞이 숫자거나 자리표시 안이면 아님 — 글자에 붙은 "사번20231234" 는 가린다
   const tail = /\d$/.test(f) ? '(?![\\d\\]])' : '';
   return new RegExp(head + chars.join('\\s*') + tail, 'gu');
 }
