@@ -138,8 +138,10 @@ test('보안 검토 2: $\'…\' 이스케이프·eval·base64 로 숨긴 경로�
 
 test('보안 검토 2: 아주 넓은 와일드카드도 빨리 판단하고, 파일이 많아도 놓치지 않는다', () => {
   const t0 = Date.now();
-  assert.equal(decide('Bash', { command: 'cat /*/*/*/*/*/*/*/*.txt' }), 'allow');
+  // 보호 폴더에 닿지 않는 넓은 패턴 (/tmp 가 얕은 리눅스에선 /*/*/… 가 테스트 보호 폴더까지 닿아 막는 게 맞다)
+  assert.equal(decide('Bash', { command: 'cat /usr/*/*/*/*/*/*/*/*.txt' }), 'allow');
   assert.ok(Date.now() - t0 < 3000, `느림 ${Date.now() - t0}ms`);
+  assert.equal(decide('Bash', { command: `cat ${root}/*/*/*.txt` }), 'deny'); // 보호 폴더 안 파일까지 닿으면 막는다
   const pad = path.join(docs, 'pad');
   fs.mkdirSync(pad, { recursive: true });
   for (let i = 0; i < 600; i++) fs.writeFileSync(path.join(pad, `회의 ${String(i).padStart(3, '0')}.txt`), '');
