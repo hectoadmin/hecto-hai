@@ -408,6 +408,8 @@ function codeCheck(txt, where, cwds = []) {
     const homeRef = d.key.startsWith(`${fold(HOME)}/`) && [...raw.matchAll(new RegExp(HOME_REF.source, 'gi'))].some((m) => {
       const j = raw.slice(m.index + m[0].length).match(/^\s*\)?\s*(?:\/|,)\s*(['"])([^'"\n]+)\1/);
       if (!j) return true;
+      // 붙인 뒤에 .. 로 다시 올라가면(Path.home() / 'Desktop' / '..') 홈이다
+      if (/(^|[/\\'"])\.\.([/\\'"]|$)/.test(raw.slice(m.index).split('\n')[0])) return true;
       const sub = norm(P.join(HOME, j[2].split(/[/\\]/)[0]));
       return sub === d.key || ancs.includes(sub);
     });
@@ -515,7 +517,8 @@ function psWords(s) {
 }
 
 function psCheck(cmd0, cwd, where = 'PowerShell 명령') {
-  let s = String(cmd0).normalize('NFC');
+  // PowerShell 은 둥근 따옴표(‘ ’ ‚ ‛ · “ ” „)도 따옴표로 읽는다 — 같은 꼴로 맞춰야 띄어쓰기 든 경로가 쪼개지지 않는다
+  let s = String(cmd0).normalize('NFC').replace(/[\u2018\u2019\u201A\u201B]/g, "'").replace(/[\u201C\u201D\u201E]/g, '"');
   if (guarded() && PS_OPAQUE.test(s)) deny(userDirs[0] ?? raws[0], `${where}에 글자를 풀거나 만들어 실행하는 부분(iex·base64·[char]·-EncodedCommand)이 있어 어떤 파일을 여는지 확인할 수 없음. 설치 명령(irm … | iex)이면 사용자가 직접 실행하세요`);
   // 백틱 이스케이프, 문자열 잇기('C:\Users\' + '인사'), 변수($d = '…'), Join-Path·[IO.Path]::Combine 을 풀어서 본다
   s = s.replace(/`(.)/gs, '$1').replace(/(['"])\s*\+\s*(['"])/g, '');

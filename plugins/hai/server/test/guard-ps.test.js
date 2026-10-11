@@ -193,3 +193,18 @@ test('보안 검토: 절대 경로를 끼워 넣거나 .. 로 돌아가도 상�
   assert.equal(decide('Bash', { command: `python3 -c "from pathlib import Path\nfor p in Path('${desk}/..').rglob('*.txt'): print(p.read_text())"` }, desk), 'deny');
   assert.equal(decide('Bash', { command: `python3 -c "import os\nfor r, _, f in os.walk('${docs}/../Desktop'): print(f)"` }, desk), 'allow');
 });
+
+test('보안 검토: 둥근 따옴표 경로, 홈에 폴더를 붙였다가 .. 로 돌아가기', () => {
+  const od = path.join(root, 'OneDrive - Hecto', '문서');
+  const odhr = path.join(od, '인사');
+  fs.mkdirSync(odhr, { recursive: true });
+  assert.equal(decide('PowerShell', { command: `Get-ChildItem ‘${od}’ -Recurse | Select-String 홍길동` }, root, odhr), 'deny');
+  assert.equal(decide('PowerShell', { command: `Get-Content “${path.join(odhr, 'a.txt')}”` }, root, odhr), 'deny');
+  const homeHr = path.join(process.env.HOME ?? process.env.USERPROFILE, 'Documents', '인사');
+  const f = path.join(desk, 'up.py');
+  fs.writeFileSync(f, `from pathlib import Path\nfor p in (Path.home() / 'Desktop' / '..').rglob('*.txt'): print(p.read_text())\n`);
+  assert.equal(decide('Bash', { command: 'python3 up.py' }, desk, homeHr), 'deny');
+  const g = path.join(desk, 'up2.py');
+  fs.writeFileSync(g, `import os\nfor r, _, f in os.walk(os.path.join(os.path.expanduser('~'), 'Desktop/..')): print(f)\n`);
+  assert.equal(decide('Bash', { command: 'python3 up2.py' }, desk, homeHr), 'deny');
+});
