@@ -1,2 +1,4 @@
 node_modules/
 .DS_Store
+docs-site/.next/
+docs-site/out/

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 330" width="760" height="330" role="img" aria-label="원문은 사내 AI 만 읽고, Claude 는 가린 글만 본다" font-family="&#x27;Noto Sans KR&#x27;, &#x27;Apple SD Gothic Neo&#x27;, &#x27;Malgun Gothic&#x27;, sans-serif">
+<title>원문은 사내 AI 만 읽고, Claude 는 가린 글만 본다</title>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B6B6B"/></marker></defs>
+<rect x="30" y="40" width="180" height="70" fill="#FFF0E8" stroke="#FF6114" stroke-width="1.5"/>
+<rect x="30" y="40" width="26" height="26" fill="#101010"/>
+<text x="43" y="53" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="central">1</text>
+<text x="120.0" y="64.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">내 PC 파일</text>
+<text x="120.0" y="85.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">문서·스캔·녹음</text>
+<rect x="290" y="40" width="180" height="70" fill="#FFFFFF" stroke="#101010" stroke-width="1.5"/>
+<rect x="290" y="40" width="26" height="26" fill="#101010"/>
+<text x="303" y="53" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="central">2</text>
+<text x="380.0" y="64.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">사내 AI(HAI)</text>
+<text x="380.0" y="85.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">읽기·받아쓰기·가리기</text>
+<rect x="550" y="40" width="180" height="70" fill="#FFFFFF" stroke="#101010" stroke-width="1.5"/>
+<rect x="550" y="40" width="26" height="26" fill="#101010"/>
+<text x="563" y="53" fill="#FFFFFF" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="central">3</text>
+<text x="640.0" y="64.875" fill="#101010" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">Claude</text>
+<text x="640.0" y="85.125" fill="#101010" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">정리·초안·집계</text>
+<rect x="550" y="220" width="180" height="70" fill="#FF6114" stroke="#FF6114" stroke-width="1.5"/>
+<rect x="550" y="220" width="26" height="26" fill="#000000"/>
+<text x="563" y="233" fill="#FF6114" font-size="13" font-weight="700" text-anchor="middle" dominant-baseline="central">4</text>
+<text x="640.0" y="244.875" fill="#000000" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">실명 결과 파일</text>
+<text x="640.0" y="265.125" fill="#000000" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">내 PC 에만 저장</text>
+<rect x="30" y="220" width="180" height="70" fill="#101010" stroke="#101010" stroke-width="1.5"/>
+<text x="120.0" y="244.875" fill="#FFFFFF" font-size="15" font-weight="700" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">원본 직접 열기</text>
+<text x="120.0" y="265.125" fill="#FFFFFF" font-size="13" font-weight="400" letter-spacing="-0.02em" text-anchor="middle" dominant-baseline="central">보호 훅이 막음</text>
+<path d="M 210,75.0 L 290,75.0" fill="none" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#head)"/>
+<rect x="228.0" y="63.0" width="44" height="24" fill="#FFFFFF" stroke="#E4E4E4" stroke-width="1"/>
+<text x="250.0" y="75.0" fill="#6B6B6B" font-size="13" text-anchor="middle" dominant-baseline="central">원문</text>
+<path d="M 470,75.0 L 550,75.0" fill="none" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#head)"/>
+<rect x="477.73" y="63.0" width="64.53999999999999" height="24" fill="#FFFFFF" stroke="#E4E4E4" stroke-width="1"/>
+<text x="510.0" y="75.0" fill="#6B6B6B" font-size="13" text-anchor="middle" dominant-baseline="central">가린 글</text>
+<path d="M 640.0,110 L 640.0,220" fill="none" stroke="#6B6B6B" stroke-width="1.5" marker-end="url(#head)"/>
+<rect x="566.65" y="153.0" width="146.7" height="24" fill="#FFFFFF" stroke="#E4E4E4" stroke-width="1"/>
+<text x="640.0" y="165.0" fill="#6B6B6B" font-size="13" text-anchor="middle" dominant-baseline="central">실명은 내 PC 에서만</text>
+<path d="M 120.0,220 L 120.0,110" fill="none" stroke="#6B6B6B" stroke-width="1.5" stroke-dasharray="7 6" marker-end="url(#head)"/>
+<rect x="44.57000000000001" y="153.0" width="150.85999999999999" height="24" fill="#FFFFFF" stroke="#E4E4E4" stroke-width="1"/>
+<text x="120.0" y="165.0" fill="#6B6B6B" font-size="13" text-anchor="middle" dominant-baseline="central">Claude 가 직접 열면</text>
+</svg>
