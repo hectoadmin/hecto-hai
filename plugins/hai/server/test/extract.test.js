@@ -4,23 +4,17 @@ import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import JSZip from 'jszip';
-import ExcelJS from 'exceljs';
-import { readText, decode } from '../src/extract.js';
+import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import { readText, decode, toWav } from '../src/extract.js';
 import { excelDate } from '../src/office.js';
 
 const tmp = await fs.mkdtemp(path.join(os.tmpdir(), 'hai-test-'));
 const put = async (name, data) => { const p = path.join(tmp, name); await fs.writeFile(p, data); return p; };
 
 test('엑셀: 시트·문자·숫자·날짜·빈칸 위치를 살린다, 숨긴 시트는 뺀다', async () => {
-  const wb = new ExcelJS.Workbook();
-  const ws = wb.addWorksheet('배차');
-  ws.addRow(['번호', '신청자', '연락처', '사용일', '금액']);
-  ws.addRow([1, '홍길동', '010-1234-5678', new Date(Date.UTC(2026, 9, 11)), 120000]);
-  ws.getCell('D2').numFmt = 'yyyy-mm-dd';
-  ws.getCell('B3').value = '빈칸 뒤';
-  ws.getCell('E3').value = { richText: [{ text: '굵게' }, { text: '&<특수>' }] };
-  const hidden = wb.addWorksheet('숨김'); hidden.state = 'hidden'; hidden.addRow(['보이면 안 됨']);
-  const p = await put('a.xlsx', Buffer.from(await wb.xlsx.writeBuffer()));
+  // fixtures/sheet.xlsx: 배차 시트(머리글, 홍길동 줄 — 날짜 서식 칸, B3·E3 만 채운 줄 — E3 는 서식 섞인 글자) + 숨긴 시트 '숨김'
+  const p = fileURLToPath(new URL('./fixtures/sheet.xlsx', import.meta.url));
   const { text } = await readText(p);
   assert.match(text, /## 시트: 배차/);
   assert.match(text, /1\t홍길동\t010-1234-5678\t2026-10-11\t120000/);
@@ -77,4 +71,20 @@ test('검토 2차: UTF-16 텍스트(엑셀 "유니코드 텍스트")', async () 
   const { text, table } = await readText(await put('u16.txt', le));
   assert.equal(text, '이름\t연락처\n홍길동\t010-2345-6789');
   assert.equal(table, undefined);
+});
+
+// macOS·Windows 는 기본 내장 도구로, 그 밖은 ffmpeg 가 있을 때만
+const canConvert = process.platform === 'darwin' || process.platform === 'win32' || (() => { try { execFileSync('ffmpeg', ['-version'], { stdio: 'ignore' }); return true; } catch { return false; } })();
+test('음성 변환: m4a → 16kHz 모노 wav (macOS afconvert · Windows 기본 미디어 엔진 · ffmpeg)', { skip: !canConvert && 'ffmpeg 없음' }, async () => {
+  const out = await toWav(fileURLToPath(new URL('./fixtures/hello.m4a', import.meta.url)));
+  try {
+    const b = await fs.readFile(out);
+    assert.equal(b.toString('latin1', 0, 4), 'RIFF');
+    let i = 12, fmt = null;
+    while (i + 8 <= b.length && !fmt) { const id = b.toString('latin1', i, i + 4); const n = b.readUInt32LE(i + 4); if (id === 'fmt ') fmt = i + 8; i += 8 + n + (n % 2); }
+    assert.ok(fmt, 'fmt 조각 없음');
+    assert.equal(b.readUInt16LE(fmt + 2), 1, '모노');
+    assert.equal(b.readUInt32LE(fmt + 4), 16000, '16kHz');
+    assert.ok(b.length > 20000, `너무 짧음 ${b.length}`);
+  } finally { await fs.rm(out, { force: true }); }
 });

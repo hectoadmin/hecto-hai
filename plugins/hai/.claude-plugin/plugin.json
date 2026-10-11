@@ -1,6 +1,6 @@
 {
   "name": "hai",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "사내 AI(HAI) 전체를 Claude 에 연결 — 문서·스캔·녹음을 사내 AI 가 먼저 읽고 개인정보를 가려서 넘긴다. 회의록·OCR·문서 검색. /hai:guide 로 시작",
   "author": {
     "name": "헥토 총무팀"
@@ -16,23 +16,23 @@
     "hai_api_key": {
       "type": "string",
       "title": "HAI API 키",
-      "description": "HAI 포털(https://hai-gateway.idc.hectoai.co.kr/)에 헥토 이메일로 가입 → API 키 관리에서 발급한 개인 키(hai-로 시작). PC 의 보안 저장소(키체인)에만 저장됩니다.",
+      "description": "HAI 포털(https://hai-gateway.idc.hectoai.co.kr/)에 헥토 이메일로 가입 → API 키 관리에서 발급한 개인 키(hai-로 시작). 비밀 값으로 따로 저장됩니다(macOS 키체인 · Windows 는 Claude Code 자격 증명 저장소).",
       "sensitive": true,
       "required": true
     },
     "protected_dirs": {
       "type": "string",
       "title": "보호 폴더 (선택)",
-      "description": "Claude 가 원본을 직접 읽지 못하게 막을 폴더. 쉼표로 여러 개. 예: ~/Documents/인사, ~/Documents/계약. 이 폴더의 파일은 HAI 도구로만 읽힙니다.",
+      "description": "Claude 가 원본을 직접 읽지 못하게 막을 폴더. 쉼표로 여러 개. 예: ~/Documents/인사, ~/Documents/계약 (Windows 는 C:\\Users\\이름\\Documents\\인사 처럼 적어도 됩니다). 이 폴더의 파일은 HAI 도구로만 읽힙니다.",
       "required": false,
       "default": ""
     },
     "raw_dir": {
       "type": "string",
       "title": "원문 결과 폴더 (선택)",
-      "description": "받아쓰기·OCR·실명 복원 결과(가리지 않은 원문)를 모아 두는 폴더. Claude 가 이 폴더를 직접 열지 못하게 막습니다. 기본 ~/Documents/HAI 원문",
+      "description": "받아쓰기·OCR·실명 복원 결과(가리지 않은 원문)를 모아 두는 폴더. Claude 가 이 폴더를 직접 열지 못하게 막습니다. 비우면 내 문서 폴더 안의 'HAI 원문'(Windows 에서 문서가 OneDrive 에 있으면 그곳).",
       "required": false,
-      "default": "~/Documents/HAI 원문"
+      "default": ""
     },
     "keep_domains": {
       "type": "string",

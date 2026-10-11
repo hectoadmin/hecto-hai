@@ -13,7 +13,7 @@
  * 가리기 전 원래 값은 이 프로세스 메모리(Vault)에만 있다. 원문 파일(받아쓰기·OCR·되돌린 결과)은 장부에 올라 훅이 Claude 의 직접 열람을 막는다.
  */
 import fs from 'node:fs/promises';
-import { readFileSync } from 'node:fs';
+import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -28,7 +28,7 @@ import { writeRaw, writeMasked } from './ledger.js';
 import { search } from './search.js';
 import { maskTable } from './table.js';
 
-export const VERSION = '0.2.0';
+export const VERSION = '0.3.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -334,12 +334,15 @@ function sandboxLine() {
   try { st = JSON.parse(readFileSync(path.join(os.homedir(), '.claude', 'settings.json'), 'utf8')); } catch { /* 없음 */ }
   const sb = st.sandbox ?? {};
   const deny = (sb.filesystem?.denyRead ?? []).map((d) => path.resolve(String(d).replace(/^~(?=\/|$)/, os.homedir())));
-  const want = [...config.protectedDirs.map((d) => path.resolve(d.replace(/^~(?=\/|$)/, os.homedir()))), config.rawDir];
+  const want = [...config.protectedDirs, config.rawDir];
   const covered = want.filter((w) => deny.some((d) => w === d || w.startsWith(d + path.sep)));
-  if (os.platform() === 'win32') return '샌드박스: Windows 에서는 지원되지 않습니다(가드 훅만 동작)';
+  if (os.platform() === 'win32') return '보호: Windows 는 샌드박스가 없어 가드 훅(명령 글자 검사)만 동작합니다 — /hai:protect 로 기본 도구 차단 규칙을 더하고, 민감한 폴더에서 Claude 를 시작하지 마세요';
   if (!sb.enabled) return '샌드박스: 꺼짐 — /hai:protect 로 켜면 보호 폴더를 운영체제 수준에서 막습니다(권장)';
   return covered.length === want.length ? `샌드박스: 켜짐 · 보호 폴더·원문 결과 폴더 읽기 차단됨(${covered.length}곳)`
     : `샌드박스: 켜짐 · 읽기 차단에 빠진 곳 ${want.length - covered.length}곳 — /hai:protect 로 추가하세요`;
 }
+
+// 원문 결과 폴더·실제 문서 폴더가 어디인지 훅에 알린다(훅은 이 서버의 설정을 못 받는다 — Windows 문서 폴더가 OneDrive 일 때 등)
+try { mkdirSync(config.dataDir, { recursive: true, mode: 0o700 }); writeFileSync(path.join(config.dataDir, 'raw-dir'), config.rawDir); writeFileSync(path.join(config.dataDir, 'docs-dir'), config.docsDir); } catch { /* 훅은 기본값으로 */ }
 
 await server.connect(new StdioServerTransport());

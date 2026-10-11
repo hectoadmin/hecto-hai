@@ -22,7 +22,13 @@
 
 ## 설치
 
-필요한 것: Claude Code, Node.js 20 이상, **개인 HAI 키**, 사내망.
+필요한 것: Claude Code(2.1.295 이상), Node.js 20 이상, **개인 HAI 키**, 사내망. Windows(WSL 없이)·macOS 모두 됩니다.
+
+**Windows 라면 먼저** — PowerShell 에서 Node.js 를 설치하고 Claude Code 를 다시 시작합니다. Git Bash 는 없어도 됩니다(Claude 가 PowerShell 을 씁니다).
+```
+winget install OpenJS.NodeJS.LTS
+```
+Node.js 가 없으면 보호 훅이 돌지 못해 **파일 읽기·명령이 모두 막힙니다**(원본이 새지 않게 일부러 막는 것). 설치하면 풀립니다.
 
 1. **키 받기** — HAI 포털 https://hai-gateway.idc.hectoai.co.kr/ 에 헥토 이메일로 가입 → 로그인 → 오른쪽 위 "API 키 관리" → 새 키(hai- 로 시작).
 2. **설치** — Claude Code 에서
@@ -34,14 +40,16 @@
 
 | 설정 | 설명 |
 |---|---|
-| HAI API 키 (필수) | 1에서 받은 키. PC 의 보안 저장소(키체인)에만 저장됩니다 |
-| 보호 폴더 (선택) | 예: `~/Documents/인사, ~/Documents/계약`. 이 폴더 파일은 Claude 가 직접 열지 못하고 HAI 도구로만 읽힙니다 |
-| 원문 결과 폴더 (선택) | 받아쓰기·OCR 결과(가리지 않은 원문)를 모으는 곳. 기본 `~/Documents/HAI 원문`. 이 폴더도 Claude 가 열지 못합니다 |
+| HAI API 키 (필수) | 1에서 받은 키. 비밀 값으로 따로 저장됩니다(macOS 키체인 · Windows 는 Claude Code 자격 증명 저장소) |
+| 보호 폴더 (선택) | 예: `~/Documents/인사, ~/Documents/계약`. Windows 는 탐색기 주소 그대로(`C:\Users\이름\Documents\인사`) 적어도 됩니다. 이 폴더 파일은 Claude 가 직접 열지 못하고 HAI 도구로만 읽힙니다 |
+| 원문 결과 폴더 (선택) | 받아쓰기·OCR 결과(가리지 않은 원문)를 모으는 곳. 비우면 내 문서 폴더의 `HAI 원문`(Windows 에서 문서가 OneDrive 에 있으면 그곳). 이 폴더도 Claude 가 열지 못합니다 |
 | 가리지 않을 이메일 도메인 (선택) | 예: `hecto.co.kr`. 비우면 이메일을 전부 가립니다 |
 
 나중에 바꾸려면 `/plugin` → hai → 설정. 업데이트는 `/plugin marketplace update hecto`.
 
-4. **(권장) 운영체제 수준으로 막기** — `/hai:protect`. Claude Code 샌드박스의 읽기 차단(`sandbox.filesystem.denyRead`)에 보호 폴더·원문 결과 폴더를 넣습니다(사용자 동의 후 `~/.claude/settings.json` 수정). 그러면 명령을 어떻게 쓰든 Bash 가 그 폴더를 읽지 못합니다. macOS·Linux·WSL2 지원, Windows 는 미지원(가드 훅만 동작).
+4. **(권장) 더 확실하게 막기** — `/hai:protect`. 사용자 동의 후 `~/.claude/settings.json` 을 고칩니다.
+   - **macOS·Linux**: Claude Code 샌드박스의 읽기 차단(`sandbox.filesystem.denyRead`)에 보호 폴더·원문 결과 폴더를 넣습니다. 명령을 어떻게 쓰든 그 폴더를 읽지 못합니다.
+   - **Windows**: 샌드박스가 없습니다. 기본 도구 차단 규칙(`permissions.deny` 의 Read·Edit)을 더하고, 명령(PowerShell·Git Bash)은 보호 훅이 막습니다. Claude 가 명령을 실행하겠다고 물을 때 **"항상 허용"을 누르지 말고** 한 번씩 확인하세요. 인사·계약 폴더 **안에서** Claude Code 를 시작하지 마세요.
 
 ## 무엇을, 어떻게 가리나
 
@@ -57,8 +65,8 @@
 
 - 자동 가림이라 **놓칠 수 있습니다.** 중요한 문서는 결과를 한 번 훑어보세요.
 - 사내 AI 는 긴 글의 **개수 세기·합계에 약합니다.** 집계는 "가려서 읽고 Claude 가 세 줘"로.
-- 읽는 형식: 문서 txt·md·csv(UTF-8·UTF-16·EUC-KR)·json·html·pdf(스캔 쪽은 OCR)·docx·xlsx·hwpx / 사진 png·jpg·tif·webp / 녹음 wav·mp3·ogg·flac·m4a 등(60분, m4a 는 macOS 내장 변환이나 ffmpeg). **옛 hwp·xls·doc 는 새 형식이나 PDF 로 저장**해서 씁니다.
-- 보호 폴더 차단은 두 겹입니다. ① 가드 훅(항상 켜짐): **실수로 원본을 여는 것을 막는 안전망**입니다. Read·Grep·Glob 은 경로로 확실히 막고, Bash 는 명령을 셸처럼 풀어(따옴표·이스케이프·와일드카드·변수·명령 치환) 판단하며 판단할 수 없는 형태(인코딩한 글자·eval·base64 풀기)는 막습니다. 다만 파이썬 등으로 폴더 전체를 훑는 코드까지 글자만 보고 막을 수는 없습니다. ② 샌드박스(`/hai:protect`로 켬): 운영체제가 읽기 자체를 막으므로 이 한계가 없습니다. 원본이 Claude 에 갈 일 자체가 없게 하는 중심은 HAI 도구(원문은 사내 AI 만 읽음)이고, 두 겹은 그 위의 장치입니다.
+- 읽는 형식: 문서 txt·md·csv(UTF-8·UTF-16·EUC-KR)·json·html·pdf(스캔 쪽은 OCR)·docx·xlsx·hwpx / 사진 png·jpg·tif·webp / 녹음 wav·mp3·ogg·flac·m4a·mp4 등(60분. m4a·mp4 는 macOS·Windows 내장 기능으로 변환, 그 밖은 ffmpeg). **옛 hwp·xls·doc 는 새 형식이나 PDF 로 저장**해서 씁니다.
+- 보호 폴더 차단은 두 겹입니다. ① 가드 훅(항상 켜짐): **실수로 원본을 여는 것을 막는 안전망**입니다. Read·Grep·Glob 은 경로로 확실히 막고, Bash 는 명령을 셸처럼 풀어(따옴표·이스케이프·와일드카드·변수·명령 치환), PowerShell 은 변수·문자열 잇기·Join-Path 를 풀어 판단하고, 실행하는 스크립트 파일(python a.py · .\a.ps1)의 내용도 봅니다. 판단할 수 없는 형태(인코딩한 글자·eval·iex·base64 풀기)는 막습니다. 다만 경로를 실행 중에 만들어 내는 코드까지 글자만 보고 막을 수는 없습니다. ② 샌드박스(`/hai:protect`로 켬, macOS·Linux): 운영체제가 읽기 자체를 막으므로 이 한계가 없습니다. **Windows 는 샌드박스가 없어 ①과 기본 도구 차단 규칙까지**이므로, 명령 실행을 한 번씩 확인하는 습관이 세 번째 장치입니다. 원본이 Claude 에 갈 일 자체가 없게 하는 중심은 HAI 도구(원문은 사내 AI 만 읽음)이고, 두 겹은 그 위의 장치입니다.
 - 실명 되돌리기는 같은 세션(12시간) 안에서만 됩니다.
 
 ## 구성 (개발자용)

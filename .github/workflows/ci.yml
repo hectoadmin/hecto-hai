@@ -5,7 +5,12 @@ on:
     branches: [main]
 jobs:
   test:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 사내 사용자 대부분이 Windows(WSL 없음) — 가드·음성 변환을 실제 Windows 에서 확인한다
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         working-directory: plugins/hai/server
@@ -18,9 +23,11 @@ jobs:
           cache-dependency-path: plugins/hai/server/package-lock.json
       - run: npm ci
       - run: npm test
-      - run: npm run build
-      # 플러그인은 npm install 을 안 하므로 묶은 dist/ 가 소스와 같아야 한다 — 소스만 고치고 빌드를 빠뜨리면 여기서 걸린다(새로 생긴 파일도)
-      - name: dist 최신 확인
+      # 묶기는 한 곳(리눅스)에서만 — 플러그인은 npm install 을 안 하므로 묶은 dist/ 가 소스와 같아야 한다(새로 생긴 파일도)
+      - if: matrix.os == 'ubuntu-latest'
+        run: npm run build
+      - if: matrix.os == 'ubuntu-latest'
+        name: dist 최신 확인
         run: |
           if [ -n "$(git status --porcelain -- ../dist)" ]; then
             git status --short -- ../dist | head -20

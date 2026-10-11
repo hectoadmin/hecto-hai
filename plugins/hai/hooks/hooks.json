@@ -2,8 +2,8 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Read|Grep|Glob|Bash|Edit|MultiEdit|Write|NotebookEdit",
-        "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard.mjs\"", "timeout": 10 }]
+        "matcher": "Read|Grep|Glob|Bash|PowerShell|Edit|MultiEdit|Write|NotebookEdit",
+        "hooks": [{ "type": "command", "command": "node \"${CLAUDE_PLUGIN_ROOT}/hooks/guard.mjs\"", "timeout": 15, "onFailure": "block" }]
       }
     ]
   }
