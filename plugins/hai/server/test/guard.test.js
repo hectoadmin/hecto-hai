@@ -1,4 +1,6 @@
-import { test } from 'node:test';
+import { test as baseTest } from 'node:test';
+// 이 파일은 bash 문법·POSIX 경로를 그대로 쓴다 — Windows 는 guard-win.test.js(경로 꼴)·guard-ps.test.js(PowerShell)가 맡는다
+const test = process.platform === 'win32' ? baseTest.skip : baseTest;
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';

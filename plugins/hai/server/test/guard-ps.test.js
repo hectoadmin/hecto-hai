@@ -88,3 +88,64 @@ test('PowerShell: 작업 폴더가 보호 폴더 안이면 막는다', () => {
   assert.equal(ps('Get-ChildItem', hr), 'deny');
   assert.equal(ps('Get-ChildItem', root), 'allow');
 });
+
+test('검토: 띄어쓰기 든 경로(OneDrive - Hecto)도 PowerShell 에서 막는다', () => {
+  const od = path.join(root, 'OneDrive - Hecto', '문서');
+  const odhr = path.join(od, '인사');
+  fs.mkdirSync(odhr, { recursive: true });
+  fs.writeFileSync(path.join(odhr, 'a.txt'), 'x');
+  fs.mkdirSync(path.join(od, '인사 자료'), { recursive: true });
+  const d = (command, cwd = root) => decide('PowerShell', { command }, cwd, odhr);
+  for (const c of [
+    `Get-ChildItem '${od}' -Recurse | Select-String '홍길동'`,
+    `Get-ChildItem -Path "${od}" -Recurse -File | Get-Content`,
+    `Get-Content '${path.join(od, '인?', 'a.txt')}'`,
+    `Copy-Item '${od}' 'backup' -Recurse`,
+    `Get-Content '${path.join(odhr, 'a.txt')}'`,
+  ]) assert.equal(d(c), 'deny', c);
+  assert.equal(d(`Get-ChildItem '${od}'`), 'allow');
+  assert.equal(d(`Get-Content '${path.join(od, '인사 자료', 'b.txt')}'`), 'allow'); // 이름이 비슷한 다른 폴더
+});
+
+test('검토: 이름만 보는 명령 목록 밖은 내용을 읽는 것으로 — COM·Rename·목록을 받아 읽기', () => {
+  for (const c of [
+    `$w = New-Object -ComObject Word.Application; $w.Documents.Open('${raw}').Content.Text`,
+    `Rename-Item '${raw}' x.txt`,
+    `(Get-Item '${raw}').CopyTo('${path.join(desk, 'c.txt')}')`,
+    `ipcsv '${raw}'`,
+    `Get-ChildItem '${docs}' -File | ForEach-Object { Get-Content $_.FullName }`,
+  ]) assert.equal(ps(c), 'deny', c);
+  assert.equal(ps('Get-ChildItem -File | Get-Content', docs), 'deny');
+});
+
+test('검토: 상위 폴더를 하위까지 훑는 스크립트·인라인 코드는 막는다', () => {
+  const walk = path.join(desk, 'walk.py');
+  fs.writeFileSync(walk, `from pathlib import Path\nfor p in (Path.home() / 'Documents').rglob('*.txt'):\n    print(p.read_text())\n`);
+  const walk2 = path.join(desk, 'walk2.py');
+  fs.writeFileSync(walk2, `import glob\nfor f in glob.glob(r'${docs}/**/*.txt', recursive=True):\n    print(open(f).read())\n`);
+  const deskOnly = path.join(desk, 'desk.py');
+  fs.writeFileSync(deskOnly, `from pathlib import Path\nfor p in (Path.home() / 'Desktop').rglob('*.txt'):\n    print(p)\n`);
+  assert.equal(decide('Bash', { command: 'python3 walk2.py' }, desk), 'deny');
+  assert.equal(decide('Bash', { command: 'python3 -m walk2' }, desk), 'deny');
+  assert.equal(decide('Bash', { command: `python3 -c "import os\nfor r, d, f in os.walk('${docs}'): print(f)"` }), 'deny');
+  assert.equal(ps('python .\\walk2.py', desk), 'deny');
+  assert.equal(decide('Bash', { command: 'python3 -c "import os; [print(r) for r,_,_ in os.walk(\'.\')]"' }, docs), 'deny'); // 작업 폴더가 상위
+  assert.equal(decide('Bash', { command: 'python3 walk.py' }, desk), 'deny'); // 보호 폴더의 상위 이름('Documents')을 훑는다
+  assert.equal(decide('Bash', { command: 'python3 desk.py' }, desk), 'allow');
+});
+
+test('검토: 흔한 낱말·옵션은 막지 않는다 — 따옴표 안 "인사", -Depth, -e, GetString', () => {
+  const rep = path.join(desk, 'report.py');
+  fs.writeFileSync(rep, `import pandas as pd\ndf = pd.read_csv('staff.csv')\nprint(df[df['부서'] == '인사'])\n`);
+  for (const [tool, c, cwd] of [
+    ['PowerShell', "Get-Content memo.txt | Select-String '인사'", desk],
+    ['PowerShell', "git commit -m '인사'", desk],
+    ['PowerShell', 'Get-Process | Select-Object -First 3 | ConvertTo-Json -Depth 3', root],
+    ['PowerShell', 'git log -r', root],
+    ['PowerShell', 'docker run -e DATABASE_URL=postgres://x app', root],
+    ['PowerShell', '[Text.Encoding]::UTF8.GetString($r.RawContentStream.ToArray())', root],
+    ['Bash', 'python3 report.py', desk],
+    ['Bash', `node -e "console.log('인사')"`, desk],
+    ['Bash', 'git add .', desk],
+  ]) assert.equal(decide(tool, { command: c }, cwd), 'allow', c);
+});

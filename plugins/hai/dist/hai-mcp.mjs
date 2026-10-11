@@ -102524,7 +102524,9 @@ function documentsDir() {
   }
   return path.join(os.homedir(), "Documents");
 }
+var DOCS = documentsDir();
 var config2 = {
+  docsDir: DOCS,
   baseUrl: env("HAI_BASE_URL", "https://hai-gateway.idc.hectoai.co.kr").replace(/\/+$/, ""),
   timeoutMs: Number(env("HAI_TIMEOUT_MS", "120000")),
   keepDomains: list(env("HAI_KEEP_DOMAINS", "")).map((d2) => d2.toLowerCase()),
@@ -102532,7 +102534,7 @@ var config2 = {
   protectedDirs: list(env("HAI_PROTECTED_DIRS", "")).map(resolveUserPath),
   rawDir: (() => {
     const d2 = env("HAI_RAW_DIR", "");
-    return d2 ? resolveUserPath(d2) : path.join(documentsDir(), "HAI \uC6D0\uBB38");
+    return d2 ? resolveUserPath(d2) : path.join(DOCS, "HAI \uC6D0\uBB38");
   })(),
   // 이 플러그인이 만든 원문 파일 목록·검색 색인을 두는 곳. 훅(guard.mjs)도 같은 경로를 읽는다
   dataDir: env("HAI_DATA_DIR", path.join(os.homedir(), ".hai-mcp")),
@@ -103860,6 +103862,7 @@ function sandboxLine() {
 try {
   mkdirSync(config2.dataDir, { recursive: true, mode: 448 });
   writeFileSync(path6.join(config2.dataDir, "raw-dir"), config2.rawDir);
+  writeFileSync(path6.join(config2.dataDir, "docs-dir"), config2.docsDir);
 } catch {
 }
 await server.connect(new StdioServerTransport());

@@ -1,6 +1,8 @@
 // Windows 경로 꼴 — C:\x · C:/x · /c/x(Git Bash) · %LOCALAPPDATA% · $env:LOCALAPPDATA · 대소문자. Windows 에서만 돈다(CI windows-latest)
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { fixture } from './guard-fixture.js';
 
@@ -54,4 +56,22 @@ test('Windows: 보호 폴더 설정을 ~ · %USERPROFILE% 꼴로 적어도 된�
   for (const setting of [`~${rel.replace(/\\/g, '/')}`, `%USERPROFILE%${rel}`]) {
     assert.equal(decide('Read', { file_path: path.join(hr, 'a.txt') }, root, setting), 'deny', setting);
   }
+});
+
+test('Windows: 짧은 이름(RUNNER~1)·없는 파일·NFD 로 적어도 막는다', { skip: !WIN }, () => {
+  const tmp = os.tmpdir();
+  const long = fs.realpathSync.native(tmp);
+  const short = (p) => p.replace(long, tmp);
+  assert.equal(decide('Read', { file_path: short(path.join(hr, 'a.txt')) }), 'deny');
+  assert.equal(decide('Read', { file_path: short(path.join(hr, '없는 파일.txt')) }), 'deny');
+  assert.equal(decide('Read', { file_path: path.join(hr, 'a.txt').normalize('NFD') }), 'deny');
+  assert.equal(decide('Read', { file_path: short(raw) }), 'deny');
+  assert.equal(decide('PowerShell', { command: `Get-Content '${short(path.join(hr, 'a.txt'))}'` }), 'deny');
+});
+
+test('Windows: \\localhost\c$ · FileSystem:: 꼴도 막는다', { skip: !WIN }, () => {
+  const f = path.join(hr, 'a.txt');
+  assert.equal(decide('PowerShell', { command: `Get-Content '${f.replace(/^([A-Za-z]):/, (_, d) => `\\\\localhost\\${d}$`)}'` }), 'deny');
+  assert.equal(decide('PowerShell', { command: `Get-Content 'FileSystem::${f}'` }), 'deny');
+  assert.equal(decide('PowerShell', { command: `Get-Content -LiteralPath '${f}'` }), 'deny');
 });

@@ -342,7 +342,7 @@ function sandboxLine() {
     : `샌드박스: 켜짐 · 읽기 차단에 빠진 곳 ${want.length - covered.length}곳 — /hai:protect 로 추가하세요`;
 }
 
-// 원문 결과 폴더가 어디인지 훅에 알린다(훅은 이 서버의 설정을 못 받는다 — Windows 문서 폴더가 OneDrive 일 때 등)
-try { mkdirSync(config.dataDir, { recursive: true, mode: 0o700 }); writeFileSync(path.join(config.dataDir, 'raw-dir'), config.rawDir); } catch { /* 훅은 기본값으로 */ }
+// 원문 결과 폴더·실제 문서 폴더가 어디인지 훅에 알린다(훅은 이 서버의 설정을 못 받는다 — Windows 문서 폴더가 OneDrive 일 때 등)
+try { mkdirSync(config.dataDir, { recursive: true, mode: 0o700 }); writeFileSync(path.join(config.dataDir, 'raw-dir'), config.rawDir); writeFileSync(path.join(config.dataDir, 'docs-dir'), config.docsDir); } catch { /* 훅은 기본값으로 */ }
 
 await server.connect(new StdioServerTransport());
