@@ -2,3 +2,11 @@ node_modules/
 .DS_Store
 docs-site/.next/
 docs-site/out/
+.idea/
+.vscode/
+*.log
+.env
+.env.*
+!.env.example
+docs-site/next-env.d.ts
+docs-site/*.tsbuildinfo
