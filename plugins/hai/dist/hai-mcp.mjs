@@ -102584,7 +102584,7 @@ function key() {
 }
 var url2 = (service, p2) => `${config2.baseUrl}/services/${service}${p2}`;
 async function call(service, p2, { method = "POST", body, timeoutMs = config2.timeoutMs, retries = 2 } = {}) {
-  const headers = { Authorization: `Bearer ${key()}` };
+  const headers = { Authorization: `Bearer ${key()}`, "X-HAI-Store-Payload": "false" };
   let payload;
   if (body instanceof FormData) payload = body;
   else if (body !== void 0) {
@@ -103480,7 +103480,7 @@ function maskTable(text, vault, format) {
 }
 
 // src/index.js
-var VERSION2 = "0.3.0";
+var VERSION2 = "0.3.1";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;

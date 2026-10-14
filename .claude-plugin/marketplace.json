@@ -11,7 +11,7 @@
       "name": "hai",
       "source": "./plugins/hai",
       "description": "사내 AI(HAI) 전체를 Claude 에 — 문서·스캔·녹음을 사내 AI 가 먼저 읽고 개인정보를 가려서 넘긴다. 회의록·OCR·문서 검색",
-      "version": "0.3.0"
+      "version": "0.3.1"
     }
   ]
 }

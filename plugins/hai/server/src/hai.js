@@ -7,6 +7,7 @@
  *
  * 오류 메시지에 요청·응답 본문을 싣지 않는다 — 게이트웨이(FastAPI)의 422 는 요청값(원문)을 detail 에 되돌려 주고,
  * Qwen 의 잘린 응답에는 문서에서 뽑은 실명이 들어 있다. 이 메시지는 그대로 Claude 에 간다.
+ * 모든 호출에 X-HAI-Store-Payload: false 를 붙인다 — 보내는 원문·받은 결과를 HAI 쪽 DB 에 남기지 않게.
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -26,7 +27,7 @@ const url = (service, p) => `${config.baseUrl}/services/${service}${p}`;
 
 /** fetch + 원인 구분. body 는 JSON 객체 또는 FormData → 파싱된 JSON */
 async function call(service, p, { method = 'POST', body, timeoutMs = config.timeoutMs, retries = 2 } = {}) {
-  const headers = { Authorization: `Bearer ${key()}` };
+  const headers = { Authorization: `Bearer ${key()}`, 'X-HAI-Store-Payload': 'false' };
   let payload;
   if (body instanceof FormData) payload = body;
   else if (body !== undefined) { headers['Content-Type'] = 'application/json'; payload = JSON.stringify(body); }

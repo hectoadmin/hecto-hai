@@ -28,7 +28,7 @@ import { writeRaw, writeMasked } from './ledger.js';
 import { search } from './search.js';
 import { maskTable } from './table.js';
 
-export const VERSION = '0.3.0';
+export const VERSION = '0.3.1';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
