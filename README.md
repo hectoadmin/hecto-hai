@@ -34,11 +34,12 @@ winget install OpenJS.NodeJS.LTS
 Node.js 가 없으면 보호 훅이 돌지 못해 **파일 읽기·명령이 모두 막힙니다**(원본이 새지 않게 일부러 막는 것). 설치하면 풀립니다.
 
 1. **키 받기** — HAI 포털 https://hai-gateway.idc.hectoai.co.kr/ 에 헥토 이메일로 가입 → 로그인 → 오른쪽 위 "API 키 관리" → 새 키(hai- 로 시작).
-2. **설치** — Claude Code 에서
+2. **설치** — Claude Code 에 한 줄 붙여넣기(설치·자동 업데이트 설정을 Claude 가 대신 함)
    ```
-   /plugin marketplace add hectoadmin/hecto-hai
-   /plugin install hai@hecto
+   https://agent.hecto.co.kr/plugin 에 적힌 대로 헥토 플러그인을 설치해줘
    ```
+   직접 하려면 `/plugin marketplace add https://agent.hecto.co.kr/plugin/marketplace.json` → `/plugin install hai@hectoadmin`.
+   새 판은 `bash scripts/pack-plugins.sh`(hecto-agent 저장소)로 agent 서버에 올린다. 이 저장소의 `.claude-plugin/marketplace.json` 은 개발·CI 용.
 3. 설정을 묻습니다.
 
 | 설정 | 설명 |
@@ -75,7 +76,7 @@ Node.js 가 없으면 보호 훅이 돌지 못해 **파일 읽기·명령이 모
 ## 구성 (개발자용)
 
 ```
-.claude-plugin/marketplace.json   마켓플레이스 "hecto"
+.claude-plugin/marketplace.json   마켓플레이스 "hectoadmin"(개발·CI 용 — 배포는 agent 서버)
 plugins/hai/
   .claude-plugin/plugin.json      사용자 설정(키·보호 폴더·도메인)
   .mcp.json                       MCP 서버 등록 → dist/hai-mcp.mjs
