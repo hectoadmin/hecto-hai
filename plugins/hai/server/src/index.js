@@ -10,6 +10,7 @@
  *   hai_search     폴더 문서에서 뜻으로 찾기 (kure-embedding)
  *   hai_chat       Qwen·Gemma 에 바로 묻기(이미지 포함, 추론 모드)
  *   hai_status     키·서비스 연결 점검
+ *   hai_timetable_fill  EVS 타임테이블 양식 엑셀에 업무·법인별 시간 채우기 (HAI 를 부르지 않는다)
  * 가리기 전 원래 값은 이 프로세스 메모리(Vault)에만 있다. 원문 파일(받아쓰기·OCR·되돌린 결과)은 장부에 올라 훅이 Claude 의 직접 열람을 막는다.
  */
 import fs from 'node:fs/promises';
@@ -27,8 +28,9 @@ import { readText, resolvePath, kindOf, SUPPORTED } from './extract.js';
 import { writeRaw, writeMasked } from './ledger.js';
 import { search } from './search.js';
 import { maskTable } from './table.js';
+import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.3.2';
+export const VERSION = '0.4.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -306,6 +308,41 @@ server.registerTool('hai_chat', {
   if (!files.length) return ok(`${r.content}\n\n(모델: ${r.model})`);
   const vault = vaultOf(mask_id);
   return ok(`mask_id: ${vault.id}\n${await maskAll(r.content, vault)}\n\n(모델: ${r.model} · 가린 것: ${counts(vault, mask_id)})`);
+}));
+
+server.registerTool('hai_timetable_fill', {
+  title: 'EVS 타임테이블 양식 채우기',
+  description: [
+    'EVS 타임테이블 등록 → 신규 → 년월 → 양식다운로드 로 받은 엑셀(근무일 줄이 들어 있음)에 날짜별 업무와 법인별 시간을 넣어 새 파일로 저장한다.',
+    '저장한 파일은 사용자가 EVS 의 Excel 업로드로 올리고, 화면에서 확인한 뒤 저장·확정을 직접 누른다. 하루에 업무가 여럿이면 rows 에 같은 날짜를 여러 번 넣는다.',
+    '법인 이름은 양식 머리글 그대로(헥토·이노·파이·헬스·데이터·미디어·큐앤엠·드림베이·월렛원·HTA). 시간은 0.1 단위로 반올림된다. HAI 를 부르지 않는다.',
+  ].join(' '),
+  inputSchema: {
+    template: z.string().describe('EVS 에서 받은 양식 엑셀 경로'),
+    rows: z.array(z.object({
+      date: z.string().describe('YYYY-MM-DD — 양식에 있는 근무일'),
+      code: z.string().describe('업무코드(예: GA_100)'),
+      name: z.string().describe('업무명(예: 총무업무)'),
+      detail: z.string().optional().describe('업무상세 — 그날 한 일, 짧게'),
+      hours: z.record(z.string(), z.number()).describe('법인별 시간. 예: {"헥토":6,"이노":2}'),
+    })).min(1),
+    out_path: z.string().optional().describe('저장 위치(기본: 양식 옆 "<양식 이름>_작성.xlsx")'),
+    overwrite: z.boolean().optional(),
+  },
+}, guard(async ({ template, rows, out_path, overwrite }) => {
+  const src = resolvePath(template);
+  const r = await fillTimetable(await fs.readFile(src), rows);
+  const file = out_path ? resolvePath(out_path) : path.join(path.dirname(src), `${path.parse(src).name}_작성.xlsx`);
+  if (!overwrite && await fs.stat(file).then(() => true, () => false)) throw new Error(`이미 있는 파일입니다: ${file} — 덮어쓰려면 overwrite: true`);
+  await fs.writeFile(file, r.buffer);
+  const off = r.days.filter((d) => d.sum && d.sum !== 8);
+  const total = Object.entries(r.totals).filter(([, h]) => h).map(([c, h]) => `${c} ${h}`).join(' · ');
+  return ok([`저장: ${file}`,
+    `채운 날 ${r.filled.length}일 / 양식 근무일 ${r.days.length}일 · 합계 ${r.days.reduce((a, d) => a + d.sum, 0).toFixed(1)}시간`,
+    `법인별: ${total || '없음'}`,
+    ...(r.empty.length ? [`빈 날(업무 없이 남음): ${r.empty.join(', ')}`] : []),
+    ...(off.length ? [`하루 8시간이 아닌 날: ${off.map((d) => `${d.date} ${d.sum}`).join(', ')}`] : []),
+    '다음: EVS 타임테이블 등록 화면에서 같은 년월을 고르고 Excel 업로드로 이 파일을 올린 뒤, 표를 확인하고 저장·확정을 직접 누르세요.'].join('\n'));
 }));
 
 server.registerTool('hai_status', {
