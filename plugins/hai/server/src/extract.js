@@ -3,12 +3,13 @@
  *   텍스트류(txt·md·csv·tsv·json·log·html·xml — UTF-8 아니면 EUC-KR), docx, xlsx, hwpx
  *   pdf     글자층이 있으면 그대로, 스캔본(글자가 거의 없음)이면 HAI OCR
  *   이미지  HAI OCR (png·jpg·tif·bmp·webp)
+ *   클립보드 캡처  HAI OCR — 파일 없이 메모리로만 (readClipboard)
  *   음성    HAI 받아쓰기 (wav·mp3·ogg·flac 은 그대로, m4a·aac·aiff·caf·mp4·mov 는 wav 로 변환: macOS afconvert, Windows 기본 미디어 엔진, 그 밖은 ffmpeg)
  * OCR·받아쓰기 결과는 같은 파일(경로·수정 시각·크기)이면 메모리에 두고 다시 쓴다 — 가리기 → 묻기를 이어서 해도 한 번만 돈다.
  * 옛 한글(.hwp)·옛 엑셀(.xls)·옛 워드(.doc)는 못 읽는다 — 새 형식이나 PDF 로 저장해서 쓴다.
  */
 import { execFile } from 'node:child_process';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -18,6 +19,7 @@ import { config, resolveUserPath } from './config.js';
 import { readXlsx, readHwpx } from './office.js';
 import { ocr, transcribe, HaiError } from './hai.js';
 import { ensureDataDir } from './ledger.js';
+import { readClipboardImage } from './clipboard.js';
 
 const run = promisify(execFile);
 const TEXT = new Set(['.txt', '.md', '.csv', '.tsv', '.json', '.jsonl', '.log', '.html', '.htm', '.xml', '.yaml', '.yml']);
@@ -63,14 +65,34 @@ export async function readText(p, opts = {}) {
   const key = `${file}|${st.mtimeMs}|${st.size}|${opts.ocr ? 1 : opts.noOcr ? 2 : 0}|${opts.engine ?? ''}|${opts.terms ?? ''}|${opts.timestamps ? 1 : 0}`;
   let hit = cache.get(key);
   if (!hit) {
-    hit = await extract(file, st, opts);
-    hit.text = hit.text.replace(/\r\n/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
-    if (!hit.text) throw new Error(hit.via === 'stt' ? '음성에서 말소리를 찾지 못했습니다' : '글자를 찾지 못했습니다');
-    if (hit.text.length > config.maxChars) throw new Error(`내용이 너무 깁니다(${hit.text.length.toLocaleString()}자, 상한 ${config.maxChars.toLocaleString()}자). 나눠서 넣으세요.`);
+    hit = tidy(await extract(file, st, opts));
     cache.set(key, hit);
     if (cache.size > 50) cache.delete(cache.keys().next().value);
   }
   return { file, ...hit };
+}
+
+/**
+ * 클립보드 캡처 → readText 와 같은 모양({ file: 이름, text, via: 'ocr', meta }). 그림은 메모리로만 HAI OCR 에 보낸다(파일을 만들지 않는다).
+ * 같은 캡처로 묻기 → 가리기를 이어 해도 OCR 은 한 번만 돈다(그림 내용으로 캐시).
+ */
+export async function readClipboard(img) {
+  img ??= await readClipboardImage();
+  const key = `clipboard|${createHash('sha256').update(img.data).digest('hex')}`;
+  let hit = cache.get(key);
+  if (!hit) {
+    hit = tidy(await ocrPages(img));
+    cache.set(key, hit);
+    if (cache.size > 50) cache.delete(cache.keys().next().value);
+  }
+  return { file: img.name, ...hit };
+}
+
+function tidy(hit) {
+  hit.text = hit.text.replace(/\r\n/g, '\n').replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  if (!hit.text) throw new Error(hit.via === 'stt' ? '음성에서 말소리를 찾지 못했습니다' : '글자를 찾지 못했습니다');
+  if (hit.text.length > config.maxChars) throw new Error(`내용이 너무 깁니다(${hit.text.length.toLocaleString()}자, 상한 ${config.maxChars.toLocaleString()}자). 나눠서 넣으세요.`);
+  return hit;
 }
 
 async function extract(file, st, opts) {

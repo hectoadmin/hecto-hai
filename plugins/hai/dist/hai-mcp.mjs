@@ -49,9 +49,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-// node_modules/ajv/dist/compile/codegen/code.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/codegen/code.js
 var require_code = __commonJS({
-  "node_modules/ajv/dist/compile/codegen/code.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/codegen/code.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.regexpCode = exports.getEsmExportName = exports.getProperty = exports.safeStringify = exports.stringify = exports.strConcat = exports.addCodeArg = exports.str = exports._ = exports.nil = exports._Code = exports.Name = exports.IDENTIFIER = exports._CodeOrName = void 0;
@@ -203,9 +203,9 @@ var require_code = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/codegen/scope.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/codegen/scope.js
 var require_scope = __commonJS({
-  "node_modules/ajv/dist/compile/codegen/scope.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/codegen/scope.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.ValueScope = exports.ValueScopeName = exports.Scope = exports.varKinds = exports.UsedValueState = void 0;
@@ -348,9 +348,9 @@ var require_scope = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/codegen/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/codegen/index.js
 var require_codegen = __commonJS({
-  "node_modules/ajv/dist/compile/codegen/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/codegen/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.or = exports.and = exports.not = exports.CodeGen = exports.operators = exports.varKinds = exports.ValueScopeName = exports.ValueScope = exports.Scope = exports.Name = exports.regexpCode = exports.stringify = exports.getProperty = exports.nil = exports.strConcat = exports.str = exports._ = void 0;
@@ -1068,9 +1068,9 @@ var require_codegen = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/util.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/util.js
 var require_util = __commonJS({
-  "node_modules/ajv/dist/compile/util.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/util.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.checkStrictMode = exports.getErrorPath = exports.Type = exports.useFunc = exports.setEvaluated = exports.evaluatedPropsToName = exports.mergeEvaluated = exports.eachItem = exports.unescapeJsonPointer = exports.escapeJsonPointer = exports.escapeFragment = exports.unescapeFragment = exports.schemaRefOrVal = exports.schemaHasRulesButRef = exports.schemaHasRules = exports.checkUnknownRules = exports.alwaysValidSchema = exports.toHash = void 0;
@@ -1235,9 +1235,9 @@ var require_util = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/names.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/names.js
 var require_names = __commonJS({
-  "node_modules/ajv/dist/compile/names.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/names.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -1274,9 +1274,9 @@ var require_names = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/errors.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/errors.js
 var require_errors = __commonJS({
-  "node_modules/ajv/dist/compile/errors.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/errors.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.extendErrors = exports.resetErrorsCount = exports.reportExtraError = exports.reportError = exports.keyword$DataError = exports.keywordError = void 0;
@@ -1396,9 +1396,9 @@ var require_errors = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/validate/boolSchema.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/boolSchema.js
 var require_boolSchema = __commonJS({
-  "node_modules/ajv/dist/compile/validate/boolSchema.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/boolSchema.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.boolOrEmptySchema = exports.topBoolOrEmptySchema = void 0;
@@ -1447,9 +1447,9 @@ var require_boolSchema = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/rules.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/rules.js
 var require_rules = __commonJS({
-  "node_modules/ajv/dist/compile/rules.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/rules.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getRules = exports.isJSONType = void 0;
@@ -1478,9 +1478,9 @@ var require_rules = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/validate/applicability.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/applicability.js
 var require_applicability = __commonJS({
-  "node_modules/ajv/dist/compile/validate/applicability.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/applicability.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.shouldUseRule = exports.shouldUseGroup = exports.schemaHasRulesForType = void 0;
@@ -1501,9 +1501,9 @@ var require_applicability = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/validate/dataType.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/dataType.js
 var require_dataType = __commonJS({
-  "node_modules/ajv/dist/compile/validate/dataType.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/dataType.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.reportTypeError = exports.checkDataTypes = exports.checkDataType = exports.coerceAndCheckDataType = exports.getJSONTypes = exports.getSchemaTypes = exports.DataType = void 0;
@@ -1685,9 +1685,9 @@ var require_dataType = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/validate/defaults.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/defaults.js
 var require_defaults = __commonJS({
-  "node_modules/ajv/dist/compile/validate/defaults.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/defaults.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.assignDefaults = void 0;
@@ -1722,9 +1722,9 @@ var require_defaults = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/code.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/code.js
 var require_code2 = __commonJS({
-  "node_modules/ajv/dist/vocabularies/code.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/code.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateUnion = exports.validateArray = exports.usePattern = exports.callValidateCode = exports.schemaProperties = exports.allSchemaProperties = exports.noPropertyInData = exports.propertyInData = exports.isOwnProperty = exports.hasPropFunc = exports.reportMissingProp = exports.checkMissingProp = exports.checkReportMissingProp = void 0;
@@ -1855,9 +1855,9 @@ var require_code2 = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/validate/keyword.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/keyword.js
 var require_keyword = __commonJS({
-  "node_modules/ajv/dist/compile/validate/keyword.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/keyword.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateKeywordUsage = exports.validSchemaType = exports.funcKeywordCode = exports.macroKeywordCode = void 0;
@@ -1973,9 +1973,9 @@ var require_keyword = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/validate/subschema.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/subschema.js
 var require_subschema = __commonJS({
-  "node_modules/ajv/dist/compile/validate/subschema.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/subschema.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.extendSubschemaMode = exports.extendSubschemaData = exports.getSubschema = void 0;
@@ -2056,9 +2056,9 @@ var require_subschema = __commonJS({
   }
 });
 
-// node_modules/fast-deep-equal/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/fast-deep-equal/index.js
 var require_fast_deep_equal = __commonJS({
-  "node_modules/fast-deep-equal/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/fast-deep-equal/index.js"(exports, module) {
     "use strict";
     module.exports = function equal(a2, b2) {
       if (a2 === b2) return true;
@@ -2091,9 +2091,9 @@ var require_fast_deep_equal = __commonJS({
   }
 });
 
-// node_modules/json-schema-traverse/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/json-schema-traverse/index.js
 var require_json_schema_traverse = __commonJS({
-  "node_modules/json-schema-traverse/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/json-schema-traverse/index.js"(exports, module) {
     "use strict";
     var traverse = module.exports = function(schema, opts, cb2) {
       if (typeof opts == "function") {
@@ -2179,9 +2179,9 @@ var require_json_schema_traverse = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/resolve.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/resolve.js
 var require_resolve = __commonJS({
-  "node_modules/ajv/dist/compile/resolve.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/resolve.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getSchemaRefs = exports.resolveUrl = exports.normalizeId = exports._getFullPath = exports.getFullPath = exports.inlineRef = void 0;
@@ -2335,9 +2335,9 @@ var require_resolve = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/validate/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/index.js
 var require_validate = __commonJS({
-  "node_modules/ajv/dist/compile/validate/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/validate/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.getData = exports.KeywordCxt = exports.validateFunctionCode = void 0;
@@ -2843,9 +2843,9 @@ var require_validate = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/runtime/validation_error.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/runtime/validation_error.js
 var require_validation_error = __commonJS({
-  "node_modules/ajv/dist/runtime/validation_error.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/runtime/validation_error.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var ValidationError = class extends Error {
@@ -2859,9 +2859,9 @@ var require_validation_error = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/ref_error.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/ref_error.js
 var require_ref_error = __commonJS({
-  "node_modules/ajv/dist/compile/ref_error.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/ref_error.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var resolve_1 = require_resolve();
@@ -2876,9 +2876,9 @@ var require_ref_error = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/compile/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/index.js
 var require_compile = __commonJS({
-  "node_modules/ajv/dist/compile/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/compile/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.resolveSchema = exports.getCompilingSchema = exports.resolveRef = exports.compileSchema = exports.SchemaEnv = void 0;
@@ -3100,9 +3100,9 @@ var require_compile = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/refs/data.json
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/refs/data.json
 var require_data = __commonJS({
-  "node_modules/ajv/dist/refs/data.json"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/refs/data.json"(exports, module) {
     module.exports = {
       $id: "https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#",
       description: "Meta-schema for $data reference (JSON AnySchema extension proposal)",
@@ -3119,9 +3119,9 @@ var require_data = __commonJS({
   }
 });
 
-// node_modules/fast-uri/lib/utils.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/fast-uri/lib/utils.js
 var require_utils = __commonJS({
-  "node_modules/fast-uri/lib/utils.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/fast-uri/lib/utils.js"(exports, module) {
     "use strict";
     var isUUID = RegExp.prototype.test.bind(/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/iu);
     var isIPv4 = RegExp.prototype.test.bind(/^(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]\d|\d)$/u);
@@ -3653,9 +3653,9 @@ var require_utils = __commonJS({
   }
 });
 
-// node_modules/fast-uri/lib/schemes.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/fast-uri/lib/schemes.js
 var require_schemes = __commonJS({
-  "node_modules/fast-uri/lib/schemes.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/fast-uri/lib/schemes.js"(exports, module) {
     "use strict";
     var { isUUID } = require_utils();
     var URN_REG = /^([\da-z][\d\-a-z]{0,31}):((?:[\w!$'()*+,\-./:;=@]|%[\da-f]{2})+)$/iu;
@@ -3864,9 +3864,9 @@ var require_schemes = __commonJS({
   }
 });
 
-// node_modules/fast-uri/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/fast-uri/index.js
 var require_fast_uri = __commonJS({
-  "node_modules/fast-uri/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/fast-uri/index.js"(exports, module) {
     "use strict";
     var { normalizeIPv6, removeDotSegments, removeDotSegmentsRelative, recomposeAuthority, normalizePercentEncoding, normalizePathEncoding, serializePathEncoding, normalizeQueryFragmentEncoding, encodeQuery, encodeFragment, reescapeHostDelimiters, isIPv4, nonSimpleDomain } = require_utils();
     var { SCHEMES, getSchemeHandler } = require_schemes();
@@ -4294,9 +4294,9 @@ var require_fast_uri = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/runtime/uri.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/runtime/uri.js
 var require_uri = __commonJS({
-  "node_modules/ajv/dist/runtime/uri.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/runtime/uri.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var uri = require_fast_uri();
@@ -4305,9 +4305,9 @@ var require_uri = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/core.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/core.js
 var require_core = __commonJS({
-  "node_modules/ajv/dist/core.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/core.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.CodeGen = exports.Name = exports.nil = exports.stringify = exports.str = exports._ = exports.KeywordCxt = void 0;
@@ -4916,9 +4916,9 @@ var require_core = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/core/id.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/core/id.js
 var require_id = __commonJS({
-  "node_modules/ajv/dist/vocabularies/core/id.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/core/id.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var def = {
@@ -4931,9 +4931,9 @@ var require_id = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/core/ref.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/core/ref.js
 var require_ref = __commonJS({
-  "node_modules/ajv/dist/vocabularies/core/ref.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/core/ref.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.callRef = exports.getValidate = void 0;
@@ -5053,9 +5053,9 @@ var require_ref = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/core/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/core/index.js
 var require_core2 = __commonJS({
-  "node_modules/ajv/dist/vocabularies/core/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/core/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var id_1 = require_id();
@@ -5074,9 +5074,9 @@ var require_core2 = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/limitNumber.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/limitNumber.js
 var require_limitNumber = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/limitNumber.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/limitNumber.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5106,9 +5106,9 @@ var require_limitNumber = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/multipleOf.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/multipleOf.js
 var require_multipleOf = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/multipleOf.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/multipleOf.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5134,9 +5134,9 @@ var require_multipleOf = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/runtime/ucs2length.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/runtime/ucs2length.js
 var require_ucs2length = __commonJS({
-  "node_modules/ajv/dist/runtime/ucs2length.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/runtime/ucs2length.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     function ucs2length(str) {
@@ -5160,9 +5160,9 @@ var require_ucs2length = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/limitLength.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/limitLength.js
 var require_limitLength = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/limitLength.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/limitLength.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5192,9 +5192,9 @@ var require_limitLength = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/pattern.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/pattern.js
 var require_pattern = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/pattern.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/pattern.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -5229,9 +5229,9 @@ var require_pattern = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/limitProperties.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/limitProperties.js
 var require_limitProperties = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/limitProperties.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/limitProperties.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5258,9 +5258,9 @@ var require_limitProperties = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/required.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/required.js
 var require_required = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/required.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/required.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -5340,9 +5340,9 @@ var require_required = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/limitItems.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/limitItems.js
 var require_limitItems = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/limitItems.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/limitItems.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5369,9 +5369,9 @@ var require_limitItems = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/runtime/equal.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/runtime/equal.js
 var require_equal = __commonJS({
-  "node_modules/ajv/dist/runtime/equal.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/runtime/equal.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var equal = require_fast_deep_equal();
@@ -5380,9 +5380,9 @@ var require_equal = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/uniqueItems.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/uniqueItems.js
 var require_uniqueItems = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/uniqueItems.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/uniqueItems.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var dataType_1 = require_dataType();
@@ -5447,9 +5447,9 @@ var require_uniqueItems = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/const.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/const.js
 var require_const = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/const.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/const.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5476,9 +5476,9 @@ var require_const = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/enum.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/enum.js
 var require_enum = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/enum.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/enum.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5525,9 +5525,9 @@ var require_enum = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/validation/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/index.js
 var require_validation = __commonJS({
-  "node_modules/ajv/dist/vocabularies/validation/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/validation/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var limitNumber_1 = require_limitNumber();
@@ -5563,9 +5563,9 @@ var require_validation = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/additionalItems.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/additionalItems.js
 var require_additionalItems = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/additionalItems.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/additionalItems.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateAdditionalItems = void 0;
@@ -5616,9 +5616,9 @@ var require_additionalItems = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/items.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/items.js
 var require_items = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/items.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/items.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateTuple = void 0;
@@ -5673,9 +5673,9 @@ var require_items = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/prefixItems.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/prefixItems.js
 var require_prefixItems = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/prefixItems.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/prefixItems.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var items_1 = require_items();
@@ -5690,9 +5690,9 @@ var require_prefixItems = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/items2020.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/items2020.js
 var require_items2020 = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/items2020.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/items2020.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5725,9 +5725,9 @@ var require_items2020 = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/contains.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/contains.js
 var require_contains = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/contains.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/contains.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5819,9 +5819,9 @@ var require_contains = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/dependencies.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/dependencies.js
 var require_dependencies = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/dependencies.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/dependencies.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.validateSchemaDeps = exports.validatePropertyDeps = exports.error = void 0;
@@ -5913,9 +5913,9 @@ var require_dependencies = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/propertyNames.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/propertyNames.js
 var require_propertyNames = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/propertyNames.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/propertyNames.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -5956,9 +5956,9 @@ var require_propertyNames = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js
 var require_additionalProperties = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/additionalProperties.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -6062,9 +6062,9 @@ var require_additionalProperties = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/properties.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/properties.js
 var require_properties = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/properties.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/properties.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var validate_1 = require_validate();
@@ -6120,9 +6120,9 @@ var require_properties = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/patternProperties.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/patternProperties.js
 var require_patternProperties = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/patternProperties.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/patternProperties.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -6194,9 +6194,9 @@ var require_patternProperties = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/not.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/not.js
 var require_not = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/not.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/not.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var util_1 = require_util();
@@ -6225,9 +6225,9 @@ var require_not = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/anyOf.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/anyOf.js
 var require_anyOf = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/anyOf.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/anyOf.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var code_1 = require_code2();
@@ -6242,9 +6242,9 @@ var require_anyOf = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/oneOf.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/oneOf.js
 var require_oneOf = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/oneOf.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/oneOf.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -6300,9 +6300,9 @@ var require_oneOf = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/allOf.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/allOf.js
 var require_allOf = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/allOf.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/allOf.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var util_1 = require_util();
@@ -6327,9 +6327,9 @@ var require_allOf = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/if.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/if.js
 var require_if = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/if.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/if.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -6396,9 +6396,9 @@ var require_if = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/thenElse.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/thenElse.js
 var require_thenElse = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/thenElse.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/thenElse.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var util_1 = require_util();
@@ -6414,9 +6414,9 @@ var require_thenElse = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/applicator/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/index.js
 var require_applicator = __commonJS({
-  "node_modules/ajv/dist/vocabularies/applicator/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/applicator/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var additionalItems_1 = require_additionalItems();
@@ -6462,9 +6462,9 @@ var require_applicator = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/format/format.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/format/format.js
 var require_format = __commonJS({
-  "node_modules/ajv/dist/vocabularies/format/format.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/format/format.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -6552,9 +6552,9 @@ var require_format = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/format/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/format/index.js
 var require_format2 = __commonJS({
-  "node_modules/ajv/dist/vocabularies/format/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/format/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var format_1 = require_format();
@@ -6563,9 +6563,9 @@ var require_format2 = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/metadata.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/metadata.js
 var require_metadata = __commonJS({
-  "node_modules/ajv/dist/vocabularies/metadata.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/metadata.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.contentVocabulary = exports.metadataVocabulary = void 0;
@@ -6586,9 +6586,9 @@ var require_metadata = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/draft7.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/draft7.js
 var require_draft7 = __commonJS({
-  "node_modules/ajv/dist/vocabularies/draft7.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/draft7.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var core_1 = require_core2();
@@ -6608,9 +6608,9 @@ var require_draft7 = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/discriminator/types.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/discriminator/types.js
 var require_types = __commonJS({
-  "node_modules/ajv/dist/vocabularies/discriminator/types.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/discriminator/types.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DiscrError = void 0;
@@ -6622,9 +6622,9 @@ var require_types = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/vocabularies/discriminator/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/discriminator/index.js
 var require_discriminator = __commonJS({
-  "node_modules/ajv/dist/vocabularies/discriminator/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/vocabularies/discriminator/index.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var codegen_1 = require_codegen();
@@ -6727,9 +6727,9 @@ var require_discriminator = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/refs/json-schema-draft-07.json
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/refs/json-schema-draft-07.json
 var require_json_schema_draft_07 = __commonJS({
-  "node_modules/ajv/dist/refs/json-schema-draft-07.json"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/refs/json-schema-draft-07.json"(exports, module) {
     module.exports = {
       $schema: "http://json-schema.org/draft-07/schema#",
       $id: "http://json-schema.org/draft-07/schema#",
@@ -6884,9 +6884,9 @@ var require_json_schema_draft_07 = __commonJS({
   }
 });
 
-// node_modules/ajv/dist/ajv.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/ajv.js
 var require_ajv = __commonJS({
-  "node_modules/ajv/dist/ajv.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv/dist/ajv.js"(exports, module) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.MissingRefError = exports.ValidationError = exports.CodeGen = exports.Name = exports.nil = exports.stringify = exports.str = exports._ = exports.KeywordCxt = exports.Ajv = void 0;
@@ -6954,9 +6954,9 @@ var require_ajv = __commonJS({
   }
 });
 
-// node_modules/ajv-formats/dist/formats.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv-formats/dist/formats.js
 var require_formats = __commonJS({
-  "node_modules/ajv-formats/dist/formats.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv-formats/dist/formats.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.formatNames = exports.fastFormats = exports.fullFormats = void 0;
@@ -7157,9 +7157,9 @@ var require_formats = __commonJS({
   }
 });
 
-// node_modules/ajv-formats/dist/limit.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv-formats/dist/limit.js
 var require_limit = __commonJS({
-  "node_modules/ajv-formats/dist/limit.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv-formats/dist/limit.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.formatLimitDefinition = void 0;
@@ -7229,9 +7229,9 @@ var require_limit = __commonJS({
   }
 });
 
-// node_modules/ajv-formats/dist/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv-formats/dist/index.js
 var require_dist = __commonJS({
-  "node_modules/ajv-formats/dist/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/ajv-formats/dist/index.js"(exports, module) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var formats_1 = require_formats();
@@ -7271,9 +7271,9 @@ var require_dist = __commonJS({
   }
 });
 
-// node_modules/process-nextick-args/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/process-nextick-args/index.js
 var require_process_nextick_args = __commonJS({
-  "node_modules/process-nextick-args/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/process-nextick-args/index.js"(exports, module) {
     "use strict";
     if (typeof process === "undefined" || !process.version || process.version.indexOf("v0.") === 0 || process.version.indexOf("v1.") === 0 && process.version.indexOf("v1.8.") !== 0) {
       module.exports = { nextTick };
@@ -7316,9 +7316,9 @@ var require_process_nextick_args = __commonJS({
   }
 });
 
-// node_modules/isarray/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/isarray/index.js
 var require_isarray = __commonJS({
-  "node_modules/isarray/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/isarray/index.js"(exports, module) {
     var toString2 = {}.toString;
     module.exports = Array.isArray || function(arr) {
       return toString2.call(arr) == "[object Array]";
@@ -7326,16 +7326,16 @@ var require_isarray = __commonJS({
   }
 });
 
-// node_modules/readable-stream/lib/internal/streams/stream.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/internal/streams/stream.js
 var require_stream = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/stream.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/internal/streams/stream.js"(exports, module) {
     module.exports = __require("stream");
   }
 });
 
-// node_modules/safe-buffer/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/safe-buffer/index.js
 var require_safe_buffer = __commonJS({
-  "node_modules/safe-buffer/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/safe-buffer/index.js"(exports, module) {
     var buffer = __require("buffer");
     var Buffer2 = buffer.Buffer;
     function copyProps(src, dst) {
@@ -7390,9 +7390,9 @@ var require_safe_buffer = __commonJS({
   }
 });
 
-// node_modules/core-util-is/lib/util.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/core-util-is/lib/util.js
 var require_util2 = __commonJS({
-  "node_modules/core-util-is/lib/util.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/core-util-is/lib/util.js"(exports) {
     function isArray(arg) {
       if (Array.isArray) {
         return Array.isArray(arg);
@@ -7460,9 +7460,9 @@ var require_util2 = __commonJS({
   }
 });
 
-// node_modules/inherits/inherits_browser.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/inherits/inherits_browser.js
 var require_inherits_browser = __commonJS({
-  "node_modules/inherits/inherits_browser.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/inherits/inherits_browser.js"(exports, module) {
     if (typeof Object.create === "function") {
       module.exports = function inherits(ctor2, superCtor) {
         if (superCtor) {
@@ -7492,9 +7492,9 @@ var require_inherits_browser = __commonJS({
   }
 });
 
-// node_modules/inherits/inherits.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/inherits/inherits.js
 var require_inherits = __commonJS({
-  "node_modules/inherits/inherits.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/inherits/inherits.js"(exports, module) {
     try {
       util2 = __require("util");
       if (typeof util2.inherits !== "function") throw "";
@@ -7506,9 +7506,9 @@ var require_inherits = __commonJS({
   }
 });
 
-// node_modules/readable-stream/lib/internal/streams/BufferList.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/internal/streams/BufferList.js
 var require_BufferList = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/BufferList.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/internal/streams/BufferList.js"(exports, module) {
     "use strict";
     function _classCallCheck(instance, Constructor) {
       if (!(instance instanceof Constructor)) {
@@ -7584,9 +7584,9 @@ var require_BufferList = __commonJS({
   }
 });
 
-// node_modules/readable-stream/lib/internal/streams/destroy.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/internal/streams/destroy.js
 var require_destroy = __commonJS({
-  "node_modules/readable-stream/lib/internal/streams/destroy.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/internal/streams/destroy.js"(exports, module) {
     "use strict";
     var pna = require_process_nextick_args();
     function destroy(err, cb2) {
@@ -7653,16 +7653,16 @@ var require_destroy = __commonJS({
   }
 });
 
-// node_modules/util-deprecate/node.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/util-deprecate/node.js
 var require_node = __commonJS({
-  "node_modules/util-deprecate/node.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/util-deprecate/node.js"(exports, module) {
     module.exports = __require("util").deprecate;
   }
 });
 
-// node_modules/readable-stream/lib/_stream_writable.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_writable.js
 var require_stream_writable = __commonJS({
-  "node_modules/readable-stream/lib/_stream_writable.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_writable.js"(exports, module) {
     "use strict";
     var pna = require_process_nextick_args();
     module.exports = Writable;
@@ -8100,9 +8100,9 @@ var require_stream_writable = __commonJS({
   }
 });
 
-// node_modules/readable-stream/lib/_stream_duplex.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_duplex.js
 var require_stream_duplex = __commonJS({
-  "node_modules/readable-stream/lib/_stream_duplex.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_duplex.js"(exports, module) {
     "use strict";
     var pna = require_process_nextick_args();
     var objectKeys = Object.keys || function(obj) {
@@ -8177,9 +8177,9 @@ var require_stream_duplex = __commonJS({
   }
 });
 
-// node_modules/string_decoder/lib/string_decoder.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/string_decoder/lib/string_decoder.js
 var require_string_decoder = __commonJS({
-  "node_modules/string_decoder/lib/string_decoder.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/string_decoder/lib/string_decoder.js"(exports) {
     "use strict";
     var Buffer2 = require_safe_buffer().Buffer;
     var isEncoding = Buffer2.isEncoding || function(encoding) {
@@ -8415,9 +8415,9 @@ var require_string_decoder = __commonJS({
   }
 });
 
-// node_modules/readable-stream/lib/_stream_readable.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_readable.js
 var require_stream_readable = __commonJS({
-  "node_modules/readable-stream/lib/_stream_readable.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_readable.js"(exports, module) {
     "use strict";
     var pna = require_process_nextick_args();
     module.exports = Readable;
@@ -9101,9 +9101,9 @@ var require_stream_readable = __commonJS({
   }
 });
 
-// node_modules/readable-stream/lib/_stream_transform.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_transform.js
 var require_stream_transform = __commonJS({
-  "node_modules/readable-stream/lib/_stream_transform.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_transform.js"(exports, module) {
     "use strict";
     module.exports = Transform2;
     var Duplex = require_stream_duplex();
@@ -9201,9 +9201,9 @@ var require_stream_transform = __commonJS({
   }
 });
 
-// node_modules/readable-stream/lib/_stream_passthrough.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_passthrough.js
 var require_stream_passthrough = __commonJS({
-  "node_modules/readable-stream/lib/_stream_passthrough.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/lib/_stream_passthrough.js"(exports, module) {
     "use strict";
     module.exports = PassThrough;
     var Transform2 = require_stream_transform();
@@ -9220,9 +9220,9 @@ var require_stream_passthrough = __commonJS({
   }
 });
 
-// node_modules/readable-stream/readable.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/readable.js
 var require_readable = __commonJS({
-  "node_modules/readable-stream/readable.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/readable-stream/readable.js"(exports, module) {
     var Stream2 = __require("stream");
     if (process.env.READABLE_STREAM === "disable" && Stream2) {
       module.exports = Stream2;
@@ -9245,9 +9245,9 @@ var require_readable = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/support.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/support.js
 var require_support = __commonJS({
-  "node_modules/jszip/lib/support.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/support.js"(exports) {
     "use strict";
     exports.base64 = true;
     exports.array = true;
@@ -9285,9 +9285,9 @@ var require_support = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/base64.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/base64.js
 var require_base64 = __commonJS({
-  "node_modules/jszip/lib/base64.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/base64.js"(exports) {
     "use strict";
     var utils = require_utils2();
     var support = require_support();
@@ -9362,9 +9362,9 @@ var require_base64 = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/nodejsUtils.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/nodejsUtils.js
 var require_nodejsUtils = __commonJS({
-  "node_modules/jszip/lib/nodejsUtils.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/nodejsUtils.js"(exports, module) {
     "use strict";
     module.exports = {
       /**
@@ -9418,9 +9418,9 @@ var require_nodejsUtils = __commonJS({
   }
 });
 
-// node_modules/immediate/lib/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/immediate/lib/index.js
 var require_lib = __commonJS({
-  "node_modules/immediate/lib/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/immediate/lib/index.js"(exports, module) {
     "use strict";
     var Mutation = global.MutationObserver || global.WebKitMutationObserver;
     var scheduleDrain;
@@ -9492,9 +9492,9 @@ var require_lib = __commonJS({
   }
 });
 
-// node_modules/lie/lib/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lie/lib/index.js
 var require_lib2 = __commonJS({
-  "node_modules/lie/lib/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lie/lib/index.js"(exports, module) {
     "use strict";
     var immediate = require_lib();
     function INTERNAL() {
@@ -9762,9 +9762,9 @@ var require_lib2 = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/external.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/external.js
 var require_external = __commonJS({
-  "node_modules/jszip/lib/external.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/external.js"(exports, module) {
     "use strict";
     var ES6Promise = null;
     if (typeof Promise !== "undefined") {
@@ -9778,9 +9778,9 @@ var require_external = __commonJS({
   }
 });
 
-// node_modules/setimmediate/setImmediate.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/setimmediate/setImmediate.js
 var require_setImmediate = __commonJS({
-  "node_modules/setimmediate/setImmediate.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/setimmediate/setImmediate.js"(exports) {
     (function(global2, undefined2) {
       "use strict";
       if (global2.setImmediate) {
@@ -9807,7 +9807,7 @@ var require_setImmediate = __commonJS({
       function clearImmediate(handle) {
         delete tasksByHandle[handle];
       }
-      function run2(task) {
+      function run3(task) {
         var callback = task.callback;
         var args = task.args;
         switch (args.length) {
@@ -9836,7 +9836,7 @@ var require_setImmediate = __commonJS({
           if (task) {
             currentlyRunningATask = true;
             try {
-              run2(task);
+              run3(task);
             } finally {
               clearImmediate(handle);
               currentlyRunningATask = false;
@@ -9926,9 +9926,9 @@ var require_setImmediate = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/utils.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/utils.js
 var require_utils2 = __commonJS({
-  "node_modules/jszip/lib/utils.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/utils.js"(exports) {
     "use strict";
     var support = require_support();
     var base643 = require_base64();
@@ -10259,9 +10259,9 @@ var require_utils2 = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/stream/GenericWorker.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/GenericWorker.js
 var require_GenericWorker = __commonJS({
-  "node_modules/jszip/lib/stream/GenericWorker.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/GenericWorker.js"(exports, module) {
     "use strict";
     function GenericWorker(name) {
       this.name = name || "default";
@@ -10486,9 +10486,9 @@ var require_GenericWorker = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/utf8.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/utf8.js
 var require_utf8 = __commonJS({
-  "node_modules/jszip/lib/utf8.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/utf8.js"(exports) {
     "use strict";
     var utils = require_utils2();
     var support = require_support();
@@ -10676,9 +10676,9 @@ var require_utf8 = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/stream/ConvertWorker.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/ConvertWorker.js
 var require_ConvertWorker = __commonJS({
-  "node_modules/jszip/lib/stream/ConvertWorker.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/ConvertWorker.js"(exports, module) {
     "use strict";
     var GenericWorker = require_GenericWorker();
     var utils = require_utils2();
@@ -10697,9 +10697,9 @@ var require_ConvertWorker = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/nodejs/NodejsStreamOutputAdapter.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/nodejs/NodejsStreamOutputAdapter.js
 var require_NodejsStreamOutputAdapter = __commonJS({
-  "node_modules/jszip/lib/nodejs/NodejsStreamOutputAdapter.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/nodejs/NodejsStreamOutputAdapter.js"(exports, module) {
     "use strict";
     var Readable = require_readable().Readable;
     var utils = require_utils2();
@@ -10728,9 +10728,9 @@ var require_NodejsStreamOutputAdapter = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/stream/StreamHelper.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/StreamHelper.js
 var require_StreamHelper = __commonJS({
-  "node_modules/jszip/lib/stream/StreamHelper.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/StreamHelper.js"(exports, module) {
     "use strict";
     var utils = require_utils2();
     var ConvertWorker = require_ConvertWorker();
@@ -10888,9 +10888,9 @@ var require_StreamHelper = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/defaults.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/defaults.js
 var require_defaults2 = __commonJS({
-  "node_modules/jszip/lib/defaults.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/defaults.js"(exports) {
     "use strict";
     exports.base64 = false;
     exports.binary = false;
@@ -10905,9 +10905,9 @@ var require_defaults2 = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/stream/DataWorker.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/DataWorker.js
 var require_DataWorker = __commonJS({
-  "node_modules/jszip/lib/stream/DataWorker.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/DataWorker.js"(exports, module) {
     "use strict";
     var utils = require_utils2();
     var GenericWorker = require_GenericWorker();
@@ -10993,9 +10993,9 @@ var require_DataWorker = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/crc32.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/crc32.js
 var require_crc32 = __commonJS({
-  "node_modules/jszip/lib/crc32.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/crc32.js"(exports, module) {
     "use strict";
     var utils = require_utils2();
     function makeTable() {
@@ -11040,9 +11040,9 @@ var require_crc32 = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/stream/Crc32Probe.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/Crc32Probe.js
 var require_Crc32Probe = __commonJS({
-  "node_modules/jszip/lib/stream/Crc32Probe.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/Crc32Probe.js"(exports, module) {
     "use strict";
     var GenericWorker = require_GenericWorker();
     var crc32 = require_crc32();
@@ -11060,9 +11060,9 @@ var require_Crc32Probe = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/stream/DataLengthProbe.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/DataLengthProbe.js
 var require_DataLengthProbe = __commonJS({
-  "node_modules/jszip/lib/stream/DataLengthProbe.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/stream/DataLengthProbe.js"(exports, module) {
     "use strict";
     var utils = require_utils2();
     var GenericWorker = require_GenericWorker();
@@ -11083,9 +11083,9 @@ var require_DataLengthProbe = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/compressedObject.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/compressedObject.js
 var require_compressedObject = __commonJS({
-  "node_modules/jszip/lib/compressedObject.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/compressedObject.js"(exports, module) {
     "use strict";
     var external = require_external();
     var DataWorker = require_DataWorker();
@@ -11128,9 +11128,9 @@ var require_compressedObject = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/zipObject.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/zipObject.js
 var require_zipObject = __commonJS({
-  "node_modules/jszip/lib/zipObject.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/zipObject.js"(exports, module) {
     "use strict";
     var StreamHelper = require_StreamHelper();
     var DataWorker = require_DataWorker();
@@ -11245,9 +11245,9 @@ var require_zipObject = __commonJS({
   }
 });
 
-// node_modules/pako/lib/utils/common.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/utils/common.js
 var require_common = __commonJS({
-  "node_modules/pako/lib/utils/common.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/utils/common.js"(exports) {
     "use strict";
     var TYPED_OK = typeof Uint8Array !== "undefined" && typeof Uint16Array !== "undefined" && typeof Int32Array !== "undefined";
     function _has(obj, key2) {
@@ -11336,9 +11336,9 @@ var require_common = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/trees.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/trees.js
 var require_trees = __commonJS({
-  "node_modules/pako/lib/zlib/trees.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/trees.js"(exports) {
     "use strict";
     var utils = require_common();
     var Z_FIXED = 4;
@@ -11978,9 +11978,9 @@ var require_trees = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/adler32.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/adler32.js
 var require_adler32 = __commonJS({
-  "node_modules/pako/lib/zlib/adler32.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/adler32.js"(exports, module) {
     "use strict";
     function adler32(adler, buf, len, pos) {
       var s1 = adler & 65535 | 0, s2 = adler >>> 16 & 65535 | 0, n2 = 0;
@@ -12000,9 +12000,9 @@ var require_adler32 = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/crc32.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/crc32.js
 var require_crc322 = __commonJS({
-  "node_modules/pako/lib/zlib/crc32.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/crc32.js"(exports, module) {
     "use strict";
     function makeTable() {
       var c2, table = [];
@@ -12028,9 +12028,9 @@ var require_crc322 = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/messages.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/messages.js
 var require_messages = __commonJS({
-  "node_modules/pako/lib/zlib/messages.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/messages.js"(exports, module) {
     "use strict";
     module.exports = {
       2: "need dictionary",
@@ -12055,9 +12055,9 @@ var require_messages = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/deflate.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/deflate.js
 var require_deflate = __commonJS({
-  "node_modules/pako/lib/zlib/deflate.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/deflate.js"(exports) {
     "use strict";
     var utils = require_common();
     var trees = require_trees();
@@ -13104,9 +13104,9 @@ var require_deflate = __commonJS({
   }
 });
 
-// node_modules/pako/lib/utils/strings.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/utils/strings.js
 var require_strings = __commonJS({
-  "node_modules/pako/lib/utils/strings.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/utils/strings.js"(exports) {
     "use strict";
     var utils = require_common();
     var STR_APPLY_OK = true;
@@ -13246,9 +13246,9 @@ var require_strings = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/zstream.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/zstream.js
 var require_zstream = __commonJS({
-  "node_modules/pako/lib/zlib/zstream.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/zstream.js"(exports, module) {
     "use strict";
     function ZStream() {
       this.input = null;
@@ -13268,9 +13268,9 @@ var require_zstream = __commonJS({
   }
 });
 
-// node_modules/pako/lib/deflate.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/deflate.js
 var require_deflate2 = __commonJS({
-  "node_modules/pako/lib/deflate.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/deflate.js"(exports) {
     "use strict";
     var zlib_deflate = require_deflate();
     var utils = require_common();
@@ -13429,9 +13429,9 @@ var require_deflate2 = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/inffast.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/inffast.js
 var require_inffast = __commonJS({
-  "node_modules/pako/lib/zlib/inffast.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/inffast.js"(exports, module) {
     "use strict";
     var BAD = 30;
     var TYPE = 12;
@@ -13658,9 +13658,9 @@ var require_inffast = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/inftrees.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/inftrees.js
 var require_inftrees = __commonJS({
-  "node_modules/pako/lib/zlib/inftrees.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/inftrees.js"(exports, module) {
     "use strict";
     var utils = require_common();
     var MAXBITS = 15;
@@ -13974,9 +13974,9 @@ var require_inftrees = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/inflate.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/inflate.js
 var require_inflate = __commonJS({
-  "node_modules/pako/lib/zlib/inflate.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/inflate.js"(exports) {
     "use strict";
     var utils = require_common();
     var adler32 = require_adler32();
@@ -15213,9 +15213,9 @@ var require_inflate = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/constants.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/constants.js
 var require_constants = __commonJS({
-  "node_modules/pako/lib/zlib/constants.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/constants.js"(exports, module) {
     "use strict";
     module.exports = {
       /* Allowed flush values; see deflate() and inflate() below for details */
@@ -15260,9 +15260,9 @@ var require_constants = __commonJS({
   }
 });
 
-// node_modules/pako/lib/zlib/gzheader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/gzheader.js
 var require_gzheader = __commonJS({
-  "node_modules/pako/lib/zlib/gzheader.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/zlib/gzheader.js"(exports, module) {
     "use strict";
     function GZheader() {
       this.text = 0;
@@ -15280,9 +15280,9 @@ var require_gzheader = __commonJS({
   }
 });
 
-// node_modules/pako/lib/inflate.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/inflate.js
 var require_inflate2 = __commonJS({
-  "node_modules/pako/lib/inflate.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/lib/inflate.js"(exports) {
     "use strict";
     var zlib_inflate = require_inflate();
     var utils = require_common();
@@ -15454,9 +15454,9 @@ var require_inflate2 = __commonJS({
   }
 });
 
-// node_modules/pako/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/index.js
 var require_pako = __commonJS({
-  "node_modules/pako/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/pako/index.js"(exports, module) {
     "use strict";
     var assign = require_common().assign;
     var deflate2 = require_deflate2();
@@ -15468,9 +15468,9 @@ var require_pako = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/flate.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/flate.js
 var require_flate = __commonJS({
-  "node_modules/jszip/lib/flate.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/flate.js"(exports) {
     "use strict";
     var USE_TYPEDARRAY = typeof Uint8Array !== "undefined" && typeof Uint16Array !== "undefined" && typeof Uint32Array !== "undefined";
     var pako = require_pako();
@@ -15527,9 +15527,9 @@ var require_flate = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/compressions.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/compressions.js
 var require_compressions = __commonJS({
-  "node_modules/jszip/lib/compressions.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/compressions.js"(exports) {
     "use strict";
     var GenericWorker = require_GenericWorker();
     exports.STORE = {
@@ -15545,9 +15545,9 @@ var require_compressions = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/signature.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/signature.js
 var require_signature = __commonJS({
-  "node_modules/jszip/lib/signature.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/signature.js"(exports) {
     "use strict";
     exports.LOCAL_FILE_HEADER = "PK";
     exports.CENTRAL_FILE_HEADER = "PK";
@@ -15558,9 +15558,9 @@ var require_signature = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/generate/ZipFileWorker.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/generate/ZipFileWorker.js
 var require_ZipFileWorker = __commonJS({
-  "node_modules/jszip/lib/generate/ZipFileWorker.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/generate/ZipFileWorker.js"(exports, module) {
     "use strict";
     var utils = require_utils2();
     var GenericWorker = require_GenericWorker();
@@ -15842,9 +15842,9 @@ var require_ZipFileWorker = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/generate/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/generate/index.js
 var require_generate = __commonJS({
-  "node_modules/jszip/lib/generate/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/generate/index.js"(exports) {
     "use strict";
     var compressions = require_compressions();
     var ZipFileWorker = require_ZipFileWorker();
@@ -15883,9 +15883,9 @@ var require_generate = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/nodejs/NodejsStreamInputAdapter.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/nodejs/NodejsStreamInputAdapter.js
 var require_NodejsStreamInputAdapter = __commonJS({
-  "node_modules/jszip/lib/nodejs/NodejsStreamInputAdapter.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/nodejs/NodejsStreamInputAdapter.js"(exports, module) {
     "use strict";
     var utils = require_utils2();
     var GenericWorker = require_GenericWorker();
@@ -15942,9 +15942,9 @@ var require_NodejsStreamInputAdapter = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/object.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/object.js
 var require_object = __commonJS({
-  "node_modules/jszip/lib/object.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/object.js"(exports, module) {
     "use strict";
     var utf8 = require_utf8();
     var utils = require_utils2();
@@ -16215,9 +16215,9 @@ var require_object = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/reader/DataReader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/DataReader.js
 var require_DataReader = __commonJS({
-  "node_modules/jszip/lib/reader/DataReader.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/DataReader.js"(exports, module) {
     "use strict";
     var utils = require_utils2();
     function DataReader(data) {
@@ -16337,9 +16337,9 @@ var require_DataReader = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/reader/ArrayReader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/ArrayReader.js
 var require_ArrayReader = __commonJS({
-  "node_modules/jszip/lib/reader/ArrayReader.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/ArrayReader.js"(exports, module) {
     "use strict";
     var DataReader = require_DataReader();
     var utils = require_utils2();
@@ -16379,9 +16379,9 @@ var require_ArrayReader = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/reader/StringReader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/StringReader.js
 var require_StringReader = __commonJS({
-  "node_modules/jszip/lib/reader/StringReader.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/StringReader.js"(exports, module) {
     "use strict";
     var DataReader = require_DataReader();
     var utils = require_utils2();
@@ -16409,9 +16409,9 @@ var require_StringReader = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/reader/Uint8ArrayReader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/Uint8ArrayReader.js
 var require_Uint8ArrayReader = __commonJS({
-  "node_modules/jszip/lib/reader/Uint8ArrayReader.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/Uint8ArrayReader.js"(exports, module) {
     "use strict";
     var ArrayReader = require_ArrayReader();
     var utils = require_utils2();
@@ -16432,9 +16432,9 @@ var require_Uint8ArrayReader = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/reader/NodeBufferReader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/NodeBufferReader.js
 var require_NodeBufferReader = __commonJS({
-  "node_modules/jszip/lib/reader/NodeBufferReader.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/NodeBufferReader.js"(exports, module) {
     "use strict";
     var Uint8ArrayReader = require_Uint8ArrayReader();
     var utils = require_utils2();
@@ -16452,9 +16452,9 @@ var require_NodeBufferReader = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/reader/readerFor.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/readerFor.js
 var require_readerFor = __commonJS({
-  "node_modules/jszip/lib/reader/readerFor.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/reader/readerFor.js"(exports, module) {
     "use strict";
     var utils = require_utils2();
     var support = require_support();
@@ -16479,9 +16479,9 @@ var require_readerFor = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/zipEntry.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/zipEntry.js
 var require_zipEntry = __commonJS({
-  "node_modules/jszip/lib/zipEntry.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/zipEntry.js"(exports, module) {
     "use strict";
     var readerFor = require_readerFor();
     var utils = require_utils2();
@@ -16697,9 +16697,9 @@ var require_zipEntry = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/zipEntries.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/zipEntries.js
 var require_zipEntries = __commonJS({
-  "node_modules/jszip/lib/zipEntries.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/zipEntries.js"(exports, module) {
     "use strict";
     var readerFor = require_readerFor();
     var utils = require_utils2();
@@ -16895,9 +16895,9 @@ var require_zipEntries = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/load.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/load.js
 var require_load = __commonJS({
-  "node_modules/jszip/lib/load.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/load.js"(exports, module) {
     "use strict";
     var utils = require_utils2();
     var external = require_external();
@@ -16974,9 +16974,9 @@ var require_load = __commonJS({
   }
 });
 
-// node_modules/jszip/lib/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/index.js
 var require_lib3 = __commonJS({
-  "node_modules/jszip/lib/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/jszip/lib/index.js"(exports, module) {
     "use strict";
     function JSZip3() {
       if (!(this instanceof JSZip3)) {
@@ -17011,10 +17011,10 @@ var require_lib3 = __commonJS({
   }
 });
 
-// node_modules/underscore/modules/_setup.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_setup.js
 var VERSION, root, ArrayProto, ObjProto, SymbolProto, push, slice, toString, hasOwnProperty, supportsArrayBuffer, supportsDataView, nativeIsArray, nativeKeys, nativeCreate, nativeIsView, _isNaN, _isFinite, hasEnumBug, nonEnumerableProps, MAX_ARRAY_INDEX;
 var init_setup = __esm({
-  "node_modules/underscore/modules/_setup.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_setup.js"() {
     VERSION = "1.13.8";
     root = typeof self == "object" && self.self === self && self || typeof global == "object" && global.global === global && global || Function("return this")() || {};
     ArrayProto = Array.prototype;
@@ -17045,7 +17045,7 @@ var init_setup = __esm({
   }
 });
 
-// node_modules/underscore/modules/restArguments.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/restArguments.js
 function restArguments(func, startIndex) {
   startIndex = startIndex == null ? func.length - 1 : +startIndex;
   return function() {
@@ -17070,58 +17070,58 @@ function restArguments(func, startIndex) {
   };
 }
 var init_restArguments = __esm({
-  "node_modules/underscore/modules/restArguments.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/restArguments.js"() {
   }
 });
 
-// node_modules/underscore/modules/isObject.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isObject.js
 function isObject2(obj) {
   var type = typeof obj;
   return type === "function" || type === "object" && !!obj;
 }
 var init_isObject = __esm({
-  "node_modules/underscore/modules/isObject.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isObject.js"() {
   }
 });
 
-// node_modules/underscore/modules/isNull.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isNull.js
 function isNull(obj) {
   return obj === null;
 }
 var init_isNull = __esm({
-  "node_modules/underscore/modules/isNull.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isNull.js"() {
   }
 });
 
-// node_modules/underscore/modules/isUndefined.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isUndefined.js
 function isUndefined(obj) {
   return obj === void 0;
 }
 var init_isUndefined = __esm({
-  "node_modules/underscore/modules/isUndefined.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isUndefined.js"() {
   }
 });
 
-// node_modules/underscore/modules/isBoolean.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isBoolean.js
 function isBoolean(obj) {
   return obj === true || obj === false || toString.call(obj) === "[object Boolean]";
 }
 var init_isBoolean = __esm({
-  "node_modules/underscore/modules/isBoolean.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isBoolean.js"() {
     init_setup();
   }
 });
 
-// node_modules/underscore/modules/isElement.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isElement.js
 function isElement(obj) {
   return !!(obj && obj.nodeType === 1);
 }
 var init_isElement = __esm({
-  "node_modules/underscore/modules/isElement.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isElement.js"() {
   }
 });
 
-// node_modules/underscore/modules/_tagTester.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_tagTester.js
 function tagTester(name) {
   var tag = "[object " + name + "]";
   return function(obj) {
@@ -17129,78 +17129,78 @@ function tagTester(name) {
   };
 }
 var init_tagTester = __esm({
-  "node_modules/underscore/modules/_tagTester.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_tagTester.js"() {
     init_setup();
   }
 });
 
-// node_modules/underscore/modules/isString.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isString.js
 var isString_default;
 var init_isString = __esm({
-  "node_modules/underscore/modules/isString.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isString.js"() {
     init_tagTester();
     isString_default = tagTester("String");
   }
 });
 
-// node_modules/underscore/modules/isNumber.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isNumber.js
 var isNumber_default;
 var init_isNumber = __esm({
-  "node_modules/underscore/modules/isNumber.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isNumber.js"() {
     init_tagTester();
     isNumber_default = tagTester("Number");
   }
 });
 
-// node_modules/underscore/modules/isDate.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isDate.js
 var isDate_default;
 var init_isDate = __esm({
-  "node_modules/underscore/modules/isDate.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isDate.js"() {
     init_tagTester();
     isDate_default = tagTester("Date");
   }
 });
 
-// node_modules/underscore/modules/isRegExp.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isRegExp.js
 var isRegExp_default;
 var init_isRegExp = __esm({
-  "node_modules/underscore/modules/isRegExp.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isRegExp.js"() {
     init_tagTester();
     isRegExp_default = tagTester("RegExp");
   }
 });
 
-// node_modules/underscore/modules/isError.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isError.js
 var isError_default;
 var init_isError = __esm({
-  "node_modules/underscore/modules/isError.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isError.js"() {
     init_tagTester();
     isError_default = tagTester("Error");
   }
 });
 
-// node_modules/underscore/modules/isSymbol.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isSymbol.js
 var isSymbol_default;
 var init_isSymbol = __esm({
-  "node_modules/underscore/modules/isSymbol.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isSymbol.js"() {
     init_tagTester();
     isSymbol_default = tagTester("Symbol");
   }
 });
 
-// node_modules/underscore/modules/isArrayBuffer.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isArrayBuffer.js
 var isArrayBuffer_default;
 var init_isArrayBuffer = __esm({
-  "node_modules/underscore/modules/isArrayBuffer.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isArrayBuffer.js"() {
     init_tagTester();
     isArrayBuffer_default = tagTester("ArrayBuffer");
   }
 });
 
-// node_modules/underscore/modules/isFunction.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isFunction.js
 var isFunction, nodelist, isFunction_default;
 var init_isFunction = __esm({
-  "node_modules/underscore/modules/isFunction.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isFunction.js"() {
     init_tagTester();
     init_setup();
     isFunction = tagTester("Function");
@@ -17214,19 +17214,19 @@ var init_isFunction = __esm({
   }
 });
 
-// node_modules/underscore/modules/_hasObjectTag.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_hasObjectTag.js
 var hasObjectTag_default;
 var init_hasObjectTag = __esm({
-  "node_modules/underscore/modules/_hasObjectTag.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_hasObjectTag.js"() {
     init_tagTester();
     hasObjectTag_default = tagTester("Object");
   }
 });
 
-// node_modules/underscore/modules/_stringTagBug.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_stringTagBug.js
 var hasDataViewBug, isIE11;
 var init_stringTagBug = __esm({
-  "node_modules/underscore/modules/_stringTagBug.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_stringTagBug.js"() {
     init_setup();
     init_hasObjectTag();
     hasDataViewBug = supportsDataView && (!/\[native code\]/.test(String(DataView)) || hasObjectTag_default(new DataView(new ArrayBuffer(8))));
@@ -17234,13 +17234,13 @@ var init_stringTagBug = __esm({
   }
 });
 
-// node_modules/underscore/modules/isDataView.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isDataView.js
 function alternateIsDataView(obj) {
   return obj != null && isFunction_default(obj.getInt8) && isArrayBuffer_default(obj.buffer);
 }
 var isDataView, isDataView_default;
 var init_isDataView = __esm({
-  "node_modules/underscore/modules/isDataView.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isDataView.js"() {
     init_tagTester();
     init_isFunction();
     init_isArrayBuffer();
@@ -17250,30 +17250,30 @@ var init_isDataView = __esm({
   }
 });
 
-// node_modules/underscore/modules/isArray.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isArray.js
 var isArray_default;
 var init_isArray = __esm({
-  "node_modules/underscore/modules/isArray.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isArray.js"() {
     init_setup();
     init_tagTester();
     isArray_default = nativeIsArray || tagTester("Array");
   }
 });
 
-// node_modules/underscore/modules/_has.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_has.js
 function has(obj, key2) {
   return obj != null && hasOwnProperty.call(obj, key2);
 }
 var init_has = __esm({
-  "node_modules/underscore/modules/_has.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_has.js"() {
     init_setup();
   }
 });
 
-// node_modules/underscore/modules/isArguments.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isArguments.js
 var isArguments, isArguments_default;
 var init_isArguments = __esm({
-  "node_modules/underscore/modules/isArguments.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isArguments.js"() {
     init_tagTester();
     init_has();
     isArguments = tagTester("Arguments");
@@ -17288,40 +17288,40 @@ var init_isArguments = __esm({
   }
 });
 
-// node_modules/underscore/modules/isFinite.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isFinite.js
 function isFinite2(obj) {
   return !isSymbol_default(obj) && _isFinite(obj) && !isNaN(parseFloat(obj));
 }
 var init_isFinite = __esm({
-  "node_modules/underscore/modules/isFinite.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isFinite.js"() {
     init_setup();
     init_isSymbol();
   }
 });
 
-// node_modules/underscore/modules/isNaN.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isNaN.js
 function isNaN2(obj) {
   return isNumber_default(obj) && _isNaN(obj);
 }
 var init_isNaN = __esm({
-  "node_modules/underscore/modules/isNaN.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isNaN.js"() {
     init_setup();
     init_isNumber();
   }
 });
 
-// node_modules/underscore/modules/constant.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/constant.js
 function constant(value) {
   return function() {
     return value;
   };
 }
 var init_constant = __esm({
-  "node_modules/underscore/modules/constant.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/constant.js"() {
   }
 });
 
-// node_modules/underscore/modules/_createSizePropertyCheck.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createSizePropertyCheck.js
 function createSizePropertyCheck(getSizeProperty) {
   return function(collection) {
     var sizeProperty = getSizeProperty(collection);
@@ -17329,48 +17329,48 @@ function createSizePropertyCheck(getSizeProperty) {
   };
 }
 var init_createSizePropertyCheck = __esm({
-  "node_modules/underscore/modules/_createSizePropertyCheck.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createSizePropertyCheck.js"() {
     init_setup();
   }
 });
 
-// node_modules/underscore/modules/_shallowProperty.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_shallowProperty.js
 function shallowProperty(key2) {
   return function(obj) {
     return obj == null ? void 0 : obj[key2];
   };
 }
 var init_shallowProperty = __esm({
-  "node_modules/underscore/modules/_shallowProperty.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_shallowProperty.js"() {
   }
 });
 
-// node_modules/underscore/modules/_getByteLength.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_getByteLength.js
 var getByteLength_default;
 var init_getByteLength = __esm({
-  "node_modules/underscore/modules/_getByteLength.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_getByteLength.js"() {
     init_shallowProperty();
     getByteLength_default = shallowProperty("byteLength");
   }
 });
 
-// node_modules/underscore/modules/_isBufferLike.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_isBufferLike.js
 var isBufferLike_default;
 var init_isBufferLike = __esm({
-  "node_modules/underscore/modules/_isBufferLike.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_isBufferLike.js"() {
     init_createSizePropertyCheck();
     init_getByteLength();
     isBufferLike_default = createSizePropertyCheck(getByteLength_default);
   }
 });
 
-// node_modules/underscore/modules/isTypedArray.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isTypedArray.js
 function isTypedArray(obj) {
   return nativeIsView ? nativeIsView(obj) && !isDataView_default(obj) : isBufferLike_default(obj) && typedArrayPattern.test(toString.call(obj));
 }
 var typedArrayPattern, isTypedArray_default;
 var init_isTypedArray = __esm({
-  "node_modules/underscore/modules/isTypedArray.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isTypedArray.js"() {
     init_setup();
     init_isDataView();
     init_constant();
@@ -17380,16 +17380,16 @@ var init_isTypedArray = __esm({
   }
 });
 
-// node_modules/underscore/modules/_getLength.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_getLength.js
 var getLength_default;
 var init_getLength = __esm({
-  "node_modules/underscore/modules/_getLength.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_getLength.js"() {
     init_shallowProperty();
     getLength_default = shallowProperty("length");
   }
 });
 
-// node_modules/underscore/modules/_collectNonEnumProps.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_collectNonEnumProps.js
 function emulatedSet(keys2) {
   var hash2 = {};
   for (var l2 = keys2.length, i2 = 0; i2 < l2; ++i2) hash2[keys2[i2]] = true;
@@ -17418,14 +17418,14 @@ function collectNonEnumProps(obj, keys2) {
   }
 }
 var init_collectNonEnumProps = __esm({
-  "node_modules/underscore/modules/_collectNonEnumProps.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_collectNonEnumProps.js"() {
     init_setup();
     init_isFunction();
     init_has();
   }
 });
 
-// node_modules/underscore/modules/keys.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/keys.js
 function keys(obj) {
   if (!isObject2(obj)) return [];
   if (nativeKeys) return nativeKeys(obj);
@@ -17435,7 +17435,7 @@ function keys(obj) {
   return keys2;
 }
 var init_keys = __esm({
-  "node_modules/underscore/modules/keys.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/keys.js"() {
     init_isObject();
     init_setup();
     init_has();
@@ -17443,7 +17443,7 @@ var init_keys = __esm({
   }
 });
 
-// node_modules/underscore/modules/isEmpty.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isEmpty.js
 function isEmpty(obj) {
   if (obj == null) return true;
   var length = getLength_default(obj);
@@ -17451,7 +17451,7 @@ function isEmpty(obj) {
   return getLength_default(keys(obj)) === 0;
 }
 var init_isEmpty = __esm({
-  "node_modules/underscore/modules/isEmpty.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isEmpty.js"() {
     init_getLength();
     init_isArray();
     init_isString();
@@ -17460,7 +17460,7 @@ var init_isEmpty = __esm({
   }
 });
 
-// node_modules/underscore/modules/isMatch.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isMatch.js
 function isMatch(object4, attrs) {
   var _keys = keys(attrs), length = _keys.length;
   if (object4 == null) return !length;
@@ -17472,19 +17472,19 @@ function isMatch(object4, attrs) {
   return true;
 }
 var init_isMatch = __esm({
-  "node_modules/underscore/modules/isMatch.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isMatch.js"() {
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/underscore.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/underscore.js
 function _(obj) {
   if (obj instanceof _) return obj;
   if (!(this instanceof _)) return new _(obj);
   this._wrapped = obj;
 }
 var init_underscore = __esm({
-  "node_modules/underscore/modules/underscore.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/underscore.js"() {
     init_setup();
     _.VERSION = VERSION;
     _.prototype.value = function() {
@@ -17497,7 +17497,7 @@ var init_underscore = __esm({
   }
 });
 
-// node_modules/underscore/modules/_toBufferView.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_toBufferView.js
 function toBufferView(bufferSource) {
   return new Uint8Array(
     bufferSource.buffer || bufferSource,
@@ -17506,12 +17506,12 @@ function toBufferView(bufferSource) {
   );
 }
 var init_toBufferView = __esm({
-  "node_modules/underscore/modules/_toBufferView.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_toBufferView.js"() {
     init_getByteLength();
   }
 });
 
-// node_modules/underscore/modules/isEqual.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isEqual.js
 function isEqual(a2, b2) {
   var todo = [{ a: a2, b: b2 }];
   var aStack = [], bStack = [];
@@ -17611,7 +17611,7 @@ function isEqual(a2, b2) {
 }
 var tagDataView;
 var init_isEqual = __esm({
-  "node_modules/underscore/modules/isEqual.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isEqual.js"() {
     init_underscore();
     init_setup();
     init_getByteLength();
@@ -17626,7 +17626,7 @@ var init_isEqual = __esm({
   }
 });
 
-// node_modules/underscore/modules/allKeys.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/allKeys.js
 function allKeys(obj) {
   if (!isObject2(obj)) return [];
   var keys2 = [];
@@ -17635,14 +17635,14 @@ function allKeys(obj) {
   return keys2;
 }
 var init_allKeys = __esm({
-  "node_modules/underscore/modules/allKeys.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/allKeys.js"() {
     init_isObject();
     init_setup();
     init_collectNonEnumProps();
   }
 });
 
-// node_modules/underscore/modules/_methodFingerprint.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_methodFingerprint.js
 function ie11fingerprint(methods) {
   var length = getLength_default(methods);
   return function(obj) {
@@ -17657,7 +17657,7 @@ function ie11fingerprint(methods) {
 }
 var forEachName, hasName, commonInit, mapTail, mapMethods, weakMapMethods, setMethods;
 var init_methodFingerprint = __esm({
-  "node_modules/underscore/modules/_methodFingerprint.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_methodFingerprint.js"() {
     init_getLength();
     init_isFunction();
     init_allKeys();
@@ -17671,10 +17671,10 @@ var init_methodFingerprint = __esm({
   }
 });
 
-// node_modules/underscore/modules/isMap.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isMap.js
 var isMap_default;
 var init_isMap = __esm({
-  "node_modules/underscore/modules/isMap.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isMap.js"() {
     init_tagTester();
     init_stringTagBug();
     init_methodFingerprint();
@@ -17682,10 +17682,10 @@ var init_isMap = __esm({
   }
 });
 
-// node_modules/underscore/modules/isWeakMap.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isWeakMap.js
 var isWeakMap_default;
 var init_isWeakMap = __esm({
-  "node_modules/underscore/modules/isWeakMap.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isWeakMap.js"() {
     init_tagTester();
     init_stringTagBug();
     init_methodFingerprint();
@@ -17693,10 +17693,10 @@ var init_isWeakMap = __esm({
   }
 });
 
-// node_modules/underscore/modules/isSet.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isSet.js
 var isSet_default;
 var init_isSet = __esm({
-  "node_modules/underscore/modules/isSet.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isSet.js"() {
     init_tagTester();
     init_stringTagBug();
     init_methodFingerprint();
@@ -17704,16 +17704,16 @@ var init_isSet = __esm({
   }
 });
 
-// node_modules/underscore/modules/isWeakSet.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isWeakSet.js
 var isWeakSet_default;
 var init_isWeakSet = __esm({
-  "node_modules/underscore/modules/isWeakSet.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/isWeakSet.js"() {
     init_tagTester();
     isWeakSet_default = tagTester("WeakSet");
   }
 });
 
-// node_modules/underscore/modules/values.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/values.js
 function values(obj) {
   var _keys = keys(obj);
   var length = _keys.length;
@@ -17724,12 +17724,12 @@ function values(obj) {
   return values2;
 }
 var init_values = __esm({
-  "node_modules/underscore/modules/values.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/values.js"() {
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/pairs.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/pairs.js
 function pairs(obj) {
   var _keys = keys(obj);
   var length = _keys.length;
@@ -17740,12 +17740,12 @@ function pairs(obj) {
   return pairs2;
 }
 var init_pairs = __esm({
-  "node_modules/underscore/modules/pairs.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/pairs.js"() {
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/invert.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/invert.js
 function invert(obj) {
   var result2 = {};
   var _keys = keys(obj);
@@ -17755,12 +17755,12 @@ function invert(obj) {
   return result2;
 }
 var init_invert = __esm({
-  "node_modules/underscore/modules/invert.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/invert.js"() {
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/functions.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/functions.js
 function functions(obj) {
   var names = [];
   for (var key2 in obj) {
@@ -17769,12 +17769,12 @@ function functions(obj) {
   return names.sort();
 }
 var init_functions = __esm({
-  "node_modules/underscore/modules/functions.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/functions.js"() {
     init_isFunction();
   }
 });
 
-// node_modules/underscore/modules/_createAssigner.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createAssigner.js
 function createAssigner(keysFunc, defaults) {
   return function(obj) {
     var length = arguments.length;
@@ -17791,41 +17791,41 @@ function createAssigner(keysFunc, defaults) {
   };
 }
 var init_createAssigner = __esm({
-  "node_modules/underscore/modules/_createAssigner.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createAssigner.js"() {
   }
 });
 
-// node_modules/underscore/modules/extend.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/extend.js
 var extend_default;
 var init_extend = __esm({
-  "node_modules/underscore/modules/extend.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/extend.js"() {
     init_createAssigner();
     init_allKeys();
     extend_default = createAssigner(allKeys);
   }
 });
 
-// node_modules/underscore/modules/extendOwn.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/extendOwn.js
 var extendOwn_default;
 var init_extendOwn = __esm({
-  "node_modules/underscore/modules/extendOwn.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/extendOwn.js"() {
     init_createAssigner();
     init_keys();
     extendOwn_default = createAssigner(keys);
   }
 });
 
-// node_modules/underscore/modules/defaults.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/defaults.js
 var defaults_default;
 var init_defaults = __esm({
-  "node_modules/underscore/modules/defaults.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/defaults.js"() {
     init_createAssigner();
     init_allKeys();
     defaults_default = createAssigner(allKeys, true);
   }
 });
 
-// node_modules/underscore/modules/_baseCreate.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_baseCreate.js
 function ctor() {
   return function() {
   };
@@ -17840,72 +17840,72 @@ function baseCreate(prototype) {
   return result2;
 }
 var init_baseCreate = __esm({
-  "node_modules/underscore/modules/_baseCreate.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_baseCreate.js"() {
     init_isObject();
     init_setup();
   }
 });
 
-// node_modules/underscore/modules/create.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/create.js
 function create(prototype, props) {
   var result2 = baseCreate(prototype);
   if (props) extendOwn_default(result2, props);
   return result2;
 }
 var init_create = __esm({
-  "node_modules/underscore/modules/create.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/create.js"() {
     init_baseCreate();
     init_extendOwn();
   }
 });
 
-// node_modules/underscore/modules/clone.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/clone.js
 function clone2(obj) {
   if (!isObject2(obj)) return obj;
   return isArray_default(obj) ? obj.slice() : extend_default({}, obj);
 }
 var init_clone = __esm({
-  "node_modules/underscore/modules/clone.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/clone.js"() {
     init_isObject();
     init_isArray();
     init_extend();
   }
 });
 
-// node_modules/underscore/modules/tap.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/tap.js
 function tap(obj, interceptor) {
   interceptor(obj);
   return obj;
 }
 var init_tap = __esm({
-  "node_modules/underscore/modules/tap.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/tap.js"() {
   }
 });
 
-// node_modules/underscore/modules/toPath.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/toPath.js
 function toPath(path7) {
   return isArray_default(path7) ? path7 : [path7];
 }
 var init_toPath = __esm({
-  "node_modules/underscore/modules/toPath.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/toPath.js"() {
     init_underscore();
     init_isArray();
     _.toPath = toPath;
   }
 });
 
-// node_modules/underscore/modules/_toPath.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_toPath.js
 function toPath2(path7) {
   return _.toPath(path7);
 }
 var init_toPath2 = __esm({
-  "node_modules/underscore/modules/_toPath.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_toPath.js"() {
     init_underscore();
     init_toPath();
   }
 });
 
-// node_modules/underscore/modules/_deepGet.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_deepGet.js
 function deepGet(obj, path7) {
   var length = path7.length;
   for (var i2 = 0; i2 < length; i2++) {
@@ -17915,24 +17915,24 @@ function deepGet(obj, path7) {
   return length ? obj : void 0;
 }
 var init_deepGet = __esm({
-  "node_modules/underscore/modules/_deepGet.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_deepGet.js"() {
   }
 });
 
-// node_modules/underscore/modules/get.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/get.js
 function get(object4, path7, defaultValue) {
   var value = deepGet(object4, toPath2(path7));
   return isUndefined(value) ? defaultValue : value;
 }
 var init_get = __esm({
-  "node_modules/underscore/modules/get.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/get.js"() {
     init_toPath2();
     init_deepGet();
     init_isUndefined();
   }
 });
 
-// node_modules/underscore/modules/has.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/has.js
 function has2(obj, path7) {
   path7 = toPath2(path7);
   var length = path7.length;
@@ -17944,22 +17944,22 @@ function has2(obj, path7) {
   return !!length;
 }
 var init_has2 = __esm({
-  "node_modules/underscore/modules/has.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/has.js"() {
     init_has();
     init_toPath2();
   }
 });
 
-// node_modules/underscore/modules/identity.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/identity.js
 function identity(value) {
   return value;
 }
 var init_identity = __esm({
-  "node_modules/underscore/modules/identity.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/identity.js"() {
   }
 });
 
-// node_modules/underscore/modules/matcher.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/matcher.js
 function matcher(attrs) {
   attrs = extendOwn_default({}, attrs);
   return function(obj) {
@@ -17967,13 +17967,13 @@ function matcher(attrs) {
   };
 }
 var init_matcher = __esm({
-  "node_modules/underscore/modules/matcher.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/matcher.js"() {
     init_extendOwn();
     init_isMatch();
   }
 });
 
-// node_modules/underscore/modules/property.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/property.js
 function property(path7) {
   path7 = toPath2(path7);
   return function(obj) {
@@ -17981,13 +17981,13 @@ function property(path7) {
   };
 }
 var init_property = __esm({
-  "node_modules/underscore/modules/property.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/property.js"() {
     init_deepGet();
     init_toPath2();
   }
 });
 
-// node_modules/underscore/modules/_optimizeCb.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_optimizeCb.js
 function optimizeCb(func, context, argCount) {
   if (context === void 0) return func;
   switch (argCount == null ? 3 : argCount) {
@@ -18010,11 +18010,11 @@ function optimizeCb(func, context, argCount) {
   };
 }
 var init_optimizeCb = __esm({
-  "node_modules/underscore/modules/_optimizeCb.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_optimizeCb.js"() {
   }
 });
 
-// node_modules/underscore/modules/_baseIteratee.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_baseIteratee.js
 function baseIteratee(value, context, argCount) {
   if (value == null) return identity;
   if (isFunction_default(value)) return optimizeCb(value, context, argCount);
@@ -18022,7 +18022,7 @@ function baseIteratee(value, context, argCount) {
   return property(value);
 }
 var init_baseIteratee = __esm({
-  "node_modules/underscore/modules/_baseIteratee.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_baseIteratee.js"() {
     init_identity();
     init_isFunction();
     init_isObject();
@@ -18033,32 +18033,32 @@ var init_baseIteratee = __esm({
   }
 });
 
-// node_modules/underscore/modules/iteratee.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/iteratee.js
 function iteratee(value, context) {
   return baseIteratee(value, context, Infinity);
 }
 var init_iteratee = __esm({
-  "node_modules/underscore/modules/iteratee.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/iteratee.js"() {
     init_underscore();
     init_baseIteratee();
     _.iteratee = iteratee;
   }
 });
 
-// node_modules/underscore/modules/_cb.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_cb.js
 function cb(value, context, argCount) {
   if (_.iteratee !== iteratee) return _.iteratee(value, context);
   return baseIteratee(value, context, argCount);
 }
 var init_cb = __esm({
-  "node_modules/underscore/modules/_cb.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_cb.js"() {
     init_underscore();
     init_baseIteratee();
     init_iteratee();
   }
 });
 
-// node_modules/underscore/modules/mapObject.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/mapObject.js
 function mapObject(obj, iteratee2, context) {
   iteratee2 = cb(iteratee2, context);
   var _keys = keys(obj), length = _keys.length, results = {};
@@ -18069,21 +18069,21 @@ function mapObject(obj, iteratee2, context) {
   return results;
 }
 var init_mapObject = __esm({
-  "node_modules/underscore/modules/mapObject.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/mapObject.js"() {
     init_cb();
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/noop.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/noop.js
 function noop() {
 }
 var init_noop = __esm({
-  "node_modules/underscore/modules/noop.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/noop.js"() {
   }
 });
 
-// node_modules/underscore/modules/propertyOf.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/propertyOf.js
 function propertyOf(obj) {
   if (obj == null) return noop;
   return function(path7) {
@@ -18091,13 +18091,13 @@ function propertyOf(obj) {
   };
 }
 var init_propertyOf = __esm({
-  "node_modules/underscore/modules/propertyOf.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/propertyOf.js"() {
     init_noop();
     init_get();
   }
 });
 
-// node_modules/underscore/modules/times.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/times.js
 function times(n2, iteratee2, context) {
   var accum = Array(Math.max(0, n2));
   iteratee2 = optimizeCb(iteratee2, context, 1);
@@ -18105,12 +18105,12 @@ function times(n2, iteratee2, context) {
   return accum;
 }
 var init_times = __esm({
-  "node_modules/underscore/modules/times.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/times.js"() {
     init_optimizeCb();
   }
 });
 
-// node_modules/underscore/modules/random.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/random.js
 function random(min2, max2) {
   if (max2 == null) {
     max2 = min2;
@@ -18119,21 +18119,21 @@ function random(min2, max2) {
   return min2 + Math.floor(Math.random() * (max2 - min2 + 1));
 }
 var init_random = __esm({
-  "node_modules/underscore/modules/random.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/random.js"() {
   }
 });
 
-// node_modules/underscore/modules/now.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/now.js
 var now_default;
 var init_now = __esm({
-  "node_modules/underscore/modules/now.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/now.js"() {
     now_default = Date.now || function() {
       return (/* @__PURE__ */ new Date()).getTime();
     };
   }
 });
 
-// node_modules/underscore/modules/_createEscaper.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createEscaper.js
 function createEscaper(map3) {
   var escaper = function(match) {
     return map3[match];
@@ -18147,15 +18147,15 @@ function createEscaper(map3) {
   };
 }
 var init_createEscaper = __esm({
-  "node_modules/underscore/modules/_createEscaper.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createEscaper.js"() {
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/_escapeMap.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_escapeMap.js
 var escapeMap_default;
 var init_escapeMap = __esm({
-  "node_modules/underscore/modules/_escapeMap.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_escapeMap.js"() {
     escapeMap_default = {
       "&": "&amp;",
       "<": "&lt;",
@@ -18167,40 +18167,40 @@ var init_escapeMap = __esm({
   }
 });
 
-// node_modules/underscore/modules/escape.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/escape.js
 var escape_default;
 var init_escape = __esm({
-  "node_modules/underscore/modules/escape.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/escape.js"() {
     init_createEscaper();
     init_escapeMap();
     escape_default = createEscaper(escapeMap_default);
   }
 });
 
-// node_modules/underscore/modules/_unescapeMap.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_unescapeMap.js
 var unescapeMap_default;
 var init_unescapeMap = __esm({
-  "node_modules/underscore/modules/_unescapeMap.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_unescapeMap.js"() {
     init_invert();
     init_escapeMap();
     unescapeMap_default = invert(escapeMap_default);
   }
 });
 
-// node_modules/underscore/modules/unescape.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/unescape.js
 var unescape_default;
 var init_unescape = __esm({
-  "node_modules/underscore/modules/unescape.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/unescape.js"() {
     init_createEscaper();
     init_unescapeMap();
     unescape_default = createEscaper(unescapeMap_default);
   }
 });
 
-// node_modules/underscore/modules/templateSettings.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/templateSettings.js
 var templateSettings_default;
 var init_templateSettings = __esm({
-  "node_modules/underscore/modules/templateSettings.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/templateSettings.js"() {
     init_underscore();
     templateSettings_default = _.templateSettings = {
       evaluate: /<%([\s\S]+?)%>/g,
@@ -18210,7 +18210,7 @@ var init_templateSettings = __esm({
   }
 });
 
-// node_modules/underscore/modules/template.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/template.js
 function escapeChar(match) {
   return "\\" + escapes[match];
 }
@@ -18262,7 +18262,7 @@ function template(text, settings, oldSettings) {
 }
 var noMatch, escapes, escapeRegExp, bareIdentifier;
 var init_template = __esm({
-  "node_modules/underscore/modules/template.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/template.js"() {
     init_defaults();
     init_underscore();
     init_templateSettings();
@@ -18280,7 +18280,7 @@ var init_template = __esm({
   }
 });
 
-// node_modules/underscore/modules/result.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/result.js
 function result(obj, path7, fallback) {
   path7 = toPath2(path7);
   var length = path7.length;
@@ -18298,37 +18298,37 @@ function result(obj, path7, fallback) {
   return obj;
 }
 var init_result = __esm({
-  "node_modules/underscore/modules/result.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/result.js"() {
     init_isFunction();
     init_toPath2();
   }
 });
 
-// node_modules/underscore/modules/uniqueId.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/uniqueId.js
 function uniqueId(prefix) {
   var id = ++idCounter + "";
   return prefix ? prefix + id : id;
 }
 var idCounter;
 var init_uniqueId = __esm({
-  "node_modules/underscore/modules/uniqueId.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/uniqueId.js"() {
     idCounter = 0;
   }
 });
 
-// node_modules/underscore/modules/chain.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/chain.js
 function chain(obj) {
   var instance = _(obj);
   instance._chain = true;
   return instance;
 }
 var init_chain = __esm({
-  "node_modules/underscore/modules/chain.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/chain.js"() {
     init_underscore();
   }
 });
 
-// node_modules/underscore/modules/_executeBound.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_executeBound.js
 function executeBound(sourceFunc, boundFunc, context, callingContext, args) {
   if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);
   var self2 = baseCreate(sourceFunc.prototype);
@@ -18337,16 +18337,16 @@ function executeBound(sourceFunc, boundFunc, context, callingContext, args) {
   return self2;
 }
 var init_executeBound = __esm({
-  "node_modules/underscore/modules/_executeBound.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_executeBound.js"() {
     init_baseCreate();
     init_isObject();
   }
 });
 
-// node_modules/underscore/modules/partial.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/partial.js
 var partial2, partial_default;
 var init_partial = __esm({
-  "node_modules/underscore/modules/partial.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/partial.js"() {
     init_restArguments();
     init_executeBound();
     init_underscore();
@@ -18368,10 +18368,10 @@ var init_partial = __esm({
   }
 });
 
-// node_modules/underscore/modules/bind.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/bind.js
 var bind_default;
 var init_bind = __esm({
-  "node_modules/underscore/modules/bind.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/bind.js"() {
     init_restArguments();
     init_isFunction();
     init_executeBound();
@@ -18385,17 +18385,17 @@ var init_bind = __esm({
   }
 });
 
-// node_modules/underscore/modules/_isArrayLike.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_isArrayLike.js
 var isArrayLike_default;
 var init_isArrayLike = __esm({
-  "node_modules/underscore/modules/_isArrayLike.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_isArrayLike.js"() {
     init_createSizePropertyCheck();
     init_getLength();
     isArrayLike_default = createSizePropertyCheck(getLength_default);
   }
 });
 
-// node_modules/underscore/modules/_flatten.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_flatten.js
 function flatten(input2, depth, strict) {
   if (!depth && depth !== 0) depth = Infinity;
   var output2 = [], idx = 0, i2 = 0, length = getLength_default(input2) || 0, stack = [];
@@ -18423,7 +18423,7 @@ function flatten(input2, depth, strict) {
   return output2;
 }
 var init_flatten = __esm({
-  "node_modules/underscore/modules/_flatten.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_flatten.js"() {
     init_getLength();
     init_isArrayLike();
     init_isArray();
@@ -18431,10 +18431,10 @@ var init_flatten = __esm({
   }
 });
 
-// node_modules/underscore/modules/bindAll.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/bindAll.js
 var bindAll_default;
 var init_bindAll = __esm({
-  "node_modules/underscore/modules/bindAll.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/bindAll.js"() {
     init_restArguments();
     init_flatten();
     init_bind();
@@ -18451,7 +18451,7 @@ var init_bindAll = __esm({
   }
 });
 
-// node_modules/underscore/modules/memoize.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/memoize.js
 function memoize(func, hasher) {
   var memoize2 = function(key2) {
     var cache2 = memoize2.cache;
@@ -18463,15 +18463,15 @@ function memoize(func, hasher) {
   return memoize2;
 }
 var init_memoize = __esm({
-  "node_modules/underscore/modules/memoize.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/memoize.js"() {
     init_has();
   }
 });
 
-// node_modules/underscore/modules/delay.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/delay.js
 var delay_default;
 var init_delay = __esm({
-  "node_modules/underscore/modules/delay.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/delay.js"() {
     init_restArguments();
     delay_default = restArguments(function(func, wait, args) {
       return setTimeout(function() {
@@ -18481,10 +18481,10 @@ var init_delay = __esm({
   }
 });
 
-// node_modules/underscore/modules/defer.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/defer.js
 var defer_default;
 var init_defer = __esm({
-  "node_modules/underscore/modules/defer.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/defer.js"() {
     init_partial();
     init_delay();
     init_underscore();
@@ -18492,7 +18492,7 @@ var init_defer = __esm({
   }
 });
 
-// node_modules/underscore/modules/throttle.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/throttle.js
 function throttle(func, wait, options) {
   var timeout, context, args, result2;
   var previous = 0;
@@ -18530,12 +18530,12 @@ function throttle(func, wait, options) {
   return throttled;
 }
 var init_throttle = __esm({
-  "node_modules/underscore/modules/throttle.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/throttle.js"() {
     init_now();
   }
 });
 
-// node_modules/underscore/modules/debounce.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/debounce.js
 function debounce(func, wait, immediate) {
   var timeout, previous, args, result2, context;
   var later = function() {
@@ -18565,34 +18565,34 @@ function debounce(func, wait, immediate) {
   return debounced;
 }
 var init_debounce = __esm({
-  "node_modules/underscore/modules/debounce.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/debounce.js"() {
     init_restArguments();
     init_now();
   }
 });
 
-// node_modules/underscore/modules/wrap.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/wrap.js
 function wrap(func, wrapper) {
   return partial_default(wrapper, func);
 }
 var init_wrap = __esm({
-  "node_modules/underscore/modules/wrap.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/wrap.js"() {
     init_partial();
   }
 });
 
-// node_modules/underscore/modules/negate.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/negate.js
 function negate(predicate) {
   return function() {
     return !predicate.apply(this, arguments);
   };
 }
 var init_negate = __esm({
-  "node_modules/underscore/modules/negate.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/negate.js"() {
   }
 });
 
-// node_modules/underscore/modules/compose.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/compose.js
 function compose() {
   var args = arguments;
   var start = args.length - 1;
@@ -18604,11 +18604,11 @@ function compose() {
   };
 }
 var init_compose = __esm({
-  "node_modules/underscore/modules/compose.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/compose.js"() {
   }
 });
 
-// node_modules/underscore/modules/after.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/after.js
 function after(times2, func) {
   return function() {
     if (--times2 < 1) {
@@ -18617,11 +18617,11 @@ function after(times2, func) {
   };
 }
 var init_after = __esm({
-  "node_modules/underscore/modules/after.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/after.js"() {
   }
 });
 
-// node_modules/underscore/modules/before.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/before.js
 function before(times2, func) {
   var memo2;
   return function() {
@@ -18633,21 +18633,21 @@ function before(times2, func) {
   };
 }
 var init_before = __esm({
-  "node_modules/underscore/modules/before.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/before.js"() {
   }
 });
 
-// node_modules/underscore/modules/once.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/once.js
 var once_default;
 var init_once = __esm({
-  "node_modules/underscore/modules/once.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/once.js"() {
     init_partial();
     init_before();
     once_default = partial_default(before, 2);
   }
 });
 
-// node_modules/underscore/modules/findKey.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/findKey.js
 function findKey(obj, predicate, context) {
   predicate = cb(predicate, context);
   var _keys = keys(obj), key2;
@@ -18657,13 +18657,13 @@ function findKey(obj, predicate, context) {
   }
 }
 var init_findKey = __esm({
-  "node_modules/underscore/modules/findKey.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/findKey.js"() {
     init_cb();
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/_createPredicateIndexFinder.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createPredicateIndexFinder.js
 function createPredicateIndexFinder(dir) {
   return function(array2, predicate, context) {
     predicate = cb(predicate, context);
@@ -18676,31 +18676,31 @@ function createPredicateIndexFinder(dir) {
   };
 }
 var init_createPredicateIndexFinder = __esm({
-  "node_modules/underscore/modules/_createPredicateIndexFinder.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createPredicateIndexFinder.js"() {
     init_cb();
     init_getLength();
   }
 });
 
-// node_modules/underscore/modules/findIndex.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/findIndex.js
 var findIndex_default;
 var init_findIndex = __esm({
-  "node_modules/underscore/modules/findIndex.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/findIndex.js"() {
     init_createPredicateIndexFinder();
     findIndex_default = createPredicateIndexFinder(1);
   }
 });
 
-// node_modules/underscore/modules/findLastIndex.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/findLastIndex.js
 var findLastIndex_default;
 var init_findLastIndex = __esm({
-  "node_modules/underscore/modules/findLastIndex.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/findLastIndex.js"() {
     init_createPredicateIndexFinder();
     findLastIndex_default = createPredicateIndexFinder(-1);
   }
 });
 
-// node_modules/underscore/modules/sortedIndex.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/sortedIndex.js
 function sortedIndex(array2, obj, iteratee2, context) {
   iteratee2 = cb(iteratee2, context, 1);
   var value = iteratee2(obj);
@@ -18713,13 +18713,13 @@ function sortedIndex(array2, obj, iteratee2, context) {
   return low;
 }
 var init_sortedIndex = __esm({
-  "node_modules/underscore/modules/sortedIndex.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/sortedIndex.js"() {
     init_cb();
     init_getLength();
   }
 });
 
-// node_modules/underscore/modules/_createIndexFinder.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createIndexFinder.js
 function createIndexFinder(dir, predicateFind, sortedIndex2) {
   return function(array2, item, idx) {
     var i2 = 0, length = getLength_default(array2);
@@ -18744,17 +18744,17 @@ function createIndexFinder(dir, predicateFind, sortedIndex2) {
   };
 }
 var init_createIndexFinder = __esm({
-  "node_modules/underscore/modules/_createIndexFinder.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createIndexFinder.js"() {
     init_getLength();
     init_setup();
     init_isNaN();
   }
 });
 
-// node_modules/underscore/modules/indexOf.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/indexOf.js
 var indexOf_default;
 var init_indexOf = __esm({
-  "node_modules/underscore/modules/indexOf.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/indexOf.js"() {
     init_sortedIndex();
     init_findIndex();
     init_createIndexFinder();
@@ -18762,42 +18762,42 @@ var init_indexOf = __esm({
   }
 });
 
-// node_modules/underscore/modules/lastIndexOf.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/lastIndexOf.js
 var lastIndexOf_default;
 var init_lastIndexOf = __esm({
-  "node_modules/underscore/modules/lastIndexOf.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/lastIndexOf.js"() {
     init_findLastIndex();
     init_createIndexFinder();
     lastIndexOf_default = createIndexFinder(-1, findLastIndex_default);
   }
 });
 
-// node_modules/underscore/modules/find.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/find.js
 function find(obj, predicate, context) {
   var keyFinder = isArrayLike_default(obj) ? findIndex_default : findKey;
   var key2 = keyFinder(obj, predicate, context);
   if (key2 !== void 0 && key2 !== -1) return obj[key2];
 }
 var init_find = __esm({
-  "node_modules/underscore/modules/find.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/find.js"() {
     init_isArrayLike();
     init_findIndex();
     init_findKey();
   }
 });
 
-// node_modules/underscore/modules/findWhere.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/findWhere.js
 function findWhere(obj, attrs) {
   return find(obj, matcher(attrs));
 }
 var init_findWhere = __esm({
-  "node_modules/underscore/modules/findWhere.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/findWhere.js"() {
     init_find();
     init_matcher();
   }
 });
 
-// node_modules/underscore/modules/each.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/each.js
 function each(obj, iteratee2, context) {
   iteratee2 = optimizeCb(iteratee2, context);
   var i2, length;
@@ -18814,14 +18814,14 @@ function each(obj, iteratee2, context) {
   return obj;
 }
 var init_each = __esm({
-  "node_modules/underscore/modules/each.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/each.js"() {
     init_optimizeCb();
     init_isArrayLike();
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/map.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/map.js
 function map2(obj, iteratee2, context) {
   iteratee2 = cb(iteratee2, context);
   var _keys = !isArrayLike_default(obj) && keys(obj), length = (_keys || obj).length, results = Array(length);
@@ -18832,14 +18832,14 @@ function map2(obj, iteratee2, context) {
   return results;
 }
 var init_map = __esm({
-  "node_modules/underscore/modules/map.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/map.js"() {
     init_cb();
     init_isArrayLike();
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/_createReduce.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createReduce.js
 function createReduce(dir) {
   var reducer = function(obj, iteratee2, memo2, initial2) {
     var _keys = !isArrayLike_default(obj) && keys(obj), length = (_keys || obj).length, index = dir > 0 ? 0 : length - 1;
@@ -18859,32 +18859,32 @@ function createReduce(dir) {
   };
 }
 var init_createReduce = __esm({
-  "node_modules/underscore/modules/_createReduce.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_createReduce.js"() {
     init_isArrayLike();
     init_keys();
     init_optimizeCb();
   }
 });
 
-// node_modules/underscore/modules/reduce.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/reduce.js
 var reduce_default;
 var init_reduce = __esm({
-  "node_modules/underscore/modules/reduce.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/reduce.js"() {
     init_createReduce();
     reduce_default = createReduce(1);
   }
 });
 
-// node_modules/underscore/modules/reduceRight.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/reduceRight.js
 var reduceRight_default;
 var init_reduceRight = __esm({
-  "node_modules/underscore/modules/reduceRight.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/reduceRight.js"() {
     init_createReduce();
     reduceRight_default = createReduce(-1);
   }
 });
 
-// node_modules/underscore/modules/filter.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/filter.js
 function filter(obj, predicate, context) {
   var results = [];
   predicate = cb(predicate, context);
@@ -18894,25 +18894,25 @@ function filter(obj, predicate, context) {
   return results;
 }
 var init_filter = __esm({
-  "node_modules/underscore/modules/filter.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/filter.js"() {
     init_cb();
     init_each();
   }
 });
 
-// node_modules/underscore/modules/reject.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/reject.js
 function reject(obj, predicate, context) {
   return filter(obj, negate(cb(predicate)), context);
 }
 var init_reject = __esm({
-  "node_modules/underscore/modules/reject.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/reject.js"() {
     init_filter();
     init_negate();
     init_cb();
   }
 });
 
-// node_modules/underscore/modules/every.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/every.js
 function every(obj, predicate, context) {
   predicate = cb(predicate, context);
   var _keys = !isArrayLike_default(obj) && keys(obj), length = (_keys || obj).length;
@@ -18923,14 +18923,14 @@ function every(obj, predicate, context) {
   return true;
 }
 var init_every = __esm({
-  "node_modules/underscore/modules/every.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/every.js"() {
     init_cb();
     init_isArrayLike();
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/some.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/some.js
 function some(obj, predicate, context) {
   predicate = cb(predicate, context);
   var _keys = !isArrayLike_default(obj) && keys(obj), length = (_keys || obj).length;
@@ -18941,31 +18941,31 @@ function some(obj, predicate, context) {
   return false;
 }
 var init_some = __esm({
-  "node_modules/underscore/modules/some.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/some.js"() {
     init_cb();
     init_isArrayLike();
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/contains.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/contains.js
 function contains(obj, item, fromIndex, guard2) {
   if (!isArrayLike_default(obj)) obj = values(obj);
   if (typeof fromIndex != "number" || guard2) fromIndex = 0;
   return indexOf_default(obj, item, fromIndex) >= 0;
 }
 var init_contains = __esm({
-  "node_modules/underscore/modules/contains.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/contains.js"() {
     init_isArrayLike();
     init_values();
     init_indexOf();
   }
 });
 
-// node_modules/underscore/modules/invoke.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/invoke.js
 var invoke_default;
 var init_invoke = __esm({
-  "node_modules/underscore/modules/invoke.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/invoke.js"() {
     init_restArguments();
     init_isFunction();
     init_map();
@@ -18995,29 +18995,29 @@ var init_invoke = __esm({
   }
 });
 
-// node_modules/underscore/modules/pluck.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/pluck.js
 function pluck(obj, key2) {
   return map2(obj, property(key2));
 }
 var init_pluck = __esm({
-  "node_modules/underscore/modules/pluck.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/pluck.js"() {
     init_map();
     init_property();
   }
 });
 
-// node_modules/underscore/modules/where.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/where.js
 function where(obj, attrs) {
   return filter(obj, matcher(attrs));
 }
 var init_where = __esm({
-  "node_modules/underscore/modules/where.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/where.js"() {
     init_filter();
     init_matcher();
   }
 });
 
-// node_modules/underscore/modules/max.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/max.js
 function max(obj, iteratee2, context) {
   var result2 = -Infinity, lastComputed = -Infinity, value, computed;
   if (iteratee2 == null || typeof iteratee2 == "number" && typeof obj[0] != "object" && obj != null) {
@@ -19041,7 +19041,7 @@ function max(obj, iteratee2, context) {
   return result2;
 }
 var init_max = __esm({
-  "node_modules/underscore/modules/max.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/max.js"() {
     init_isArrayLike();
     init_values();
     init_cb();
@@ -19049,7 +19049,7 @@ var init_max = __esm({
   }
 });
 
-// node_modules/underscore/modules/min.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/min.js
 function min(obj, iteratee2, context) {
   var result2 = Infinity, lastComputed = Infinity, value, computed;
   if (iteratee2 == null || typeof iteratee2 == "number" && typeof obj[0] != "object" && obj != null) {
@@ -19073,7 +19073,7 @@ function min(obj, iteratee2, context) {
   return result2;
 }
 var init_min = __esm({
-  "node_modules/underscore/modules/min.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/min.js"() {
     init_isArrayLike();
     init_values();
     init_cb();
@@ -19081,7 +19081,7 @@ var init_min = __esm({
   }
 });
 
-// node_modules/underscore/modules/toArray.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/toArray.js
 function toArray(obj) {
   if (!obj) return [];
   if (isArray_default(obj)) return slice.call(obj);
@@ -19093,7 +19093,7 @@ function toArray(obj) {
 }
 var reStrSymbol;
 var init_toArray = __esm({
-  "node_modules/underscore/modules/toArray.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/toArray.js"() {
     init_isArray();
     init_setup();
     init_isString();
@@ -19105,7 +19105,7 @@ var init_toArray = __esm({
   }
 });
 
-// node_modules/underscore/modules/sample.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/sample.js
 function sample(obj, n2, guard2) {
   if (n2 == null || guard2) {
     if (!isArrayLike_default(obj)) obj = values(obj);
@@ -19124,7 +19124,7 @@ function sample(obj, n2, guard2) {
   return sample2.slice(0, n2);
 }
 var init_sample = __esm({
-  "node_modules/underscore/modules/sample.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/sample.js"() {
     init_isArrayLike();
     init_values();
     init_getLength();
@@ -19133,17 +19133,17 @@ var init_sample = __esm({
   }
 });
 
-// node_modules/underscore/modules/shuffle.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/shuffle.js
 function shuffle(obj) {
   return sample(obj, Infinity);
 }
 var init_shuffle = __esm({
-  "node_modules/underscore/modules/shuffle.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/shuffle.js"() {
     init_sample();
   }
 });
 
-// node_modules/underscore/modules/sortBy.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/sortBy.js
 function sortBy(obj, iteratee2, context) {
   var index = 0;
   iteratee2 = cb(iteratee2, context);
@@ -19164,14 +19164,14 @@ function sortBy(obj, iteratee2, context) {
   }), "value");
 }
 var init_sortBy = __esm({
-  "node_modules/underscore/modules/sortBy.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/sortBy.js"() {
     init_cb();
     init_pluck();
     init_map();
   }
 });
 
-// node_modules/underscore/modules/_group.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_group.js
 function group(behavior, partition) {
   return function(obj, iteratee2, context) {
     var result2 = partition ? [[], []] : {};
@@ -19184,16 +19184,16 @@ function group(behavior, partition) {
   };
 }
 var init_group = __esm({
-  "node_modules/underscore/modules/_group.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_group.js"() {
     init_cb();
     init_each();
   }
 });
 
-// node_modules/underscore/modules/groupBy.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/groupBy.js
 var groupBy_default;
 var init_groupBy = __esm({
-  "node_modules/underscore/modules/groupBy.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/groupBy.js"() {
     init_group();
     init_has();
     groupBy_default = group(function(result2, value, key2) {
@@ -19203,10 +19203,10 @@ var init_groupBy = __esm({
   }
 });
 
-// node_modules/underscore/modules/indexBy.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/indexBy.js
 var indexBy_default;
 var init_indexBy = __esm({
-  "node_modules/underscore/modules/indexBy.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/indexBy.js"() {
     init_group();
     indexBy_default = group(function(result2, value, key2) {
       result2[key2] = value;
@@ -19214,10 +19214,10 @@ var init_indexBy = __esm({
   }
 });
 
-// node_modules/underscore/modules/countBy.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/countBy.js
 var countBy_default;
 var init_countBy = __esm({
-  "node_modules/underscore/modules/countBy.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/countBy.js"() {
     init_group();
     init_has();
     countBy_default = group(function(result2, value, key2) {
@@ -19227,10 +19227,10 @@ var init_countBy = __esm({
   }
 });
 
-// node_modules/underscore/modules/partition.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/partition.js
 var partition_default;
 var init_partition = __esm({
-  "node_modules/underscore/modules/partition.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/partition.js"() {
     init_group();
     partition_default = group(function(result2, value, pass) {
       result2[pass ? 0 : 1].push(value);
@@ -19238,31 +19238,31 @@ var init_partition = __esm({
   }
 });
 
-// node_modules/underscore/modules/size.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/size.js
 function size(obj) {
   if (obj == null) return 0;
   return isArrayLike_default(obj) ? obj.length : keys(obj).length;
 }
 var init_size = __esm({
-  "node_modules/underscore/modules/size.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/size.js"() {
     init_isArrayLike();
     init_keys();
   }
 });
 
-// node_modules/underscore/modules/_keyInObj.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_keyInObj.js
 function keyInObj(value, key2, obj) {
   return key2 in obj;
 }
 var init_keyInObj = __esm({
-  "node_modules/underscore/modules/_keyInObj.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_keyInObj.js"() {
   }
 });
 
-// node_modules/underscore/modules/pick.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/pick.js
 var pick_default;
 var init_pick = __esm({
-  "node_modules/underscore/modules/pick.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/pick.js"() {
     init_restArguments();
     init_isFunction();
     init_optimizeCb();
@@ -19290,10 +19290,10 @@ var init_pick = __esm({
   }
 });
 
-// node_modules/underscore/modules/omit.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/omit.js
 var omit_default;
 var init_omit = __esm({
-  "node_modules/underscore/modules/omit.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/omit.js"() {
     init_restArguments();
     init_isFunction();
     init_negate();
@@ -19317,74 +19317,74 @@ var init_omit = __esm({
   }
 });
 
-// node_modules/underscore/modules/initial.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/initial.js
 function initial(array2, n2, guard2) {
   return slice.call(array2, 0, Math.max(0, array2.length - (n2 == null || guard2 ? 1 : n2)));
 }
 var init_initial = __esm({
-  "node_modules/underscore/modules/initial.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/initial.js"() {
     init_setup();
   }
 });
 
-// node_modules/underscore/modules/first.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/first.js
 function first(array2, n2, guard2) {
   if (array2 == null || array2.length < 1) return n2 == null || guard2 ? void 0 : [];
   if (n2 == null || guard2) return array2[0];
   return initial(array2, array2.length - n2);
 }
 var init_first = __esm({
-  "node_modules/underscore/modules/first.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/first.js"() {
     init_initial();
   }
 });
 
-// node_modules/underscore/modules/rest.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/rest.js
 function rest(array2, n2, guard2) {
   return slice.call(array2, n2 == null || guard2 ? 1 : n2);
 }
 var init_rest = __esm({
-  "node_modules/underscore/modules/rest.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/rest.js"() {
     init_setup();
   }
 });
 
-// node_modules/underscore/modules/last.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/last.js
 function last(array2, n2, guard2) {
   if (array2 == null || array2.length < 1) return n2 == null || guard2 ? void 0 : [];
   if (n2 == null || guard2) return array2[array2.length - 1];
   return rest(array2, Math.max(0, array2.length - n2));
 }
 var init_last = __esm({
-  "node_modules/underscore/modules/last.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/last.js"() {
     init_rest();
   }
 });
 
-// node_modules/underscore/modules/compact.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/compact.js
 function compact(array2) {
   return filter(array2, Boolean);
 }
 var init_compact = __esm({
-  "node_modules/underscore/modules/compact.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/compact.js"() {
     init_filter();
   }
 });
 
-// node_modules/underscore/modules/flatten.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/flatten.js
 function flatten2(array2, depth) {
   return flatten(array2, depth, false);
 }
 var init_flatten2 = __esm({
-  "node_modules/underscore/modules/flatten.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/flatten.js"() {
     init_flatten();
   }
 });
 
-// node_modules/underscore/modules/difference.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/difference.js
 var difference_default;
 var init_difference = __esm({
-  "node_modules/underscore/modules/difference.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/difference.js"() {
     init_restArguments();
     init_flatten();
     init_filter();
@@ -19398,10 +19398,10 @@ var init_difference = __esm({
   }
 });
 
-// node_modules/underscore/modules/without.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/without.js
 var without_default;
 var init_without = __esm({
-  "node_modules/underscore/modules/without.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/without.js"() {
     init_restArguments();
     init_difference();
     without_default = restArguments(function(array2, otherArrays) {
@@ -19410,7 +19410,7 @@ var init_without = __esm({
   }
 });
 
-// node_modules/underscore/modules/uniq.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/uniq.js
 function uniq(array2, isSorted, iteratee2, context) {
   if (!isBoolean(isSorted)) {
     context = iteratee2;
@@ -19437,7 +19437,7 @@ function uniq(array2, isSorted, iteratee2, context) {
   return result2;
 }
 var init_uniq = __esm({
-  "node_modules/underscore/modules/uniq.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/uniq.js"() {
     init_isBoolean();
     init_cb();
     init_getLength();
@@ -19445,10 +19445,10 @@ var init_uniq = __esm({
   }
 });
 
-// node_modules/underscore/modules/union.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/union.js
 var union_default;
 var init_union = __esm({
-  "node_modules/underscore/modules/union.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/union.js"() {
     init_restArguments();
     init_uniq();
     init_flatten();
@@ -19458,7 +19458,7 @@ var init_union = __esm({
   }
 });
 
-// node_modules/underscore/modules/intersection.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/intersection.js
 function intersection2(array2) {
   var result2 = [];
   var argsLength = arguments.length;
@@ -19474,13 +19474,13 @@ function intersection2(array2) {
   return result2;
 }
 var init_intersection = __esm({
-  "node_modules/underscore/modules/intersection.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/intersection.js"() {
     init_getLength();
     init_contains();
   }
 });
 
-// node_modules/underscore/modules/unzip.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/unzip.js
 function unzip(array2) {
   var length = array2 && max(array2, getLength_default).length || 0;
   var result2 = Array(length);
@@ -19490,24 +19490,24 @@ function unzip(array2) {
   return result2;
 }
 var init_unzip = __esm({
-  "node_modules/underscore/modules/unzip.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/unzip.js"() {
     init_max();
     init_getLength();
     init_pluck();
   }
 });
 
-// node_modules/underscore/modules/zip.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/zip.js
 var zip_default;
 var init_zip = __esm({
-  "node_modules/underscore/modules/zip.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/zip.js"() {
     init_restArguments();
     init_unzip();
     zip_default = restArguments(unzip);
   }
 });
 
-// node_modules/underscore/modules/object.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/object.js
 function object3(list2, values2) {
   var result2 = {};
   for (var i2 = 0, length = getLength_default(list2); i2 < length; i2++) {
@@ -19520,12 +19520,12 @@ function object3(list2, values2) {
   return result2;
 }
 var init_object = __esm({
-  "node_modules/underscore/modules/object.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/object.js"() {
     init_getLength();
   }
 });
 
-// node_modules/underscore/modules/range.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/range.js
 function range(start, stop, step) {
   if (stop == null) {
     stop = start || 0;
@@ -19542,11 +19542,11 @@ function range(start, stop, step) {
   return range2;
 }
 var init_range = __esm({
-  "node_modules/underscore/modules/range.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/range.js"() {
   }
 });
 
-// node_modules/underscore/modules/chunk.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/chunk.js
 function chunk2(array2, count) {
   if (count == null || count < 1) return [];
   var result2 = [];
@@ -19557,22 +19557,22 @@ function chunk2(array2, count) {
   return result2;
 }
 var init_chunk = __esm({
-  "node_modules/underscore/modules/chunk.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/chunk.js"() {
     init_setup();
   }
 });
 
-// node_modules/underscore/modules/_chainResult.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_chainResult.js
 function chainResult(instance, obj) {
   return instance._chain ? _(obj).chain() : obj;
 }
 var init_chainResult = __esm({
-  "node_modules/underscore/modules/_chainResult.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/_chainResult.js"() {
     init_underscore();
   }
 });
 
-// node_modules/underscore/modules/mixin.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/mixin.js
 function mixin(obj) {
   each(functions(obj), function(name) {
     var func = _[name] = obj[name];
@@ -19585,7 +19585,7 @@ function mixin(obj) {
   return _;
 }
 var init_mixin = __esm({
-  "node_modules/underscore/modules/mixin.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/mixin.js"() {
     init_underscore();
     init_each();
     init_functions();
@@ -19594,10 +19594,10 @@ var init_mixin = __esm({
   }
 });
 
-// node_modules/underscore/modules/underscore-array-methods.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/underscore-array-methods.js
 var underscore_array_methods_default;
 var init_underscore_array_methods = __esm({
-  "node_modules/underscore/modules/underscore-array-methods.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/underscore-array-methods.js"() {
     init_underscore();
     init_each();
     init_setup();
@@ -19627,7 +19627,7 @@ var init_underscore_array_methods = __esm({
   }
 });
 
-// node_modules/underscore/modules/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/index.js
 var modules_exports = {};
 __export(modules_exports, {
   VERSION: () => VERSION,
@@ -19778,7 +19778,7 @@ __export(modules_exports, {
   zip: () => zip_default
 });
 var init_modules = __esm({
-  "node_modules/underscore/modules/index.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/index.js"() {
     init_setup();
     init_restArguments();
     init_isObject();
@@ -19908,10 +19908,10 @@ var init_modules = __esm({
   }
 });
 
-// node_modules/underscore/modules/index-default.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/index-default.js
 var _2, index_default_default;
 var init_index_default = __esm({
-  "node_modules/underscore/modules/index-default.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/index-default.js"() {
     init_modules();
     init_modules();
     _2 = mixin(modules_exports);
@@ -19920,7 +19920,7 @@ var init_index_default = __esm({
   }
 });
 
-// node_modules/underscore/modules/index-all.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/index-all.js
 var index_all_exports = {};
 __export(index_all_exports, {
   VERSION: () => VERSION,
@@ -20071,15 +20071,15 @@ __export(index_all_exports, {
   zip: () => zip_default
 });
 var init_index_all = __esm({
-  "node_modules/underscore/modules/index-all.js"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/underscore/modules/index-all.js"() {
     init_index_default();
     init_modules();
   }
 });
 
-// node_modules/mammoth/lib/promises.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/promises.js
 var require_promises = __commonJS({
-  "node_modules/mammoth/lib/promises.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/promises.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     exports.defer = defer;
     exports.Promise = Promise;
@@ -20176,9 +20176,9 @@ var require_promises = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/documents.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/documents.js
 var require_documents = __commonJS({
-  "node_modules/mammoth/lib/documents.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/documents.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var types = exports.types = {
       document: "document",
@@ -20411,9 +20411,9 @@ var require_documents = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/results.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/results.js
 var require_results = __commonJS({
-  "node_modules/mammoth/lib/results.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/results.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     exports.Result = Result;
     exports.success = success2;
@@ -20475,9 +20475,9 @@ var require_results = __commonJS({
   }
 });
 
-// node_modules/base64-js/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/base64-js/index.js
 var require_base64_js = __commonJS({
-  "node_modules/base64-js/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/base64-js/index.js"(exports) {
     "use strict";
     exports.byteLength = byteLength;
     exports.toByteArray = toByteArray;
@@ -20576,9 +20576,9 @@ var require_base64_js = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/zipfile.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/zipfile.js
 var require_zipfile = __commonJS({
-  "node_modules/mammoth/lib/zipfile.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/zipfile.js"(exports) {
     var base64js = require_base64_js();
     var JSZip3 = require_lib3();
     exports.openArrayBuffer = openArrayBuffer;
@@ -20643,9 +20643,9 @@ var require_zipfile = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/xml/nodes.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/nodes.js
 var require_nodes = __commonJS({
-  "node_modules/mammoth/lib/xml/nodes.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/nodes.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     exports.Element = Element;
     exports.element = function(name, attributes, children) {
@@ -20708,9 +20708,9 @@ var require_nodes = __commonJS({
   }
 });
 
-// node_modules/@xmldom/xmldom/lib/conventions.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/conventions.js
 var require_conventions = __commonJS({
-  "node_modules/@xmldom/xmldom/lib/conventions.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/conventions.js"(exports) {
     "use strict";
     function find3(list2, predicate, ac) {
       if (ac === void 0) {
@@ -20853,9 +20853,9 @@ var require_conventions = __commonJS({
   }
 });
 
-// node_modules/@xmldom/xmldom/lib/dom.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/dom.js
 var require_dom = __commonJS({
-  "node_modules/@xmldom/xmldom/lib/dom.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/dom.js"(exports) {
     var conventions = require_conventions();
     var find3 = conventions.find;
     var NAMESPACE = conventions.NAMESPACE;
@@ -22483,9 +22483,9 @@ var require_dom = __commonJS({
   }
 });
 
-// node_modules/@xmldom/xmldom/lib/entities.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/entities.js
 var require_entities = __commonJS({
-  "node_modules/@xmldom/xmldom/lib/entities.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/entities.js"(exports) {
     "use strict";
     var freeze = require_conventions().freeze;
     exports.XML_ENTITIES = freeze({
@@ -24626,9 +24626,9 @@ var require_entities = __commonJS({
   }
 });
 
-// node_modules/@xmldom/xmldom/lib/sax.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/sax.js
 var require_sax = __commonJS({
-  "node_modules/@xmldom/xmldom/lib/sax.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/sax.js"(exports) {
     var NAMESPACE = require_conventions().NAMESPACE;
     var tagNamePattern = require_conventions().tagNamePattern;
     var S_TAG = 0;
@@ -25218,9 +25218,9 @@ var require_sax = __commonJS({
   }
 });
 
-// node_modules/@xmldom/xmldom/lib/dom-parser.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/dom-parser.js
 var require_dom_parser = __commonJS({
-  "node_modules/@xmldom/xmldom/lib/dom-parser.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/dom-parser.js"(exports) {
     var conventions = require_conventions();
     var dom = require_dom();
     var entities = require_entities();
@@ -25434,9 +25434,9 @@ var require_dom_parser = __commonJS({
   }
 });
 
-// node_modules/@xmldom/xmldom/lib/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/index.js
 var require_lib4 = __commonJS({
-  "node_modules/@xmldom/xmldom/lib/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@xmldom/xmldom/lib/index.js"(exports) {
     var dom = require_dom();
     exports.DOMImplementation = dom.DOMImplementation;
     exports.XMLSerializer = dom.XMLSerializer;
@@ -25444,9 +25444,9 @@ var require_lib4 = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/xml/xmldom.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/xmldom.js
 var require_xmldom = __commonJS({
-  "node_modules/mammoth/lib/xml/xmldom.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/xmldom.js"(exports) {
     var xmldom = require_lib4();
     var dom = require_dom();
     function parseFromString(string4) {
@@ -25468,9 +25468,9 @@ var require_xmldom = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/xml/reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/reader.js
 var require_reader = __commonJS({
-  "node_modules/mammoth/lib/xml/reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/reader.js"(exports) {
     var promises = require_promises();
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var xmldom = require_xmldom();
@@ -25530,9 +25530,9 @@ var require_reader = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/Utility.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/Utility.js
 var require_Utility = __commonJS({
-  "node_modules/xmlbuilder/lib/Utility.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/Utility.js"(exports, module) {
     (function() {
       var assign, getValue, isArray, isEmpty2, isFunction2, isObject3, isPlainObject3, slice2 = [].slice, hasProp = {}.hasOwnProperty;
       assign = function() {
@@ -25601,9 +25601,9 @@ var require_Utility = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLAttribute.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLAttribute.js
 var require_XMLAttribute = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLAttribute.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLAttribute.js"(exports, module) {
     (function() {
       var XMLAttribute;
       module.exports = XMLAttribute = (function() {
@@ -25640,9 +25640,9 @@ var require_XMLAttribute = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLElement.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLElement.js
 var require_XMLElement = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLElement.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLElement.js"(exports, module) {
     (function() {
       var XMLAttribute, XMLElement, XMLNode, getValue, isFunction2, isObject3, ref, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -25751,9 +25751,9 @@ var require_XMLElement = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLCData.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLCData.js
 var require_XMLCData = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLCData.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLCData.js"(exports, module) {
     (function() {
       var XMLCData, XMLNode, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -25789,9 +25789,9 @@ var require_XMLCData = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLComment.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLComment.js
 var require_XMLComment = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLComment.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLComment.js"(exports, module) {
     (function() {
       var XMLComment, XMLNode, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -25827,9 +25827,9 @@ var require_XMLComment = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLDeclaration.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDeclaration.js
 var require_XMLDeclaration = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLDeclaration.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDeclaration.js"(exports, module) {
     (function() {
       var XMLDeclaration, XMLNode, isObject3, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -25873,9 +25873,9 @@ var require_XMLDeclaration = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLDTDAttList.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDTDAttList.js
 var require_XMLDTDAttList = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLDTDAttList.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDTDAttList.js"(exports, module) {
     (function() {
       var XMLDTDAttList, XMLNode, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -25930,9 +25930,9 @@ var require_XMLDTDAttList = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLDTDEntity.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDTDEntity.js
 var require_XMLDTDEntity = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLDTDEntity.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDTDEntity.js"(exports, module) {
     (function() {
       var XMLDTDEntity, XMLNode, isObject3, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -25992,9 +25992,9 @@ var require_XMLDTDEntity = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLDTDElement.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDTDElement.js
 var require_XMLDTDElement = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLDTDElement.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDTDElement.js"(exports, module) {
     (function() {
       var XMLDTDElement, XMLNode, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -26034,9 +26034,9 @@ var require_XMLDTDElement = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLDTDNotation.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDTDNotation.js
 var require_XMLDTDNotation = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLDTDNotation.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDTDNotation.js"(exports, module) {
     (function() {
       var XMLDTDNotation, XMLNode, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -26078,9 +26078,9 @@ var require_XMLDTDNotation = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLDocType.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDocType.js
 var require_XMLDocType = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLDocType.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDocType.js"(exports, module) {
     (function() {
       var XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDocType, XMLNode, isObject3, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -26177,9 +26177,9 @@ var require_XMLDocType = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLRaw.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLRaw.js
 var require_XMLRaw = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLRaw.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLRaw.js"(exports, module) {
     (function() {
       var XMLNode, XMLRaw, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -26215,9 +26215,9 @@ var require_XMLRaw = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLText.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLText.js
 var require_XMLText = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLText.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLText.js"(exports, module) {
     (function() {
       var XMLNode, XMLText, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -26253,9 +26253,9 @@ var require_XMLText = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLProcessingInstruction.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js
 var require_XMLProcessingInstruction = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLProcessingInstruction.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLProcessingInstruction.js"(exports, module) {
     (function() {
       var XMLNode, XMLProcessingInstruction, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -26294,9 +26294,9 @@ var require_XMLProcessingInstruction = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLDummy.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDummy.js
 var require_XMLDummy = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLDummy.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDummy.js"(exports, module) {
     (function() {
       var XMLDummy, XMLNode, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -26329,9 +26329,9 @@ var require_XMLDummy = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLNode.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLNode.js
 var require_XMLNode = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLNode.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLNode.js"(exports, module) {
     (function() {
       var XMLCData, XMLComment, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLNode, XMLProcessingInstruction, XMLRaw, XMLText, getValue, isEmpty2, isFunction2, isObject3, ref, hasProp = {}.hasOwnProperty;
       ref = require_Utility(), isObject3 = ref.isObject, isFunction2 = ref.isFunction, isEmpty2 = ref.isEmpty, getValue = ref.getValue;
@@ -26743,9 +26743,9 @@ var require_XMLNode = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLStringifier.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLStringifier.js
 var require_XMLStringifier = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLStringifier.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLStringifier.js"(exports, module) {
     (function() {
       var XMLStringifier, bind = function(fn2, me2) {
         return function() {
@@ -26881,9 +26881,9 @@ var require_XMLStringifier = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLWriterBase.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLWriterBase.js
 var require_XMLWriterBase = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLWriterBase.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLWriterBase.js"(exports, module) {
     (function() {
       var XMLWriterBase, hasProp = {}.hasOwnProperty;
       module.exports = XMLWriterBase = (function() {
@@ -26969,9 +26969,9 @@ var require_XMLWriterBase = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLStringWriter.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLStringWriter.js
 var require_XMLStringWriter = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLStringWriter.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLStringWriter.js"(exports, module) {
     (function() {
       var XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLProcessingInstruction, XMLRaw, XMLStringWriter, XMLText, XMLWriterBase, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -27289,9 +27289,9 @@ var require_XMLStringWriter = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLDocument.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDocument.js
 var require_XMLDocument = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLDocument.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDocument.js"(exports, module) {
     (function() {
       var XMLDocument, XMLNode, XMLStringWriter, XMLStringifier, isPlainObject3, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -27341,9 +27341,9 @@ var require_XMLDocument = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLDocumentCB.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDocumentCB.js
 var require_XMLDocumentCB = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLDocumentCB.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLDocumentCB.js"(exports, module) {
     (function() {
       var XMLAttribute, XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDocumentCB, XMLElement, XMLProcessingInstruction, XMLRaw, XMLStringWriter, XMLStringifier, XMLText, getValue, isFunction2, isObject3, isPlainObject3, ref, hasProp = {}.hasOwnProperty;
       ref = require_Utility(), isObject3 = ref.isObject, isFunction2 = ref.isFunction, isPlainObject3 = ref.isPlainObject, getValue = ref.getValue;
@@ -27698,9 +27698,9 @@ var require_XMLDocumentCB = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/XMLStreamWriter.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLStreamWriter.js
 var require_XMLStreamWriter = __commonJS({
-  "node_modules/xmlbuilder/lib/XMLStreamWriter.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/XMLStreamWriter.js"(exports, module) {
     (function() {
       var XMLCData, XMLComment, XMLDTDAttList, XMLDTDElement, XMLDTDEntity, XMLDTDNotation, XMLDeclaration, XMLDocType, XMLDummy, XMLElement, XMLProcessingInstruction, XMLRaw, XMLStreamWriter, XMLText, XMLWriterBase, extend2 = function(child, parent) {
         for (var key2 in parent) {
@@ -27965,9 +27965,9 @@ var require_XMLStreamWriter = __commonJS({
   }
 });
 
-// node_modules/xmlbuilder/lib/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/index.js
 var require_lib5 = __commonJS({
-  "node_modules/xmlbuilder/lib/index.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/xmlbuilder/lib/index.js"(exports, module) {
     (function() {
       var XMLDocument, XMLDocumentCB, XMLStreamWriter, XMLStringWriter, assign, isFunction2, ref;
       ref = require_Utility(), assign = ref.assign, isFunction2 = ref.isFunction;
@@ -28013,9 +28013,9 @@ var require_lib5 = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/xml/writer.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/writer.js
 var require_writer = __commonJS({
-  "node_modules/mammoth/lib/xml/writer.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/writer.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var xmlbuilder = require_lib5();
     exports.writeString = writeString2;
@@ -28066,9 +28066,9 @@ var require_writer = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/xml/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/index.js
 var require_xml = __commonJS({
-  "node_modules/mammoth/lib/xml/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/xml/index.js"(exports) {
     var nodes = require_nodes();
     exports.Element = nodes.Element;
     exports.element = nodes.element;
@@ -28079,9 +28079,9 @@ var require_xml = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/office-xml-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/office-xml-reader.js
 var require_office_xml_reader = __commonJS({
-  "node_modules/mammoth/lib/docx/office-xml-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/office-xml-reader.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var promises = require_promises();
     var xml = require_xml();
@@ -28140,9 +28140,9 @@ var require_office_xml_reader = __commonJS({
   }
 });
 
-// node_modules/dingbat-to-unicode/dist/dingbats.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/dingbat-to-unicode/dist/dingbats.js
 var require_dingbats = __commonJS({
-  "node_modules/dingbat-to-unicode/dist/dingbats.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/dingbat-to-unicode/dist/dingbats.js"(exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var dingbats = {
@@ -29222,9 +29222,9 @@ var require_dingbats = __commonJS({
   }
 });
 
-// node_modules/dingbat-to-unicode/dist/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/dingbat-to-unicode/dist/index.js
 var require_dist2 = __commonJS({
-  "node_modules/dingbat-to-unicode/dist/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/dingbat-to-unicode/dist/index.js"(exports) {
     "use strict";
     var __importDefault = exports && exports.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { "default": mod };
@@ -29268,12 +29268,12 @@ var require_dist2 = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/transforms.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/transforms.js
 var require_transforms = __commonJS({
-  "node_modules/mammoth/lib/transforms.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/transforms.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     exports.paragraph = paragraph;
-    exports.run = run2;
+    exports.run = run3;
     exports._elements = elements;
     exports._elementsOfType = elementsOfType;
     exports.getDescendantsOfType = getDescendantsOfType;
@@ -29281,7 +29281,7 @@ var require_transforms = __commonJS({
     function paragraph(transform2) {
       return elementsOfType("paragraph", transform2);
     }
-    function run2(transform2) {
+    function run3(transform2) {
       return elementsOfType("run", transform2);
     }
     function elementsOfType(elementType, transform2) {
@@ -29325,9 +29325,9 @@ var require_transforms = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/uris.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/uris.js
 var require_uris = __commonJS({
-  "node_modules/mammoth/lib/docx/uris.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/uris.js"(exports) {
     exports.uriToZipEntryName = uriToZipEntryName;
     exports.replaceFragment = replaceFragment;
     function uriToZipEntryName(base, uri) {
@@ -29347,9 +29347,9 @@ var require_uris = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/body-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/body-reader.js
 var require_body_reader = __commonJS({
-  "node_modules/mammoth/lib/docx/body-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/body-reader.js"(exports) {
     exports.createBodyReader = createBodyReader;
     exports._readNumberingProperties = readNumberingProperties;
     var dingbatToUnicode = require_dist2();
@@ -30039,9 +30039,9 @@ var require_body_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/document-xml-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/document-xml-reader.js
 var require_document_xml_reader = __commonJS({
-  "node_modules/mammoth/lib/docx/document-xml-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/document-xml-reader.js"(exports) {
     exports.DocumentXmlReader = DocumentXmlReader;
     var documents = require_documents();
     var Result = require_results().Result;
@@ -30067,9 +30067,9 @@ var require_document_xml_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/relationships-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/relationships-reader.js
 var require_relationships_reader = __commonJS({
-  "node_modules/mammoth/lib/docx/relationships-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/relationships-reader.js"(exports) {
     exports.readRelationships = readRelationships;
     exports.defaultValue = new Relationships([]);
     exports.Relationships = Relationships;
@@ -30111,9 +30111,9 @@ var require_relationships_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/content-types-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/content-types-reader.js
 var require_content_types_reader = __commonJS({
-  "node_modules/mammoth/lib/docx/content-types-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/content-types-reader.js"(exports) {
     exports.readContentTypesFromXml = readContentTypesFromXml;
     var fallbackContentTypes = {
       "png": "png",
@@ -30168,9 +30168,9 @@ var require_content_types_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/numbering-xml.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/numbering-xml.js
 var require_numbering_xml = __commonJS({
-  "node_modules/mammoth/lib/docx/numbering-xml.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/numbering-xml.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     exports.readNumberingXml = readNumberingXml;
     exports.Numbering = Numbering;
@@ -30271,9 +30271,9 @@ var require_numbering_xml = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/styles-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/styles-reader.js
 var require_styles_reader = __commonJS({
-  "node_modules/mammoth/lib/docx/styles-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/styles-reader.js"(exports) {
     exports.readStylesXml = readStylesXml;
     exports.Styles = Styles;
     exports.defaultStyles = new Styles({}, {});
@@ -30347,9 +30347,9 @@ var require_styles_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/notes-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/notes-reader.js
 var require_notes_reader = __commonJS({
-  "node_modules/mammoth/lib/docx/notes-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/notes-reader.js"(exports) {
     var documents = require_documents();
     var Result = require_results().Result;
     exports.createFootnotesReader = createReader.bind(exports, "footnote");
@@ -30373,9 +30373,9 @@ var require_notes_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/comments-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/comments-reader.js
 var require_comments_reader = __commonJS({
-  "node_modules/mammoth/lib/docx/comments-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/comments-reader.js"(exports) {
     var documents = require_documents();
     var Result = require_results().Result;
     function createCommentsReader(bodyReader) {
@@ -30402,9 +30402,9 @@ var require_comments_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/fs.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/fs.js
 var require_fs = __commonJS({
-  "node_modules/mammoth/lib/fs.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/fs.js"(exports) {
     var fs7 = __require("fs");
     var promises = require_promises();
     function readFile(path7, options) {
@@ -30420,11 +30420,11 @@ var require_fs = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/files.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/files.js
 var require_files = __commonJS({
-  "node_modules/mammoth/lib/docx/files.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/files.js"(exports) {
     var url3 = __require("url");
-    var os5 = __require("os");
+    var os6 = __require("os");
     var dirname = __require("path").dirname;
     var isAbsolutePath = __require("path").isAbsolute;
     var resolvePath2 = __require("path").resolve;
@@ -30466,7 +30466,7 @@ var require_files = __commonJS({
     }
     function uriToPath(uriString, platform) {
       if (!platform) {
-        platform = os5.platform();
+        platform = os6.platform();
       }
       var uri = url3.parse(uriString);
       if (isLocalFileUri(uri) || isRelativeUri(uri)) {
@@ -30489,9 +30489,9 @@ var require_files = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/docx-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/docx-reader.js
 var require_docx_reader = __commonJS({
-  "node_modules/mammoth/lib/docx/docx-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/docx-reader.js"(exports) {
     exports.read = read;
     exports._findPartPaths = findPartPaths;
     var promises = require_promises();
@@ -30698,9 +30698,9 @@ var require_docx_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/docx/style-map.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/style-map.js
 var require_style_map = __commonJS({
-  "node_modules/mammoth/lib/docx/style-map.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/docx/style-map.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var promises = require_promises();
     var xml = require_xml();
@@ -30764,9 +30764,9 @@ var require_style_map = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/html/ast.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/html/ast.js
 var require_ast = __commonJS({
-  "node_modules/mammoth/lib/html/ast.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/html/ast.js"(exports) {
     var htmlPaths = require_html_paths();
     function nonFreshElement(tagName, attributes, children) {
       return elementWithTag(
@@ -30812,9 +30812,9 @@ var require_ast = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/html/simplify.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/html/simplify.js
 var require_simplify = __commonJS({
-  "node_modules/mammoth/lib/html/simplify.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/html/simplify.js"(exports, module) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var ast = require_ast();
     function simplify(nodes) {
@@ -30889,9 +30889,9 @@ var require_simplify = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/html/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/html/index.js
 var require_html = __commonJS({
-  "node_modules/mammoth/lib/html/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/html/index.js"(exports) {
     var ast = require_ast();
     exports.freshElement = ast.freshElement;
     exports.nonFreshElement = ast.nonFreshElement;
@@ -30929,9 +30929,9 @@ var require_html = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/styles/html-paths.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/styles/html-paths.js
 var require_html_paths = __commonJS({
-  "node_modules/mammoth/lib/styles/html-paths.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/styles/html-paths.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var html = require_html();
     exports.topLevelElement = topLevelElement;
@@ -30997,9 +30997,9 @@ var require_html_paths = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/images.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/images.js
 var require_images = __commonJS({
-  "node_modules/mammoth/lib/images.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/images.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var promises = require_promises();
     var Html2 = require_html();
@@ -31031,9 +31031,9 @@ var require_images = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/writers/html-writer.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/writers/html-writer.js
 var require_html_writer = __commonJS({
-  "node_modules/mammoth/lib/writers/html-writer.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/writers/html-writer.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     exports.writer = writer;
     function writer(options) {
@@ -31161,9 +31161,9 @@ var require_html_writer = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/writers/markdown-writer.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/writers/markdown-writer.js
 var require_markdown_writer = __commonJS({
-  "node_modules/mammoth/lib/writers/markdown-writer.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/writers/markdown-writer.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var htmlWriter = require_html_writer();
     function symmetricMarkdownElement(end) {
@@ -31306,9 +31306,9 @@ var require_markdown_writer = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/writers/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/writers/index.js
 var require_writers = __commonJS({
-  "node_modules/mammoth/lib/writers/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/writers/index.js"(exports) {
     var htmlWriter = require_html_writer();
     var markdownWriter = require_markdown_writer();
     exports.writer = writer;
@@ -31323,9 +31323,9 @@ var require_writers = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/document-to-html.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/document-to-html.js
 var require_document_to_html = __commonJS({
-  "node_modules/mammoth/lib/document-to-html.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/document-to-html.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var promises = require_promises();
     var documents = require_documents();
@@ -31431,47 +31431,47 @@ var require_document_to_html = __commonJS({
           return defaultParagraphStyle;
         }
       }
-      function convertRun(run2, messages, context) {
+      function convertRun(run3, messages, context) {
         var nodes = function() {
-          return convertElements(run2.children, messages, context);
+          return convertElements(run3.children, messages, context);
         };
         var paths = [];
-        if (run2.highlight !== null) {
-          var path7 = findHtmlPath({ type: "highlight", color: run2.highlight });
+        if (run3.highlight !== null) {
+          var path7 = findHtmlPath({ type: "highlight", color: run3.highlight });
           if (path7) {
             paths.push(path7);
           }
         }
-        if (run2.isSmallCaps) {
+        if (run3.isSmallCaps) {
           paths.push(findHtmlPathForRunProperty("smallCaps"));
         }
-        if (run2.isAllCaps) {
+        if (run3.isAllCaps) {
           paths.push(findHtmlPathForRunProperty("allCaps"));
         }
-        if (run2.isStrikethrough) {
+        if (run3.isStrikethrough) {
           paths.push(findHtmlPathForRunProperty("strikethrough", "s"));
         }
-        if (run2.isUnderline) {
+        if (run3.isUnderline) {
           paths.push(findHtmlPathForRunProperty("underline"));
         }
-        if (run2.verticalAlignment === documents.verticalAlignment.subscript) {
+        if (run3.verticalAlignment === documents.verticalAlignment.subscript) {
           paths.push(htmlPaths.element("sub", {}, { fresh: false }));
         }
-        if (run2.verticalAlignment === documents.verticalAlignment.superscript) {
+        if (run3.verticalAlignment === documents.verticalAlignment.superscript) {
           paths.push(htmlPaths.element("sup", {}, { fresh: false }));
         }
-        if (run2.isItalic) {
+        if (run3.isItalic) {
           paths.push(findHtmlPathForRunProperty("italic", "em"));
         }
-        if (run2.isBold) {
+        if (run3.isBold) {
           paths.push(findHtmlPathForRunProperty("bold", "strong"));
         }
         var stylePath = htmlPaths.empty;
-        var style = findStyle(run2);
+        var style = findStyle(run3);
         if (style) {
           stylePath = style.to;
-        } else if (run2.styleId) {
-          messages.push(unrecognisedStyleWarning("run", run2));
+        } else if (run3.styleId) {
+          messages.push(unrecognisedStyleWarning("run", run3));
         }
         paths.push(stylePath);
         paths.forEach(function(path8) {
@@ -31743,9 +31743,9 @@ var require_document_to_html = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/raw-text.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/raw-text.js
 var require_raw_text = __commonJS({
-  "node_modules/mammoth/lib/raw-text.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/raw-text.js"(exports) {
     var documents = require_documents();
     function convertElementToRawText(element) {
       if (element.type === "text") {
@@ -31761,9 +31761,9 @@ var require_raw_text = __commonJS({
   }
 });
 
-// node_modules/lop/lib/TokenIterator.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/TokenIterator.js
 var require_TokenIterator = __commonJS({
-  "node_modules/lop/lib/TokenIterator.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/TokenIterator.js"(exports, module) {
     var TokenIterator = module.exports = function(tokens, startIndex) {
       this._tokens = tokens;
       this._startIndex = startIndex || 0;
@@ -31788,9 +31788,9 @@ var require_TokenIterator = __commonJS({
   }
 });
 
-// node_modules/lop/lib/parser.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/parser.js
 var require_parser = __commonJS({
-  "node_modules/lop/lib/parser.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/parser.js"(exports) {
     var TokenIterator = require_TokenIterator();
     exports.Parser = function(options) {
       var parseTokens = function(parser, tokens) {
@@ -31803,9 +31803,9 @@ var require_parser = __commonJS({
   }
 });
 
-// node_modules/option/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/option/index.js
 var require_option = __commonJS({
-  "node_modules/option/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/option/index.js"(exports) {
     exports.none = /* @__PURE__ */ Object.create({
       value: function() {
         throw new Error("Called value on none");
@@ -31883,9 +31883,9 @@ var require_option = __commonJS({
   }
 });
 
-// node_modules/lop/lib/parsing-results.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/parsing-results.js
 var require_parsing_results = __commonJS({
-  "node_modules/lop/lib/parsing-results.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/parsing-results.js"(exports, module) {
     module.exports = {
       failure: function(errors, remaining) {
         if (errors.length < 1) {
@@ -31981,9 +31981,9 @@ var require_parsing_results = __commonJS({
   }
 });
 
-// node_modules/lop/lib/errors.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/errors.js
 var require_errors2 = __commonJS({
-  "node_modules/lop/lib/errors.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/errors.js"(exports) {
     exports.error = function(options) {
       return new Error2(options);
     };
@@ -32005,9 +32005,9 @@ var require_errors2 = __commonJS({
   }
 });
 
-// node_modules/lop/lib/lazy-iterators.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/lazy-iterators.js
 var require_lazy_iterators = __commonJS({
-  "node_modules/lop/lib/lazy-iterators.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/lazy-iterators.js"(exports) {
     var fromArray = exports.fromArray = function(array2) {
       var index = 0;
       var hasNext = function() {
@@ -32085,9 +32085,9 @@ var require_lazy_iterators = __commonJS({
   }
 });
 
-// node_modules/lop/lib/rules.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/rules.js
 var require_rules2 = __commonJS({
-  "node_modules/lop/lib/rules.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/rules.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var options = require_option();
     var results = require_parsing_results();
@@ -32370,9 +32370,9 @@ var require_rules2 = __commonJS({
   }
 });
 
-// node_modules/lop/lib/StringSource.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/StringSource.js
 var require_StringSource = __commonJS({
-  "node_modules/lop/lib/StringSource.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/StringSource.js"(exports, module) {
     var StringSource = module.exports = function(string4, description) {
       var self2 = {
         asString: function() {
@@ -32421,9 +32421,9 @@ var require_StringSource = __commonJS({
   }
 });
 
-// node_modules/lop/lib/Token.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/Token.js
 var require_Token = __commonJS({
-  "node_modules/lop/lib/Token.js"(exports, module) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/Token.js"(exports, module) {
     module.exports = function(name, value, source) {
       this.name = name;
       this.value = value;
@@ -32434,9 +32434,9 @@ var require_Token = __commonJS({
   }
 });
 
-// node_modules/lop/lib/bottom-up.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/bottom-up.js
 var require_bottom_up = __commonJS({
-  "node_modules/lop/lib/bottom-up.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/bottom-up.js"(exports) {
     var rules = require_rules2();
     var results = require_parsing_results();
     exports.parser = function(name, prefixRules, infixRuleBuilders) {
@@ -32549,9 +32549,9 @@ var require_bottom_up = __commonJS({
   }
 });
 
-// node_modules/lop/lib/regex-tokeniser.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/regex-tokeniser.js
 var require_regex_tokeniser = __commonJS({
-  "node_modules/lop/lib/regex-tokeniser.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/lib/regex-tokeniser.js"(exports) {
     var Token2 = require_Token();
     var StringSource = require_StringSource();
     exports.RegexTokeniser = RegexTokeniser;
@@ -32614,9 +32614,9 @@ var require_regex_tokeniser = __commonJS({
   }
 });
 
-// node_modules/lop/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/index.js
 var require_lop = __commonJS({
-  "node_modules/lop/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/lop/index.js"(exports) {
     exports.Parser = require_parser().Parser;
     exports.rules = require_rules2();
     exports.errors = require_errors2();
@@ -32637,11 +32637,11 @@ var require_lop = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/styles/document-matchers.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/styles/document-matchers.js
 var require_document_matchers = __commonJS({
-  "node_modules/mammoth/lib/styles/document-matchers.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/styles/document-matchers.js"(exports) {
     exports.paragraph = paragraph;
-    exports.run = run2;
+    exports.run = run3;
     exports.table = table;
     exports.bold = new Matcher("bold");
     exports.italic = new Matcher("italic");
@@ -32659,7 +32659,7 @@ var require_document_matchers = __commonJS({
     function paragraph(options) {
       return new Matcher("paragraph", options);
     }
-    function run2(options) {
+    function run3(options) {
       return new Matcher("run", options);
     }
     function table(options) {
@@ -32719,9 +32719,9 @@ var require_document_matchers = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/styles/parser/tokeniser.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/styles/parser/tokeniser.js
 var require_tokeniser = __commonJS({
-  "node_modules/mammoth/lib/styles/parser/tokeniser.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/styles/parser/tokeniser.js"(exports) {
     var lop = require_lop();
     var RegexTokeniser = lop.RegexTokeniser;
     exports.tokenise = tokenise;
@@ -32752,9 +32752,9 @@ var require_tokeniser = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/style-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/style-reader.js
 var require_style_reader = __commonJS({
-  "node_modules/mammoth/lib/style-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/style-reader.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var lop = require_lop();
     var documentMatchers = require_document_matchers();
@@ -33085,9 +33085,9 @@ var require_style_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/options-reader.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/options-reader.js
 var require_options_reader = __commonJS({
-  "node_modules/mammoth/lib/options-reader.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/options-reader.js"(exports) {
     exports.readOptions = readOptions;
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var defaultStyleMap = exports._defaultStyleMap = [
@@ -33181,9 +33181,9 @@ var require_options_reader = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/unzip.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/unzip.js
 var require_unzip = __commonJS({
-  "node_modules/mammoth/lib/unzip.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/unzip.js"(exports) {
     var fs7 = require_fs();
     var promises = require_promises();
     var zipfile = require_zipfile();
@@ -33202,9 +33202,9 @@ var require_unzip = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/underline.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/underline.js
 var require_underline = __commonJS({
-  "node_modules/mammoth/lib/underline.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/underline.js"(exports) {
     var htmlPaths = require_html_paths();
     var Html2 = require_html();
     exports.element = element;
@@ -33216,9 +33216,9 @@ var require_underline = __commonJS({
   }
 });
 
-// node_modules/mammoth/lib/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/index.js
 var require_lib6 = __commonJS({
-  "node_modules/mammoth/lib/index.js"(exports) {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/mammoth/lib/index.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     var docxReader = require_docx_reader();
     var docxStyleMap = require_style_map();
@@ -33316,7 +33316,7 @@ var require_lib6 = __commonJS({
   }
 });
 
-// node_modules/unpdf/dist/pdfjs.mjs
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/unpdf/dist/pdfjs.mjs
 var pdfjs_exports = {};
 __export(pdfjs_exports, {
   AbortException: () => AbortException,
@@ -34281,7 +34281,7 @@ async function JBig2(e2 = {}) {
   };
   if (n2.noExitRuntime && n2.noExitRuntime, n2.print && n2.print, n2.printErr && n2.printErr, n2.wasmBinary && n2.wasmBinary, n2.arguments && n2.arguments, n2.thisProgram && n2.thisProgram, n2.preInit) for (typeof n2.preInit == `function` && (n2.preInit = [n2.preInit]); n2.preInit.length > 0; ) n2.preInit.shift()();
   n2.writeArrayToMemory = writeArrayToMemory;
-  function run2() {
+  function run3() {
     preRun();
     function doRun() {
       n2.calledRun = true, initRuntime(), a2?.(n2), n2.onRuntimeInitialized?.(), postRun();
@@ -34291,7 +34291,7 @@ async function JBig2(e2 = {}) {
     }, 1)) : doRun();
   }
   var u2 = {}();
-  return run2(), t2 = s2 ? n2 : new Promise((e3, t3) => {
+  return run3(), t2 = s2 ? n2 : new Promise((e3, t3) => {
     a2 = e3;
   }), t2;
 }
@@ -34336,7 +34336,7 @@ async function OpenJPEG(e2 = {}) {
   };
   if (n2.noExitRuntime && n2.noExitRuntime, n2.print && n2.print, n2.printErr && n2.printErr, n2.wasmBinary && n2.wasmBinary, n2.arguments && n2.arguments, n2.thisProgram && (i2 = n2.thisProgram), n2.preInit) for (typeof n2.preInit == `function` && (n2.preInit = [n2.preInit]); n2.preInit.length > 0; ) n2.preInit.shift()();
   n2.writeArrayToMemory = writeArrayToMemory;
-  function run2() {
+  function run3() {
     preRun();
     function doRun() {
       n2.calledRun = true, initRuntime(), o2?.(n2), n2.onRuntimeInitialized?.(), postRun();
@@ -34346,7 +34346,7 @@ async function OpenJPEG(e2 = {}) {
     }, 1)) : doRun();
   }
   var f2 = {}();
-  return run2(), t2 = s2 ? n2 : new Promise((e3, t3) => {
+  return run3(), t2 = s2 ? n2 : new Promise((e3, t3) => {
     o2 = e3;
   }), t2;
 }
@@ -37735,9 +37735,9 @@ function normalizeEdgeBoundary(e2, t2, n2) {
 function percentage(e2) {
   return `${(e2 * 100).toFixed(2)}%`;
 }
-var e, t, n, r, i, a, o, s, c, l, u, d, f, p, m, h, g, _3, v, y, b, x, S, C, w, T, E, D, O, k, PasswordException$1, UnknownErrorException$1, InvalidPDFException$1, ResponseException$1, FormatError$1, AbortException$1, FeatureTest$1, Util$1, j, ee, makeArr$1, makeMap$1, makeObj$1, M, te, ne, re, ie, N, ae, oe, F, L, RefSet, RefSetCache, BaseStream, se, ce, le, ue, de, fe, MissingDataException, ParserEOFException, XRefEntryException, XRefParseException, pe, me, QCMS, he, ge, _e, ve, ye, be, xe, Se, AlternateCS, PatternCS, IndexedCS, DeviceGrayCS, DeviceRgbCS, DeviceRgbaCS, DeviceCmykCS, CalGrayCS, Ce, LabCS, we, Te, Ee, StringStream, NullStream, ChunkedStream, ChunkedStreamManager, De, Oe, ke, DecodeStream, StreamsSequenceStream, ColorSpaceUtils, JpegError, DNLMarkerError, EOIMarkerError, Ae, je, Me, Ne, Pe, Fe, Ie, Le, JpegImage, Re, ze, NullOptimizer, QueueOptimizer, Be, CheckedOperatorList, Ve, Pattern, BaseShading, RadialAxialShading, He, MeshStreamReader, Ue, We, DummyShading, BinaryCMapStream, BinaryCMapReader, Ascii85Stream, AsciiHexStream, makeBrotliDecode, Ge, BrotliStream, Ke, qe, Jbig2Error, Je, CCITTFaxStream, Ye, Xe, Ze, Qe, $e, FlateStream, et, tt, JpxError, nt, JpxStream, LZWStream, PredictorStream, RunLengthStream, Parser, rt, Lexer, Linearization, it, at, CMap, IdentityCMap, CMapFactory, CSS_FONT_INFO$1, SYSTEM_FONT_INFO$1, FONT_INFO$1, PATTERN_INFO$1, ot, st, ct, lt, ut, dt, ft, pt, mt, ht, gt, _t, vt, yt, bt, xt, St, Ct, wt, Tt, DataBuilder, Et, Dt, Ot, kt, At, CFFParser, CFF, CFFHeader, CFFStrings, CFFIndex, CFFDict, jt, Mt, Nt, Pt, Ft, CFFCharset, CFFEncoding, CFFFDSelect, CFFOffsetTracker, It, Lt, Rt, zt, Bt, Vt, Ht, Ut, Wt, GlyfTable, Gt, Kt, Contour, qt, Jt, ToUnicodeMap, IdentityToUnicodeMap, CFFFont, Commands, Yt, TrueTypeCompiled, Type2Compiled, FontRendererFactory, Xt, Zt, Qt, $t, Type1CharString, en, Type1Parser, Type1Font, tn, nn, rn, an, fonts_Glyph, Font, ErrorFont, on, sn, cn, ln, un, dn, fn, pn, mn, hn, gn, _n, vn, yn, bn, xn, Sn, Cn, wn, Tn, En, Dn, On, kn, An, jn, Mn, Nn, Pn, Fn, In, Ln, Rn, zn, Bn, Vn, Hn, Un, Wn, Gn, Kn, R, Token, qn, Jn, z2, PsNode, PsProgram, PsBlock, PsNumber, PsOperator, PsIf, PsIfElse, PsArgNode, PsConstNode, PsUnaryNode, PsBinaryNode, PsTernaryNode, Yn, Xn, V, Zn, Qn, PsJsCompiler, PSStackBasedInterpreter, H, $n, er, tr, nr, BaseLocalCache, LocalImageCache, LocalColorSpaceCache, LocalFunctionCache, LocalGStateCache, LocalTilingPatternCache, RegionalImageCache, GlobalColorSpaceCache, rr, ir, ar, PDFFunction, or, sr, cr, lr, ur, dr, fr, pr, mr, hr, gr, _r, vr, yr, MurmurHash3_64$1, br, xr, Sr, Cr, wr, Tr, TranslatedFont, StateManager, TextState, EvalState, Er, DefaultAppearanceEvaluator, AppearanceStreamEvaluator, Dr, Or, kr, NameOrNumberTree, NameTree, NumberTree, Ar, jr, Mr, SimpleDOMNode, SimpleXMLParser, MetadataParser, Nr, Pr, StructElementNode, StructElement, StructTreePage, isRef2, Fr, Ir, Lr, Rr, zr, Vr, Hr, Ur, Wr, Gr, Kr, qr, U, Jr, Yr, W, Xr, Zr, Qr, $r, ei, ti, ni, ri, ii, ai, oi, si, ci, li, ui, G, di, fi, pi, mi, hi, gi, _i, vi, yi, bi, xi, Si, Ci, wi, Ti, Ei, Di, Oi, ki, Ai, ji, Mi, Ni, Pi, Fi, Ii, Ri, zi, Bi, Vi, Hi, Wi, Gi, Ki, qi, K, Ji, Yi, Xi, Zi, Qi, $i, ea, q, FontFinder, FontInfo$1, FontSelector, TextMeasure, ta, na, ra, ia, aa, oa, sa, ca, J, la, ua, da, fa, pa, ma, ha, ga, _a3, va, ya, ba, xa, Sa, Ca, Y, X, XFAAttribute, wa, ContentObject, OptionObject, StringObject, IntegerObject, Option01, Option10, Ta, Z, Ea, Da, Oa, AppearanceFilter, Arc, Area, Assist, Barcode, Bind, BindItems, Bookend, BooleanElement, Border, Break, BreakAfter, BreakBefore, Button, Calculate, Caption, Certificate, Certificates, CheckButton, ChoiceList, Color, Comb, Connect, ContentArea, Corner, DateElement, DateTime, DateTimeEdit, Decimal, DefaultUi, Desc, DigestMethod, DigestMethods, Draw, Edge, Encoding, Encodings, Encrypt, EncryptData, Encryption, EncryptionMethod, EncryptionMethods, Event$1, ExData, ExObject, ExclGroup, Execute, Extras, Field, Fill, Filter, Float, template_Font, Format, Handler, Hyphenation, Image$1, ImageEdit, Integer, Issuers, Items, Keep, KeyUsage, Line, Linear, LockDocument, Manifest, Margin, Mdp, Medium, Message, NumericEdit, Occur, Oid, Oids, Overflow, PageArea, ka, Para, PasswordEdit, template_Pattern, Picture, Proto, Radial, Reason, Reasons, Rectangle, RefElement, Script, SetProperty, SignData, Signature, Signing, Solid, Speak, Stipple, Subform, SubformSet, SubjectDN, SubjectDNs, Submit, Template, Text, TextEdit, Time, TimeStamp, ToolTip, Traversal, Traverse, Ui, Validate, Value, Variables, Aa, ja, Binder, DataHandler, Q, Acrobat, Acrobat7, ADBE_JSConsole, ADBE_JSDebugger, AddSilentPrint, AddViewerPreferences, AdjustData, AdobeExtensionLevel, Agent, AlwaysEmbed, Amd, config_Area, Attributes, AutoSave, Base, BatchOutput, BehaviorOverride, Cache, Change, Common, Compress, CompressLogicalStructure, CompressObjectStream, Compression, Config, Conformance, ContentCopy, Copies, Creator, CurrentPage, Data, Debug, DefaultTypeface, Destination, DocumentAssembly, Driver, DuplexOption, DynamicRender, Embed, config_Encrypt, config_Encryption, EncryptionLevel, Enforce, Equate, EquateRange, Exclude, ExcludeNS, FlipLabel, config_FontInfo, FormFieldFilling, GroupParent, IfEmpty, IncludeXDPContent, IncrementalLoad, IncrementalMerge, Interactive, Jog, LabelPrinter, Layout, Level, Linearized, Locale, LocaleSet, Log, MapElement, MediumInfo, config_Message, Messaging, Mode, ModifyAnnots, MsgId, NameAttr, NeverEmbed, NumberOfCopies, OpenAction, Output, OutputBin, OutputXSL, Overprint, Packets, PageOffset, PageRange, Pagination, PaginationOverride, Part, Pcl, Pdf, Pdfa, Permissions, PickTrayByPDFSize, config_Picture, PlaintextMetadata, Presence, Present, Print, PrintHighQuality, PrintScaling, PrinterName, Producer, Ps, Range$1, Record, Relevant, Rename, RenderPolicy, RunScripts, config_Script, ScriptModel, Severity, SilentPrint, Staple, StartNode, StartPage, SubmitFormat, SubmitUrl, SubsetBelow, SuppressBanner, Tagged, config_Template, Threshold, To, TemplateCache, Trace, Transform, Type, Uri, config_Validate, ValidateApprovalSignatures, ValidationMessaging, Version, VersionControl, ViewerPreferences, WebClient, Whitespace, Window, Xdc, Xdp, Xsl, Zpl, Ma, Na, ConnectionSet, EffectiveInputPolicy, EffectiveOutputPolicy, Operation, RootElement, SoapAction, SoapAddress, connection_set_Uri, WsdlAddress, WsdlConnection, XmlConnection, XsdConnection, Pa, Fa, datasets_Data, Datasets, Ia, La, CalendarSymbols, CurrencySymbol, CurrencySymbols, DatePattern, DatePatterns, DateTimeSymbols, Day, DayNames, Era, EraNames, locale_set_Locale, locale_set_LocaleSet, Meridiem, MeridiemNames, Month, MonthNames, NumberPattern, NumberPatterns, NumberSymbol, NumberSymbols, TimePattern, TimePatterns, TypeFace, TypeFaces, Ra, za, signature_Signature, Ba, Va, Stylesheet, Ha, Ua, xdp_Xdp, Wa, Ga, Ka, qa, Ja, Ya, Xa, Za, Qa, XhtmlObject, A, B, Body, Br, Html, I, Li, Ol, P, Span, Sub, Sup, Ul, $a, eo, UnknownNamespace, Root, Empty, Builder, to, no, AnnotationFactory, Annotation, AnnotationBorderStyle, MarkupAnnotation, ro, TextWidgetAnnotation, ButtonWidgetAnnotation, ChoiceWidgetAnnotation, SignatureWidgetAnnotation, TextAnnotation, LinkAnnotation, PopupAnnotation, FreeTextAnnotation, LineAnnotation, SquareAnnotation, CircleAnnotation, PolylineAnnotation, PolygonAnnotation, CaretAnnotation, InkAnnotation, HighlightAnnotation, UnderlineAnnotation, SquigglyAnnotation, StrikeOutAnnotation, StampAnnotation, FileAttachmentAnnotation, io, ao, oo, so, DatasetXMLParser, DatasetReader, SingleIntersector, Intersector, Word64, co, lo, DecryptStream, ARCFourCipher, NullCipher, AESBaseCipher, AES128Cipher, AES256Cipher, PDFBase, PDF17, PDF20, CipherTransform, uo, XRef, fo, Page, po, mo, ho, PDFDocument, BasePdfManager, LocalPdfManager, NetworkPdfManager, go, _o, MessageHandler$1, PageData, DocumentData, XRefWrapper, PDFEditor, BasePDFStream$1, BasePDFStreamReader$1, BasePDFStreamRangeReader$1, PDFWorkerStream, PDFWorkerStreamReader, PDFWorkerStreamRangeReader, WorkerTask, WorkerMessageHandler, vo, yo, bo, xo, So, Co, wo, Eo, Do, Oo, $, ko, Ao, jo, Mo, No, Po, Fo, Io, Lo, Ro, zo, Bo, PasswordException, UnknownErrorException, InvalidPDFException, ResponseException, FormatError, AbortException, FeatureTest, Util, Vo, Ho, makeArr, makeMap, makeObj, Uo, Wo, XfaLayer, PixelsPerInch, RenderingCancelledException, StatTimer, PDFDateString, Go, Ko, ColorScheme, CSSConstants, qo, Jo, FloatingToolbar, Yo, Xo, IdManager, Zo, CommandManager, Qo, $o, es, ts, Comment, ns, rs, FakeEditor, is, as, os2, MurmurHash3_64, ss, AnnotationStorage, PrintAnnotationStorage, cs, ls, us, ds, BBoxReader, ensureDebugMetadata, CanvasBBoxTracker, CanvasDependencyTracker, fs3, ps, ms, FontLoader, FontFaceObject, CSS_FONT_INFO, SYSTEM_FONT_INFO, FONT_INFO, PATTERN_INFO, CssFontInfo, SystemFontInfo, FontInfo, PatternInfo, FontPathInfo, isRefProxy, isNameProxy, hs, LoopbackPort, gs, _s, MessageHandler, BaseBinaryDataFactory, DOMBinaryDataFactory, BaseCanvasFactory, DOMCanvasFactory, BaseFilterFactory, DOMFilterFactory, NodeFilterFactory, NodeCanvasFactory, NodeBinaryDataFactory, WebGPU, vs, ys, BaseShadingPattern, RadialAxialShadingPattern, MeshShadingPattern, DummyShadingPattern, bs, xs, Ss, Cs, CanvasExtraState, ws, Ts, Es, Ds, Os, BasePDFStream, BasePDFStreamReader, BasePDFStreamRangeReader, PDFFetchStream, PDFFetchStreamReader, PDFFetchStreamRangeReader, PDFDataTransportStream, PDFDataTransportStreamReader, PDFDataTransportStreamRangeReader, PDFNetworkStream, PDFNetworkStreamReader, PDFNetworkStreamRangeReader, PDFNodeStream, PDFNodeStreamReader, PDFNodeStreamRangeReader, GlobalWorkerOptions, Metadata, ks, OptionalContentGroup, As, PagesMapper, js, dataObj, PDFObjects, Ms, Ns, PDFDataRangeTransport, PDFDocumentProxy, Fs, Is, WorkerTransport, RenderTask, Ls, Rs, zs, Bs, Vs, ColorConverters, BaseSVGFactory, DOMSVGFactory, Hs, Us, AnnotationElementFactory, Ws, EditorAnnotationElement, LinkAnnotationElement, TextAnnotationElement, WidgetAnnotationElement, TextWidgetAnnotationElement, SignatureWidgetAnnotationElement, CheckboxWidgetAnnotationElement, RadioButtonWidgetAnnotationElement, PushButtonWidgetAnnotationElement, ChoiceWidgetAnnotationElement, PopupAnnotationElement, PopupElement, FreeTextAnnotationElement, LineAnnotationElement, SquareAnnotationElement, CircleAnnotationElement, PolylineAnnotationElement, PolygonAnnotationElement, CaretAnnotationElement, InkAnnotationElement, HighlightAnnotationElement, UnderlineAnnotationElement, SquigglyAnnotationElement, StrikeOutAnnotationElement, StampAnnotationElement, FileAttachmentAnnotationElement, MediaAnnotationElement, Gs, Ks, qs, Outline, Js, FreeDrawOutline, HighlightOutliner, HighlightOutline, FreeHighlightOutliner, FreeHighlightOutline, Ys, DrawingOptions, Xs, InkDrawOutliner, InkDrawOutline, Zs, Qs, ContourDrawOutline, SignatureExtractor, $s, ec, tc, StampEditor, nc, rc, ic;
+var e, t, n, r, i, a, o, s, c, l, u, d, f, p, m, h, g, _3, v, y, b, x, S, C, w, T, E, D, O, k, PasswordException$1, UnknownErrorException$1, InvalidPDFException$1, ResponseException$1, FormatError$1, AbortException$1, FeatureTest$1, Util$1, j, ee, makeArr$1, makeMap$1, makeObj$1, M, te, ne, re, ie, N, ae, oe, F, L, RefSet, RefSetCache, BaseStream, se, ce, le, ue, de, fe, MissingDataException, ParserEOFException, XRefEntryException, XRefParseException, pe, me, QCMS, he, ge, _e, ve, ye, be, xe, Se, AlternateCS, PatternCS, IndexedCS, DeviceGrayCS, DeviceRgbCS, DeviceRgbaCS, DeviceCmykCS, CalGrayCS, Ce, LabCS, we, Te, Ee, StringStream, NullStream, ChunkedStream, ChunkedStreamManager, De, Oe, ke, DecodeStream, StreamsSequenceStream, ColorSpaceUtils, JpegError, DNLMarkerError, EOIMarkerError, Ae, je, Me, Ne, Pe, Fe, Ie, Le, JpegImage, Re, ze, NullOptimizer, QueueOptimizer, Be, CheckedOperatorList, Ve, Pattern, BaseShading, RadialAxialShading, He, MeshStreamReader, Ue, We, DummyShading, BinaryCMapStream, BinaryCMapReader, Ascii85Stream, AsciiHexStream, makeBrotliDecode, Ge, BrotliStream, Ke, qe, Jbig2Error, Je, CCITTFaxStream, Ye, Xe, Ze, Qe, $e, FlateStream, et, tt, JpxError, nt, JpxStream, LZWStream, PredictorStream, RunLengthStream, Parser, rt, Lexer, Linearization, it, at, CMap, IdentityCMap, CMapFactory, CSS_FONT_INFO$1, SYSTEM_FONT_INFO$1, FONT_INFO$1, PATTERN_INFO$1, ot, st, ct, lt, ut, dt, ft, pt, mt, ht, gt, _t, vt, yt, bt, xt, St, Ct, wt, Tt, DataBuilder, Et, Dt, Ot, kt, At, CFFParser, CFF, CFFHeader, CFFStrings, CFFIndex, CFFDict, jt, Mt, Nt, Pt, Ft, CFFCharset, CFFEncoding, CFFFDSelect, CFFOffsetTracker, It, Lt, Rt, zt, Bt, Vt, Ht, Ut, Wt, GlyfTable, Gt, Kt, Contour, qt, Jt, ToUnicodeMap, IdentityToUnicodeMap, CFFFont, Commands, Yt, TrueTypeCompiled, Type2Compiled, FontRendererFactory, Xt, Zt, Qt, $t, Type1CharString, en, Type1Parser, Type1Font, tn, nn, rn, an, fonts_Glyph, Font, ErrorFont, on, sn, cn, ln, un, dn, fn, pn, mn, hn, gn, _n, vn, yn, bn, xn, Sn, Cn, wn, Tn, En, Dn, On, kn, An, jn, Mn, Nn, Pn, Fn, In, Ln, Rn, zn, Bn, Vn, Hn, Un, Wn, Gn, Kn, R, Token, qn, Jn, z2, PsNode, PsProgram, PsBlock, PsNumber, PsOperator, PsIf, PsIfElse, PsArgNode, PsConstNode, PsUnaryNode, PsBinaryNode, PsTernaryNode, Yn, Xn, V, Zn, Qn, PsJsCompiler, PSStackBasedInterpreter, H, $n, er, tr, nr, BaseLocalCache, LocalImageCache, LocalColorSpaceCache, LocalFunctionCache, LocalGStateCache, LocalTilingPatternCache, RegionalImageCache, GlobalColorSpaceCache, rr, ir, ar, PDFFunction, or, sr, cr, lr, ur, dr, fr, pr, mr, hr, gr, _r, vr, yr, MurmurHash3_64$1, br, xr, Sr, Cr, wr, Tr, TranslatedFont, StateManager, TextState, EvalState, Er, DefaultAppearanceEvaluator, AppearanceStreamEvaluator, Dr, Or, kr, NameOrNumberTree, NameTree, NumberTree, Ar, jr, Mr, SimpleDOMNode, SimpleXMLParser, MetadataParser, Nr, Pr, StructElementNode, StructElement, StructTreePage, isRef2, Fr, Ir, Lr, Rr, zr, Vr, Hr, Ur, Wr, Gr, Kr, qr, U, Jr, Yr, W, Xr, Zr, Qr, $r, ei, ti, ni, ri, ii, ai, oi, si, ci, li, ui, G, di, fi, pi, mi, hi, gi, _i, vi, yi, bi, xi, Si, Ci, wi, Ti, Ei, Di, Oi, ki, Ai, ji, Mi, Ni, Pi, Fi, Ii, Ri, zi, Bi, Vi, Hi, Wi, Gi, Ki, qi, K, Ji, Yi, Xi, Zi, Qi, $i, ea, q, FontFinder, FontInfo$1, FontSelector, TextMeasure, ta, na, ra, ia, aa, oa, sa, ca, J, la, ua, da, fa, pa, ma, ha, ga, _a3, va, ya, ba, xa, Sa, Ca, Y, X, XFAAttribute, wa, ContentObject, OptionObject, StringObject, IntegerObject, Option01, Option10, Ta, Z, Ea, Da, Oa, AppearanceFilter, Arc, Area, Assist, Barcode, Bind, BindItems, Bookend, BooleanElement, Border, Break, BreakAfter, BreakBefore, Button, Calculate, Caption, Certificate, Certificates, CheckButton, ChoiceList, Color, Comb, Connect, ContentArea, Corner, DateElement, DateTime, DateTimeEdit, Decimal, DefaultUi, Desc, DigestMethod, DigestMethods, Draw, Edge, Encoding, Encodings, Encrypt, EncryptData, Encryption, EncryptionMethod, EncryptionMethods, Event$1, ExData, ExObject, ExclGroup, Execute, Extras, Field, Fill, Filter, Float, template_Font, Format, Handler, Hyphenation, Image$1, ImageEdit, Integer, Issuers, Items, Keep, KeyUsage, Line, Linear, LockDocument, Manifest, Margin, Mdp, Medium, Message, NumericEdit, Occur, Oid, Oids, Overflow, PageArea, ka, Para, PasswordEdit, template_Pattern, Picture, Proto, Radial, Reason, Reasons, Rectangle, RefElement, Script, SetProperty, SignData, Signature, Signing, Solid, Speak, Stipple, Subform, SubformSet, SubjectDN, SubjectDNs, Submit, Template, Text, TextEdit, Time, TimeStamp, ToolTip, Traversal, Traverse, Ui, Validate, Value, Variables, Aa, ja, Binder, DataHandler, Q, Acrobat, Acrobat7, ADBE_JSConsole, ADBE_JSDebugger, AddSilentPrint, AddViewerPreferences, AdjustData, AdobeExtensionLevel, Agent, AlwaysEmbed, Amd, config_Area, Attributes, AutoSave, Base, BatchOutput, BehaviorOverride, Cache, Change, Common, Compress, CompressLogicalStructure, CompressObjectStream, Compression, Config, Conformance, ContentCopy, Copies, Creator, CurrentPage, Data, Debug, DefaultTypeface, Destination, DocumentAssembly, Driver, DuplexOption, DynamicRender, Embed, config_Encrypt, config_Encryption, EncryptionLevel, Enforce, Equate, EquateRange, Exclude, ExcludeNS, FlipLabel, config_FontInfo, FormFieldFilling, GroupParent, IfEmpty, IncludeXDPContent, IncrementalLoad, IncrementalMerge, Interactive, Jog, LabelPrinter, Layout, Level, Linearized, Locale, LocaleSet, Log, MapElement, MediumInfo, config_Message, Messaging, Mode, ModifyAnnots, MsgId, NameAttr, NeverEmbed, NumberOfCopies, OpenAction, Output, OutputBin, OutputXSL, Overprint, Packets, PageOffset, PageRange, Pagination, PaginationOverride, Part, Pcl, Pdf, Pdfa, Permissions, PickTrayByPDFSize, config_Picture, PlaintextMetadata, Presence, Present, Print, PrintHighQuality, PrintScaling, PrinterName, Producer, Ps, Range$1, Record, Relevant, Rename, RenderPolicy, RunScripts, config_Script, ScriptModel, Severity, SilentPrint, Staple, StartNode, StartPage, SubmitFormat, SubmitUrl, SubsetBelow, SuppressBanner, Tagged, config_Template, Threshold, To, TemplateCache, Trace, Transform, Type, Uri, config_Validate, ValidateApprovalSignatures, ValidationMessaging, Version, VersionControl, ViewerPreferences, WebClient, Whitespace, Window, Xdc, Xdp, Xsl, Zpl, Ma, Na, ConnectionSet, EffectiveInputPolicy, EffectiveOutputPolicy, Operation, RootElement, SoapAction, SoapAddress, connection_set_Uri, WsdlAddress, WsdlConnection, XmlConnection, XsdConnection, Pa, Fa, datasets_Data, Datasets, Ia, La, CalendarSymbols, CurrencySymbol, CurrencySymbols, DatePattern, DatePatterns, DateTimeSymbols, Day, DayNames, Era, EraNames, locale_set_Locale, locale_set_LocaleSet, Meridiem, MeridiemNames, Month, MonthNames, NumberPattern, NumberPatterns, NumberSymbol, NumberSymbols, TimePattern, TimePatterns, TypeFace, TypeFaces, Ra, za, signature_Signature, Ba, Va, Stylesheet, Ha, Ua, xdp_Xdp, Wa, Ga, Ka, qa, Ja, Ya, Xa, Za, Qa, XhtmlObject, A, B, Body, Br, Html, I, Li, Ol, P, Span, Sub, Sup, Ul, $a, eo, UnknownNamespace, Root, Empty, Builder, to, no, AnnotationFactory, Annotation, AnnotationBorderStyle, MarkupAnnotation, ro, TextWidgetAnnotation, ButtonWidgetAnnotation, ChoiceWidgetAnnotation, SignatureWidgetAnnotation, TextAnnotation, LinkAnnotation, PopupAnnotation, FreeTextAnnotation, LineAnnotation, SquareAnnotation, CircleAnnotation, PolylineAnnotation, PolygonAnnotation, CaretAnnotation, InkAnnotation, HighlightAnnotation, UnderlineAnnotation, SquigglyAnnotation, StrikeOutAnnotation, StampAnnotation, FileAttachmentAnnotation, io, ao, oo, so, DatasetXMLParser, DatasetReader, SingleIntersector, Intersector, Word64, co, lo, DecryptStream, ARCFourCipher, NullCipher, AESBaseCipher, AES128Cipher, AES256Cipher, PDFBase, PDF17, PDF20, CipherTransform, uo, XRef, fo, Page, po, mo, ho, PDFDocument, BasePdfManager, LocalPdfManager, NetworkPdfManager, go, _o, MessageHandler$1, PageData, DocumentData, XRefWrapper, PDFEditor, BasePDFStream$1, BasePDFStreamReader$1, BasePDFStreamRangeReader$1, PDFWorkerStream, PDFWorkerStreamReader, PDFWorkerStreamRangeReader, WorkerTask, WorkerMessageHandler, vo, yo, bo, xo, So, Co, wo, Eo, Do, Oo, $, ko, Ao, jo, Mo, No, Po, Fo, Io, Lo, Ro, zo, Bo, PasswordException, UnknownErrorException, InvalidPDFException, ResponseException, FormatError, AbortException, FeatureTest, Util, Vo, Ho, makeArr, makeMap, makeObj, Uo, Wo, XfaLayer, PixelsPerInch, RenderingCancelledException, StatTimer, PDFDateString, Go, Ko, ColorScheme, CSSConstants, qo, Jo, FloatingToolbar, Yo, Xo, IdManager, Zo, CommandManager, Qo, $o, es, ts, Comment, ns, rs, FakeEditor, is, as, os3, MurmurHash3_64, ss, AnnotationStorage, PrintAnnotationStorage, cs, ls, us, ds, BBoxReader, ensureDebugMetadata, CanvasBBoxTracker, CanvasDependencyTracker, fs3, ps, ms, FontLoader, FontFaceObject, CSS_FONT_INFO, SYSTEM_FONT_INFO, FONT_INFO, PATTERN_INFO, CssFontInfo, SystemFontInfo, FontInfo, PatternInfo, FontPathInfo, isRefProxy, isNameProxy, hs, LoopbackPort, gs, _s, MessageHandler, BaseBinaryDataFactory, DOMBinaryDataFactory, BaseCanvasFactory, DOMCanvasFactory, BaseFilterFactory, DOMFilterFactory, NodeFilterFactory, NodeCanvasFactory, NodeBinaryDataFactory, WebGPU, vs, ys, BaseShadingPattern, RadialAxialShadingPattern, MeshShadingPattern, DummyShadingPattern, bs, xs, Ss, Cs, CanvasExtraState, ws, Ts, Es, Ds, Os, BasePDFStream, BasePDFStreamReader, BasePDFStreamRangeReader, PDFFetchStream, PDFFetchStreamReader, PDFFetchStreamRangeReader, PDFDataTransportStream, PDFDataTransportStreamReader, PDFDataTransportStreamRangeReader, PDFNetworkStream, PDFNetworkStreamReader, PDFNetworkStreamRangeReader, PDFNodeStream, PDFNodeStreamReader, PDFNodeStreamRangeReader, GlobalWorkerOptions, Metadata, ks, OptionalContentGroup, As, PagesMapper, js, dataObj, PDFObjects, Ms, Ns, PDFDataRangeTransport, PDFDocumentProxy, Fs, Is, WorkerTransport, RenderTask, Ls, Rs, zs, Bs, Vs, ColorConverters, BaseSVGFactory, DOMSVGFactory, Hs, Us, AnnotationElementFactory, Ws, EditorAnnotationElement, LinkAnnotationElement, TextAnnotationElement, WidgetAnnotationElement, TextWidgetAnnotationElement, SignatureWidgetAnnotationElement, CheckboxWidgetAnnotationElement, RadioButtonWidgetAnnotationElement, PushButtonWidgetAnnotationElement, ChoiceWidgetAnnotationElement, PopupAnnotationElement, PopupElement, FreeTextAnnotationElement, LineAnnotationElement, SquareAnnotationElement, CircleAnnotationElement, PolylineAnnotationElement, PolygonAnnotationElement, CaretAnnotationElement, InkAnnotationElement, HighlightAnnotationElement, UnderlineAnnotationElement, SquigglyAnnotationElement, StrikeOutAnnotationElement, StampAnnotationElement, FileAttachmentAnnotationElement, MediaAnnotationElement, Gs, Ks, qs, Outline, Js, FreeDrawOutline, HighlightOutliner, HighlightOutline, FreeHighlightOutliner, FreeHighlightOutline, Ys, DrawingOptions, Xs, InkDrawOutliner, InkDrawOutline, Zs, Qs, ContourDrawOutline, SignatureExtractor, $s, ec, tc, StampEditor, nc, rc, ic;
 var init_pdfjs = __esm({
-  "node_modules/unpdf/dist/pdfjs.mjs"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/unpdf/dist/pdfjs.mjs"() {
     if (polyfillDOMMatrix(), globalThis.FinalizationRegistry === void 0 && (globalThis.FinalizationRegistry = class FinalizationRegistry2 {
       register() {
       }
@@ -63551,7 +63551,7 @@ var init_pdfjs = __esm({
     };
     is = 3285377520;
     as = 4294901760;
-    os2 = 65535;
+    os3 = 65535;
     MurmurHash3_64 = class {
       constructor(e2) {
         this.h1 = e2 ? e2 & 4294967295 : is, this.h2 = e2 ? e2 & 4294967295 : is;
@@ -63567,20 +63567,20 @@ var init_pdfjs = __esm({
         } else if (ArrayBuffer.isView(e2)) t2 = e2.slice(), n2 = t2.byteLength;
         else throw Error(`Invalid data format, must be a string or TypedArray.`);
         let r2 = n2 >> 2, i2 = n2 - r2 * 4, a2 = new Uint32Array(t2.buffer, 0, r2), o2 = 0, s2 = 0, c2 = this.h1, l2 = this.h2, u2 = 3432918353, d2 = 461845907, f2 = 11601, p2 = 13715;
-        for (let e3 = 0; e3 < r2; e3++) e3 & 1 ? (o2 = a2[e3], o2 = o2 * u2 & as | o2 * f2 & os2, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os2, c2 ^= o2, c2 = c2 << 13 | c2 >>> 19, c2 = c2 * 5 + 3864292196) : (s2 = a2[e3], s2 = s2 * u2 & as | s2 * f2 & os2, s2 = s2 << 15 | s2 >>> 17, s2 = s2 * d2 & as | s2 * p2 & os2, l2 ^= s2, l2 = l2 << 13 | l2 >>> 19, l2 = l2 * 5 + 3864292196);
+        for (let e3 = 0; e3 < r2; e3++) e3 & 1 ? (o2 = a2[e3], o2 = o2 * u2 & as | o2 * f2 & os3, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os3, c2 ^= o2, c2 = c2 << 13 | c2 >>> 19, c2 = c2 * 5 + 3864292196) : (s2 = a2[e3], s2 = s2 * u2 & as | s2 * f2 & os3, s2 = s2 << 15 | s2 >>> 17, s2 = s2 * d2 & as | s2 * p2 & os3, l2 ^= s2, l2 = l2 << 13 | l2 >>> 19, l2 = l2 * 5 + 3864292196);
         switch (o2 = 0, i2) {
           case 3:
             o2 ^= t2[r2 * 4 + 2] << 16;
           case 2:
             o2 ^= t2[r2 * 4 + 1] << 8;
           case 1:
-            o2 ^= t2[r2 * 4], o2 = o2 * u2 & as | o2 * f2 & os2, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os2, r2 & 1 ? c2 ^= o2 : l2 ^= o2;
+            o2 ^= t2[r2 * 4], o2 = o2 * u2 & as | o2 * f2 & os3, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os3, r2 & 1 ? c2 ^= o2 : l2 ^= o2;
         }
         this.h1 = c2, this.h2 = l2;
       }
       hexdigest() {
         let e2 = this.h1, t2 = this.h2;
-        return e2 ^= t2 >>> 1, e2 = e2 * 3981806797 & as | e2 * 36045 & os2, t2 = t2 * 4283543511 & as | ((t2 << 16 | e2 >>> 16) * 2950163797 & as) >>> 16, e2 ^= t2 >>> 1, e2 = e2 * 444984403 & as | e2 * 60499 & os2, t2 = t2 * 3301882366 & as | ((t2 << 16 | e2 >>> 16) * 3120437893 & as) >>> 16, e2 ^= t2 >>> 1, (e2 >>> 0).toString(16).padStart(8, `0`) + (t2 >>> 0).toString(16).padStart(8, `0`);
+        return e2 ^= t2 >>> 1, e2 = e2 * 3981806797 & as | e2 * 36045 & os3, t2 = t2 * 4283543511 & as | ((t2 << 16 | e2 >>> 16) * 2950163797 & as) >>> 16, e2 ^= t2 >>> 1, e2 = e2 * 444984403 & as | e2 * 60499 & os3, t2 = t2 * 3301882366 & as | ((t2 << 16 | e2 >>> 16) * 3120437893 & as) >>> 16, e2 ^= t2 >>> 1, (e2 >>> 0).toString(16).padStart(8, `0`) + (t2 >>> 0).toString(16).padStart(8, `0`);
       }
     };
     ss = Object.freeze({ map: null, hash: ``, transfer: void 0 });
@@ -72832,7 +72832,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
   }
 });
 
-// node_modules/unpdf/dist/index.mjs
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/unpdf/dist/index.mjs
 var dist_exports = {};
 __export(dist_exports, {
   configureUnPDF: () => configureUnPDF,
@@ -73118,7 +73118,7 @@ async function configureUnPDF(options) {
 }
 var resolvedModule, isNode, isBrowser, resolvedCanvasModule, BaseCanvasFactory2, DOMCanvasFactory2, NodeCanvasFactory2, XMP_DATE_PROPERTIES, getMeta, extractText, extractTextItems, extractImages, renderPageAsImage, extractLinks;
 var init_dist = __esm({
-  "node_modules/unpdf/dist/index.mjs"() {
+  "../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/unpdf/dist/index.mjs"() {
     isNode = globalThis.process?.release?.name === "node";
     isBrowser = typeof window !== "undefined";
     BaseCanvasFactory2 = class {
@@ -73208,10 +73208,10 @@ var init_dist = __esm({
 // src/index.js
 import fs6 from "node:fs/promises";
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
-import os4 from "node:os";
+import os5 from "node:os";
 import path6 from "node:path";
 
-// node_modules/zod/v3/helpers/util.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v3/helpers/util.js
 var util;
 (function(util2) {
   util2.assertEqual = (_4) => {
@@ -73345,7 +73345,7 @@ var getParsedType = (data) => {
   }
 };
 
-// node_modules/zod/v3/ZodError.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v3/ZodError.js
 var ZodIssueCode = util.arrayToEnum([
   "invalid_type",
   "invalid_literal",
@@ -73474,7 +73474,7 @@ ZodError.create = (issues) => {
   return error62;
 };
 
-// node_modules/zod/v3/locales/en.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v3/locales/en.js
 var errorMap = (issue2, _ctx) => {
   let message;
   switch (issue2.code) {
@@ -73577,13 +73577,13 @@ var errorMap = (issue2, _ctx) => {
 };
 var en_default = errorMap;
 
-// node_modules/zod/v3/errors.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v3/errors.js
 var overrideErrorMap = en_default;
 function getErrorMap() {
   return overrideErrorMap;
 }
 
-// node_modules/zod/v3/helpers/parseUtil.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v3/helpers/parseUtil.js
 var makeIssue = (params) => {
   const { data, path: path7, errorMaps, issueData } = params;
   const fullPath = [...path7, ...issueData.path || []];
@@ -73692,14 +73692,14 @@ var isDirty = (x2) => x2.status === "dirty";
 var isValid = (x2) => x2.status === "valid";
 var isAsync = (x2) => typeof Promise !== "undefined" && x2 instanceof Promise;
 
-// node_modules/zod/v3/helpers/errorUtil.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v3/helpers/errorUtil.js
 var errorUtil;
 (function(errorUtil2) {
   errorUtil2.errToObj = (message) => typeof message === "string" ? { message } : message || {};
   errorUtil2.toString = (message) => typeof message === "string" ? message : message?.message;
 })(errorUtil || (errorUtil = {}));
 
-// node_modules/zod/v3/types.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
   constructor(parent, value, path7, key2) {
     this._cachedPath = [];
@@ -77106,7 +77106,7 @@ var nullableType = ZodNullable.create;
 var preprocessType = ZodEffects.createWithPreprocess;
 var pipelineType = ZodPipeline.create;
 
-// node_modules/zod/v4/core/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/index.js
 var core_exports2 = {};
 __export(core_exports2, {
   $ZodAny: () => $ZodAny,
@@ -77423,7 +77423,7 @@ __export(core_exports2, {
   withParser: () => withParser
 });
 
-// node_modules/zod/v4/core/util.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/util.js
 var util_exports = {};
 __export(util_exports, {
   BIGINT_FORMAT_RANGES: () => BIGINT_FORMAT_RANGES,
@@ -78279,7 +78279,7 @@ function constantCatch(value) {
   return fn2;
 }
 
-// node_modules/zod/v4/core/core.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/core.js
 var _a;
 var NEVER = /* @__PURE__ */ Object.freeze({
   status: "aborted"
@@ -78401,7 +78401,7 @@ function config(newConfig) {
   return globalConfig;
 }
 
-// node_modules/zod/v4/core/errors.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/errors.js
 function _getMessage() {
   const internals = this._zod;
   internals.message ?? (internals.message = JSON.stringify(internals.def, jsonStringifyReplacer, 2));
@@ -78593,7 +78593,7 @@ function prettifyError(error62) {
   return lines.join("\n");
 }
 
-// node_modules/zod/v4/core/parse.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/parse.js
 function finalizeParams(callee, params) {
   return { callee: params?.callee ?? callee, Err: params?.Err };
 }
@@ -78753,7 +78753,7 @@ var _safeDecodeAsync = (_Err) => async (schema, value, _ctx) => {
 };
 var safeDecodeAsync = /* @__PURE__ */ _safeDecodeAsync($ZodRealError);
 
-// node_modules/zod/v4/core/regexes.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/regexes.js
 var regexes_exports = {};
 __export(regexes_exports, {
   anyString: () => anyString,
@@ -78925,7 +78925,7 @@ var sha512_hex = /^[0-9a-fA-F]{128}$/;
 var sha512_base64 = /* @__PURE__ */ fixedBase64(86, "==");
 var sha512_base64url = /* @__PURE__ */ fixedBase64url(86);
 
-// node_modules/zod/v4/core/checks.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/checks.js
 var $ZodCheck = /* @__PURE__ */ $constructor("$ZodCheck", (inst, def) => {
   var _a4;
   inst._zod ?? (inst._zod = {});
@@ -79401,7 +79401,7 @@ var $ZodCheckOverwrite = /* @__PURE__ */ $constructor("$ZodCheckOverwrite", (ins
   };
 });
 
-// node_modules/zod/v4/core/doc.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/doc.js
 var Doc = class {
   constructor(args = [], closed = {}) {
     this.content = [];
@@ -79442,14 +79442,14 @@ ${content.join("\n")}
   }
 };
 
-// node_modules/zod/v4/core/versions.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/versions.js
 var version = {
   major: 4,
   minor: 6,
   patch: 7
 };
 
-// node_modules/zod/v4/core/schemas.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/schemas.js
 var $ZodType = /* @__PURE__ */ $constructor("$ZodType", (inst, def) => {
   var _a4;
   inst ?? (inst = {});
@@ -81891,7 +81891,7 @@ function handleRefineResult(result2, payload, input2, inst) {
   }
 }
 
-// node_modules/zod/v4/core/memoizer.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/memoizer.js
 var $ZodCyclicError = class extends Error {
   constructor() {
     super(`Cannot parse a reference cycle that closes through a transform`);
@@ -82168,7 +82168,7 @@ function isBackEdge(ctx, value) {
   return backEdges !== void 0 && isRef(value) && backEdges.has(value);
 }
 
-// node_modules/zod/v4/locales/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/index.js
 var locales_exports = {};
 __export(locales_exports, {
   ar: () => ar_default,
@@ -82236,7 +82236,7 @@ __export(locales_exports, {
   zhTW: () => zh_TW_default
 });
 
-// node_modules/zod/v4/locales/ar.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ar.js
 var error = () => {
   const Sizable = {
     string: { unit: "\u062D\u0631\u0641", verb: "\u0623\u0646 \u064A\u062D\u0648\u064A" },
@@ -82348,7 +82348,7 @@ function ar_default() {
   };
 }
 
-// node_modules/zod/v4/locales/az.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/az.js
 var error2 = () => {
   const Sizable = {
     string: { unit: "simvol", verb: "olmal\u0131d\u0131r" },
@@ -82459,7 +82459,7 @@ function az_default() {
   };
 }
 
-// node_modules/zod/v4/locales/be.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/be.js
 function getBelarusianPlural(count, one, few, many) {
   const absCount = Math.abs(count);
   const lastDigit = absCount % 10;
@@ -82628,7 +82628,7 @@ function be_default() {
   };
 }
 
-// node_modules/zod/v4/locales/bg.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/bg.js
 var error4 = () => {
   const Sizable = {
     string: { unit: "\u0441\u0438\u043C\u0432\u043E\u043B\u0430", verb: "\u0434\u0430 \u0441\u044A\u0434\u044A\u0440\u0436\u0430" },
@@ -82754,7 +82754,7 @@ function bg_default() {
   };
 }
 
-// node_modules/zod/v4/locales/bn.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/bn.js
 var error5 = () => {
   const Sizable = {
     string: { unit: "\u0985\u0995\u09CD\u09B7\u09B0", verb: "\u09A5\u09BE\u0995\u09A4\u09C7 \u09B9\u09AC\u09C7" },
@@ -82868,7 +82868,7 @@ function bn_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ca.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ca.js
 var error6 = () => {
   const Sizable = {
     string: { unit: "car\xE0cters", verb: "contenir" },
@@ -82982,7 +82982,7 @@ function ca_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ckb.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ckb.js
 var error7 = () => {
   const Sizable = {
     string: { unit: "\u067E\u06CC\u062A", verb: "\u0628\u06CE\u062A" },
@@ -83115,7 +83115,7 @@ function ckb_default() {
   };
 }
 
-// node_modules/zod/v4/locales/cs.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/cs.js
 var error8 = () => {
   const Sizable = {
     string: { unit: "znak\u016F", verb: "m\xEDt" },
@@ -83232,7 +83232,7 @@ function cs_default() {
   };
 }
 
-// node_modules/zod/v4/locales/da.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/da.js
 var error9 = () => {
   const Sizable = {
     string: { unit: "tegn", verb: "havde" },
@@ -83353,7 +83353,7 @@ function da_default() {
   };
 }
 
-// node_modules/zod/v4/locales/de.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/de.js
 var error10 = () => {
   const Sizable = {
     string: { unit: "Zeichen", verb: "zu haben" },
@@ -83467,7 +83467,7 @@ function de_default() {
   };
 }
 
-// node_modules/zod/v4/locales/el.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/el.js
 var error11 = () => {
   const Sizable = {
     string: { unit: "\u03C7\u03B1\u03C1\u03B1\u03BA\u03C4\u03AE\u03C1\u03B5\u03C2", verb: "\u03BD\u03B1 \u03AD\u03C7\u03B5\u03B9" },
@@ -83580,7 +83580,7 @@ function el_default() {
   };
 }
 
-// node_modules/zod/v4/locales/en.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/en.js
 var error12 = () => {
   const Sizable = {
     string: { unit: "characters", verb: "to have" },
@@ -83705,7 +83705,7 @@ function en_default2() {
   };
 }
 
-// node_modules/zod/v4/locales/eo.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/eo.js
 var error13 = () => {
   const Sizable = {
     string: { unit: "karaktrojn", verb: "havi" },
@@ -83820,7 +83820,7 @@ function eo_default() {
   };
 }
 
-// node_modules/zod/v4/locales/es.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/es.js
 var error14 = () => {
   const Sizable = {
     string: { unit: "caracteres", verb: "tener" },
@@ -83957,7 +83957,7 @@ function es_default() {
   };
 }
 
-// node_modules/zod/v4/locales/fa.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/fa.js
 var error15 = () => {
   const Sizable = {
     string: { unit: "\u06A9\u0627\u0631\u0627\u06A9\u062A\u0631", verb: "\u062F\u0627\u0634\u062A\u0647 \u0628\u0627\u0634\u062F" },
@@ -84077,7 +84077,7 @@ function fa_default() {
   };
 }
 
-// node_modules/zod/v4/locales/fi.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/fi.js
 var error16 = () => {
   const Sizable = {
     string: { unit: "merkki\xE4", subject: "merkkijonon" },
@@ -84195,7 +84195,7 @@ function fi_default() {
   };
 }
 
-// node_modules/zod/v4/locales/fr.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/fr.js
 var error17 = () => {
   const Sizable = {
     string: { unit: "caract\xE8res", verb: "avoir" },
@@ -84325,7 +84325,7 @@ function fr_default() {
   };
 }
 
-// node_modules/zod/v4/locales/fr-CA.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/fr-CA.js
 var error18 = () => {
   const Sizable = {
     string: { unit: "caract\xE8res", verb: "avoir" },
@@ -84438,7 +84438,7 @@ function fr_CA_default() {
   };
 }
 
-// node_modules/zod/v4/locales/gu.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/gu.js
 var error19 = () => {
   const Sizable = {
     string: { unit: "\u0A85\u0A95\u0ACD\u0AB7\u0AB0", verb: "\u0AB9\u0ACB\u0AB5\u0ABE \u0A9C\u0ACB\u0A88\u0A8F" },
@@ -84552,7 +84552,7 @@ function gu_default() {
   };
 }
 
-// node_modules/zod/v4/locales/he.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/he.js
 var error20 = () => {
   const TypeNames = {
     string: { label: "\u05DE\u05D7\u05E8\u05D5\u05D6\u05EA", gender: "f" },
@@ -84754,7 +84754,7 @@ function he_default() {
   };
 }
 
-// node_modules/zod/v4/locales/hi.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/hi.js
 var error21 = () => {
   const Sizable = {
     string: { unit: "\u0905\u0915\u094D\u0937\u0930", verb: "\u0930\u0916\u0928\u0947 \u0915\u0947 \u0932\u093F\u090F" },
@@ -84866,7 +84866,7 @@ function hi_default() {
   };
 }
 
-// node_modules/zod/v4/locales/hr.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/hr.js
 var error22 = () => {
   const Sizable = {
     string: { unit: "znakova", verb: "imati" },
@@ -84993,7 +84993,7 @@ function hr_default() {
   };
 }
 
-// node_modules/zod/v4/locales/hu.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/hu.js
 var error23 = () => {
   const Sizable = {
     string: { unit: "karakter", verb: "legyen" },
@@ -85107,7 +85107,7 @@ function hu_default() {
   };
 }
 
-// node_modules/zod/v4/locales/hy.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/hy.js
 function getArmenianPlural(count, one, many) {
   return Math.abs(count) === 1 ? one : many;
 }
@@ -85266,7 +85266,7 @@ function hy_default() {
   };
 }
 
-// node_modules/zod/v4/locales/id.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/id.js
 var error25 = () => {
   const Sizable = {
     string: { unit: "karakter", verb: "memiliki" },
@@ -85378,7 +85378,7 @@ function id_default() {
   };
 }
 
-// node_modules/zod/v4/locales/is.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/is.js
 var error26 = () => {
   const Sizable = {
     string: { unit: "stafi", verb: "a\xF0 hafa" },
@@ -85493,7 +85493,7 @@ function is_default() {
   };
 }
 
-// node_modules/zod/v4/locales/it.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/it.js
 var error27 = () => {
   const Sizable = {
     string: { unit: "caratteri", verb: "avere" },
@@ -85607,7 +85607,7 @@ function it_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ja.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ja.js
 var error28 = () => {
   const Sizable = {
     string: { unit: "\u6587\u5B57", verb: "\u3067\u3042\u308B" },
@@ -85720,7 +85720,7 @@ function ja_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ka.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ka.js
 var error29 = () => {
   const Sizable = {
     string: { unit: "\u10E1\u10D8\u10DB\u10D1\u10DD\u10DA\u10DD", verb: "\u10E3\u10DC\u10D3\u10D0 \u10E8\u10D4\u10D8\u10EA\u10D0\u10D5\u10D3\u10D4\u10E1" },
@@ -85838,7 +85838,7 @@ function ka_default() {
   };
 }
 
-// node_modules/zod/v4/locales/km.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/km.js
 var error30 = () => {
   const Sizable = {
     string: { unit: "\u178F\u17BD\u17A2\u1780\u17D2\u179F\u179A", verb: "\u1782\u17BD\u179A\u1798\u17B6\u1793" },
@@ -85954,12 +85954,12 @@ function km_default() {
   };
 }
 
-// node_modules/zod/v4/locales/kh.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/kh.js
 function kh_default() {
   return km_default();
 }
 
-// node_modules/zod/v4/locales/kn.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/kn.js
 var error31 = () => {
   const Sizable = {
     string: { unit: "\u0C85\u0C95\u0CCD\u0CB7\u0CB0\u0C97\u0CB3\u0CC1", verb: "\u0CB9\u0CCA\u0C82\u0CA6\u0CB2\u0CC1" },
@@ -86075,7 +86075,7 @@ function kn_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ko.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ko.js
 var error32 = () => {
   const Sizable = {
     string: { unit: "\uBB38\uC790", verb: "to have" },
@@ -86192,7 +86192,7 @@ function ko_default() {
   };
 }
 
-// node_modules/zod/v4/locales/lt.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/lt.js
 var capitalizeFirstCharacter = (text) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
@@ -86400,7 +86400,7 @@ function lt_default() {
   };
 }
 
-// node_modules/zod/v4/locales/mk.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/mk.js
 var error34 = () => {
   const Sizable = {
     string: { unit: "\u0437\u043D\u0430\u0446\u0438", verb: "\u0434\u0430 \u0438\u043C\u0430\u0430\u0442" },
@@ -86515,7 +86515,7 @@ function mk_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ms.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ms.js
 var error35 = () => {
   const Sizable = {
     string: { unit: "aksara", verb: "mempunyai" },
@@ -86628,7 +86628,7 @@ function ms_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ne.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ne.js
 var error36 = () => {
   const Sizable = {
     string: { unit: "\u0905\u0915\u094D\u0937\u0930", verb: "\u0939\u0941\u0928\u0941\u092A\u0930\u094D\u091B" },
@@ -86740,7 +86740,7 @@ function ne_default() {
   };
 }
 
-// node_modules/zod/v4/locales/nl.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/nl.js
 var error37 = () => {
   const Sizable = {
     string: { unit: "tekens", verb: "heeft" },
@@ -86856,7 +86856,7 @@ function nl_default() {
   };
 }
 
-// node_modules/zod/v4/locales/nn.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/nn.js
 var error38 = () => {
   const Sizable = {
     string: { unit: "teikn", verb: "\xE5 ha" },
@@ -86970,7 +86970,7 @@ function nn_default() {
   };
 }
 
-// node_modules/zod/v4/locales/no.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/no.js
 var error39 = () => {
   const Sizable = {
     string: { unit: "tegn", verb: "\xE5 ha" },
@@ -87084,7 +87084,7 @@ function no_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ota.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ota.js
 var error40 = () => {
   const Sizable = {
     string: { unit: "harf", verb: "olmal\u0131d\u0131r" },
@@ -87199,7 +87199,7 @@ function ota_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ps.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ps.js
 var error41 = () => {
   const Sizable = {
     string: { unit: "\u062A\u0648\u06A9\u064A", verb: "\u0648\u0644\u0631\u064A" },
@@ -87319,7 +87319,7 @@ function ps_default() {
   };
 }
 
-// node_modules/zod/v4/locales/pl.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/pl.js
 var error42 = () => {
   const Sizable = {
     string: { unit: "znak\xF3w", verb: "mie\u0107" },
@@ -87434,7 +87434,7 @@ function pl_default() {
   };
 }
 
-// node_modules/zod/v4/locales/pt.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/pt.js
 var error43 = () => {
   const Sizable = {
     string: { unit: "caracteres" },
@@ -87578,7 +87578,7 @@ function pt_default() {
   };
 }
 
-// node_modules/zod/v4/locales/pt-BR.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/pt-BR.js
 var error44 = () => {
   const Sizable = {
     string: { unit: "caracteres" },
@@ -87723,7 +87723,7 @@ function pt_BR_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ro.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ro.js
 var error45 = () => {
   const Sizable = {
     string: { unit: "caractere", verb: "s\u0103 aib\u0103" },
@@ -87846,7 +87846,7 @@ function ro_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ru.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ru.js
 function getRussianPlural(count, one, few, many) {
   const absCount = Math.abs(count);
   const lastDigit = absCount % 10;
@@ -88015,7 +88015,7 @@ function ru_default() {
   };
 }
 
-// node_modules/zod/v4/locales/sk.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/sk.js
 var error47 = () => {
   const Sizable = {
     string: { unit: "znakov", verb: "ma\u0165" },
@@ -88132,7 +88132,7 @@ function sk_default() {
   };
 }
 
-// node_modules/zod/v4/locales/sl.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/sl.js
 var error48 = () => {
   const Sizable = {
     string: { unit: "znakov", verb: "imeti" },
@@ -88247,7 +88247,7 @@ function sl_default() {
   };
 }
 
-// node_modules/zod/v4/locales/sv.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/sv.js
 var error49 = () => {
   const Sizable = {
     string: { unit: "tecken", verb: "att ha" },
@@ -88363,7 +88363,7 @@ function sv_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ta.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ta.js
 var error50 = () => {
   const Sizable = {
     string: { unit: "\u0B8E\u0BB4\u0BC1\u0BA4\u0BCD\u0BA4\u0BC1\u0B95\u0BCD\u0B95\u0BB3\u0BCD", verb: "\u0B95\u0BCA\u0BA3\u0BCD\u0B9F\u0BBF\u0BB0\u0BC1\u0B95\u0BCD\u0B95 \u0BB5\u0BC7\u0BA3\u0BCD\u0B9F\u0BC1\u0BAE\u0BCD" },
@@ -88479,7 +88479,7 @@ function ta_default() {
   };
 }
 
-// node_modules/zod/v4/locales/tg.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/tg.js
 var error51 = () => {
   const Sizable = {
     string: { unit: "\u0430\u043B\u043E\u043C\u0430\u0442", verb: "\u0434\u043E\u0448\u0442\u0430 \u0431\u043E\u0448\u0430\u0434" },
@@ -88596,7 +88596,7 @@ function tg_default() {
   };
 }
 
-// node_modules/zod/v4/locales/th.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/th.js
 var error52 = () => {
   const Sizable = {
     string: { unit: "\u0E15\u0E31\u0E27\u0E2D\u0E31\u0E01\u0E29\u0E23", verb: "\u0E04\u0E27\u0E23\u0E21\u0E35" },
@@ -88712,7 +88712,7 @@ function th_default() {
   };
 }
 
-// node_modules/zod/v4/locales/tk.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/tk.js
 var error53 = () => {
   const Sizable = {
     string: { unit: "simwol", verb: "bolmaly" },
@@ -88820,7 +88820,7 @@ function tk_default() {
   };
 }
 
-// node_modules/zod/v4/locales/tr.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/tr.js
 var error54 = () => {
   const Sizable = {
     string: { unit: "karakter", verb: "olmal\u0131" },
@@ -88931,7 +88931,7 @@ function tr_default() {
   };
 }
 
-// node_modules/zod/v4/locales/uk.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/uk.js
 var error55 = () => {
   const Sizable = {
     string: { unit: "\u0441\u0438\u043C\u0432\u043E\u043B\u0456\u0432", verb: "\u043C\u0430\u0442\u0438\u043C\u0435" },
@@ -89045,12 +89045,12 @@ function uk_default() {
   };
 }
 
-// node_modules/zod/v4/locales/ua.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ua.js
 function ua_default() {
   return uk_default();
 }
 
-// node_modules/zod/v4/locales/ur.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/ur.js
 var error56 = () => {
   const Sizable = {
     string: { unit: "\u062D\u0631\u0648\u0641", verb: "\u06C1\u0648\u0646\u0627" },
@@ -89166,7 +89166,7 @@ function ur_default() {
   };
 }
 
-// node_modules/zod/v4/locales/uz.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/uz.js
 var error57 = () => {
   const Sizable = {
     string: { unit: "belgi", verb: "bo\u2018lishi kerak" },
@@ -89280,7 +89280,7 @@ function uz_default() {
   };
 }
 
-// node_modules/zod/v4/locales/vi.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/vi.js
 var error58 = () => {
   const Sizable = {
     string: { unit: "k\xFD t\u1EF1", verb: "c\xF3" },
@@ -89394,7 +89394,7 @@ function vi_default() {
   };
 }
 
-// node_modules/zod/v4/locales/zh-CN.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/zh-CN.js
 var error59 = () => {
   const Sizable = {
     string: { unit: "\u5B57\u7B26", verb: "\u5305\u542B" },
@@ -89509,7 +89509,7 @@ function zh_CN_default() {
   };
 }
 
-// node_modules/zod/v4/locales/zh-TW.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/zh-TW.js
 var error60 = () => {
   const Sizable = {
     string: { unit: "\u5B57\u5143", verb: "\u64C1\u6709" },
@@ -89622,7 +89622,7 @@ function zh_TW_default() {
   };
 }
 
-// node_modules/zod/v4/locales/yo.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/locales/yo.js
 var error61 = () => {
   const Sizable = {
     string: { unit: "\xE0mi", verb: "n\xED" },
@@ -89735,7 +89735,7 @@ function yo_default() {
   };
 }
 
-// node_modules/zod/v4/core/registries.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/registries.js
 var _a2;
 var $output = /* @__PURE__ */ Symbol("ZodOutput");
 var $input = /* @__PURE__ */ Symbol("ZodInput");
@@ -89785,7 +89785,7 @@ function registry() {
 (_a2 = globalThis).__zod_globalRegistry ?? (_a2.__zod_globalRegistry = registry());
 var globalRegistry = globalThis.__zod_globalRegistry;
 
-// node_modules/zod/v4/core/compile.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/compile.js
 var INVALID2 = /* @__PURE__ */ Symbol.for("zod.compile.invalid");
 var FALLBACK_FLAG = /* @__PURE__ */ Symbol.for("zod.compile.fallback");
 var ZodCompileAsyncError = class extends Error {
@@ -91395,7 +91395,7 @@ function generateTransformCheck(doc, ctx, schema, accessor) {
   return accessor;
 }
 
-// node_modules/zod/v4/core/api.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/api.js
 function snapshotChecks(def) {
   if (def.checks)
     def.checks = [...def.checks];
@@ -92454,7 +92454,7 @@ function _stringFormat(Class2, format, fnOrRegex, _params = {}) {
   return inst;
 }
 
-// node_modules/zod/v4/core/to-json-schema.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/to-json-schema.js
 function assignProps(target, ...sources) {
   for (const source of sources) {
     for (const key2 of Reflect.ownKeys(source)) {
@@ -92984,7 +92984,7 @@ var createStandardJSONSchemaMethod = (schema, io2, processors = {}) => (params) 
   return finalize(ctx, schema);
 };
 
-// node_modules/zod/v4/core/json-schema-processors.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/json-schema-processors.js
 var narrowMin = (agg, key2, value) => {
   if (agg[key2] === void 0 || value > agg[key2])
     agg[key2] = value;
@@ -93732,7 +93732,7 @@ function toJSONSchema(input2, params) {
   return finalize(ctx, input2);
 }
 
-// node_modules/zod/v4/core/json-schema-generator.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/json-schema-generator.js
 var JSONSchemaGenerator = class {
   /** @deprecated Access via ctx instead */
   get metadataRegistry() {
@@ -93810,10 +93810,10 @@ var JSONSchemaGenerator = class {
   }
 };
 
-// node_modules/zod/v4/core/json-schema.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/json-schema.js
 var json_schema_exports = {};
 
-// node_modules/zod/v4/mini/schemas.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/mini/schemas.js
 var ZodMiniType = /* @__PURE__ */ $constructor("ZodMiniType", (inst, def) => {
   if (!inst._zod)
     throw new Error("Uninitialized schema in ZodMiniType.");
@@ -93879,7 +93879,7 @@ function object(shape, params) {
   return new ZodMiniObject(def);
 }
 
-// node_modules/zod/v4/core/visit.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/core/visit.js
 var RESOLVING = /* @__PURE__ */ Symbol("z.visit/resolving");
 function visit(schema, fnOrHandlers) {
   const fn2 = typeof fnOrHandlers === "function" ? fnOrHandlers : (node2, rewritten) => {
@@ -93887,7 +93887,7 @@ function visit(schema, fnOrHandlers) {
     return h2 ? h2(node2, rewritten) : node2;
   };
   const cache2 = /* @__PURE__ */ new Map();
-  function run2(s2) {
+  function run3(s2) {
     const cached3 = cache2.get(s2);
     if (cached3 === RESOLVING) {
       return new $ZodLazy({
@@ -93913,21 +93913,21 @@ function visit(schema, fnOrHandlers) {
         let changed = false;
         const newShape = {};
         for (const k2 of keys2) {
-          const mapped = run2(oldShape[k2]);
+          const mapped = run3(oldShape[k2]);
           if (mapped !== oldShape[k2])
             changed = true;
           newShape[k2] = mapped;
         }
         let newCatchall = def.catchall;
         if (def.catchall) {
-          newCatchall = run2(def.catchall);
+          newCatchall = run3(def.catchall);
           if (newCatchall !== def.catchall)
             changed = true;
         }
         return changed ? clone(s2, { ...def, shape: newShape, catchall: newCatchall }) : s2;
       }
       case "array": {
-        const mapped = run2(def.element);
+        const mapped = run3(def.element);
         return mapped === def.element ? s2 : clone(s2, { ...def, element: mapped });
       }
       case "tuple": {
@@ -93935,14 +93935,14 @@ function visit(schema, fnOrHandlers) {
         let changed = false;
         const newItems = [];
         for (const item of oldItems) {
-          const mapped = run2(item);
+          const mapped = run3(item);
           if (mapped !== item)
             changed = true;
           newItems.push(mapped);
         }
         let newRest = def.rest;
         if (def.rest) {
-          newRest = run2(def.rest);
+          newRest = run3(def.rest);
           if (newRest !== def.rest)
             changed = true;
         }
@@ -93950,12 +93950,12 @@ function visit(schema, fnOrHandlers) {
       }
       case "record":
       case "map": {
-        const newKey = run2(def.keyType);
-        const newVal = run2(def.valueType);
+        const newKey = run3(def.keyType);
+        const newVal = run3(def.valueType);
         return newKey === def.keyType && newVal === def.valueType ? s2 : clone(s2, { ...def, keyType: newKey, valueType: newVal });
       }
       case "set": {
-        const newVal = run2(def.valueType);
+        const newVal = run3(def.valueType);
         return newVal === def.valueType ? s2 : clone(s2, { ...def, valueType: newVal });
       }
       case "union": {
@@ -93963,7 +93963,7 @@ function visit(schema, fnOrHandlers) {
         let changed = false;
         const newOptions = [];
         for (const opt of oldOptions) {
-          const mapped = run2(opt);
+          const mapped = run3(opt);
           if (mapped !== opt)
             changed = true;
           newOptions.push(mapped);
@@ -93971,8 +93971,8 @@ function visit(schema, fnOrHandlers) {
         return changed ? clone(s2, { ...def, options: newOptions }) : s2;
       }
       case "intersection": {
-        const newLeft = run2(def.left);
-        const newRight = run2(def.right);
+        const newLeft = run3(def.left);
+        const newRight = run3(def.right);
         return newLeft === def.left && newRight === def.right ? s2 : clone(s2, { ...def, left: newLeft, right: newRight });
       }
       case "optional":
@@ -93984,23 +93984,23 @@ function visit(schema, fnOrHandlers) {
       case "nonoptional":
       case "promise":
       case "success": {
-        const newInner = run2(def.innerType);
+        const newInner = run3(def.innerType);
         return newInner === def.innerType ? s2 : clone(s2, { ...def, innerType: newInner });
       }
       case "pipe": {
-        const newIn = run2(def.in);
-        const newOut = run2(def.out);
+        const newIn = run3(def.in);
+        const newOut = run3(def.out);
         return newIn === def.in && newOut === def.out ? s2 : clone(s2, { ...def, in: newIn, out: newOut });
       }
       case "function": {
-        const newInput = run2(def.input);
-        const newOutput = run2(def.output);
+        const newInput = run3(def.input);
+        const newOutput = run3(def.output);
         return newInput === def.input && newOutput === def.output ? s2 : clone(s2, { ...def, input: newInput, output: newOutput });
       }
       case "lazy": {
         const original = def.getter;
         const { _cachedInner, ...rest2 } = def;
-        return clone(s2, { ...rest2, getter: () => run2(original()) });
+        return clone(s2, { ...rest2, getter: () => run3(original()) });
       }
       // A leaf by choice: `parts` are regex fragments, not data positions.
       case "template_literal":
@@ -94031,10 +94031,10 @@ function visit(schema, fnOrHandlers) {
       }
     }
   }
-  return run2(schema);
+  return run3(schema);
 }
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
 function isZ4Schema(s2) {
   const schema = s2;
   return !!schema._zod;
@@ -94194,7 +94194,7 @@ function getLiteralValue(schema) {
   return void 0;
 }
 
-// node_modules/zod/v4/classic/external.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/external.js
 var external_exports = {};
 __export(external_exports, {
   $brand: () => $brand,
@@ -94457,7 +94457,7 @@ __export(external_exports, {
   xor: () => xor
 });
 
-// node_modules/zod/v4/classic/schemas.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/schemas.js
 var schemas_exports2 = {};
 __export(schemas_exports2, {
   ZodAny: () => ZodAny2,
@@ -94638,7 +94638,7 @@ __export(schemas_exports2, {
   xor: () => xor
 });
 
-// node_modules/zod/v4/classic/checks.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/checks.js
 var checks_exports2 = {};
 __export(checks_exports2, {
   endsWith: () => _endsWith,
@@ -94673,7 +94673,7 @@ __export(checks_exports2, {
   uppercase: () => _uppercase
 });
 
-// node_modules/zod/v4/classic/errors.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/errors.js
 var _installedErrorProtos = /* @__PURE__ */ new WeakSet([Object.prototype, Error.prototype]);
 function _lazyMethod(proto, key2, make) {
   Object.defineProperty(proto, key2, {
@@ -94719,7 +94719,7 @@ var ZodRealError = /* @__PURE__ */ $constructor("ZodError", initializer2, void 0
   Parent: Error
 });
 
-// node_modules/zod/v4/classic/parse.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/parse.js
 var parse2 = /* @__PURE__ */ _parse(ZodRealError);
 var parseAsync2 = /* @__PURE__ */ _parseAsync(ZodRealError);
 var safeParse3 = /* @__PURE__ */ _safeParse(ZodRealError);
@@ -94733,7 +94733,7 @@ var safeDecode2 = /* @__PURE__ */ _safeDecode(ZodRealError);
 var safeEncodeAsync2 = /* @__PURE__ */ _safeEncodeAsync(ZodRealError);
 var safeDecodeAsync2 = /* @__PURE__ */ _safeDecodeAsync(ZodRealError);
 
-// node_modules/zod/v4/classic/schemas.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/schemas.js
 function _ensureDefaultLocale() {
   if (!globalConfig.localeError)
     config(en_default2());
@@ -96198,7 +96198,7 @@ function preprocess(fn2, schema) {
   });
 }
 
-// node_modules/zod/v4/classic/compat.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/compat.js
 var ZodIssueCode2 = {
   invalid_type: "invalid_type",
   too_big: "too_big",
@@ -96224,7 +96224,7 @@ var ZodFirstPartyTypeKind2;
 /* @__PURE__ */ (function(ZodFirstPartyTypeKind3) {
 })(ZodFirstPartyTypeKind2 || (ZodFirstPartyTypeKind2 = {}));
 
-// node_modules/zod/v4/classic/iso.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/iso.js
 var iso_exports2 = {};
 __export(iso_exports2, {
   ZodISODate: () => ZodISODate,
@@ -96249,7 +96249,7 @@ function duration2(params) {
   return _isoDuration(ZodISODuration, params);
 }
 
-// node_modules/zod/v4/classic/from-json-schema.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/from-json-schema.js
 var z = {
   ...schemas_exports2,
   ...checks_exports2,
@@ -96982,7 +96982,7 @@ function fromJSONSchema(schema, params) {
   return convertSchema(normalized, ctx);
 }
 
-// node_modules/zod/v4/classic/deep-partial.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/deep-partial.js
 function deepPartial(schema) {
   return visit(schema, {
     object: (s2) => s2.partial(),
@@ -96994,7 +96994,7 @@ function deepPartial(schema) {
   });
 }
 
-// node_modules/zod/v4/classic/in-out.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/in-out.js
 function withChecks(side, checks) {
   if (!checks?.length)
     return side;
@@ -97024,7 +97024,7 @@ function output(schema) {
   });
 }
 
-// node_modules/zod/v4/classic/coerce.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod/v4/classic/coerce.js
 var coerce_exports2 = {};
 __export(coerce_exports2, {
   bigint: () => bigint3,
@@ -97049,7 +97049,7 @@ function date4(params) {
   return _coercedDate(ZodDate2, params);
 }
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
 var LATEST_PROTOCOL_VERSION = "2025-11-25";
 var SUPPORTED_PROTOCOL_VERSIONS = [LATEST_PROTOCOL_VERSION, "2025-06-18", "2025-03-26", "2024-11-05", "2024-10-07"];
 var RELATED_TASK_META_KEY = "io.modelcontextprotocol/related-task";
@@ -98580,12 +98580,12 @@ var UrlElicitationRequiredError = class extends McpError {
   }
 };
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/interfaces.js
 function isTerminal(status) {
   return status === "completed" || status === "failed" || status === "cancelled";
 }
 
-// node_modules/zod-to-json-schema/dist/esm/Options.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/Options.js
 var ignoreOverride = /* @__PURE__ */ Symbol("Let zodToJsonSchema decide on which parser to use");
 var defaultOptions = {
   name: void 0,
@@ -98619,7 +98619,7 @@ var getDefaultOptions = (options) => typeof options === "string" ? {
   ...options
 };
 
-// node_modules/zod-to-json-schema/dist/esm/Refs.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/Refs.js
 var getRefs = (options) => {
   const _options = getDefaultOptions(options);
   const currentPath = _options.name !== void 0 ? [..._options.basePath, _options.definitionPath, _options.name] : _options.basePath;
@@ -98640,7 +98640,7 @@ var getRefs = (options) => {
   };
 };
 
-// node_modules/zod-to-json-schema/dist/esm/errorMessages.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/errorMessages.js
 function addErrorMessage(res, key2, errorMessage, refs) {
   if (!refs?.errorMessages)
     return;
@@ -98656,7 +98656,7 @@ function setResponseValueAndErrors(res, key2, value, errorMessage, refs) {
   addErrorMessage(res, key2, errorMessage, refs);
 }
 
-// node_modules/zod-to-json-schema/dist/esm/getRelativePath.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/getRelativePath.js
 var getRelativePath = (pathA, pathB) => {
   let i2 = 0;
   for (; i2 < pathA.length && i2 < pathB.length; i2++) {
@@ -98666,7 +98666,7 @@ var getRelativePath = (pathA, pathB) => {
   return [(pathA.length - i2).toString(), ...pathB.slice(i2)].join("/");
 };
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/any.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/any.js
 function parseAnyDef(refs) {
   if (refs.target !== "openAi") {
     return {};
@@ -98682,7 +98682,7 @@ function parseAnyDef(refs) {
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/array.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/array.js
 function parseArrayDef(def, refs) {
   const res = {
     type: "array"
@@ -98706,7 +98706,7 @@ function parseArrayDef(def, refs) {
   return res;
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/bigint.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/bigint.js
 function parseBigintDef(def, refs) {
   const res = {
     type: "integer",
@@ -98752,24 +98752,24 @@ function parseBigintDef(def, refs) {
   return res;
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/boolean.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/boolean.js
 function parseBooleanDef() {
   return {
     type: "boolean"
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/branded.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/branded.js
 function parseBrandedDef(_def, refs) {
   return parseDef(_def.type._def, refs);
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/catch.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/catch.js
 var parseCatchDef = (def, refs) => {
   return parseDef(def.innerType._def, refs);
 };
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/date.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/date.js
 function parseDateDef(def, refs, overrideDateStrategy) {
   const strategy = overrideDateStrategy ?? refs.dateStrategy;
   if (Array.isArray(strategy)) {
@@ -98828,7 +98828,7 @@ var integerDateParser = (def, refs) => {
   return res;
 };
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/default.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/default.js
 function parseDefaultDef(_def, refs) {
   return {
     ...parseDef(_def.innerType._def, refs),
@@ -98836,12 +98836,12 @@ function parseDefaultDef(_def, refs) {
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/effects.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/effects.js
 function parseEffectsDef(_def, refs) {
   return refs.effectStrategy === "input" ? parseDef(_def.schema._def, refs) : parseAnyDef(refs);
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/enum.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/enum.js
 function parseEnumDef(def) {
   return {
     type: "string",
@@ -98849,7 +98849,7 @@ function parseEnumDef(def) {
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/intersection.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/intersection.js
 var isJsonSchema7AllOfType = (type) => {
   if ("type" in type && type.type === "string")
     return false;
@@ -98891,7 +98891,7 @@ function parseIntersectionDef(def, refs) {
   } : void 0;
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/literal.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/literal.js
 function parseLiteralDef(def, refs) {
   const parsedType2 = typeof def.value;
   if (parsedType2 !== "bigint" && parsedType2 !== "number" && parsedType2 !== "boolean" && parsedType2 !== "string") {
@@ -98911,7 +98911,7 @@ function parseLiteralDef(def, refs) {
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/string.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/string.js
 var emojiRegex2 = void 0;
 var zodPatterns = {
   /**
@@ -99236,7 +99236,7 @@ function stringifyRegExpWithFlags(regex, refs) {
   return pattern;
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/record.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/record.js
 function parseRecordDef(def, refs) {
   if (refs.target === "openAi") {
     console.warn("Warning: OpenAI may not support records in schemas! Try an array of key-value pairs instead.");
@@ -99288,7 +99288,7 @@ function parseRecordDef(def, refs) {
   return schema;
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/map.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/map.js
 function parseMapDef(def, refs) {
   if (refs.mapStrategy === "record") {
     return parseRecordDef(def, refs);
@@ -99313,7 +99313,7 @@ function parseMapDef(def, refs) {
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/nativeEnum.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/nativeEnum.js
 function parseNativeEnumDef(def) {
   const object4 = def.values;
   const actualKeys = Object.keys(def.values).filter((key2) => {
@@ -99327,7 +99327,7 @@ function parseNativeEnumDef(def) {
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/never.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/never.js
 function parseNeverDef(refs) {
   return refs.target === "openAi" ? void 0 : {
     not: parseAnyDef({
@@ -99337,7 +99337,7 @@ function parseNeverDef(refs) {
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/null.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/null.js
 function parseNullDef(refs) {
   return refs.target === "openApi3" ? {
     enum: ["null"],
@@ -99347,7 +99347,7 @@ function parseNullDef(refs) {
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/union.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/union.js
 var primitiveMappings = {
   ZodString: "string",
   ZodNumber: "number",
@@ -99415,7 +99415,7 @@ var asAnyOf = (def, refs) => {
   return anyOf.length ? { anyOf } : void 0;
 };
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/nullable.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/nullable.js
 function parseNullableDef(def, refs) {
   if (["ZodString", "ZodNumber", "ZodBigInt", "ZodBoolean", "ZodNull"].includes(def.innerType._def.typeName) && (!def.innerType._def.checks || !def.innerType._def.checks.length)) {
     if (refs.target === "openApi3") {
@@ -99447,7 +99447,7 @@ function parseNullableDef(def, refs) {
   return base && { anyOf: [base, { type: "null" }] };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/number.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/number.js
 function parseNumberDef(def, refs) {
   const res = {
     type: "number"
@@ -99496,7 +99496,7 @@ function parseNumberDef(def, refs) {
   return res;
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/object.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/object.js
 function parseObjectDef(def, refs) {
   const forceOptionalIntoNullable = refs.target === "openAi";
   const result2 = {
@@ -99566,7 +99566,7 @@ function safeIsOptional(schema) {
   }
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/optional.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/optional.js
 var parseOptionalDef = (def, refs) => {
   if (refs.currentPath.toString() === refs.propertyPath?.toString()) {
     return parseDef(def.innerType._def, refs);
@@ -99585,7 +99585,7 @@ var parseOptionalDef = (def, refs) => {
   } : parseAnyDef(refs);
 };
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/pipeline.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/pipeline.js
 var parsePipelineDef = (def, refs) => {
   if (refs.pipeStrategy === "input") {
     return parseDef(def.in._def, refs);
@@ -99605,12 +99605,12 @@ var parsePipelineDef = (def, refs) => {
   };
 };
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/promise.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/promise.js
 function parsePromiseDef(def, refs) {
   return parseDef(def.type._def, refs);
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/set.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/set.js
 function parseSetDef(def, refs) {
   const items = parseDef(def.valueType._def, {
     ...refs,
@@ -99630,7 +99630,7 @@ function parseSetDef(def, refs) {
   return schema;
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/tuple.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/tuple.js
 function parseTupleDef(def, refs) {
   if (def.rest) {
     return {
@@ -99658,24 +99658,24 @@ function parseTupleDef(def, refs) {
   }
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/undefined.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/undefined.js
 function parseUndefinedDef(refs) {
   return {
     not: parseAnyDef(refs)
   };
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/unknown.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/unknown.js
 function parseUnknownDef(refs) {
   return parseAnyDef(refs);
 }
 
-// node_modules/zod-to-json-schema/dist/esm/parsers/readonly.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parsers/readonly.js
 var parseReadonlyDef = (def, refs) => {
   return parseDef(def.innerType._def, refs);
 };
 
-// node_modules/zod-to-json-schema/dist/esm/selectParser.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/selectParser.js
 var selectParser = (def, typeName, refs) => {
   switch (typeName) {
     case ZodFirstPartyTypeKind.ZodString:
@@ -99751,7 +99751,7 @@ var selectParser = (def, typeName, refs) => {
   }
 };
 
-// node_modules/zod-to-json-schema/dist/esm/parseDef.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/parseDef.js
 function parseDef(def, refs, forceResolution = false) {
   const seenItem = refs.seen.get(def);
   if (refs.override) {
@@ -99807,7 +99807,7 @@ var addMeta = (def, refs, jsonSchema) => {
   return jsonSchema;
 };
 
-// node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/zod-to-json-schema/dist/esm/zodToJsonSchema.js
 var zodToJsonSchema = (schema, options) => {
   const refs = getRefs(options);
   let definitions = typeof options === "object" && options.definitions ? Object.entries(options.definitions).reduce((acc, [name2, schema2]) => ({
@@ -99869,7 +99869,7 @@ var zodToJsonSchema = (schema, options) => {
   return combined;
 };
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-json-schema-compat.js
 function mapMiniTarget(t2) {
   if (!t2)
     return "draft-7";
@@ -99911,7 +99911,7 @@ function parseWithCompat(schema, data) {
   return result2.data;
 }
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js
 var DEFAULT_REQUEST_TIMEOUT_MSEC = 6e4;
 var Protocol = class {
   constructor(_options) {
@@ -100888,7 +100888,7 @@ function mergeCapabilities(base, additional) {
   return result2;
 }
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/validation/ajv-provider.js
 var import_ajv = __toESM(require_ajv(), 1);
 var import_ajv_formats = __toESM(require_dist(), 1);
 function createDefaultAjvInstance() {
@@ -100956,7 +100956,7 @@ var AjvJsonSchemaValidator = class {
   }
 };
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/server.js
 var ExperimentalServerTasks = class {
   constructor(_server) {
     this._server = _server;
@@ -101169,7 +101169,7 @@ var ExperimentalServerTasks = class {
   }
 };
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/helpers.js
 function assertToolsCallTaskCapability(requests, method, entityName) {
   if (!requests) {
     throw new Error(`${entityName} does not support task creation (required for ${method})`);
@@ -101204,7 +101204,7 @@ function assertClientRequestTaskCapability(requests, method, entityName) {
   }
 }
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/server/index.js
 var Server = class extends Protocol {
   /**
    * Initializes this server with the given name and version information.
@@ -101575,7 +101575,7 @@ var Server = class extends Protocol {
   }
 };
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/server/completable.js
 var COMPLETABLE_SYMBOL = /* @__PURE__ */ Symbol.for("mcp.completable");
 function isCompletable(schema) {
   return !!schema && typeof schema === "object" && COMPLETABLE_SYMBOL in schema;
@@ -101589,7 +101589,7 @@ var McpZodTypeKind;
   McpZodTypeKind2["Completable"] = "McpCompletable";
 })(McpZodTypeKind || (McpZodTypeKind = {}));
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/toolNameValidation.js
 var TOOL_NAME_REGEX = /^[A-Za-z0-9._-]{1,128}$/;
 function validateToolName(name) {
   const warnings = [];
@@ -101647,7 +101647,7 @@ function validateAndWarnToolName(name) {
   return result2.isValid;
 }
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/experimental/tasks/mcp-server.js
 var ExperimentalMcpServerTasks = class {
   constructor(_mcpServer) {
     this._mcpServer = _mcpServer;
@@ -101662,7 +101662,7 @@ var ExperimentalMcpServerTasks = class {
   }
 };
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/server/mcp.js
 function toolInputElementCount(value, max2) {
   let count = 0;
   const stack = [value];
@@ -102494,10 +102494,10 @@ var EMPTY_COMPLETION_RESULT = {
   }
 };
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 import process2 from "node:process";
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/shared/stdio.js
 var STDIO_DEFAULT_MAX_BUFFER_SIZE = 10 * 1024 * 1024;
 var ReadBuffer = class {
   constructor(options) {
@@ -102534,7 +102534,7 @@ function serializeMessage(message) {
   return JSON.stringify(message) + "\n";
 }
 
-// node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
+// ../../../../../../../../../../Users/swjang/source/hai-plugin/plugins/hai/server/node_modules/@modelcontextprotocol/sdk/dist/esm/server/stdio.js
 var StdioServerTransport = class {
   constructor(_stdin = process2.stdin, _stdout = process2.stdout, options) {
     this._stdin = _stdin;
@@ -102788,7 +102788,8 @@ async function transcribe(file2, { engine = "whisper", terms, timestamps = false
 }
 async function ocr(file2, { waitMs = 15 * 6e4, docx = false } = {}) {
   const form = new FormData();
-  form.set("file", new Blob([await fs.readFile(file2)]), path2.basename(file2));
+  if (typeof file2 === "string") form.set("file", new Blob([await fs.readFile(file2)]), path2.basename(file2));
+  else form.set("file", new Blob([file2.data]), file2.name);
   if (docx) form.set("outputFormats", JSON.stringify(["docx"]));
   const { data } = await call(config2.services.ocr, "/layout-parsing/async", { body: form, timeoutMs: 12e4, retries: 3 });
   const jobId = data.result?.jobId;
@@ -103061,12 +103062,12 @@ ${part}
 }
 
 // src/extract.js
-import { execFile } from "node:child_process";
-import { randomUUID as randomUUID2 } from "node:crypto";
+import { execFile as execFile2 } from "node:child_process";
+import { createHash, randomUUID as randomUUID2 } from "node:crypto";
 import fs4 from "node:fs/promises";
-import os3 from "node:os";
+import os4 from "node:os";
 import path4 from "node:path";
-import { promisify } from "node:util";
+import { promisify as promisify2 } from "node:util";
 import { fileURLToPath } from "node:url";
 
 // src/office.js
@@ -103204,8 +103205,77 @@ async function writeMasked(name, text) {
   return p2;
 }
 
-// src/extract.js
+// src/clipboard.js
+import { execFile } from "node:child_process";
+import os2 from "node:os";
+import { promisify } from "node:util";
 var run = promisify(execFile);
+var MAX = 20 * 1024 * 1024;
+var NO_IMAGE = "NO_IMAGE";
+var WIN = `$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+$img = [System.Windows.Forms.Clipboard]::GetImage()
+if (-not $img) { [Console]::Out.Write('${NO_IMAGE}'); exit 0 }
+$ms = New-Object System.IO.MemoryStream
+$img.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
+[Console]::Out.Write([Convert]::ToBase64String($ms.ToArray()))`;
+var MAC = `ObjC.import('AppKit');
+const pb = $.NSPasteboard.generalPasteboard;
+let d = pb.dataForType($.NSPasteboardTypePNG);
+if (d.isNil()) {
+  const t = pb.dataForType($.NSPasteboardTypeTIFF);
+  if (!t.isNil()) d = $.NSBitmapImageRep.imageRepWithData(t).representationUsingTypeProperties($.NSBitmapImageFileTypePNG, $());
+}
+d.isNil() ? '${NO_IMAGE}' : d.base64EncodedStringWithOptions(0).js;`;
+var PNG = Buffer.from([137, 80, 78, 71]);
+function decodeOutput(out) {
+  const s2 = String(out ?? "").trim();
+  if (!s2 || s2 === NO_IMAGE) return null;
+  const buf = Buffer.from(s2, "base64");
+  if (!buf.subarray(0, 4).equals(PNG)) throw new HaiError("HAI_BAD_INPUT", "\uD074\uB9BD\uBCF4\uB4DC \uADF8\uB9BC\uC744 PNG \uB85C \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4");
+  return buf;
+}
+async function readClipboardImage() {
+  const opt = { encoding: "utf8", maxBuffer: MAX * 2, timeout: 3e4, windowsHide: true };
+  let data;
+  try {
+    const p2 = os2.platform();
+    if (p2 === "win32") {
+      const { stdout } = await run("powershell.exe", ["-NoProfile", "-NonInteractive", "-STA", "-ExecutionPolicy", "Bypass", "-EncodedCommand", Buffer.from(WIN, "utf16le").toString("base64")], opt);
+      data = decodeOutput(stdout);
+    } else if (p2 === "darwin") {
+      const { stdout } = await run("osascript", ["-l", "JavaScript", "-e", MAC], opt);
+      data = decodeOutput(stdout);
+    } else {
+      data = await linux();
+    }
+  } catch (err) {
+    if (err instanceof HaiError) throw err;
+    if (process.env.HAI_DEBUG) process.stderr.write(`clipboard: ${String(err?.stderr || err?.message).slice(0, 300)}
+`);
+    throw new HaiError("HAI_BAD_INPUT", "\uD074\uB9BD\uBCF4\uB4DC\uB97C \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. \uB2E4\uC2DC \uCEA1\uCC98\uD55C \uB4A4 \uD574 \uBCF4\uC138\uC694.");
+  }
+  if (!data) throw new HaiError("HAI_BAD_INPUT", '\uD074\uB9BD\uBCF4\uB4DC\uC5D0 \uADF8\uB9BC\uC774 \uC5C6\uC2B5\uB2C8\uB2E4. \uCEA1\uCC98(Windows: Win+Shift+S, macOS: Cmd+Ctrl+Shift+4)\uD55C \uB4A4 \uB2E4\uC2DC \uD558\uC138\uC694. \uD30C\uC77C\uC744 "\uBCF5\uC0AC"\uD55C \uAC83\uC740 \uADF8\uB9BC\uC774 \uC544\uB2D9\uB2C8\uB2E4 \u2014 \uADF8\uB54C\uB294 \uD30C\uC77C \uACBD\uB85C\uB97C \uC8FC\uC138\uC694.');
+  if (data.length > MAX) throw new HaiError("HAI_BAD_INPUT", "\uD074\uB9BD\uBCF4\uB4DC \uADF8\uB9BC\uC774 \uB108\uBB34 \uD07D\uB2C8\uB2E4(20MB \uCD08\uACFC). \uB098\uB220\uC11C \uCEA1\uCC98\uD558\uC138\uC694.");
+  return { data, name: `\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 ${stamp()}.png` };
+}
+async function linux() {
+  for (const [cmd, args] of [["wl-paste", ["--type", "image/png"]], ["xclip", ["-selection", "clipboard", "-t", "image/png", "-o"]]]) {
+    try {
+      const { stdout } = await run(cmd, args, { encoding: "buffer", maxBuffer: MAX * 2, timeout: 3e4 });
+      if (stdout.subarray(0, 4).equals(PNG)) return stdout;
+    } catch {
+    }
+  }
+  return null;
+}
+var stamp = (d2 = /* @__PURE__ */ new Date()) => {
+  const p2 = (n2) => String(n2).padStart(2, "0");
+  return `${d2.getFullYear()}${p2(d2.getMonth() + 1)}${p2(d2.getDate())}-${p2(d2.getHours())}${p2(d2.getMinutes())}${p2(d2.getSeconds())}`;
+};
+
+// src/extract.js
+var run2 = promisify2(execFile2);
 var TEXT = /* @__PURE__ */ new Set([".txt", ".md", ".csv", ".tsv", ".json", ".jsonl", ".log", ".html", ".htm", ".xml", ".yaml", ".yml"]);
 var IMAGE = /* @__PURE__ */ new Set([".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"]);
 var AUDIO_OK = /* @__PURE__ */ new Set([".wav", ".mp3", ".ogg", ".flac"]);
@@ -103240,14 +103310,28 @@ async function readText(p2, opts = {}) {
   const key2 = `${file2}|${st2.mtimeMs}|${st2.size}|${opts.ocr ? 1 : opts.noOcr ? 2 : 0}|${opts.engine ?? ""}|${opts.terms ?? ""}|${opts.timestamps ? 1 : 0}`;
   let hit = cache.get(key2);
   if (!hit) {
-    hit = await extract(file2, st2, opts);
-    hit.text = hit.text.replace(/\r\n/g, "\n").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
-    if (!hit.text) throw new Error(hit.via === "stt" ? "\uC74C\uC131\uC5D0\uC11C \uB9D0\uC18C\uB9AC\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4" : "\uAE00\uC790\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4");
-    if (hit.text.length > config2.maxChars) throw new Error(`\uB0B4\uC6A9\uC774 \uB108\uBB34 \uAE41\uB2C8\uB2E4(${hit.text.length.toLocaleString()}\uC790, \uC0C1\uD55C ${config2.maxChars.toLocaleString()}\uC790). \uB098\uB220\uC11C \uB123\uC73C\uC138\uC694.`);
+    hit = tidy(await extract(file2, st2, opts));
     cache.set(key2, hit);
     if (cache.size > 50) cache.delete(cache.keys().next().value);
   }
   return { file: file2, ...hit };
+}
+async function readClipboard(img) {
+  img ??= await readClipboardImage();
+  const key2 = `clipboard|${createHash("sha256").update(img.data).digest("hex")}`;
+  let hit = cache.get(key2);
+  if (!hit) {
+    hit = tidy(await ocrPages(img));
+    cache.set(key2, hit);
+    if (cache.size > 50) cache.delete(cache.keys().next().value);
+  }
+  return { file: img.name, ...hit };
+}
+function tidy(hit) {
+  hit.text = hit.text.replace(/\r\n/g, "\n").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  if (!hit.text) throw new Error(hit.via === "stt" ? "\uC74C\uC131\uC5D0\uC11C \uB9D0\uC18C\uB9AC\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4" : "\uAE00\uC790\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4");
+  if (hit.text.length > config2.maxChars) throw new Error(`\uB0B4\uC6A9\uC774 \uB108\uBB34 \uAE41\uB2C8\uB2E4(${hit.text.length.toLocaleString()}\uC790, \uC0C1\uD55C ${config2.maxChars.toLocaleString()}\uC790). \uB098\uB220\uC11C \uB123\uC73C\uC138\uC694.`);
+  return hit;
 }
 async function extract(file2, st2, opts) {
   const ext = path4.extname(file2).toLowerCase();
@@ -103359,8 +103443,8 @@ async function toWav(file2) {
   const name = `${randomUUID2()}.wav`;
   const out = path4.join(dir, name);
   const tries = [];
-  if (os3.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file2, out]]);
-  if (os3.platform() === "win32") {
+  if (os4.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file2, out]]);
+  if (os4.platform() === "win32") {
     tries.push([
       "powershell.exe",
       ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-EncodedCommand", Buffer.from(WIN_TO_WAV, "utf16le").toString("base64")],
@@ -103371,7 +103455,7 @@ async function toWav(file2) {
   let why = "";
   for (const [cmd, args, opts] of tries) {
     try {
-      await run(cmd, args, { timeout: 3e5, ...opts });
+      await run2(cmd, args, { timeout: 3e5, ...opts });
       if ((await fs4.stat(out)).size > 44) return out;
     } catch (err) {
       if (process.env.HAI_DEBUG) why += `${cmd}: ${String(err?.stderr || err?.message).slice(0, 300)}
@@ -103380,7 +103464,7 @@ async function toWav(file2) {
   }
   await fs4.rm(out, { force: true });
   if (why) process.stderr.write(why);
-  throw new HaiError("HAI_BAD_INPUT", `${path4.extname(file2)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694${os3.platform() === "win32" ? "(winget install Gyan.FFmpeg)" : ""}.`);
+  throw new HaiError("HAI_BAD_INPUT", `${path4.extname(file2)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694${os4.platform() === "win32" ? "(winget install Gyan.FFmpeg)" : ""}.`);
 }
 var mmss = (sec) => {
   const s2 = Math.floor(Number(sec) || 0);
@@ -103388,14 +103472,14 @@ var mmss = (sec) => {
 };
 
 // src/search.js
-import { createHash } from "node:crypto";
+import { createHash as createHash2 } from "node:crypto";
 import fs5 from "node:fs/promises";
 import path5 from "node:path";
 var CHUNK = 700;
 var OVERLAP = 120;
 var MAX_FILES = 400;
 var SKIP_DIR = /^(\.|node_modules$|__pycache__$|Library$)/;
-var indexPath = async (dir) => path5.join(await ensureDataDir(), "index", `${createHash("sha256").update(dir).digest("hex").slice(0, 16)}.json`);
+var indexPath = async (dir) => path5.join(await ensureDataDir(), "index", `${createHash2("sha256").update(dir).digest("hex").slice(0, 16)}.json`);
 function spans(text, size2 = CHUNK, overlap = OVERLAP) {
   const out = [];
   let start = 0;
@@ -103690,7 +103774,7 @@ async function fillTimetable(buf, rows) {
 }
 
 // src/index.js
-var VERSION2 = "0.4.0";
+var VERSION2 = "0.5.0";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -103797,11 +103881,20 @@ var audioSchema = {
   engine: external_exports.enum(["whisper", "qwen"]).optional().describe("\uB179\uC74C\uC77C \uB54C: whisper(\uAE30\uBCF8, \uD68C\uC758\xB7\uC77C\uBC18 \uB179\uC74C) / qwen(\uC804\uD654\xB7\uC0C1\uB2F4\xB7\uC7A1\uC74C \uB9CE\uC740 \uB179\uC74C)"),
   terms: external_exports.string().optional().describe('\uB179\uC74C\uC77C \uB54C: \uC778\uC2DD\uC744 \uB3D5\uB294 \uACE0\uC720\uBA85\uC0AC\xB7\uC6A9\uC5B4(\uC27C\uD45C). \uC608: "\uD5E5\uD1A0, \uD2D4\uC6C0, \uBC95\uC778\uCC28\uB7C9"')
 };
+var pathSchema = external_exports.string().optional().describe("\uB85C\uCEEC \uD30C\uC77C \uACBD\uB85C (clipboard \uB97C \uC4F0\uBA74 \uBE44\uC6B4\uB2E4)");
+var clipboardSchema = external_exports.boolean().optional().describe('true \uBA74 path \uB300\uC2E0 \uD074\uB9BD\uBCF4\uB4DC\uC758 \uCEA1\uCC98 \uADF8\uB9BC\uC744 \uC77D\uB294\uB2E4(\uBA54\uBAA8\uB9AC\uB85C\uB9CC HAI OCR \uC5D0 \uBCF4\uB0B8\uB2E4 \u2014 \uD30C\uC77C\uC744 \uB9CC\uB4E4\uC9C0 \uC54A\uC544 \uC800\uC7A5\uD558\uBA74 DRM \uC774 \uAC78\uB9AC\uB294 PC \uC5D0\uC11C\uB3C4 \uB41C\uB2E4). \uC0AC\uC6A9\uC790\uAC00 "\uD074\uB9BD\uBCF4\uB4DC", "\uBC29\uAE08 \uCEA1\uCC98\uD55C \uAC83"\uC774\uB77C\uACE0 \uD560 \uB54C. \uCEA1\uCC98\uB97C \uCC44\uD305\uC5D0 \uBD99\uC5EC \uB123\uAC8C \uD558\uC9C0 \uC54A\uB294\uB2E4');
+function readSource({ path: p2, clipboard }, opts) {
+  if (clipboard && p2) throw new Error("path \uC640 clipboard \uC911 \uD558\uB098\uB9CC \uC8FC\uC138\uC694");
+  if (clipboard) return readClipboard();
+  if (!p2) throw new Error("path \uB098 clipboard: true \uC911 \uD558\uB098\uAC00 \uD544\uC694\uD569\uB2C8\uB2E4");
+  return readText(p2, opts);
+}
 var server = new McpServer({ name: "hai", version: VERSION2 }, {
   instructions: [
     "\uC0AC\uB0B4 AI(HAI) \uB3C4\uAD6C. \uAC1C\uC778\uC815\uBCF4\xB7\uBBFC\uAC10\uC815\uBCF4\uAC00 \uB4E0 \uB85C\uCEEC \uD30C\uC77C\uC740 Read \uB300\uC2E0 \uC774 \uB3C4\uAD6C\uB85C \uC77D\uB294\uB2E4 \u2014 \uC6D0\uBB38\uC740 HAI \uB9CC \uC77D\uACE0 Claude \uC5D0\uB294 \uAC00\uB9B0 \uAE00\uC774\uB098 \uB2F5\uB9CC \uC628\uB2E4.",
     `\uC77D\uB294 \uD615\uC2DD: ${SUPPORTED.join(" ")} (\uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4\uC740 OCR, \uB179\uC74C\uC740 \uBC1B\uC544\uC4F0\uAE30\uAC00 \uC790\uB3D9\uC73C\uB85C \uBD99\uB294\uB2E4).`,
-    "\uC694\uC57D\xB7\uCC3E\uAE30 \u2192 hai_ask_file, \uC5EC\uB7EC \uD30C\uC77C \u2192 hai_ask_files, \uAC19\uC774 \uB2E4\uB4EC\uAE30\xB7\uC9D1\uACC4 \u2192 hai_mask_file, \uC2E4\uBA85 \uACB0\uACFC\uBB3C \u2192 hai_restore, \uBB38\uC11C \uCC3E\uAE30 \u2192 hai_search."
+    "\uC694\uC57D\xB7\uCC3E\uAE30 \u2192 hai_ask_file, \uC5EC\uB7EC \uD30C\uC77C \u2192 hai_ask_files, \uAC19\uC774 \uB2E4\uB4EC\uAE30\xB7\uC9D1\uACC4 \u2192 hai_mask_file, \uC2E4\uBA85 \uACB0\uACFC\uBB3C \u2192 hai_restore, \uBB38\uC11C \uCC3E\uAE30 \u2192 hai_search.",
+    "\uAC1C\uC778\uC815\uBCF4\uAC00 \uBCF4\uC774\uB294 \uD654\uBA74 \uCEA1\uCC98\uB294 \uCC44\uD305\uC5D0 \uBD99\uC5EC \uB123\uAC8C \uD558\uC9C0 \uB9D0\uACE0 \uD074\uB9BD\uBCF4\uB4DC\uC5D0 \uB454 \uCC44 hai_ask_file\xB7hai_mask_file\xB7hai_ocr \uC5D0 clipboard: true \uB85C \uC77D\uB294\uB2E4."
   ].join(" ")
 });
 server.registerTool("hai_ask_file", {
@@ -103809,10 +103902,12 @@ server.registerTool("hai_ask_file", {
   description: [
     "\uB85C\uCEEC \uD30C\uC77C\uC744 \uC0AC\uB0B4 AI(HAI)\uB9CC \uC77D\uACE0 instruction \uC5D0 \uB300\uD55C \uB2F5\uB9CC \uB3CC\uB824\uC900\uB2E4. \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4. \uB2F5\uC5D0 \uC11E\uC778 \uAC1C\uC778\uC815\uBCF4\uB3C4 [\uC774\uB9841] \uAC19\uC740 \uC790\uB9AC\uD45C\uC2DC\uB85C \uAC00\uB9B0\uB2E4(mask_id \uB85C hai_restore \uAC00\uB2A5).",
     "\uBB38\uC11C(pdf\xB7docx\xB7xlsx\xB7hwpx\xB7csv\xB7txt), \uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4(\uC790\uB3D9 OCR), \uB179\uC74C(wav\xB7mp3\xB7m4a \uB4F1, \uC790\uB3D9 \uBC1B\uC544\uC4F0\uAE30) \uBAA8\uB450 \uB41C\uB2E4.",
-    "\uC694\uC57D\xB7\uC870\uD56D \uCC3E\uAE30\xB7\uD68C\uC758\uB85D \uC791\uC131\xB7\uBAA9\uB85D \uBF51\uAE30\uC5D0 \uC4F4\uB2E4. \uC815\uD655\uD55C \uAC1C\uC218\xB7\uD569\uACC4\uAC00 \uD544\uC694\uD558\uBA74 hai_mask_file \uB85C \uBC1B\uC544 \uC9C1\uC811 \uC13C\uB2E4(LLM \uC740 \uAE34 \uAE00\uC758 \uAC1C\uC218\uB97C \uC790\uC8FC \uD2C0\uB9B0\uB2E4)."
+    "\uC694\uC57D\xB7\uC870\uD56D \uCC3E\uAE30\xB7\uD68C\uC758\uB85D \uC791\uC131\xB7\uBAA9\uB85D \uBF51\uAE30\uC5D0 \uC4F4\uB2E4. \uC815\uD655\uD55C \uAC1C\uC218\xB7\uD569\uACC4\uAC00 \uD544\uC694\uD558\uBA74 hai_mask_file \uB85C \uBC1B\uC544 \uC9C1\uC811 \uC13C\uB2E4(LLM \uC740 \uAE34 \uAE00\uC758 \uAC1C\uC218\uB97C \uC790\uC8FC \uD2C0\uB9B0\uB2E4).",
+    "\uD30C\uC77C \uB300\uC2E0 \uD074\uB9BD\uBCF4\uB4DC\uC758 \uCEA1\uCC98\uB3C4 \uB41C\uB2E4(clipboard: true)."
   ].join(" "),
   inputSchema: {
-    path: external_exports.string(),
+    path: pathSchema,
+    clipboard: clipboardSchema,
     instruction: external_exports.string().describe('HAI \uC5D0 \uC2DC\uD0AC \uC77C. \uC608: "\uACC4\uC57D \uAE30\uAC04\xB7\uD574\uC9C0 \uC870\uAC74\xB7\uC704\uC57D\uAE08\uC744 \uC870\uD56D \uBC88\uD638\uC640 \uD568\uAED8 \uD45C\uB85C", "\uD68C\uC758\uB85D: \uC548\uAC74\xB7\uACB0\uC815\xB7\uD560 \uC77C(\uB2F4\uB2F9\xB7\uAE30\uD55C)"'),
     model: modelSchema,
     thinking: thinkingSchema,
@@ -103820,9 +103915,9 @@ server.registerTool("hai_ask_file", {
     mask_id: maskIdSchema,
     ...audioSchema
   }
-}, guard(async ({ path: p2, instruction, model, thinking, extra, mask_id, engine, terms }, ex) => {
-  progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911");
-  const { file: file2, text, via: how, meta: meta3 } = await readText(p2, { engine, terms });
+}, guard(async ({ path: p2, clipboard, instruction, model, thinking, extra, mask_id, engine, terms }, ex) => {
+  progress(ex, clipboard ? "\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 \uC77D\uB294 \uC911" : "\uD30C\uC77C \uC77D\uB294 \uC911");
+  const { file: file2, text, via: how, meta: meta3 } = await readSource({ path: p2, clipboard }, { engine, terms });
   progress(ex, "HAI \uAC00 \uC77D\uB294 \uC911");
   const answer = await askText(text, instruction, { model, thinking }, (m2) => progress(ex, m2));
   const vault = vaultOf(mask_id);
@@ -103892,14 +103987,14 @@ server.registerTool("hai_mask_file", {
   title: "\uD30C\uC77C\uC744 \uAC00\uB824\uC11C \uC77D\uAE30",
   description: [
     "\uB85C\uCEEC \uD30C\uC77C\uC744 HAI \uAC00 \uBA3C\uC800 \uC77D\uC5B4 \uAC1C\uC778\uC815\uBCF4\uB97C [\uC774\uB9841]\xB7[\uD734\uB300\uC804\uD6541] \uAC19\uC740 \uC790\uB9AC\uD45C\uC2DC\uB85C \uBC14\uAFBC \uAE00\uC744 \uB3CC\uB824\uC900\uB2E4. \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4.",
-    "\uBCF4\uACE0\uC11C \uCD08\uC548\xB7\uD45C \uC815\uB9AC\xB7\uAC1C\uC218 \uC138\uAE30\uCC98\uB7FC Claude \uAC00 \uAE00 \uC804\uCCB4\uB97C \uB2E4\uB904\uC57C \uD560 \uB54C \uC4F4\uB2E4. \uC2A4\uCE94\xB7\uC0AC\uC9C4\xB7\uB179\uC74C\uB3C4 \uB41C\uB2E4.",
+    "\uBCF4\uACE0\uC11C \uCD08\uC548\xB7\uD45C \uC815\uB9AC\xB7\uAC1C\uC218 \uC138\uAE30\uCC98\uB7FC Claude \uAC00 \uAE00 \uC804\uCCB4\uB97C \uB2E4\uB904\uC57C \uD560 \uB54C \uC4F4\uB2E4. \uC2A4\uCE94\xB7\uC0AC\uC9C4\xB7\uB179\uC74C, \uD074\uB9BD\uBCF4\uB4DC\uC758 \uCEA1\uCC98(clipboard: true)\uB3C4 \uB41C\uB2E4.",
     "\uAC19\uC740 \uBB38\uC11C\uB97C \uB2E4\uC2DC \uAC00\uB9B4 \uB54C\uB294 mask_id \uB97C \uB118\uACA8 \uBC88\uD638\uB97C \uB9DE\uCD98\uB2E4. \uACB0\uACFC\uBB3C\uC744 \uC2E4\uBA85\uC73C\uB85C \uB0A8\uAE30\uB824\uBA74 hai_restore.",
     "\uC790\uB3D9 \uAC00\uB9BC\uC774\uB77C \uB193\uCE60 \uC218 \uC788\uB2E4 \u2014 \uC2E4\uBA85\xB7\uC5F0\uB77D\uCC98\uAC00 \uBCF4\uC774\uBA74 \uC0AC\uC6A9\uC790\uC5D0\uAC8C \uC54C\uB9AC\uACE0 extra \uB85C \uC720\uD615\uC744 \uB354\uD574 \uB2E4\uC2DC \uBD80\uB978\uB2E4."
   ].join(" "),
-  inputSchema: { path: external_exports.string(), extra: extraSchema, mask_id: maskIdSchema, ...audioSchema }
-}, guard(async ({ path: p2, extra, mask_id, engine, terms }, ex) => {
-  progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911");
-  const { file: file2, text, via: how, table } = await readText(p2, { engine, terms });
+  inputSchema: { path: pathSchema, clipboard: clipboardSchema, extra: extraSchema, mask_id: maskIdSchema, ...audioSchema }
+}, guard(async ({ path: p2, clipboard, extra, mask_id, engine, terms }, ex) => {
+  progress(ex, clipboard ? "\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 \uC77D\uB294 \uC911" : "\uD30C\uC77C \uC77D\uB294 \uC911");
+  const { file: file2, text, via: how, table } = await readSource({ path: p2, clipboard }, { engine, terms });
   const vault = vaultOf(mask_id);
   progress(ex, "\uAC1C\uC778\uC815\uBCF4 \uCC3E\uB294 \uC911");
   const masked = await maskAll(text, vault, extra, { table });
@@ -103958,14 +104053,17 @@ ${dur(meta3?.seconds)} \uB179\uC74C \xB7 ${text.length.toLocaleString()}\uC790 \
 }));
 server.registerTool("hai_ocr", {
   title: "\uC2A4\uCE94\xB7\uC0AC\uC9C4\uC5D0\uC11C \uAE00\uC790 \uBF51\uAE30",
-  description: "\uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4(png\xB7jpg\xB7tif)\uC744 HAI OCR(\uD45C\xB7\uB808\uC774\uC544\uC6C3 \uC778\uC2DD)\uB85C \uAE00\uB85C \uBC14\uAFD4 \uB0B4 PC \uD30C\uC77C\uB85C \uC800\uC7A5\uD55C\uB2E4. format: md(\uAE30\uBCF8, Markdown) \uB610\uB294 docx(\uACE0\uCE60 \uC218 \uC788\uB294 \uC6CC\uB4DC \uD30C\uC77C \u2014 \uC5EC\uB7EC \uCABD\uC740 \uCABD \uACBD\uACC4\uC5D0\uC11C \uC798\uB9B0 \uD45C\uB97C \uC774\uC5B4 \uD55C \uBC8C\uB85C). \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4. \uB0B4\uC6A9\uC744 \uBB3B\uAC70\uB098 \uB2E4\uB4EC\uC744 \uB54C\uB294 \uC6D0\uBCF8\uC774\uB098 \uC800\uC7A5 \uD30C\uC77C\uC5D0 hai_ask_file\xB7hai_mask_file \uC744 \uC4F4\uB2E4(\uADF8 \uB3C4\uAD6C\uB4E4\uB3C4 \uC2A4\uCE94\uBCF8\uC774\uBA74 OCR \uC744 \uC54C\uC544\uC11C \uD55C\uB2E4).",
-  inputSchema: { path: external_exports.string(), format: external_exports.enum(["md", "docx"]).optional(), out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354\uC758 "<\uC774\uB984> OCR.md" \uB610\uB294 ".docx")') }
-}, guard(async ({ path: p2, format, out_path }, ex) => {
-  const file2 = resolvePath(p2);
-  if (!["pdf", "image"].includes(kindOf(file2))) throw new Error("PDF \uB098 \uC774\uBBF8\uC9C0(png\xB7jpg\xB7tif\xB7bmp\xB7webp)\uB9CC \uB429\uB2C8\uB2E4");
+  description: "\uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4(png\xB7jpg\xB7tif) \uB610\uB294 \uD074\uB9BD\uBCF4\uB4DC\uC758 \uCEA1\uCC98(clipboard: true)\uB97C HAI OCR(\uD45C\xB7\uB808\uC774\uC544\uC6C3 \uC778\uC2DD)\uB85C \uAE00\uB85C \uBC14\uAFD4 \uB0B4 PC \uD30C\uC77C\uB85C \uC800\uC7A5\uD55C\uB2E4. format: md(\uAE30\uBCF8, Markdown) \uB610\uB294 docx(\uACE0\uCE60 \uC218 \uC788\uB294 \uC6CC\uB4DC \uD30C\uC77C \u2014 \uC5EC\uB7EC \uCABD\uC740 \uCABD \uACBD\uACC4\uC5D0\uC11C \uC798\uB9B0 \uD45C\uB97C \uC774\uC5B4 \uD55C \uBC8C\uB85C). \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4. \uB0B4\uC6A9\uC744 \uBB3B\uAC70\uB098 \uB2E4\uB4EC\uC744 \uB54C\uB294 \uC6D0\uBCF8\uC774\uB098 \uC800\uC7A5 \uD30C\uC77C\uC5D0 hai_ask_file\xB7hai_mask_file \uC744 \uC4F4\uB2E4(\uADF8 \uB3C4\uAD6C\uB4E4\uB3C4 \uC2A4\uCE94\uBCF8\uC774\uBA74 OCR \uC744 \uC54C\uC544\uC11C \uD55C\uB2E4).",
+  inputSchema: { path: pathSchema, clipboard: clipboardSchema, format: external_exports.enum(["md", "docx"]).optional(), out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354\uC758 "<\uC774\uB984> OCR.md" \uB610\uB294 ".docx", \uD074\uB9BD\uBCF4\uB4DC\uB294 "\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 <\uC2DC\uAC01> OCR")') }
+}, guard(async ({ path: p2, clipboard, format, out_path }, ex) => {
+  if (clipboard && p2) throw new Error("path \uC640 clipboard \uC911 \uD558\uB098\uB9CC \uC8FC\uC138\uC694");
+  if (!clipboard && !p2) throw new Error("path \uB098 clipboard: true \uC911 \uD558\uB098\uAC00 \uD544\uC694\uD569\uB2C8\uB2E4");
+  const file2 = clipboard ? await readClipboardImage() : resolvePath(p2);
+  const name = clipboard ? file2.name : file2;
+  if (!clipboard && !["pdf", "image"].includes(kindOf(file2))) throw new Error("PDF \uB098 \uC774\uBBF8\uC9C0(png\xB7jpg\xB7tif\xB7bmp\xB7webp)\uB9CC \uB429\uB2C8\uB2E4");
   progress(ex, "OCR \uC911");
   const ext = format === "docx" ? ".docx" : ".md";
-  const target = out_path ? resolvePath(out_path) : path6.join(config2.rawDir, `${path6.parse(file2).name} OCR${ext}`);
+  const target = out_path ? resolvePath(out_path) : path6.join(config2.rawDir, `${path6.parse(name).name} OCR${ext}`);
   if (format === "docx") {
     const { count, docx } = await ocr(file2, { docx: true });
     if (!docx) throw new Error("HAI \uAC00 \uC6CC\uB4DC \uD30C\uC77C\uC744 \uB3CC\uB824\uC8FC\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. format \uC5C6\uC774(Markdown) \uB2E4\uC2DC \uD574 \uBCF4\uC138\uC694.");
@@ -103973,7 +104071,7 @@ server.registerTool("hai_ocr", {
     return ok(`\uC800\uC7A5: ${saved2}
 ${count}\uCABD \u2192 \uC6CC\uB4DC(docx) \xB7 \uC6D0\uBB38\uC740 Claude \uC5D0 \uBCF4\uC774\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC6CC\uB4DC\uB85C \uC5F4\uC5B4 \uACE0\uCE58\uC138\uC694.`);
   }
-  const { text, meta: meta3 } = await readText(file2, { ocr: true });
+  const { text, meta: meta3 } = clipboard ? await readClipboard(file2) : await readText(file2, { ocr: true });
   const saved = await writeRaw(target, `${text}
 `);
   return ok(`\uC800\uC7A5: ${saved}
@@ -104035,7 +104133,7 @@ ${await maskAll(r2.content, vault)}
 (\uBAA8\uB378: ${r2.model} \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)})`);
 }));
 async function isProtected(file2) {
-  const fold = os4.platform() === "darwin" || os4.platform() === "win32";
+  const fold = os5.platform() === "darwin" || os5.platform() === "win32";
   const canon = async (p2) => {
     let r2 = path6.resolve(p2);
     try {
@@ -104106,7 +104204,7 @@ server.registerTool("hai_status", {
     `\uBCF4\uD638 \uD3F4\uB354: ${config2.protectedDirs.length ? config2.protectedDirs.join(", ") : "\uC5C6\uC74C(\uC124\uC815 \uAD8C\uC7A5)"}`
   ];
   if (!source) return ok([...lines, "\u2192 \uD0A4\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4. HAI \uD3EC\uD138(https://hai-gateway.idc.hectoai.co.kr/)\uC5D0 \uD5E5\uD1A0 \uC774\uBA54\uC77C\uB85C \uAC00\uC785 \u2192 API \uD0A4 \uAD00\uB9AC\uC5D0\uC11C \uBC1C\uAE09 \u2192 /plugin \uC5D0\uC11C hai \uC124\uC815\uC5D0 \uB123\uC73C\uC138\uC694."].join("\n"));
-  lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os4.homedir(), "~")}`);
+  lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os5.homedir(), "~")}`);
   lines.push(sandboxLine());
   const LABEL = { qwen: "Qwen(\uBD84\uC11D\xB7\uCD94\uB860)", gemma: "Gemma(\uB300\uD654\xB7\uC0AC\uC9C4)", embed: "\uBB38\uC11C \uAC80\uC0C9(KURE)", whisper: "\uBC1B\uC544\uC4F0\uAE30 whisper", asr: "\uBC1B\uC544\uC4F0\uAE30 qwen3-asr", ocr: "OCR(paddleocr)" };
   const rows = await probe();
@@ -104118,14 +104216,14 @@ server.registerTool("hai_status", {
 function sandboxLine() {
   let st2 = {};
   try {
-    st2 = JSON.parse(readFileSync(path6.join(os4.homedir(), ".claude", "settings.json"), "utf8"));
+    st2 = JSON.parse(readFileSync(path6.join(os5.homedir(), ".claude", "settings.json"), "utf8"));
   } catch {
   }
   const sb = st2.sandbox ?? {};
-  const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path6.resolve(String(d2).replace(/^~(?=\/|$)/, os4.homedir())));
+  const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path6.resolve(String(d2).replace(/^~(?=\/|$)/, os5.homedir())));
   const want = [...config2.protectedDirs, config2.rawDir];
   const covered = want.filter((w2) => deny.some((d2) => w2 === d2 || w2.startsWith(d2 + path6.sep)));
-  if (os4.platform() === "win32") return "\uBCF4\uD638: Windows \uB294 \uC0CC\uB4DC\uBC15\uC2A4\uAC00 \uC5C6\uC5B4 \uAC00\uB4DC \uD6C5(\uBA85\uB839 \uAE00\uC790 \uAC80\uC0AC)\uB9CC \uB3D9\uC791\uD569\uB2C8\uB2E4 \u2014 /hai:protect \uB85C \uAE30\uBCF8 \uB3C4\uAD6C \uCC28\uB2E8 \uADDC\uCE59\uC744 \uB354\uD558\uACE0, \uBBFC\uAC10\uD55C \uD3F4\uB354\uC5D0\uC11C Claude \uB97C \uC2DC\uC791\uD558\uC9C0 \uB9C8\uC138\uC694";
+  if (os5.platform() === "win32") return "\uBCF4\uD638: Windows \uB294 \uC0CC\uB4DC\uBC15\uC2A4\uAC00 \uC5C6\uC5B4 \uAC00\uB4DC \uD6C5(\uBA85\uB839 \uAE00\uC790 \uAC80\uC0AC)\uB9CC \uB3D9\uC791\uD569\uB2C8\uB2E4 \u2014 /hai:protect \uB85C \uAE30\uBCF8 \uB3C4\uAD6C \uCC28\uB2E8 \uADDC\uCE59\uC744 \uB354\uD558\uACE0, \uBBFC\uAC10\uD55C \uD3F4\uB354\uC5D0\uC11C Claude \uB97C \uC2DC\uC791\uD558\uC9C0 \uB9C8\uC138\uC694";
   if (!sb.enabled) return "\uC0CC\uB4DC\uBC15\uC2A4: \uAEBC\uC9D0 \u2014 /hai:protect \uB85C \uCF1C\uBA74 \uBCF4\uD638 \uD3F4\uB354\uB97C \uC6B4\uC601\uCCB4\uC81C \uC218\uC900\uC5D0\uC11C \uB9C9\uC2B5\uB2C8\uB2E4(\uAD8C\uC7A5)";
   return covered.length === want.length ? `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uBCF4\uD638 \uD3F4\uB354\xB7\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354 \uC77D\uAE30 \uCC28\uB2E8\uB428(${covered.length}\uACF3)` : `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uC77D\uAE30 \uCC28\uB2E8\uC5D0 \uBE60\uC9C4 \uACF3 ${want.length - covered.length}\uACF3 \u2014 /hai:protect \uB85C \uCD94\uAC00\uD558\uC138\uC694`;
 }
