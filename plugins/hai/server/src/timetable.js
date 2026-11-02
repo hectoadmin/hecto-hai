@@ -34,8 +34,9 @@ export async function fillTimetable(buf, rows) {
     col: colIndex(attr(c[1], 'r') ?? 'A1'), s: attr(c[1], 's'), t: attr(c[1], 't'), v: (c[2] ?? '').match(/<v>([\s\S]*?)<\/v>/)?.[1],
   }));
   const header = cellsOf(allRows[0] ?? '').map((c) => (c.t === 's' ? shared[Number(c.v)] : unxml(c.v ?? '')).trim());
-  if (FIXED.some((h, i) => header[i] !== h)) throw new Error(`양식 머리글이 다릅니다: ${header.slice(0, 5).join(' · ')} (기대: ${FIXED.join(' · ')})`);
+  if (FIXED.some((h, i) => header[i] !== h)) throw new Error(`EVS 타임테이블 양식이 아닙니다(첫 줄 머리글이 ${FIXED.join(' · ')} … 이어야 함). EVS 에서 받은 양식 파일을 그대로 쓰세요.`);
   const companies = header.slice(5).filter(Boolean);
+  if (!companies.length || companies.some((c) => c.length > 10)) throw new Error('EVS 타임테이블 양식이 아닙니다(법인 칸이 없음). EVS 에서 받은 양식 파일을 그대로 쓰세요.');
 
   // 양식의 근무일 줄 — 날짜(엑셀 일련번호)와 칸별 서식
   const tmpl = allRows.slice(1).map((row) => {
@@ -43,6 +44,7 @@ export async function fillTimetable(buf, rows) {
     const b = cells.find((c) => c.col === 1);
     return { serial: b?.v, date: b?.v ? excelDate(b.v) : '', styles: Object.fromEntries(cells.map((c) => [c.col, c.s])) };
   }).filter((r) => r.date);
+  if (zip.file(/^xl\/worksheets\/sheet\d+\.xml$/).length !== 1) throw new Error('EVS 타임테이블 양식이 아닙니다(시트가 하나여야 함). EVS 에서 받은 양식 파일을 그대로 쓰세요.');
   if (!tmpl.length) throw new Error('양식에 근무일 줄이 없습니다. EVS 에서 년월을 고른 뒤 양식다운로드로 받은 파일인지 확인하세요.');
 
   // 입력 검사

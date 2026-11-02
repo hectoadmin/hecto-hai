@@ -25,7 +25,7 @@ import { chat, probe, ocr, HaiError } from './hai.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
 import { findSpans, chunk } from './ner.js';
 import { readText, resolvePath, kindOf, SUPPORTED } from './extract.js';
-import { writeRaw, writeMasked } from './ledger.js';
+import { writeRaw, writeMasked, rawFiles } from './ledger.js';
 import { search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
@@ -331,6 +331,12 @@ server.registerTool('hai_timetable_fill', {
   },
 }, guard(async ({ template, rows, out_path, overwrite }) => {
   const src = resolvePath(template);
+  // 보호 폴더·원문 결과 폴더·원문 장부의 파일은 양식으로 받지 않는다 — 오류 문구나 저장 파일로 내용이 새지 않게
+  const real = await fs.realpath(src).catch(() => src);
+  const inside = (dir) => [src, real].some((f) => f === dir || f.startsWith(dir + path.sep));
+  if ([...config.protectedDirs, config.rawDir].some(inside) || (await rawFiles()).some((f) => f === src || f === real)) {
+    throw new Error('보호 폴더(또는 원문 결과 폴더)의 파일은 양식으로 쓸 수 없습니다. EVS 에서 받은 양식은 다운로드 폴더에 그대로 두고 그 경로를 주세요.');
+  }
   const r = await fillTimetable(await fs.readFile(src), rows);
   const file = out_path ? resolvePath(out_path) : path.join(path.dirname(src), `${path.parse(src).name}_작성.xlsx`);
   if (!overwrite && await fs.stat(file).then(() => true, () => false)) throw new Error(`이미 있는 파일입니다: ${file} — 덮어쓰려면 overwrite: true`);

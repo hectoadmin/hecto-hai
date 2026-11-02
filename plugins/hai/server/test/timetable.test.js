@@ -33,3 +33,12 @@ test('양식에 없는 날짜·법인 이름은 거절한다', async () => {
   await assert.rejects(fillTimetable(TEMPLATE, [{ date: '2026-10-01', code: '', name: 'Y', hours: {} }]), /업무코드와 업무명/);
   await assert.rejects(fillTimetable(Buffer.from('not a zip'), []), /./);
 });
+
+test('양식이 아니면 칸 내용을 오류에 옮기지 않는다', async () => {
+  const JSZip = (await import('jszip')).default;
+  const zip = await JSZip.loadAsync(TEMPLATE);
+  const sst = await zip.file('xl/sharedStrings.xml').async('string');
+  zip.file('xl/sharedStrings.xml', sst.replace('<t>#</t>', '<t>김비밀 010-1234-5678</t>'));
+  const other = await zip.generateAsync({ type: 'nodebuffer' });
+  await assert.rejects(fillTimetable(other, [{ date: '2026-10-01', code: 'X', name: 'Y', hours: {} }]), (e) => /양식이 아닙니다/.test(e.message) && !/김비밀|010/.test(e.message));
+});

@@ -103048,6 +103048,13 @@ async function ensureDataDir() {
   await fs2.mkdir(config2.dataDir, { recursive: true, mode: 448 });
   return config2.dataDir;
 }
+async function rawFiles() {
+  try {
+    return [...new Set((await fs2.readFile(LEDGER(), "utf8")).split("\n").filter(Boolean))];
+  } catch {
+    return [];
+  }
+}
 async function realish(file2) {
   const abs = path3.resolve(file2);
   try {
@@ -103507,13 +103514,15 @@ async function fillTimetable(buf, rows) {
     v: (c2[2] ?? "").match(/<v>([\s\S]*?)<\/v>/)?.[1]
   }));
   const header = cellsOf(allRows[0] ?? "").map((c2) => (c2.t === "s" ? shared[Number(c2.v)] : unxml(c2.v ?? "")).trim());
-  if (FIXED.some((h2, i2) => header[i2] !== h2)) throw new Error(`\uC591\uC2DD \uBA38\uB9AC\uAE00\uC774 \uB2E4\uB985\uB2C8\uB2E4: ${header.slice(0, 5).join(" \xB7 ")} (\uAE30\uB300: ${FIXED.join(" \xB7 ")})`);
+  if (FIXED.some((h2, i2) => header[i2] !== h2)) throw new Error(`EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD\uC774 \uC544\uB2D9\uB2C8\uB2E4(\uCCAB \uC904 \uBA38\uB9AC\uAE00\uC774 ${FIXED.join(" \xB7 ")} \u2026 \uC774\uC5B4\uC57C \uD568). EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uD30C\uC77C\uC744 \uADF8\uB300\uB85C \uC4F0\uC138\uC694.`);
   const companies = header.slice(5).filter(Boolean);
+  if (!companies.length || companies.some((c2) => c2.length > 10)) throw new Error("EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD\uC774 \uC544\uB2D9\uB2C8\uB2E4(\uBC95\uC778 \uCE78\uC774 \uC5C6\uC74C). EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uD30C\uC77C\uC744 \uADF8\uB300\uB85C \uC4F0\uC138\uC694.");
   const tmpl = allRows.slice(1).map((row) => {
     const cells = cellsOf(row);
     const b2 = cells.find((c2) => c2.col === 1);
     return { serial: b2?.v, date: b2?.v ? excelDate(b2.v) : "", styles: Object.fromEntries(cells.map((c2) => [c2.col, c2.s])) };
   }).filter((r2) => r2.date);
+  if (zip.file(/^xl\/worksheets\/sheet\d+\.xml$/).length !== 1) throw new Error("EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD\uC774 \uC544\uB2D9\uB2C8\uB2E4(\uC2DC\uD2B8\uAC00 \uD558\uB098\uC5EC\uC57C \uD568). EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uD30C\uC77C\uC744 \uADF8\uB300\uB85C \uC4F0\uC138\uC694.");
   if (!tmpl.length) throw new Error("\uC591\uC2DD\uC5D0 \uADFC\uBB34\uC77C \uC904\uC774 \uC5C6\uC2B5\uB2C8\uB2E4. EVS \uC5D0\uC11C \uB144\uC6D4\uC744 \uACE0\uB978 \uB4A4 \uC591\uC2DD\uB2E4\uC6B4\uB85C\uB4DC\uB85C \uBC1B\uC740 \uD30C\uC77C\uC778\uC9C0 \uD655\uC778\uD558\uC138\uC694.");
   const byDate = /* @__PURE__ */ new Map();
   for (const [i2, r2] of rows.entries()) {
@@ -103937,6 +103946,11 @@ server.registerTool("hai_timetable_fill", {
   }
 }, guard(async ({ template: template2, rows, out_path, overwrite }) => {
   const src = resolvePath(template2);
+  const real = await fs6.realpath(src).catch(() => src);
+  const inside = (dir) => [src, real].some((f2) => f2 === dir || f2.startsWith(dir + path6.sep));
+  if ([...config2.protectedDirs, config2.rawDir].some(inside) || (await rawFiles()).some((f2) => f2 === src || f2 === real)) {
+    throw new Error("\uBCF4\uD638 \uD3F4\uB354(\uB610\uB294 \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354)\uC758 \uD30C\uC77C\uC740 \uC591\uC2DD\uC73C\uB85C \uC4F8 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD\uC740 \uB2E4\uC6B4\uB85C\uB4DC \uD3F4\uB354\uC5D0 \uADF8\uB300\uB85C \uB450\uACE0 \uADF8 \uACBD\uB85C\uB97C \uC8FC\uC138\uC694.");
+  }
   const r2 = await fillTimetable(await fs6.readFile(src), rows);
   const file2 = out_path ? resolvePath(out_path) : path6.join(path6.dirname(src), `${path6.parse(src).name}_\uC791\uC131.xlsx`);
   if (!overwrite && await fs6.stat(file2).then(() => true, () => false)) throw new Error(`\uC774\uBBF8 \uC788\uB294 \uD30C\uC77C\uC785\uB2C8\uB2E4: ${file2} \u2014 \uB36E\uC5B4\uC4F0\uB824\uBA74 overwrite: true`);
