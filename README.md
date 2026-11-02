@@ -19,6 +19,7 @@
 | 내 문서에서 뜻으로 찾기 | "~/Documents/계약 에서 위약금 조항 찾아줘" | KURE(한국어 임베딩) |
 | 사진·차트 설명, 문장 다듬기 | "이 사진 뭐가 문제인지 HAI 한테 물어봐줘" | Gemma · Qwen |
 | 결과를 실명으로 저장 | "초안을 실명으로 바꿔 ~/Desktop/보고서.md 로" | 내 PC 에만 저장 |
+| EVS 타임테이블 작성 | `/hai:timetable 2026-10` — 내 배분 규칙을 기억하고 양식 엑셀까지 채움(업로드·확정은 직접) | (HAI 안 씀, 근거 문서는 HAI 로) |
 
 처음이면 Claude Code 에서 `/hai:guide` — 연결 점검과 예시를 보여 줍니다. 문서 하나는 `/hai:doc <파일> [할 일]`.
 
@@ -33,11 +34,12 @@ winget install OpenJS.NodeJS.LTS
 Node.js 가 없으면 보호 훅이 돌지 못해 **파일 읽기·명령이 모두 막힙니다**(원본이 새지 않게 일부러 막는 것). 설치하면 풀립니다.
 
 1. **키 받기** — HAI 포털 https://hai-gateway.idc.hectoai.co.kr/ 에 헥토 이메일로 가입 → 로그인 → 오른쪽 위 "API 키 관리" → 새 키(hai- 로 시작).
-2. **설치** — Claude Code 에서
+2. **설치** — Claude Code 에 한 줄 붙여넣기(설치·자동 업데이트 설정을 Claude 가 대신 함)
    ```
-   /plugin marketplace add hectoadmin/hecto-hai
-   /plugin install hai@hecto
+   https://agent.hecto.co.kr/plugin 에 적힌 대로 헥토 플러그인을 설치해줘
    ```
+   직접 하려면 `/plugin marketplace add https://agent.hecto.co.kr/plugin/marketplace.json` → `/plugin install hai@hectoadmin`.
+   새 판은 `bash scripts/pack-plugins.sh`(hecto-agent 저장소)로 agent 서버에 올린다. 이 저장소의 `.claude-plugin/marketplace.json` 은 개발·CI 용.
 3. 설정을 묻습니다.
 
 | 설정 | 설명 |
@@ -74,7 +76,7 @@ Node.js 가 없으면 보호 훅이 돌지 못해 **파일 읽기·명령이 모
 ## 구성 (개발자용)
 
 ```
-.claude-plugin/marketplace.json   마켓플레이스 "hecto"
+.claude-plugin/marketplace.json   마켓플레이스 "hectoadmin"(개발·CI 용 — 배포는 agent 서버)
 plugins/hai/
   .claude-plugin/plugin.json      사용자 설정(키·보호 폴더·도메인)
   .mcp.json                       MCP 서버 등록 → dist/hai-mcp.mjs

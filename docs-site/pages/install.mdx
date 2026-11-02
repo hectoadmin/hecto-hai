@@ -36,15 +36,13 @@ winget install OpenJS.NodeJS.LTS
 
 ## 3. 플러그인 설치
 
-Claude Code 입력창에 차례로 입력합니다.
+Claude Code 입력창에 아래 문장을 그대로 붙여넣습니다. 설치와 자동 업데이트 설정을 Claude 가 대신 합니다.
 
 ```text
-/plugin marketplace add hectoadmin/hecto-hai
-/plugin install hai@hecto
+https://agent.hecto.co.kr/plugin 에 적힌 대로 헥토 플러그인을 설치해줘
 ```
 
-1. 첫 줄은 "HAI 플러그인이 들어 있는 가게를 등록해"라는 뜻입니다.
-2. 둘째 줄은 "거기서 hai 를 설치해"입니다.
+직접 입력하려면 `/plugin marketplace add https://agent.hecto.co.kr/plugin/marketplace.json` 다음에 `/plugin install hai@hectoadmin` 을 넣습니다. 같은 곳에서 사내 앱 개발 규칙(`aef`)·헥토 디자인(`hecto-design`)도 받을 수 있습니다.
 
 ## 4. 설정 넣기
 
@@ -82,8 +80,10 @@ Claude Code 입력창에 차례로 입력합니다.
 
 ## 새 버전으로 바꾸기
 
+자동으로 받습니다. Claude Code 를 쓰는 중에 새 판을 받아 두고, 다시 시작하면 적용됩니다. 바로 바꾸고 싶으면:
+
 ```text
-/plugin marketplace update hecto
-/plugin update hai@hecto
+/plugin marketplace update hectoadmin
+/plugin update hai@hectoadmin
 /reload-plugins
 ```

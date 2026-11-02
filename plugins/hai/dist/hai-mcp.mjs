@@ -10200,11 +10200,11 @@ var require_utils2 = __commonJS({
       ctor2.prototype = new Obj();
     };
     exports.extend = function() {
-      var result2 = {}, i2, attr2;
+      var result2 = {}, i2, attr3;
       for (i2 = 0; i2 < arguments.length; i2++) {
-        for (attr2 in arguments[i2]) {
-          if (Object.prototype.hasOwnProperty.call(arguments[i2], attr2) && typeof result2[attr2] === "undefined") {
-            result2[attr2] = arguments[i2][attr2];
+        for (attr3 in arguments[i2]) {
+          if (Object.prototype.hasOwnProperty.call(arguments[i2], attr3) && typeof result2[attr3] === "undefined") {
+            result2[attr3] = arguments[i2][attr3];
           }
         }
       }
@@ -16978,9 +16978,9 @@ var require_load = __commonJS({
 var require_lib3 = __commonJS({
   "node_modules/jszip/lib/index.js"(exports, module) {
     "use strict";
-    function JSZip2() {
-      if (!(this instanceof JSZip2)) {
-        return new JSZip2();
+    function JSZip3() {
+      if (!(this instanceof JSZip3)) {
+        return new JSZip3();
       }
       if (arguments.length) {
         throw new Error("The constructor with parameters has been removed in JSZip 3.0, please check the upgrade guide.");
@@ -16989,7 +16989,7 @@ var require_lib3 = __commonJS({
       this.comment = null;
       this.root = "";
       this.clone = function() {
-        var newObj = new JSZip2();
+        var newObj = new JSZip3();
         for (var i2 in this) {
           if (typeof this[i2] !== "function") {
             newObj[i2] = this[i2];
@@ -16998,16 +16998,16 @@ var require_lib3 = __commonJS({
         return newObj;
       };
     }
-    JSZip2.prototype = require_object();
-    JSZip2.prototype.loadAsync = require_load();
-    JSZip2.support = require_support();
-    JSZip2.defaults = require_defaults2();
-    JSZip2.version = "3.10.2";
-    JSZip2.loadAsync = function(content, options) {
-      return new JSZip2().loadAsync(content, options);
+    JSZip3.prototype = require_object();
+    JSZip3.prototype.loadAsync = require_load();
+    JSZip3.support = require_support();
+    JSZip3.defaults = require_defaults2();
+    JSZip3.version = "3.10.2";
+    JSZip3.loadAsync = function(content, options) {
+      return new JSZip3().loadAsync(content, options);
     };
-    JSZip2.external = require_external();
-    module.exports = JSZip2;
+    JSZip3.external = require_external();
+    module.exports = JSZip3;
   }
 });
 
@@ -20580,12 +20580,12 @@ var require_base64_js = __commonJS({
 var require_zipfile = __commonJS({
   "node_modules/mammoth/lib/zipfile.js"(exports) {
     var base64js = require_base64_js();
-    var JSZip2 = require_lib3();
+    var JSZip3 = require_lib3();
     exports.openArrayBuffer = openArrayBuffer;
     exports.splitPath = splitPath;
     exports.joinPath = joinPath;
     function openArrayBuffer(arrayBuffer) {
-      return JSZip2.loadAsync(arrayBuffer).then(function(zipFile) {
+      return JSZip3.loadAsync(arrayBuffer).then(function(zipFile) {
         function exists(name) {
           return zipFile.file(name) !== null;
         }
@@ -21033,12 +21033,12 @@ var require_dom = __commonJS({
         }
       }
     }
-    function _nnmIndexAdd(list2, attr2) {
-      list2._nameIndex[attr2.nodeName] = attr2;
+    function _nnmIndexAdd(list2, attr3) {
+      list2._nameIndex[attr3.nodeName] = attr3;
     }
-    function _nnmIndexRemove(list2, attr2) {
-      if (list2._nameIndex[attr2.nodeName] === attr2) {
-        delete list2._nameIndex[attr2.nodeName];
+    function _nnmIndexRemove(list2, attr3) {
+      if (list2._nameIndex[attr3.nodeName] === attr3) {
+        delete list2._nameIndex[attr3.nodeName];
       }
     }
     function _addNamedNode(el, list2, newAttr, oldAttr) {
@@ -21058,24 +21058,24 @@ var require_dom = __commonJS({
         }
       }
     }
-    function _removeNamedNode(el, list2, attr2) {
-      var i2 = _findNodeIndex(list2, attr2);
+    function _removeNamedNode(el, list2, attr3) {
+      var i2 = _findNodeIndex(list2, attr3);
       if (i2 >= 0) {
         var lastIndex = list2.length - 1;
         while (i2 < lastIndex) {
           list2[i2] = list2[++i2];
         }
         list2.length = lastIndex;
-        _nnmIndexRemove(list2, attr2);
+        _nnmIndexRemove(list2, attr3);
         if (el) {
           var doc = el.ownerDocument;
           if (doc) {
-            _onRemoveAttribute(doc, el, attr2);
-            attr2.ownerElement = null;
+            _onRemoveAttribute(doc, el, attr3);
+            attr3.ownerElement = null;
           }
         }
       } else {
-        throw new DOMException(NOT_FOUND_ERR, new Error(el.tagName + "@" + attr2));
+        throw new DOMException(NOT_FOUND_ERR, new Error(el.tagName + "@" + attr3));
       }
     }
     NamedNodeMap.prototype = {
@@ -21084,43 +21084,43 @@ var require_dom = __commonJS({
       getNamedItem: function(key2) {
         var i2 = this.length;
         while (i2--) {
-          var attr2 = this[i2];
-          if (attr2.nodeName == key2) {
-            return attr2;
+          var attr3 = this[i2];
+          if (attr3.nodeName == key2) {
+            return attr3;
           }
         }
       },
-      setNamedItem: function(attr2) {
-        var el = attr2.ownerElement;
+      setNamedItem: function(attr3) {
+        var el = attr3.ownerElement;
         if (el && el != this._ownerElement) {
           throw new DOMException(INUSE_ATTRIBUTE_ERR);
         }
-        var oldAttr = this._nameIndex[attr2.nodeName];
-        _addNamedNode(this._ownerElement, this, attr2, oldAttr);
+        var oldAttr = this._nameIndex[attr3.nodeName];
+        _addNamedNode(this._ownerElement, this, attr3, oldAttr);
         return oldAttr;
       },
       /* returns Node */
-      setNamedItemNS: function(attr2) {
-        var el = attr2.ownerElement, oldAttr;
+      setNamedItemNS: function(attr3) {
+        var el = attr3.ownerElement, oldAttr;
         if (el && el != this._ownerElement) {
           throw new DOMException(INUSE_ATTRIBUTE_ERR);
         }
-        oldAttr = this.getNamedItemNS(attr2.namespaceURI, attr2.localName);
-        _addNamedNode(this._ownerElement, this, attr2, oldAttr);
+        oldAttr = this.getNamedItemNS(attr3.namespaceURI, attr3.localName);
+        _addNamedNode(this._ownerElement, this, attr3, oldAttr);
         return oldAttr;
       },
       /* returns Node */
       removeNamedItem: function(key2) {
-        var attr2 = this.getNamedItem(key2);
-        _removeNamedNode(this._ownerElement, this, attr2);
-        return attr2;
+        var attr3 = this.getNamedItem(key2);
+        _removeNamedNode(this._ownerElement, this, attr3);
+        return attr3;
       },
       // raises: NOT_FOUND_ERR,NO_MODIFICATION_ALLOWED_ERR
       //for level2
       removeNamedItemNS: function(namespaceURI, localName) {
-        var attr2 = this.getNamedItemNS(namespaceURI, localName);
-        _removeNamedNode(this._ownerElement, this, attr2);
-        return attr2;
+        var attr3 = this.getNamedItemNS(namespaceURI, localName);
+        _removeNamedNode(this._ownerElement, this, attr3);
+        return attr3;
       },
       getNamedItemNS: function(namespaceURI, localName) {
         var i2 = this.length;
@@ -21643,9 +21643,9 @@ var require_dom = __commonJS({
       node2.ownerDocument = newOwnerDocument;
       if (node2.nodeType === ELEMENT_NODE && node2.attributes) {
         for (var i2 = 0; i2 < node2.attributes.length; i2++) {
-          var attr2 = node2.attributes.item(i2);
-          if (attr2) {
-            attr2.ownerDocument = newOwnerDocument;
+          var attr3 = node2.attributes.item(i2);
+          if (attr3) {
+            attr3.ownerDocument = newOwnerDocument;
           }
         }
       }
@@ -21936,20 +21936,20 @@ var require_dom = __commonJS({
         return this.getAttributeNode(name) != null;
       },
       getAttribute: function(name) {
-        var attr2 = this.getAttributeNode(name);
-        return attr2 && attr2.value || "";
+        var attr3 = this.getAttributeNode(name);
+        return attr3 && attr3.value || "";
       },
       getAttributeNode: function(name) {
         return this.attributes.getNamedItem(name);
       },
       setAttribute: function(name, value) {
-        var attr2 = this.ownerDocument.createAttribute(name);
-        attr2.value = attr2.nodeValue = "" + value;
-        this.setAttributeNode(attr2);
+        var attr3 = this.ownerDocument.createAttribute(name);
+        attr3.value = attr3.nodeValue = "" + value;
+        this.setAttributeNode(attr3);
       },
       removeAttribute: function(name) {
-        var attr2 = this.getAttributeNode(name);
-        attr2 && this.removeAttributeNode(attr2);
+        var attr3 = this.getAttributeNode(name);
+        attr3 && this.removeAttributeNode(attr3);
       },
       //four real opeartion method
       appendChild: function(newChild) {
@@ -21977,13 +21977,13 @@ var require_dom = __commonJS({
         return this.getAttributeNodeNS(namespaceURI, localName) != null;
       },
       getAttributeNS: function(namespaceURI, localName) {
-        var attr2 = this.getAttributeNodeNS(namespaceURI, localName);
-        return attr2 && attr2.value || "";
+        var attr3 = this.getAttributeNodeNS(namespaceURI, localName);
+        return attr3 && attr3.value || "";
       },
       setAttributeNS: function(namespaceURI, qualifiedName, value) {
-        var attr2 = this.ownerDocument.createAttributeNS(namespaceURI, qualifiedName);
-        attr2.value = attr2.nodeValue = "" + value;
-        this.setAttributeNode(attr2);
+        var attr3 = this.ownerDocument.createAttributeNS(namespaceURI, qualifiedName);
+        attr3.value = attr3.nodeValue = "" + value;
+        this.setAttributeNode(attr3);
       },
       getAttributeNodeNS: function(namespaceURI, localName) {
         return this.attributes.getNamedItemNS(namespaceURI, localName);
@@ -22215,22 +22215,22 @@ var require_dom = __commonJS({
               buf.push("<", prefixedNodeName);
               var childNs = ns2.slice();
               for (var i2 = 0; i2 < len; i2++) {
-                var attr2 = attrs.item(i2);
-                if (attr2.prefix == "xmlns") {
-                  childNs.push({ prefix: attr2.localName, namespace: attr2.value });
-                } else if (attr2.nodeName == "xmlns") {
-                  childNs.push({ prefix: "", namespace: attr2.value });
+                var attr3 = attrs.item(i2);
+                if (attr3.prefix == "xmlns") {
+                  childNs.push({ prefix: attr3.localName, namespace: attr3.value });
+                } else if (attr3.nodeName == "xmlns") {
+                  childNs.push({ prefix: "", namespace: attr3.value });
                 }
               }
               for (var i2 = 0; i2 < len; i2++) {
-                var attr2 = attrs.item(i2);
-                if (needNamespaceDefine(attr2, html, childNs)) {
-                  var attrPrefix = attr2.prefix || "";
-                  var uri = attr2.namespaceURI;
+                var attr3 = attrs.item(i2);
+                if (needNamespaceDefine(attr3, html, childNs)) {
+                  var attrPrefix = attr3.prefix || "";
+                  var uri = attr3.namespaceURI;
                   addSerializedAttribute(buf, attrPrefix ? "xmlns:" + attrPrefix : "xmlns", uri, requireWellFormed);
                   childNs.push({ prefix: attrPrefix, namespace: uri });
                 }
-                var filteredAttr = nodeFilter ? nodeFilter(attr2) : attr2;
+                var filteredAttr = nodeFilter ? nodeFilter(attr3) : attr3;
                 if (filteredAttr) {
                   if (typeof filteredAttr === "string") {
                     buf.push(filteredAttr);
@@ -25317,10 +25317,10 @@ var require_dom_parser = __commonJS({
           var namespaceURI = attrs.getURI(i2);
           var value = attrs.getValue(i2);
           var qName = attrs.getQName(i2);
-          var attr2 = doc.createAttributeNS(namespaceURI, qName);
-          this.locator && position(attrs.getLocator(i2), attr2);
-          attr2.value = attr2.nodeValue = value;
-          el.setAttributeNode(attr2);
+          var attr3 = doc.createAttributeNS(namespaceURI, qName);
+          this.locator && position(attrs.getLocator(i2), attr3);
+          attr3.value = attr3.nodeValue = value;
+          el.setAttributeNode(attr3);
         }
       },
       endElement: function(namespaceURI, localName, qName) {
@@ -103153,6 +103153,13 @@ async function ensureDataDir() {
   await fs2.mkdir(config2.dataDir, { recursive: true, mode: 448 });
   return config2.dataDir;
 }
+async function rawFiles() {
+  try {
+    return [...new Set((await fs2.readFile(LEDGER(), "utf8")).split("\n").filter(Boolean))];
+  } catch {
+    return [];
+  }
+}
 async function realish(file2) {
   const abs = path3.resolve(file2);
   try {
@@ -103584,8 +103591,106 @@ function maskTable(text, vault, format) {
   return { text: out.join("\n"), columns };
 }
 
+// src/timetable.js
+var import_jszip2 = __toESM(require_lib3(), 1);
+var esc2 = (s2) => String(s2).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+var colName = (i2) => {
+  let s2 = "";
+  for (let n2 = i2 + 1; n2 > 0; n2 = Math.floor((n2 - 1) / 26)) s2 = String.fromCharCode(65 + (n2 - 1) % 26) + s2;
+  return s2;
+};
+var colIndex2 = (ref) => [...ref.replace(/\d+$/, "")].reduce((n2, ch2) => n2 * 26 + ch2.charCodeAt(0) - 64, 0) - 1;
+var attr2 = (tag, name) => tag.match(new RegExp(`\\b${name}="([^"]*)"`))?.[1];
+var FIXED = ["#", "\uC77C\uC790", "\uC5C5\uBB34\uCF54\uB4DC", "\uC5C5\uBB34\uBA85", "\uC5C5\uBB34\uC0C1\uC138"];
+var r1 = (x2) => Math.round(Number(x2) * 10) / 10;
+async function fillTimetable(buf, rows) {
+  const zip = await import_jszip2.default.loadAsync(buf);
+  const sheetPath = "xl/worksheets/sheet1.xml";
+  let sheet = await zip.file(sheetPath)?.async("string");
+  let sst = await zip.file("xl/sharedStrings.xml")?.async("string") ?? "";
+  if (!sheet || !sst) throw new Error("EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD\uC774 \uC544\uB2D9\uB2C8\uB2E4(\uC2DC\uD2B8\xB7\uACF5\uC720 \uBB38\uC790\uC5F4\uC774 \uC5C6\uC74C). EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uD30C\uC77C\uC744 \uADF8\uB300\uB85C \uC4F0\uC138\uC694.");
+  const shared = [...sst.matchAll(/<si>([\s\S]*?)<\/si>/g)].map((m2) => unxml(m2[1].replace(/<[^>]+>/g, "")));
+  const rowRe = /<row\b[^>]*>[\s\S]*?<\/row>/g;
+  const allRows = sheet.match(rowRe) ?? [];
+  const cellsOf = (row) => [...row.matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)].map((c2) => ({
+    col: colIndex2(attr2(c2[1], "r") ?? "A1"),
+    s: attr2(c2[1], "s"),
+    t: attr2(c2[1], "t"),
+    v: (c2[2] ?? "").match(/<v>([\s\S]*?)<\/v>/)?.[1]
+  }));
+  const headCells = cellsOf(allRows[0] ?? "");
+  const header = headCells.map((c2) => (c2.t === "s" ? shared[Number(c2.v)] : unxml(c2.v ?? "")).trim());
+  if (FIXED.some((h2, i2) => header[i2] !== h2)) throw new Error(`EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD\uC774 \uC544\uB2D9\uB2C8\uB2E4(\uCCAB \uC904 \uBA38\uB9AC\uAE00\uC774 ${FIXED.join(" \xB7 ")} \u2026 \uC774\uC5B4\uC57C \uD568). EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uD30C\uC77C\uC744 \uADF8\uB300\uB85C \uC4F0\uC138\uC694.`);
+  const companies = header.slice(5).filter(Boolean);
+  if (!companies.length || companies.some((c2) => c2.length > 10)) throw new Error("EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD\uC774 \uC544\uB2D9\uB2C8\uB2E4(\uBC95\uC778 \uCE78\uC774 \uC5C6\uC74C). EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uD30C\uC77C\uC744 \uADF8\uB300\uB85C \uC4F0\uC138\uC694.");
+  const tmpl = allRows.slice(1).map((row) => {
+    const cells = cellsOf(row);
+    const b2 = cells.find((c2) => c2.col === 1);
+    return { serial: b2?.v, date: b2?.v ? excelDate(b2.v) : "", styles: Object.fromEntries(cells.map((c2) => [c2.col, c2.s])) };
+  }).filter((r2) => r2.date);
+  if (zip.file(/^xl\/worksheets\/sheet\d+\.xml$/).length !== 1) throw new Error("EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD\uC774 \uC544\uB2D9\uB2C8\uB2E4(\uC2DC\uD2B8\uAC00 \uD558\uB098\uC5EC\uC57C \uD568). EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uD30C\uC77C\uC744 \uADF8\uB300\uB85C \uC4F0\uC138\uC694.");
+  if (!tmpl.length) throw new Error("\uC591\uC2DD\uC5D0 \uADFC\uBB34\uC77C \uC904\uC774 \uC5C6\uC2B5\uB2C8\uB2E4. EVS \uC5D0\uC11C \uB144\uC6D4\uC744 \uACE0\uB978 \uB4A4 \uC591\uC2DD\uB2E4\uC6B4\uB85C\uB4DC\uB85C \uBC1B\uC740 \uD30C\uC77C\uC778\uC9C0 \uD655\uC778\uD558\uC138\uC694.");
+  const byDate = /* @__PURE__ */ new Map();
+  for (const [i2, r2] of rows.entries()) {
+    const where2 = `${i2 + 1}\uBC88\uC9F8 \uC904(${r2.date ?? "\uB0A0\uC9DC \uC5C6\uC74C"})`;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(r2.date ?? "")) throw new Error(`${where2}: \uB0A0\uC9DC\uB294 YYYY-MM-DD \uB85C`);
+    if (!tmpl.some((t2) => t2.date === r2.date)) throw new Error(`${where2}: \uC591\uC2DD\uC5D0 \uC5C6\uB294 \uB0A0\uC9DC\uC785\uB2C8\uB2E4(\uD734\uC77C\uC774\uAC70\uB098 \uB2E4\uB978 \uB2EC). \uC591\uC2DD\uC758 \uADFC\uBB34\uC77C: ${tmpl[0].date} ~ ${tmpl.at(-1).date}, ${tmpl.length}\uC77C`);
+    if (!String(r2.code ?? "").trim() || !String(r2.name ?? "").trim()) throw new Error(`${where2}: \uC5C5\uBB34\uCF54\uB4DC\uC640 \uC5C5\uBB34\uBA85\uC774 \uD544\uC694\uD569\uB2C8\uB2E4`);
+    for (const [k2, h2] of Object.entries(r2.hours ?? {})) {
+      if (!companies.includes(k2)) throw new Error(`${where2}: \uBC95\uC778 "${k2}" \uB294 \uC591\uC2DD\uC5D0 \uC5C6\uC2B5\uB2C8\uB2E4. \uC4F8 \uC218 \uC788\uB294 \uC774\uB984: ${companies.join(" \xB7 ")}`);
+      if (!(Number(h2) >= 0)) throw new Error(`${where2}: ${k2} \uC2DC\uAC04\uC774 \uC22B\uC790\uAC00 \uC544\uB2D9\uB2C8\uB2E4`);
+    }
+    if (!byDate.has(r2.date)) byDate.set(r2.date, []);
+    byDate.get(r2.date).push(r2);
+  }
+  const strings = [];
+  const strIndex = (s2) => {
+    const v2 = String(s2 ?? "");
+    let i2 = strings.indexOf(v2);
+    if (i2 < 0) {
+      strings.push(v2);
+      i2 = strings.length - 1;
+    }
+    return i2;
+  };
+  const headRow = `${allRows[0].match(/^<row\b[^>]*>/)[0]}${headCells.map((c2, k2) => `<c r="${colName(c2.col)}1"${c2.s ? ` s="${c2.s}"` : ""} t="s"><v>${strIndex(header[k2])}</v></c>`).join("")}</row>`;
+  const out = [];
+  const totals = Object.fromEntries(companies.map((c2) => [c2, 0]));
+  const days = [];
+  for (const t2 of tmpl) {
+    const list2 = byDate.get(t2.date) ?? [null];
+    let sum = 0;
+    for (const r2 of list2) {
+      const n2 = out.length + 2;
+      const st2 = (col) => t2.styles[col] ? ` s="${t2.styles[col]}"` : "";
+      const cells = [
+        `<c r="A${n2}"${st2(0)}><v>${out.length + 1}</v></c>`,
+        `<c r="B${n2}"${st2(1)}><v>${t2.serial}</v></c>`,
+        ...[r2?.code, r2?.name, r2?.detail].map((v2, k2) => `<c r="${colName(2 + k2)}${n2}"${st2(2 + k2)} t="s"><v>${strIndex(String(v2 ?? "").trim())}</v></c>`),
+        ...companies.map((c2, k2) => {
+          const h2 = r1(r2?.hours?.[c2] ?? 0);
+          sum += h2;
+          totals[c2] = r1(totals[c2] + h2);
+          return `<c r="${colName(5 + k2)}${n2}"${st2(5 + k2)}><v>${h2}</v></c>`;
+        })
+      ];
+      out.push(`<row r="${n2}" spans="1:${5 + companies.length}">${cells.join("")}</row>`);
+    }
+    days.push({ date: t2.date, sum: r1(sum) });
+  }
+  const last2 = out.length + 1;
+  sheet = sheet.replace(/<sheetData>[\s\S]*<\/sheetData>/, `<sheetData>${headRow}${out.join("")}</sheetData>`).replace(/<dimension ref="[^"]*"\/>/, `<dimension ref="A1:${colName(4 + companies.length)}${last2}"/>`);
+  const count = (sheet.match(/ t="s"/g) ?? []).length;
+  sst = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="${count}" uniqueCount="${strings.length}">${strings.map((x2) => `<si><t xml:space="preserve">${esc2(x2)}</t></si>`).join("")}</sst>`;
+  zip.file(sheetPath, sheet);
+  zip.file("xl/sharedStrings.xml", sst);
+  const buffer = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
+  return { buffer, companies, filled: [...byDate.keys()], empty: tmpl.filter((t2) => !byDate.has(t2.date)).map((t2) => t2.date), totals, days };
+}
+
 // src/index.js
-var VERSION2 = "0.3.2";
+var VERSION2 = "0.4.0";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -103928,6 +104033,66 @@ server.registerTool("hai_chat", {
 ${await maskAll(r2.content, vault)}
 
 (\uBAA8\uB378: ${r2.model} \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)})`);
+}));
+async function isProtected(file2) {
+  const fold = os4.platform() === "darwin" || os4.platform() === "win32";
+  const canon = async (p2) => {
+    let r2 = path6.resolve(p2);
+    try {
+      r2 = await fs6.realpath(r2);
+    } catch {
+      try {
+        r2 = path6.join(await fs6.realpath(path6.dirname(r2)), path6.basename(r2));
+      } catch {
+      }
+    }
+    const n2 = r2.normalize("NFC");
+    return fold ? n2.toLowerCase() : n2;
+  };
+  const f2 = await canon(file2);
+  const dirs = await Promise.all([...config2.protectedDirs, config2.rawDir].map(canon));
+  if (dirs.some((d2) => f2 === d2 || f2.startsWith(d2 + path6.sep))) return true;
+  const raws = await Promise.all((await rawFiles()).map(canon));
+  return raws.includes(f2);
+}
+server.registerTool("hai_timetable_fill", {
+  title: "EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD \uCC44\uC6B0\uAE30",
+  description: [
+    "EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uB4F1\uB85D \u2192 \uC2E0\uADDC \u2192 \uB144\uC6D4 \u2192 \uC591\uC2DD\uB2E4\uC6B4\uB85C\uB4DC \uB85C \uBC1B\uC740 \uC5D1\uC140(\uADFC\uBB34\uC77C \uC904\uC774 \uB4E4\uC5B4 \uC788\uC74C)\uC5D0 \uB0A0\uC9DC\uBCC4 \uC5C5\uBB34\uC640 \uBC95\uC778\uBCC4 \uC2DC\uAC04\uC744 \uB123\uC5B4 \uC0C8 \uD30C\uC77C\uB85C \uC800\uC7A5\uD55C\uB2E4.",
+    "\uC800\uC7A5\uD55C \uD30C\uC77C\uC740 \uC0AC\uC6A9\uC790\uAC00 EVS \uC758 Excel \uC5C5\uB85C\uB4DC\uB85C \uC62C\uB9AC\uACE0, \uD654\uBA74\uC5D0\uC11C \uD655\uC778\uD55C \uB4A4 \uC800\uC7A5\xB7\uD655\uC815\uC744 \uC9C1\uC811 \uB204\uB978\uB2E4. \uD558\uB8E8\uC5D0 \uC5C5\uBB34\uAC00 \uC5EC\uB7FF\uC774\uBA74 rows \uC5D0 \uAC19\uC740 \uB0A0\uC9DC\uB97C \uC5EC\uB7EC \uBC88 \uB123\uB294\uB2E4.",
+    "\uBC95\uC778 \uC774\uB984\uC740 \uC591\uC2DD \uBA38\uB9AC\uAE00 \uADF8\uB300\uB85C(\uD5E5\uD1A0\xB7\uC774\uB178\xB7\uD30C\uC774\xB7\uD5EC\uC2A4\xB7\uB370\uC774\uD130\xB7\uBBF8\uB514\uC5B4\xB7\uD050\uC564\uC5E0\xB7\uB4DC\uB9BC\uBCA0\uC774\xB7\uC6D4\uB81B\uC6D0\xB7HTA). \uC2DC\uAC04\uC740 0.1 \uB2E8\uC704\uB85C \uBC18\uC62C\uB9BC\uB41C\uB2E4. HAI \uB97C \uBD80\uB974\uC9C0 \uC54A\uB294\uB2E4."
+  ].join(" "),
+  inputSchema: {
+    template: external_exports.string().describe("EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uC5D1\uC140 \uACBD\uB85C"),
+    rows: external_exports.array(external_exports.object({
+      date: external_exports.string().describe("YYYY-MM-DD \u2014 \uC591\uC2DD\uC5D0 \uC788\uB294 \uADFC\uBB34\uC77C"),
+      code: external_exports.string().describe("\uC5C5\uBB34\uCF54\uB4DC(\uC608: GA_100)"),
+      name: external_exports.string().describe("\uC5C5\uBB34\uBA85(\uC608: \uCD1D\uBB34\uC5C5\uBB34)"),
+      detail: external_exports.string().optional().describe("\uC5C5\uBB34\uC0C1\uC138 \u2014 \uADF8\uB0A0 \uD55C \uC77C, \uC9E7\uAC8C"),
+      hours: external_exports.record(external_exports.string(), external_exports.number()).describe('\uBC95\uC778\uBCC4 \uC2DC\uAC04. \uC608: {"\uD5E5\uD1A0":6,"\uC774\uB178":2}')
+    })).min(1),
+    out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC591\uC2DD \uC606 "<\uC591\uC2DD \uC774\uB984>_\uC791\uC131.xlsx")'),
+    overwrite: external_exports.boolean().optional()
+  }
+}, guard(async ({ template: template2, rows, out_path, overwrite }) => {
+  const src = resolvePath(template2);
+  if (await isProtected(src)) {
+    throw new Error("\uBCF4\uD638 \uD3F4\uB354(\uB610\uB294 \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354)\uC758 \uD30C\uC77C\uC740 \uC591\uC2DD\uC73C\uB85C \uC4F8 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD\uC740 \uB2E4\uC6B4\uB85C\uB4DC \uD3F4\uB354\uC5D0 \uADF8\uB300\uB85C \uB450\uACE0 \uADF8 \uACBD\uB85C\uB97C \uC8FC\uC138\uC694.");
+  }
+  const r2 = await fillTimetable(await fs6.readFile(src), rows);
+  const file2 = out_path ? resolvePath(out_path) : path6.join(path6.dirname(src), `${path6.parse(src).name}_\uC791\uC131.xlsx`);
+  if (!overwrite && await fs6.stat(file2).then(() => true, () => false)) throw new Error(`\uC774\uBBF8 \uC788\uB294 \uD30C\uC77C\uC785\uB2C8\uB2E4: ${file2} \u2014 \uB36E\uC5B4\uC4F0\uB824\uBA74 overwrite: true`);
+  await fs6.writeFile(file2, r2.buffer);
+  const off = r2.days.filter((d2) => d2.sum && d2.sum !== 8);
+  const total = Object.entries(r2.totals).filter(([, h2]) => h2).map(([c2, h2]) => `${c2} ${h2}`).join(" \xB7 ");
+  return ok([
+    `\uC800\uC7A5: ${file2}`,
+    `\uCC44\uC6B4 \uB0A0 ${r2.filled.length}\uC77C / \uC591\uC2DD \uADFC\uBB34\uC77C ${r2.days.length}\uC77C \xB7 \uD569\uACC4 ${r2.days.reduce((a2, d2) => a2 + d2.sum, 0).toFixed(1)}\uC2DC\uAC04`,
+    `\uBC95\uC778\uBCC4: ${total || "\uC5C6\uC74C"}`,
+    ...r2.empty.length ? [`\uBE48 \uB0A0(\uC5C5\uBB34 \uC5C6\uC774 \uB0A8\uC74C): ${r2.empty.join(", ")}`] : [],
+    ...off.length ? [`\uD558\uB8E8 8\uC2DC\uAC04\uC774 \uC544\uB2CC \uB0A0: ${off.map((d2) => `${d2.date} ${d2.sum}`).join(", ")}`] : [],
+    "\uB2E4\uC74C: EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uB4F1\uB85D \uD654\uBA74\uC5D0\uC11C \uAC19\uC740 \uB144\uC6D4\uC744 \uACE0\uB974\uACE0 Excel \uC5C5\uB85C\uB4DC\uB85C \uC774 \uD30C\uC77C\uC744 \uC62C\uB9B0 \uB4A4, \uD45C\uB97C \uD655\uC778\uD558\uACE0 \uC800\uC7A5\xB7\uD655\uC815\uC744 \uC9C1\uC811 \uB204\uB974\uC138\uC694."
+  ].join("\n"));
 }));
 server.registerTool("hai_status", {
   title: "HAI \uC5F0\uACB0 \uC810\uAC80",
