@@ -42,9 +42,11 @@ export function loadToken() {
 }
 
 export function saveToken(token) {
+  if (!/^[A-Za-z0-9_-]{20,200}$/.test(String(token))) throw new Error('로그인 서버가 준 토큰 모양이 이상합니다. 다시 로그인하세요.');
   fs.mkdirSync(config.dataDir, { recursive: true, mode: 0o700 });
   if (store() === 'darwin') {
-    execFileSync('security', ['add-generic-password', '-U', '-s', KEYCHAIN, '-a', 'hai', '-w', token], { stdio: 'ignore' });
+    // 토큰을 명령줄 인자에 싣지 않는다(ps 로 보인다) — security -i 에 명령을 표준 입력으로
+    execFileSync('security', ['-i'], { input: `add-generic-password -U -s ${KEYCHAIN} -a hai -w ${token}\n`, stdio: ['pipe', 'ignore', 'ignore'] });
   } else if (store() === 'win32') {
     // 토큰은 표준 입력으로 넘긴다(명령줄에 남지 않게). DPAPI — 이 Windows 사용자만 풀 수 있다
     ps(`$t = [Console]::In.ReadToEnd().Trim(); ConvertTo-SecureString $t -AsPlainText -Force | ConvertFrom-SecureString | Set-Content -NoNewline -LiteralPath '${fileOf().replace(/'/g, "''")}'`, token);

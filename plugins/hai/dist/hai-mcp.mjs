@@ -102712,9 +102712,11 @@ function loadToken() {
   return cached3;
 }
 function saveToken(token) {
+  if (!/^[A-Za-z0-9_-]{20,200}$/.test(String(token))) throw new Error("\uB85C\uADF8\uC778 \uC11C\uBC84\uAC00 \uC900 \uD1A0\uD070 \uBAA8\uC591\uC774 \uC774\uC0C1\uD569\uB2C8\uB2E4. \uB2E4\uC2DC \uB85C\uADF8\uC778\uD558\uC138\uC694.");
   fs.mkdirSync(config2.dataDir, { recursive: true, mode: 448 });
   if (store() === "darwin") {
-    execFileSync2("security", ["add-generic-password", "-U", "-s", KEYCHAIN, "-a", "hai", "-w", token], { stdio: "ignore" });
+    execFileSync2("security", ["-i"], { input: `add-generic-password -U -s ${KEYCHAIN} -a hai -w ${token}
+`, stdio: ["pipe", "ignore", "ignore"] });
   } else if (store() === "win32") {
     ps(`$t = [Console]::In.ReadToEnd().Trim(); ConvertTo-SecureString $t -AsPlainText -Force | ConvertFrom-SecureString | Set-Content -NoNewline -LiteralPath '${fileOf().replace(/'/g, "''")}'`, token);
   } else {
