@@ -33,7 +33,8 @@ export async function fillTimetable(buf, rows) {
   const cellsOf = (row) => [...row.matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)].map((c) => ({
     col: colIndex(attr(c[1], 'r') ?? 'A1'), s: attr(c[1], 's'), t: attr(c[1], 't'), v: (c[2] ?? '').match(/<v>([\s\S]*?)<\/v>/)?.[1],
   }));
-  const header = cellsOf(allRows[0] ?? '').map((c) => (c.t === 's' ? shared[Number(c.v)] : unxml(c.v ?? '')).trim());
+  const headCells = cellsOf(allRows[0] ?? '');
+  const header = headCells.map((c) => (c.t === 's' ? shared[Number(c.v)] : unxml(c.v ?? '')).trim());
   if (FIXED.some((h, i) => header[i] !== h)) throw new Error(`EVS 타임테이블 양식이 아닙니다(첫 줄 머리글이 ${FIXED.join(' · ')} … 이어야 함). EVS 에서 받은 양식 파일을 그대로 쓰세요.`);
   const companies = header.slice(5).filter(Boolean);
   if (!companies.length || companies.some((c) => c.length > 10)) throw new Error('EVS 타임테이블 양식이 아닙니다(법인 칸이 없음). EVS 에서 받은 양식 파일을 그대로 쓰세요.');
@@ -62,7 +63,10 @@ export async function fillTimetable(buf, rows) {
     byDate.get(r.date).push(r);
   }
 
-  const strIndex = (s) => { const v = String(s ?? ''); let i = shared.indexOf(v); if (i < 0) { shared.push(v); i = shared.length - 1; } return i; };
+  // 공유 문자열은 새로 만든다 — 머리글과 넣은 글자만 남기고 양식에 있던 다른 글자는 옮기지 않는다
+  const strings = [];
+  const strIndex = (s) => { const v = String(s ?? ''); let i = strings.indexOf(v); if (i < 0) { strings.push(v); i = strings.length - 1; } return i; };
+  const headRow = `${allRows[0].match(/^<row\b[^>]*>/)[0]}${headCells.map((c, k) => `<c r="${colName(c.col)}1"${c.s ? ` s="${c.s}"` : ''} t="s"><v>${strIndex(header[k])}</v></c>`).join('')}</row>`;
   const out = [];
   const totals = Object.fromEntries(companies.map((c) => [c, 0]));
   const days = [];
@@ -88,11 +92,10 @@ export async function fillTimetable(buf, rows) {
   }
 
   const last = out.length + 1;
-  sheet = sheet.replace(/<sheetData>[\s\S]*<\/sheetData>/, `<sheetData>${allRows[0]}${out.join('')}</sheetData>`)
+  sheet = sheet.replace(/<sheetData>[\s\S]*<\/sheetData>/, `<sheetData>${headRow}${out.join('')}</sheetData>`)
     .replace(/<dimension ref="[^"]*"\/>/, `<dimension ref="A1:${colName(4 + companies.length)}${last}"/>`);
   const count = (sheet.match(/ t="s"/g) ?? []).length;
-  sst = sst.replace(/<sst\b[^>]*>[\s\S]*<\/sst>/, (m) => m.replace(/^<sst\b[^>]*>/, (open) => open.replace(/count="\d+"/, `count="${count}"`).replace(/uniqueCount="\d+"/, `uniqueCount="${shared.length}"`))
-    .replace(/<si>[\s\S]*<\/si>/, shared.map((s) => `<si><t xml:space="preserve">${esc(s)}</t></si>`).join('')));
+  sst = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="${count}" uniqueCount="${strings.length}">${strings.map((x) => `<si><t xml:space="preserve">${esc(x)}</t></si>`).join('')}</sst>`;
   zip.file(sheetPath, sheet);
   zip.file('xl/sharedStrings.xml', sst);
   const buffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });

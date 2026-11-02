@@ -103513,7 +103513,8 @@ async function fillTimetable(buf, rows) {
     t: attr2(c2[1], "t"),
     v: (c2[2] ?? "").match(/<v>([\s\S]*?)<\/v>/)?.[1]
   }));
-  const header = cellsOf(allRows[0] ?? "").map((c2) => (c2.t === "s" ? shared[Number(c2.v)] : unxml(c2.v ?? "")).trim());
+  const headCells = cellsOf(allRows[0] ?? "");
+  const header = headCells.map((c2) => (c2.t === "s" ? shared[Number(c2.v)] : unxml(c2.v ?? "")).trim());
   if (FIXED.some((h2, i2) => header[i2] !== h2)) throw new Error(`EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD\uC774 \uC544\uB2D9\uB2C8\uB2E4(\uCCAB \uC904 \uBA38\uB9AC\uAE00\uC774 ${FIXED.join(" \xB7 ")} \u2026 \uC774\uC5B4\uC57C \uD568). EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uD30C\uC77C\uC744 \uADF8\uB300\uB85C \uC4F0\uC138\uC694.`);
   const companies = header.slice(5).filter(Boolean);
   if (!companies.length || companies.some((c2) => c2.length > 10)) throw new Error("EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD\uC774 \uC544\uB2D9\uB2C8\uB2E4(\uBC95\uC778 \uCE78\uC774 \uC5C6\uC74C). EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD \uD30C\uC77C\uC744 \uADF8\uB300\uB85C \uC4F0\uC138\uC694.");
@@ -103537,15 +103538,17 @@ async function fillTimetable(buf, rows) {
     if (!byDate.has(r2.date)) byDate.set(r2.date, []);
     byDate.get(r2.date).push(r2);
   }
+  const strings = [];
   const strIndex = (s2) => {
     const v2 = String(s2 ?? "");
-    let i2 = shared.indexOf(v2);
+    let i2 = strings.indexOf(v2);
     if (i2 < 0) {
-      shared.push(v2);
-      i2 = shared.length - 1;
+      strings.push(v2);
+      i2 = strings.length - 1;
     }
     return i2;
   };
+  const headRow = `${allRows[0].match(/^<row\b[^>]*>/)[0]}${headCells.map((c2, k2) => `<c r="${colName(c2.col)}1"${c2.s ? ` s="${c2.s}"` : ""} t="s"><v>${strIndex(header[k2])}</v></c>`).join("")}</row>`;
   const out = [];
   const totals = Object.fromEntries(companies.map((c2) => [c2, 0]));
   const days = [];
@@ -103571,9 +103574,10 @@ async function fillTimetable(buf, rows) {
     days.push({ date: t2.date, sum: r1(sum) });
   }
   const last2 = out.length + 1;
-  sheet = sheet.replace(/<sheetData>[\s\S]*<\/sheetData>/, `<sheetData>${allRows[0]}${out.join("")}</sheetData>`).replace(/<dimension ref="[^"]*"\/>/, `<dimension ref="A1:${colName(4 + companies.length)}${last2}"/>`);
+  sheet = sheet.replace(/<sheetData>[\s\S]*<\/sheetData>/, `<sheetData>${headRow}${out.join("")}</sheetData>`).replace(/<dimension ref="[^"]*"\/>/, `<dimension ref="A1:${colName(4 + companies.length)}${last2}"/>`);
   const count = (sheet.match(/ t="s"/g) ?? []).length;
-  sst = sst.replace(/<sst\b[^>]*>[\s\S]*<\/sst>/, (m2) => m2.replace(/^<sst\b[^>]*>/, (open2) => open2.replace(/count="\d+"/, `count="${count}"`).replace(/uniqueCount="\d+"/, `uniqueCount="${shared.length}"`)).replace(/<si>[\s\S]*<\/si>/, shared.map((s2) => `<si><t xml:space="preserve">${esc2(s2)}</t></si>`).join("")));
+  sst = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="${count}" uniqueCount="${strings.length}">${strings.map((x2) => `<si><t xml:space="preserve">${esc2(x2)}</t></si>`).join("")}</sst>`;
   zip.file(sheetPath, sheet);
   zip.file("xl/sharedStrings.xml", sst);
   const buffer = await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" });
@@ -103925,6 +103929,27 @@ ${await maskAll(r2.content, vault)}
 
 (\uBAA8\uB378: ${r2.model} \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)})`);
 }));
+async function isProtected(file2) {
+  const fold = os4.platform() === "darwin" || os4.platform() === "win32";
+  const canon = async (p2) => {
+    let r2 = path6.resolve(p2);
+    try {
+      r2 = await fs6.realpath(r2);
+    } catch {
+      try {
+        r2 = path6.join(await fs6.realpath(path6.dirname(r2)), path6.basename(r2));
+      } catch {
+      }
+    }
+    const n2 = r2.normalize("NFC");
+    return fold ? n2.toLowerCase() : n2;
+  };
+  const f2 = await canon(file2);
+  const dirs = await Promise.all([...config2.protectedDirs, config2.rawDir].map(canon));
+  if (dirs.some((d2) => f2 === d2 || f2.startsWith(d2 + path6.sep))) return true;
+  const raws = await Promise.all((await rawFiles()).map(canon));
+  return raws.includes(f2);
+}
 server.registerTool("hai_timetable_fill", {
   title: "EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uC591\uC2DD \uCC44\uC6B0\uAE30",
   description: [
@@ -103946,9 +103971,7 @@ server.registerTool("hai_timetable_fill", {
   }
 }, guard(async ({ template: template2, rows, out_path, overwrite }) => {
   const src = resolvePath(template2);
-  const real = await fs6.realpath(src).catch(() => src);
-  const inside = (dir) => [src, real].some((f2) => f2 === dir || f2.startsWith(dir + path6.sep));
-  if ([...config2.protectedDirs, config2.rawDir].some(inside) || (await rawFiles()).some((f2) => f2 === src || f2 === real)) {
+  if (await isProtected(src)) {
     throw new Error("\uBCF4\uD638 \uD3F4\uB354(\uB610\uB294 \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354)\uC758 \uD30C\uC77C\uC740 \uC591\uC2DD\uC73C\uB85C \uC4F8 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD\uC740 \uB2E4\uC6B4\uB85C\uB4DC \uD3F4\uB354\uC5D0 \uADF8\uB300\uB85C \uB450\uACE0 \uADF8 \uACBD\uB85C\uB97C \uC8FC\uC138\uC694.");
   }
   const r2 = await fillTimetable(await fs6.readFile(src), rows);

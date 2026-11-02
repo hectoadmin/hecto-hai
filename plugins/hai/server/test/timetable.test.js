@@ -42,3 +42,16 @@ test('양식이 아니면 칸 내용을 오류에 옮기지 않는다', async ()
   const other = await zip.generateAsync({ type: 'nodebuffer' });
   await assert.rejects(fillTimetable(other, [{ date: '2026-10-01', code: 'X', name: 'Y', hours: {} }]), (e) => /양식이 아닙니다/.test(e.message) && !/김비밀|010/.test(e.message));
 });
+
+test('양식에 있던 다른 글자는 저장 파일로 옮기지 않는다', async () => {
+  const JSZip = (await import('jszip')).default;
+  const zip = await JSZip.loadAsync(TEMPLATE);
+  const sst = await zip.file('xl/sharedStrings.xml').async('string');
+  zip.file('xl/sharedStrings.xml', sst.replace('</sst>', '<si><t>숨은 글자 김비밀</t></si></sst>'));
+  const r = await fillTimetable(await zip.generateAsync({ type: 'nodebuffer' }), [{ date: '2026-10-01', code: 'GA_100', name: '총무업무', hours: { 헥토: 8 } }]);
+  const out = await JSZip.loadAsync(r.buffer);
+  const strings = await out.file('xl/sharedStrings.xml').async('string');
+  assert.doesNotMatch(strings, /김비밀/);
+  assert.match(strings, /GA_100/);
+  assert.equal((await lines(r.buffer))[0].split('\t').slice(0, 4).join('\t'), '1\t2026-10-01\tGA_100\t총무업무');
+});

@@ -310,6 +310,22 @@ server.registerTool('hai_chat', {
   return ok(`mask_id: ${vault.id}\n${await maskAll(r.content, vault)}\n\n(모델: ${r.model} · 가린 것: ${counts(vault, mask_id)})`);
 }));
 
+/** 훅(guard.mjs)과 같은 기준으로 보호 대상인지 — 실제 경로 · NFC · macOS·Windows 대소문자 무시 */
+async function isProtected(file) {
+  const fold = os.platform() === 'darwin' || os.platform() === 'win32';
+  const canon = async (p) => {
+    let r = path.resolve(p);
+    try { r = await fs.realpath(r); } catch { try { r = path.join(await fs.realpath(path.dirname(r)), path.basename(r)); } catch { /* 그대로 */ } }
+    const n = r.normalize('NFC');
+    return fold ? n.toLowerCase() : n;
+  };
+  const f = await canon(file);
+  const dirs = await Promise.all([...config.protectedDirs, config.rawDir].map(canon));
+  if (dirs.some((d) => f === d || f.startsWith(d + path.sep))) return true;
+  const raws = await Promise.all((await rawFiles()).map(canon));
+  return raws.includes(f);
+}
+
 server.registerTool('hai_timetable_fill', {
   title: 'EVS 타임테이블 양식 채우기',
   description: [
@@ -331,10 +347,9 @@ server.registerTool('hai_timetable_fill', {
   },
 }, guard(async ({ template, rows, out_path, overwrite }) => {
   const src = resolvePath(template);
-  // 보호 폴더·원문 결과 폴더·원문 장부의 파일은 양식으로 받지 않는다 — 오류 문구나 저장 파일로 내용이 새지 않게
-  const real = await fs.realpath(src).catch(() => src);
-  const inside = (dir) => [src, real].some((f) => f === dir || f.startsWith(dir + path.sep));
-  if ([...config.protectedDirs, config.rawDir].some(inside) || (await rawFiles()).some((f) => f === src || f === real)) {
+  // 보호 폴더·원문 결과 폴더·원문 장부의 파일은 양식으로 받지 않는다 — 오류 문구나 저장 파일로 내용이 새지 않게.
+  // 훅과 같은 방식으로 맞춰 비교한다: 실제 경로(링크 풀기) · NFC · macOS·Windows 는 대소문자 무시
+  if (await isProtected(src)) {
     throw new Error('보호 폴더(또는 원문 결과 폴더)의 파일은 양식으로 쓸 수 없습니다. EVS 에서 받은 양식은 다운로드 폴더에 그대로 두고 그 경로를 주세요.');
   }
   const r = await fillTimetable(await fs.readFile(src), rows);
