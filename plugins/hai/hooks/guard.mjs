@@ -121,9 +121,15 @@ const SECRET_CMD = [
   /protecteddata\]?\s*(::|\.)\s*unprotect|\bcryptunprotectdata\b|\bwin32crypt\b|dpapi::/,
   /passwordvault|\bcred(read|enumerate)\w*|get-storedcredential|\bget-secret\b|\bvaultcmd\b|keymgr\.dll/, /\bsecret-tool\s+lookup\b/,
 ];
+// 플래그·명령 이름은 조각으로 숨길 수 있다(-$(echo w) · '-'+'w' · 'find-generic-'+'password') — 그래서 토큰 항목 이름을 프로그램으로 다루거나
+// 코드가 security 를 부르는 것도 막는다(execFile('security', …) · run(['/usr/bin/security', …]))
+const SECRET_ITEM = /hai-agent-token/;
+const SECRET_CALLER = /\bsecurity\b|\bkeyring\b|subprocess|execfile|execsync|\bspawn|popen|os\.system|child_process|osascript/;
+const CODE_SECURITY = /(['"])(\/usr\/bin\/)?security\1\s*[,\])]|(['"])\/usr\/bin\/security\3/;
 function secretCheck(texts, where = '명령') {
   for (const x of [].concat(texts).map(fold)) {
-    if ((/find-(generic|internet)-password\b/.test(x) && SECRET_FLAG.test(x)) || SECRET_CMD.some((re) => re.test(x))) {
+    if ((/find-(generic|internet)-password\b/.test(x) && SECRET_FLAG.test(x)) || SECRET_CMD.some((re) => re.test(x))
+      || (SECRET_ITEM.test(x) && SECRET_CALLER.test(x)) || CODE_SECURITY.test(x)) {
       refuse(`${where}가 키체인·자격 증명 저장소의 비밀값을 꺼냅니다(hai 로그인 토큰 등) — ${TOKEN_NEXT}`);
     }
   }
@@ -207,6 +213,8 @@ function opaque(raw) {
 // 명령 치환 안에서 만든 글자(\x·\u·8진 이스케이프) — printf '\xec…' 로 경로를 만들 수 있다
 const ENCODED = /\\x[0-9a-fA-F]{1,2}|\\u[0-9a-fA-F]{2,4}|\\U[0-9a-fA-F]{4,8}|\\[0-3][0-7]{2}/;
 // 내용을 읽지 않고 이름·속성만 보거나 사용자에게 여는 명령
+// 다른 이름(링크)을 만들거나 옮기는 명령 — 원본이 토큰 폴더(또는 그 상위)면 막는다
+const ALIAS = /^(ln|gln|link|mv|gmv|cp|gcp|rsync|ditto|scp|install|rename|mount|mount_nullfs|bindfs)$/;
 const NAMES_ONLY = new Set(['ls', 'stat', 'du', 'df', 'file', 'echo', 'pwd', 'mkdir', 'touch', 'open', 'which', 'cd', 'xattr', 'mdls']);
 
 
@@ -442,6 +450,8 @@ function codeCheck(txt, where, cwds = []) {
   // 토큰 폴더를 조각으로 잇는 코드 — os.path.join(expanduser('~'), '.hai-mcp', …) · Path.home() / '.hai-mcp'
   const sb = fold(P.basename(DATA));
   if (sb.length >= 4 && quotedIs(raw, sb) && (HOME_REF.test(raw) || raw.includes(fold(HOME)))) deny(tokens[0], `${where}가 홈 폴더에 ${sb} 를 이어 붙여 그 안을 가리킴`);
+  // 이름을 조각으로 잇는 꼴('.hai' + '-mcp' · '/.ha' + 'i-mcp/agent-tok' + 'en') — 홈을 가리키면서 따옴표 글자에 그 조각이 있으면
+  if (HOME_REF.test(raw) && /(['"])[^'"\n]*(\.hai?(?=[/\\'"]|-)|-mcp\b|agent-(t|['"]))[^'"\n]*\1/.test(raw)) deny(tokens[0], `${where}가 홈 폴더 아래 토큰 폴더 이름 조각을 이어 붙임`);
   const walk = WALK.test(raw);
   // 작업 폴더(cd 로 옮긴 곳 포함)가 보호 폴더의 상위면 코드 속 '인사' · os.walk('.') 는 그 아래를 가리킨다
   const cwdKeys = [].concat(cwds).filter(Boolean).map((c) => key(c));
@@ -485,11 +495,17 @@ function codeCheck(txt, where, cwds = []) {
   }
 }
 
+/** 글자에 토큰 파일 경로(절대·~·$HOME 꼴)가 보이면 막는다 */
+function tokenText(txt, where) {
+  const T = [...new Set([fold(txt), canonText(txt)])];
+  for (const t of tokens) if (t.forms.some((f) => T.some((x) => x.includes(f)))) deny(t, `${where}에 그 파일 경로가 들어 있음`);
+}
+
 /** 글자에 원문 파일 이름·보호 폴더 경로·경로 속 보호 폴더 이름이 보이면 막는다. names: 이름만 보는 명령이면 원문 결과 폴더·원문 파일은 넘어간다 */
 function textCheck(txt, { names = false, where = '명령' } = {}) {
   const T = [...new Set([fold(txt), canonText(txt)])];
   if (!names) for (const r of raws) if (r.base.length >= 4 && T.some((x) => x.includes(r.base))) deny(r, `${where}에 그 파일 이름이 들어 있음`);
-  if (!names) for (const t of tokens) if (t.forms.some((f) => T.some((x) => x.includes(f)))) deny(t, `${where}에 그 파일 경로가 들어 있음`);
+  if (!names) tokenText(txt, where);
   for (const d of userDirs) {
     if (names && d.rawdir) continue;
     for (const f of d.forms) for (const x of T) {
@@ -523,9 +539,15 @@ function runsCode(ws) {
   return ws.some((w) => INTERP.test(nm(w))); // find … -exec python a.py · xargs node · nice python …
 }
 /** 실행하는 스크립트 파일(python a.py · python -m a · ./a.sh · & .\a.ps1)의 내용에 보호 대상이 있으면 막는다 — Claude 가 스크립트를 써서 돌리는 경우 */
+// 규칙 파일을 읽어 명령을 돌리는 프로그램 → 그 파일
+const RUNNERS = { make: ['Makefile', 'makefile', 'GNUmakefile'], gmake: ['Makefile', 'makefile', 'GNUmakefile'], just: ['justfile', 'Justfile'], rake: ['Rakefile'],
+  npm: ['package.json'], yarn: ['package.json'], pnpm: ['package.json'], bun: ['package.json'] };
 function scriptCheck(ws, bases) {
-  if (!runsCode(ws)) return;
-  const files = ws.filter((w) => SCRIPT_EXT.test(w));
+  const runner = RUNNERS[bn(ws[0] ?? '')];
+  if (!runner && !runsCode(ws)) return;
+  // 실행하는 프로그램에 넘긴 파일은 확장자와 상관없이 본다(sh peek.txt · bash < peek.txt). 프로그램 자신은 빼고
+  const files = runner ? [...runner, ...ws.filter((w, i) => /^(-f|--file|--makefile)$/.test(ws[i - 1] ?? ''))]
+    : ws.filter((w) => !w.startsWith('-') && !INTERP.test(bn(w).replace(/\.exe$/i, '')));
   ws.forEach((w, i) => { if (w === '-m' && ws[i + 1]) files.push(`${ws[i + 1].replace(/\./g, '/')}.py`, `${ws[i + 1].replace(/\./g, '/')}/__main__.py`); });
   for (const w of files) for (const b of bases) {
     const f = toN(expand(w, b));
@@ -722,6 +744,12 @@ function psCheck(cmd0, cwd, where = 'PowerShell 명령', depth = 0) {
         const p = key(expand(clean, b));
         const h = hit(p);
         if (h && !(namesOnly && (!h.dir || h.rawdir))) deny(h, '명령이 그 안을 가리킴');
+        // 토큰 폴더 자체를 넘기거나(Set-Location 은 괜찮다), 링크·이동·복사의 대상이 그 상위면 다른 이름으로 열 수 있다
+        const hd = psn(ws[0]?.w ?? '');
+        if (content && !/^(cd|chdir|set-location|sl|push-location|pushd)$/.test(hd) && (p === STORE
+          || (inside(STORE, p) && (/-itemtype\s+['"]?(hardlink|symboliclink|junction)/i.test(s) || /^(move-item|mi|mv|move|rename-item|ren|rni|copy-item|cp|copy|cpi|mklink)$/.test(hd))))) {
+          deny(tokens[0], '명령이 그 폴더(또는 그 상위)를 넘김 — 링크·이동·복사하면 다른 이름으로 열 수 있음');
+        }
         const a = rec ? (content ? ancestorOf(p) : ancestorDirOf(p)) : null;
         if (a) deny(a, `${tilde(p)} 를 하위 폴더까지 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
         // 폴더 목록을 읽는 명령으로 넘기면(gci 폴더 | Get-Content) 그 폴더 바로 아래 원문 파일도 읽힌다
@@ -768,6 +796,9 @@ function check(ev) {
     case 'Read': case 'Edit': case 'MultiEdit': case 'NotebookEdit': case 'Write': {
       const p = t.file_path ?? t.notebook_path;
       if (!p) break;
+      // 써 두고 나중에 간접으로 돌리는 것(make·npm run·bash < f)을 막으려고 쓰는 내용도 본다 — 토큰 파일 경로, 비밀값 꺼내는 명령
+      const body = [t.content, t.new_string, t.new_source, ...(Array.isArray(t.edits) ? t.edits.map((e) => e?.new_string) : [])].filter((x) => typeof x === 'string');
+      if (body.length) { secretCheck(body, '쓰는 내용'); for (const x of body) tokenText(x, '쓰는 내용'); }
       const h = hit(abs(p));
       // 원문 파일에 쓰기는 괜찮지만(덮어쓰기) 보호 폴더 안 파일 열기·고치기는 막는다
       if (h && !(ev.tool_name === 'Write' && h.dir)) deny(h, `${ev.tool_name} 차단`);
@@ -815,6 +846,10 @@ function check(ev) {
         const bareAll = cmds.filter((c) => !safeEval(c)).flat().map((w) => bn(unq(w)));
         const op = cmds.find(opaque) ?? (bareAll.some((w) => w === 'eval' || w === 'uudecode') || (bareAll.includes('base64') && words.some((w) => /^(-d|-D|--decode)$/.test(w))) || (bareAll.includes('xxd') && words.some((w) => /^-r/.test(w))) ? [bareAll.find((w) => /^(eval|uudecode|base64|xxd)$/.test(w))] : null);
         if (op) deny(first(), `${unq(op[0])} 가 든 명령은 어떤 파일을 여는지 확인할 수 없음`);
+        // 파일 내용·명령 출력을 코드로 실행(bash -c "$(cat f)" · source <(cat f)) — 안의 글자를 미리 볼 수 없다
+        if (/(^|[\s;&|(])(source|\.|(ba|z|da|k|fi)?sh|python[\d.]*|node|perl|ruby|php)\s+(-\S+\s+)*(<\s*)?<\(/.test(shell) || /\s-[ce]\s+["']?(\$\(|`)/.test(shell)) {
+          deny(first(), '파일 내용이나 명령 출력을 코드로 실행하는 명령은 어떤 파일을 여는지 확인할 수 없음');
+        }
         const inner = [...shell.matchAll(/\$\(([^()]*)\)|`([^`]*)`/g)].map((m) => m[1] ?? m[2]);
         if (inner.some((x) => ENCODED.test(x))) deny(first(), '명령 치환 안에서 이스케이프로 글자를 만드는 명령은 어떤 파일을 여는지 확인할 수 없음');
       }
@@ -840,7 +875,9 @@ function check(ev) {
       secretCheck([cmd, cmd.replace(/\\(.)/g, '$1'), words.map((w) => unq(sub(w))).join(' ')]);
       const segsFirst = cmds.map((ws) => unwrap(ws)[0] ?? ws[0]);
       // 명령 치환·프로세스 치환이 있으면 안에서 무엇이든 돌 수 있다 — echo "$(cat 원문)" 은 이름 보기가 아니다
-      const namesOnly = !/\$\(|`|[<>]\(/.test(shell) && segsFirst.length > 0 && segsFirst.every((c) => NAMES_ONLY.has(bn(unq(c))));
+      // 파일로 써 넘기기(echo … > f)는 이름 보기가 아니다 — /dev/null·&1 로 버리는 것은 괜찮다
+      const writes = shell.split('\n').some((l) => { const m = codeMask(l); return [...l].some((c, i) => c === '>' && m[i] && l[i - 1] !== '>' && !/^>?\s*(&|\/dev\/null\b)/.test(l.slice(i + 1))); });
+      const namesOnly = !writes && !/\$\(|`|[<>]\(/.test(shell) && segsFirst.length > 0 && segsFirst.every((c) => NAMES_ONLY.has(bn(unq(c))));
       const recs = cmds.map(recursionOf);
       // 위치와 상관없이 — 감싸는 말을 다 알 수는 없으니 따옴표 밖 단어 어디에든 훑는 명령 이름이 있으면 그 명령으로 본다.
       // 이름을 설명·찾기·설치하는 명령의 인자(echo tar 사용법 · which rg · man tar · brew install rg)는 빼고
@@ -925,6 +962,27 @@ function check(ev) {
       if (!namesOnly && dyn) {
         const dirs = pieces.map((w) => unq(w.replace(/[*?[{].*$/, '')).replace(/\/+$/, '')).filter(Boolean).flatMap((c) => bases.map((b) => key(expand(c, b))));
         if ([...dirs, ...bases.map(key)].includes(STORE)) deny(tokens[0], '명령이 그 폴더에서 열 파일 이름을 실행 중에 정해 무엇을 여는지 확인할 수 없음');
+      }
+      // 토큰 폴더 자체를 명령에 넘기면(ln -s · mv · cp) 다른 이름으로 열 수 있다 — cd 로 들어가는 것만 괜찮다
+      if (!namesOnly) {
+        const sw = words.map((w) => unq(sub(w)));
+        const cdArg = new Set(sw.flatMap((w, i) => (/^(cd|pushd)$/.test(w) ? [i + 1] : [])));
+        const cands = [...sw.filter((w, i) => !cdArg.has(i)), ...pieces.map(unq).filter((w) => !sw.includes(w))];
+        for (const w of cands) {
+          const c = w.replace(/[*?[{].*$/, '').replace(/\/+$/, '');
+          if (c && !c.startsWith('-') && bases.some((b) => key(expand(c, b)) === STORE)) deny(tokens[0], '명령이 그 폴더 자체를 넘김(링크·이동·복사하면 다른 이름으로 열 수 있음)');
+        }
+      }
+      // 링크·이동·복사의 원본이 토큰 폴더를 품은 상위 폴더(ln -s ~ /tmp/h · ln -s ~/.h* x)면 그 아래 토큰을 다른 이름으로 열 수 있다
+      for (const c of cmds) {
+        const ws = unwrap(c).map((w) => sub(unq(w)));
+        if (!ALIAS.test(bn(ws[0] ?? ''))) continue;
+        const pos = ws.slice(1).filter((w) => !w.startsWith('-'));
+        for (const w of pos.length >= 2 ? pos.slice(0, -1) : pos) for (const b of bases) {
+          if (/[*?[{]/.test(w) && globTargets(w, b).some(({ t: tg }) => tg.token)) deny(tokens[0], `${w} 를 링크·이동·복사하면 그 아래 토큰을 다른 이름으로 열 수 있음`);
+          const cl = w.replace(/[*?[{].*$/, '').replace(/(.)\/+$/, '$1');
+          if (cl && inside(STORE, key(expand(cl, b)))) deny(tokens[0], `${tilde(key(expand(cl, b)))} 를 링크·이동·복사하면 그 아래 토큰을 다른 이름으로 열 수 있음`);
+        }
       }
       // 경로 없이 재귀로 훑는 명령(grep -r 홍길동 / rg 홍길동 / find -name …)은 기준 폴더 아래 전체를 본다.
       // 경로를 준 명령은 위에서 그 경로로 판단했다 — 실제로 있는 폴더 이름(Desktop)도 경로로 친다. 와일드카드로 시작하는 단어(*/*.txt)는 아니다

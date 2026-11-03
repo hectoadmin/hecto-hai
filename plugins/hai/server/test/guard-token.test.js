@@ -115,7 +115,57 @@ bashTest('Bash: 가린 글·규칙 파일·이름 보기·상관없는 명령은
     'grep -r foo .',
     'git commit -m "agent-token 보호 고침"',
     'grep -n agent-token src/login.js',
-    'security find-generic-password -s hai-agent-token', // 항목 속성만(비밀값 없음)
+    'security find-generic-password -s other-item', // 항목 속성만(비밀값 없음)
+    'cp notes.txt ~', // 홈으로 복사(받는 곳)
+    'ln -s ~/.hai-mcp/masked ./m', // 가린 글 폴더 링크
+  ]));
+});
+
+// 보안 리뷰(#23) 지적: 상위 폴더 별칭, 써 두고 간접 실행, 숨긴 플래그, 조각으로 잇는 이름
+bashTest('Bash: 토큰 폴더·그 상위를 링크·이동해 다른 이름으로 열지 못한다', () => {
+  expectAll('deny', bash([
+    'ln -s ~/.hai-mcp /tmp/h && cat /tmp/h/agent-token',
+    'ln -s ~ /tmp/h && cat /tmp/h/.hai-mcp/agent-token',
+    'mv ~/.hai-mcp ~/x && cat ~/x/agent-token',
+    'cd ~ && ln -s .hai-mcp t',
+    'cd ~/.hai-mcp && ln -s . /tmp/h',
+    'rsync -a ~/ /tmp/h/',
+  ]));
+});
+
+bashTest('써 둔 파일을 간접으로 실행해도 본다(make·npm run·bash < f·$(cat f))', () => {
+  fs.writeFileSync(path.join(proj, 'peek.txt'), 'cat ~/.hai-mcp/agent-token\n');
+  fs.writeFileSync(path.join(proj, 'Makefile'), 'peek:\n\tcat ~/.hai-mcp/agent-token\n');
+  fs.writeFileSync(path.join(proj, 'package.json'), JSON.stringify({ scripts: { peek: 'security find-generic-password -s x -w' } }));
+  expectAll('deny', bash([
+    "echo 'cat ~/.hai-mcp/agent-token' > run.sh",
+    'bash < peek.txt',
+    'sh peek.txt',
+    'make peek',
+    'npm run peek',
+    'bash -c "$(cat peek.txt)"',
+    'source <(cat peek.txt)',
+  ]));
+  for (const f of ['peek.txt', 'Makefile', 'package.json']) fs.rmSync(path.join(proj, f));
+});
+
+test('Write·Edit 로 토큰을 읽는 코드·비밀값 꺼내는 명령을 써 두지 못한다', () => {
+  expectAll('deny', [
+    ['Write', { file_path: path.join(proj, 'run.sh'), content: 'cat ~/.hai-mcp/agent-token' }],
+    ['Write', { file_path: path.join(proj, 'Makefile'), content: 'all:\n\tsecurity find-generic-password -s x -w' }],
+    ['Edit', { file_path: path.join(proj, 'a.sh'), old_string: 'x', new_string: 'security dump-keychain' }],
+    ['MultiEdit', { file_path: path.join(proj, 'a.py'), edits: [{ old_string: 'x', new_string: "open(os.path.expanduser('~/.hai-mcp/agent-token'))" }] }],
+  ]);
+  expectAll('allow', [['Write', { file_path: path.join(proj, 'notes.md'), content: 'agent-token 은 키체인에 둔다' }]]);
+});
+
+bashTest('Bash: 플래그·이름을 조각으로 숨긴 비밀값 꺼내기·토큰 경로도 막는다', () => {
+  expectAll('deny', bash([
+    'security find-generic-password -s hai-agent-token -$(echo w)',
+    `python3 -c "import subprocess as s;s.run(['security','find-generic-'+'password','-s','x','-'+'w'])"`,
+    `python3 -c "import subprocess as s;s.run(['/usr/bin/security','find-generic-'+'password','-s','x','-'+'w'])"`,
+    `python3 -c "import os;print(open(os.path.join(os.path.expanduser('~'),'.hai'+'-mcp','agent-'+'token')).read())"`,
+    `node -e "console.log(require('fs').readFileSync(require('os').homedir()+'/.ha'+'i-mcp/agent-tok'+'en','utf8'))"`,
   ]));
 });
 
@@ -166,6 +216,9 @@ bashTest('Git Bash 에서 부르는 PowerShell 로도 자격 증명·DPAPI 를 �
 
 test('PowerShell: 와일드카드·변수·Join-Path·목록 넘기기로도 토큰 파일을 열지 못한다', () => {
   expectAll('deny', pwsh([
+    `New-Item -ItemType SymbolicLink -Path x -Target '${data}'`,
+    `New-Item -ItemType Junction -Path x -Target '${root}'`,
+    `Move-Item '${data}' '${path.join(proj, 'x')}'`,
     `Get-Content '${path.join(data, 'agent-token.dpapi')}'`,
     `Get-Content '${path.join(data, 'agent-tok*')}'`,
     `Get-Content '${path.join(data, '*')}'`,
