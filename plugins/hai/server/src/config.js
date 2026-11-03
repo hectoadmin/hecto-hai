@@ -1,7 +1,8 @@
 /**
  * 설정 — 전부 환경변수(플러그인 사용자 설정이 넣어 준다). 키는 화면·로그·도구 결과에 절대 싣지 않는다.
- *   HAI_API_KEY        없으면 macOS 키체인(서비스 hai-api)에서 읽는다
- *   HAI_BASE_URL       기본 https://hai-gateway.idc.hectoai.co.kr
+ *   HAI_API_KEY        없으면 macOS 키체인(서비스 hai-api)에서 읽는다. hai_login 으로 로그인했으면 키보다 로그인이 먼저다
+ *   HAI_BASE_URL       기본 https://hai-gateway.idc.hectoai.co.kr (키로 부를 때)
+ *   HAI_AGENT_URL      기본 https://agent.hecto.co.kr — 로그인했으면 {이 주소}/hai/services/… 로 부른다(서버가 사내 AI 를 대신 부름)
  *   HAI_TIMEOUT_MS     기본 120000 (게이트웨이 비스트리밍 상한은 300초)
  *   HAI_KEEP_DOMAINS   가리지 않을 이메일 도메인, 쉼표 구분 (기본 없음 = 이메일 전부 가림)
  *   HAI_MAX_CHARS      파일 한 개 최대 글자 수 (기본 300000)
@@ -42,6 +43,7 @@ const DOCS = documentsDir();
 export const config = {
   docsDir: DOCS,
   baseUrl: env('HAI_BASE_URL', 'https://hai-gateway.idc.hectoai.co.kr').replace(/\/+$/, ''),
+  agentUrl: env('HAI_AGENT_URL', 'https://agent.hecto.co.kr').replace(/\/+$/, ''),
   timeoutMs: Number(env('HAI_TIMEOUT_MS', '120000')),
   keepDomains: list(env('HAI_KEEP_DOMAINS', '')).map((d) => d.toLowerCase()),
   maxChars: Number(env('HAI_MAX_CHARS', '300000')),

@@ -12,31 +12,36 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { config, apiKey } from './config.js';
+import { loadToken } from './login.js';
 
 export class HaiError extends Error {
   constructor(code, message, status) { super(message); this.name = 'HaiError'; this.code = code; this.status = status; }
 }
 
-function key() {
+/** 어디로 어떻게 부를지 — 로그인(agent 서버가 대신 부름)이 먼저, 없으면 개인 키로 게이트웨이에 바로 */
+export function route() {
+  const token = loadToken();
+  if (token) return { via: 'agent', base: `${config.agentUrl}/hai`, auth: token };
   const { key: k } = apiKey();
-  if (!k) throw new HaiError('HAI_KEY_MISSING', 'HAI API 키가 없습니다. /plugin → hai → 설정에 개인 키(hai-로 시작)를 넣으세요. 키는 HAI 포털에서 헥토 이메일로 가입한 뒤 "API 키 관리"에서 발급합니다.');
-  return k;
+  if (k) return { via: 'key', base: config.baseUrl, auth: k };
+  throw new HaiError('HAI_LOGIN_REQUIRED', '사내 AI 로그인이 필요합니다. hai_login 을 실행하면 브라우저가 열리고, 헥토 이메일로 로그인하면 끝납니다.');
 }
-
-const url = (service, p) => `${config.baseUrl}/services/${service}${p}`;
 
 /** fetch + 원인 구분. body 는 JSON 객체 또는 FormData → 파싱된 JSON */
 async function call(service, p, { method = 'POST', body, timeoutMs = config.timeoutMs, retries = 2 } = {}) {
-  const headers = { Authorization: `Bearer ${key()}`, 'X-HAI-Store-Payload': 'false' };
+  const r = route();
+  const headers = { Authorization: `Bearer ${r.auth}`, 'X-HAI-Store-Payload': 'false' };
   let payload;
   if (body instanceof FormData) payload = body;
   else if (body !== undefined) { headers['Content-Type'] = 'application/json'; payload = JSON.stringify(body); }
   for (let attempt = 0; ; attempt++) {
     let res;
     try {
-      res = await fetch(url(service, p), { method, headers, body: payload, signal: AbortSignal.timeout(timeoutMs) });
+      res = await fetch(`${r.base}/services/${service}${p}`, { method, headers, body: payload, signal: AbortSignal.timeout(timeoutMs) });
     } catch (err) {
-      throw new HaiError('HAI_UNREACHABLE', `HAI(${service}) 연결 실패 — ${causeOf(err, timeoutMs)}. 사내망(또는 허용된 IP)에서만 쓸 수 있습니다.`);
+      throw new HaiError('HAI_UNREACHABLE', r.via === 'agent'
+        ? `HAI(${service}) 연결 실패 — ${causeOf(err, timeoutMs)}. 인터넷 연결을 확인하세요.`
+        : `HAI(${service}) 연결 실패 — ${causeOf(err, timeoutMs)}. 사내망(또는 허용된 IP)에서만 쓸 수 있습니다.`);
     }
     // 동시 처리 한도(429)·일시 장애(502·503)는 Retry-After 만큼 쉬고 다시
     if ((res.status === 429 || res.status === 502 || res.status === 503) && attempt < retries) {
@@ -47,8 +52,9 @@ async function call(service, p, { method = 'POST', body, timeoutMs = config.time
     const text = await res.text();
     let data; try { data = JSON.parse(text); } catch { data = null; }
     if (!res.ok) {
+      if (r.via === 'agent' && res.status === 401) throw new HaiError('HAI_LOGIN_REQUIRED', '사내 AI 로그인이 끊겼습니다(로그아웃·차단). hai_login 으로 다시 로그인하세요.', 401);
       const code = res.status === 401 || res.status === 403 ? 'HAI_KEY_INVALID' : res.status === 404 ? 'HAI_NOT_FOUND' : 'HAI_FAILED';
-      throw new HaiError(code, `HAI(${service}) ${res.status} ${safeReason(res.status, data)}`, res.status);
+      throw new HaiError(code, `HAI(${service}) ${res.status} ${safeReason(res.status, data, r.via)}`, res.status);
     }
     if (data === null) throw new HaiError('HAI_FAILED', `HAI(${service}) 응답이 JSON 이 아닙니다 (${res.status})`);
     return { data, headers: res.headers };
@@ -56,7 +62,9 @@ async function call(service, p, { method = 'POST', body, timeoutMs = config.time
 }
 
 /** 원문이 섞일 수 없는 짧은 안내만 — 키·주소 문제는 알려 주고, 입력을 되돌려 주는 상세(detail 배열·객체)는 버린다 */
-function safeReason(status, body) {
+function safeReason(status, body, via) {
+  if (via === 'agent' && status === 413) return '파일이 너무 큽니다. 나눠서 올리거나 사내망에서 개인 키로 하세요';
+  if (via === 'agent' && status === 429) return '요청이 많습니다. 잠시 뒤 다시';
   if (status === 401 || status === 403) return '키가 틀렸거나 만료됐습니다';
   if (status === 404) return '서비스 경로를 찾을 수 없습니다(서비스 이름·모델 확인)';
   if (status === 413) return '파일이 너무 큽니다(일반 50MB, 음성 200MB)';
