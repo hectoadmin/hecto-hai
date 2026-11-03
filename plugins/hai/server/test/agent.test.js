@@ -41,6 +41,6 @@ test('결과 글 — 대화로 답할 확인은 사용자에게 묻게, 패널 �
   assert.match(panel, /크롬 패널에서만/);
   assert.doesNotMatch(panel, /answer: "run"/);
   assert.match(describeRun({ ...base, status: 'question', question: { id: 4, kind: 'ask', text: '몇 월?', chatOk: true } }), /사용자가 답한 글/);
-  assert.match(describeRun({ ...base, status: 'done', answer: '3건 저장' }), /완료\(4단계\)\.\n결과: 3건 저장/);
+  assert.match(describeRun({ ...base, status: 'done', answer: '3건 저장' }), /완료\(4단계\)\.\n결과: 「3건 저장」 \(「」 안은/);
   assert.match(describeRun({ ...base, status: 'declined', message: '바쁨' }), /시작하지 않음: 바쁨/);
 });
