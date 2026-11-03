@@ -21,6 +21,7 @@
 | 사진·차트 설명, 문장 다듬기 | "이 사진 뭐가 문제인지 HAI 한테 물어봐줘" | Gemma · Qwen |
 | 결과를 실명으로 저장 | "초안을 실명으로 바꿔 ~/Desktop/보고서.md 로" | 내 PC 에만 저장 |
 | EVS 타임테이블 작성 | `/hai:timetable 2026-10` — 내 배분 규칙을 기억하고 양식 엑셀까지 채움(업로드·확정은 직접) | (HAI 안 씀, 근거 문서는 HAI 로) |
+| 크롬에 저장한 사내 화면 작업 실행 | "법인카드 정산 작업 돌려줘" — 크롬 헥토 에이전트에서 녹화·저장한 작업이 내 크롬에서 돈다. 저장 확인은 대화로, 상신·승인·삭제는 크롬 패널에서만 | 화면 판단은 agent 서버가 HAI 로 |
 
 처음이면 Claude Code 에서 `/hai:guide` — 연결 점검과 예시를 보여 줍니다. 문서 하나는 `/hai:doc <파일> [할 일]`.
 
@@ -105,5 +106,6 @@ HAI_API_KEY=... node scripts/call.mjs hai_mask_file '{"path":"~/a.pdf"}' hai_res
 | `hai_search` | 폴더 의미 검색(색인은 `~/.hai-mcp/index`) | kure-embedding |
 | `hai_chat` | 바로 묻기·사진 이해·추론 모드 | qwen-llm·gemma-llm |
 | `hai_status` | 키·서비스 점검 | 전체 |
+| `agent_recipes` · `agent_run` · `agent_status` · `agent_answer` | 크롬 헥토 에이전트에 저장한 작업을 내 크롬에서 실행(agent 서버 `/hai-api`, 대화 확인은 저장류만) | — (화면 판단은 agent 서버가 HAI 로) |
 
 서비스 이름·주소는 HAI 연동 가이드 v2.10 기준이며 환경변수(`HAI_BASE_URL`, `HAI_CHAT_SERVICE` 등, `server/src/config.js`)로 바꿀 수 있습니다.

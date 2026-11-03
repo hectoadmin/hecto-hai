@@ -80,6 +80,7 @@ export function describeRun(st) {
       return `${head} — 진행 중(${st.steps}단계${st.last ? `, 마지막: ${st.last}` : ''}). agent_status {run: ${id}} 로 이어서 기다리세요.`;
     case 'question': {
       const q = st.question;
+      if (q.kind === 'dialog') q.text = `페이지 확인 창 "${q.text}"`;
       if (!q.chatOk) {
         return `${head} — 크롬 패널에서만 확인할 수 있습니다: ${q.text}\n`
           + `되돌릴 수 없는 동작·이동·파일 고르기라 대화로 대신 답할 수 없습니다. 사용자에게 크롬 패널에서 직접 확인(또는 거부)해 달라고 안내하고 agent_status {run: ${id}} 로 기다리세요. 멈추려면 agent_answer {run: ${id}, q: ${q.id}, answer: "stop"}.`;

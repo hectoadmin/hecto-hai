@@ -103058,6 +103058,7 @@ function describeRun(st2) {
       return `${head} \u2014 \uC9C4\uD589 \uC911(${st2.steps}\uB2E8\uACC4${st2.last ? `, \uB9C8\uC9C0\uB9C9: ${st2.last}` : ""}). agent_status {run: ${id}} \uB85C \uC774\uC5B4\uC11C \uAE30\uB2E4\uB9AC\uC138\uC694.`;
     case "question": {
       const q2 = st2.question;
+      if (q2.kind === "dialog") q2.text = `\uD398\uC774\uC9C0 \uD655\uC778 \uCC3D "${q2.text}"`;
       if (!q2.chatOk) {
         return `${head} \u2014 \uD06C\uB86C \uD328\uB110\uC5D0\uC11C\uB9CC \uD655\uC778\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4: ${q2.text}
 \uB418\uB3CC\uB9B4 \uC218 \uC5C6\uB294 \uB3D9\uC791\xB7\uC774\uB3D9\xB7\uD30C\uC77C \uACE0\uB974\uAE30\uB77C \uB300\uD654\uB85C \uB300\uC2E0 \uB2F5\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \uC0AC\uC6A9\uC790\uC5D0\uAC8C \uD06C\uB86C \uD328\uB110\uC5D0\uC11C \uC9C1\uC811 \uD655\uC778(\uB610\uB294 \uAC70\uBD80)\uD574 \uB2EC\uB77C\uACE0 \uC548\uB0B4\uD558\uACE0 agent_status {run: ${id}} \uB85C \uAE30\uB2E4\uB9AC\uC138\uC694. \uBA48\uCD94\uB824\uBA74 agent_answer {run: ${id}, q: ${q2.id}, answer: "stop"}.`;
