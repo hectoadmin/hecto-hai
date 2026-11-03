@@ -10,7 +10,8 @@
  *   (ask_file·mask_file·ocr 은 clipboard: true 로 클립보드 캡처도 읽는다 — 파일을 만들지 않아 저장 즉시 DRM 이 걸리는 PC 에서 쓴다)
  *   hai_search     폴더 문서에서 뜻으로 찾기 (kure-embedding)
  *   hai_chat       Qwen·Gemma 에 바로 묻기(이미지 포함, 추론 모드)
- *   hai_status     키·서비스 연결 점검
+ *   hai_status     로그인·서비스 연결 점검
+ *   hai_login      헥토 통합인증으로 로그인 — 개인 키 없이 agent 서버가 사내 AI 를 대신 부른다 (hai_logout)
  *   hai_timetable_fill  EVS 타임테이블 양식 엑셀에 업무·법인별 시간 채우기 (HAI 를 부르지 않는다)
  * 가리기 전 원래 값은 이 프로세스 메모리(Vault)에만 있다. 원문 파일(받아쓰기·OCR·되돌린 결과)은 장부에 올라 훅이 Claude 의 직접 열람을 막는다.
  */
@@ -22,7 +23,8 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { config, apiKey } from './config.js';
-import { chat, probe, ocr, HaiError } from './hai.js';
+import { chat, probe, ocr, route as haiRoute, HaiError } from './hai.js';
+import { login, logout, loginUser } from './login.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
 import { findSpans, chunk } from './ner.js';
 import { readText, readClipboard, resolvePath, kindOf, SUPPORTED } from './extract.js';
@@ -32,7 +34,7 @@ import { search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.5.0';
+export const VERSION = '0.6.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -385,23 +387,47 @@ server.registerTool('hai_timetable_fill', {
     '다음: EVS 타임테이블 등록 화면에서 같은 년월을 고르고 Excel 업로드로 이 파일을 올린 뒤, 표를 확인하고 저장·확정을 직접 누르세요.'].join('\n'));
 }));
 
-server.registerTool('hai_status', {
-  title: 'HAI 연결 점검',
-  description: 'HAI 키, 서비스별(Qwen·Gemma·임베딩·받아쓰기 2종) 연결, 보호 폴더 설정을 확인한다. 처음 쓸 때나 오류가 날 때 먼저 부른다.',
+server.registerTool('hai_login', {
+  title: '사내 AI 로그인',
+  description: '헥토 통합인증으로 로그인한다 — 브라우저가 열리면 헥토 이메일과 웍스로 온 인증번호를 넣으면 끝. 그 뒤로는 개인 HAI 키 없이 agent 서버(agent.hecto.co.kr)가 사내 AI 를 대신 부르고, 회사 밖에서도 된다. 로그인은 기간 제한 없이 유지되고 hai_logout·퇴사·관리자 차단 때 끊긴다. 처음 쓸 때나 "로그인이 필요합니다/끊겼습니다" 오류가 나면 부른다.',
+  inputSchema: {},
+}, guard(async (args, ex) => {
+  // 브라우저가 열리지 않을 때를 위해 주소를 진행 알림으로 보여 준다(한 번 쓰는 값이라 남아도 쓸 수 없다)
+  const u = await login({ onUrl: (url) => progress(ex, `브라우저에서 로그인하세요. 창이 안 열리면 이 주소를 여세요: ${url}`) });
+  return ok([`로그인되었습니다${u.name ? ` — ${u.name}` : ''}${u.email ? ` (${u.email})` : ''}.`,
+    '이제 개인 키 없이 사내 AI 를 씁니다. hai_status 로 연결을 확인할 수 있습니다.'].join('\n'));
+}));
+
+server.registerTool('hai_logout', {
+  title: '사내 AI 로그아웃',
+  description: '이 PC 의 사내 AI 로그인을 끊는다(서버에서도 지운다). 다시 쓰려면 hai_login.',
   inputSchema: {},
 }, guard(async () => {
+  await logout();
+  return ok('로그아웃했습니다. 다시 쓰려면 hai_login 을 실행하세요.');
+}));
+
+server.registerTool('hai_status', {
+  title: 'HAI 연결 점검',
+  description: '로그인(또는 키), 서비스별(Qwen·Gemma·임베딩·받아쓰기 2종) 연결, 보호 폴더 설정을 확인한다. 처음 쓸 때나 오류가 날 때 먼저 부른다.',
+  inputSchema: {},
+}, guard(async () => {
+  const user = loginUser();
   const { source } = apiKey();
-  const lines = [`hai 플러그인 ${VERSION} · 게이트웨이 ${config.baseUrl}`,
-    `키: ${source ? (source === 'env' ? '플러그인 설정' : 'macOS 키체인') : '없음'}`,
+  let via = null;
+  try { via = haiRoute().via; } catch { /* 둘 다 없음 */ }
+  const lines = [`hai 플러그인 ${VERSION}`,
+    `연결: ${via === 'agent' ? `헥토 로그인${user?.name ? ` — ${user.name}` : ''} (agent 서버가 대신 부름 · 회사 밖에서도 됨)` : via === 'key' ? `개인 키(${source === 'env' ? '플러그인 설정' : 'macOS 키체인'}) · 게이트웨이 ${config.baseUrl} · 사내망에서만` : '없음'}`,
     `보호 폴더: ${config.protectedDirs.length ? config.protectedDirs.join(', ') : '없음(설정 권장)'}`];
-  if (!source) return ok([...lines, '→ 키가 없습니다. HAI 포털(https://hai-gateway.idc.hectoai.co.kr/)에 헥토 이메일로 가입 → API 키 관리에서 발급 → /plugin 에서 hai 설정에 넣으세요.'].join('\n'));
+  if (!via) return ok([...lines, '→ 로그인이 필요합니다. hai_login 을 실행하면 브라우저가 열리고, 헥토 이메일로 로그인하면 끝납니다.'].join('\n'));
   lines.push(`원문 결과 폴더: ${config.rawDir.replace(os.homedir(), '~')}`);
   lines.push(sandboxLine());
   const LABEL = { qwen: 'Qwen(분석·추론)', gemma: 'Gemma(대화·사진)', embed: '문서 검색(KURE)', whisper: '받아쓰기 whisper', asr: '받아쓰기 qwen3-asr', ocr: 'OCR(paddleocr)' };
   const rows = await probe();
   for (const r of rows) lines.push(`- ${LABEL[r.name]}: ${r.ok === null ? r.note : r.ok ? `됨 (${r.model}, ${r.ms}ms)` : `안 됨 — ${r.note}`}`);
-  if (rows.some((r) => r.code === 'HAI_KEY_INVALID')) lines.push('→ 키가 틀렸거나 만료됐습니다. 포털에서 새로 발급해 /plugin 설정에 다시 넣으세요.');
-  if (rows.some((r) => r.code === 'HAI_UNREACHABLE')) lines.push('→ 사내망(또는 허용된 IP)에서만 됩니다. 네트워크를 확인하세요.');
+  if (rows.some((r) => r.code === 'HAI_LOGIN_REQUIRED')) lines.push('→ 로그인이 끊겼습니다. hai_login 으로 다시 로그인하세요.');
+  if (rows.some((r) => r.code === 'HAI_KEY_INVALID')) lines.push('→ 키가 틀렸거나 만료됐습니다. hai_login 으로 로그인하면 키 없이 쓸 수 있습니다.');
+  if (rows.some((r) => r.code === 'HAI_UNREACHABLE')) lines.push(via === 'agent' ? '→ 인터넷 연결을 확인하세요.' : '→ 사내망(또는 허용된 IP)에서만 됩니다. hai_login 으로 로그인하면 회사 밖에서도 됩니다.');
   return ok(lines.join('\n'));
 }));
 

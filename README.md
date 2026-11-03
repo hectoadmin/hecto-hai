@@ -26,31 +26,28 @@
 
 ## 설치
 
-필요한 것: Claude Code(2.1.295 이상), Node.js 20 이상, **개인 HAI 키**, 사내망. Windows(WSL 없이)·macOS 모두 됩니다.
+필요한 것: Claude Code(2.1.295 이상), Node.js 20 이상, 헥토 이메일. Windows(WSL 없이)·macOS 모두 됩니다. **개인 HAI 키와 사내망은 필요 없습니다** — `hai_login` 으로 통합인증 로그인을 하면 agent 서버(agent.hecto.co.kr)가 사내 AI 를 대신 부릅니다(회사 밖에서도 됨). 개인 키를 넣어 두면 로그인하지 않았을 때 사내망에서 게이트웨이로 바로 부릅니다.
 
-**Windows 라면 먼저** — PowerShell 에서 Node.js 를 설치하고 Claude Code 를 다시 시작합니다. Git Bash 는 없어도 됩니다(Claude 가 PowerShell 을 씁니다).
-```
-winget install OpenJS.NodeJS.LTS
-```
+**Node.js 먼저** — https://nodejs.org 에서 LTS 설치 파일을 받아 "다음"만 눌러 설치하고 Claude Code 를 다시 시작합니다(Windows 에서 검은 창이 편하면 cmd·PowerShell 에 `winget install OpenJS.NodeJS.LTS`). Git Bash 는 없어도 됩니다.
 Node.js 가 없으면 보호 훅이 돌지 못해 **파일 읽기·명령이 모두 막힙니다**(원본이 새지 않게 일부러 막는 것). 설치하면 풀립니다.
 
-1. **키 받기** — HAI 포털 https://hai-gateway.idc.hectoai.co.kr/ 에 헥토 이메일로 가입 → 로그인 → 오른쪽 위 "API 키 관리" → 새 키(hai- 로 시작).
-2. **설치** — Claude Code 에 한 줄 붙여넣기(설치·자동 업데이트 설정을 Claude 가 대신 함)
+1. **설치** — Claude Code 에 한 줄 붙여넣기(설치·자동 업데이트 설정을 Claude 가 대신 함)
    ```
    https://agent.hecto.co.kr/plugin 에 적힌 대로 헥토 플러그인을 설치해줘
    ```
    직접 하려면 `/plugin marketplace add https://agent.hecto.co.kr/plugin/marketplace.json` → `/plugin install hai@hectoadmin`.
    새 판은 `bash scripts/pack-plugins.sh`(hecto-agent 저장소)로 agent 서버에 올린다. 이 저장소의 `.claude-plugin/marketplace.json` 은 개발·CI 용.
-3. 설정을 묻습니다.
+2. **로그인** — Claude Code 에 "hai 로그인해줘"(또는 `/hai:guide`). 브라우저가 열리면 헥토 이메일 → 웍스로 온 인증번호. 기간 제한 없이 유지되고 `hai_logout`·퇴사·관리자 차단 때만 끊깁니다.
+3. 설정(모두 선택) — `/plugin configure hai@hectoadmin`.
 
 | 설정 | 설명 |
 |---|---|
-| HAI API 키 (필수) | 1에서 받은 키. 비밀 값으로 따로 저장됩니다(macOS 키체인 · Windows 는 Claude Code 자격 증명 저장소) |
+| HAI API 키 (선택) | 보통 비워 둡니다(로그인으로 씀). 넣으면 로그인하지 않았을 때 사내망에서 게이트웨이로 바로. 비밀 값으로 따로 저장됩니다 |
 | 보호 폴더 (선택) | 예: `~/Documents/인사, ~/Documents/계약`. Windows 는 탐색기 주소 그대로(`C:\Users\이름\Documents\인사`) 적어도 됩니다. 이 폴더 파일은 Claude 가 직접 열지 못하고 HAI 도구로만 읽힙니다 |
 | 원문 결과 폴더 (선택) | 받아쓰기·OCR 결과(가리지 않은 원문)를 모으는 곳. 비우면 내 문서 폴더의 `HAI 원문`(Windows 에서 문서가 OneDrive 에 있으면 그곳). 이 폴더도 Claude 가 열지 못합니다 |
 | 가리지 않을 이메일 도메인 (선택) | 예: `hecto.co.kr`. 비우면 이메일을 전부 가립니다 |
 
-나중에 바꾸려면 `/plugin` → hai → 설정. 업데이트는 `/plugin marketplace update hecto`.
+나중에 바꾸려면 `/plugin configure hai@hectoadmin`. 업데이트는 자동(바로 받으려면 `/plugin marketplace update hectoadmin`).
 
 4. **(권장) 더 확실하게 막기** — `/hai:protect`. 사용자 동의 후 `~/.claude/settings.json` 을 고칩니다.
    - **macOS·Linux**: Claude Code 샌드박스의 읽기 차단(`sandbox.filesystem.denyRead`)에 보호 폴더·원문 결과 폴더를 넣습니다. 명령을 어떻게 쓰든 그 폴더를 읽지 못합니다.

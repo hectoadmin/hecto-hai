@@ -1,7 +1,7 @@
 {
   "name": "hai",
-  "version": "0.5.0",
-  "description": "사내 AI(HAI) 전체를 Claude 에 연결 — 문서·스캔·녹음을 사내 AI 가 먼저 읽고 개인정보를 가려서 넘긴다. 회의록·OCR·문서 검색. /hai:guide 로 시작",
+  "version": "0.6.0",
+  "description": "사내 AI(HAI) 전체를 Claude 에 연결 — 헥토 이메일로 로그인(키 필요 없음), 문서·스캔·녹음을 사내 AI 가 먼저 읽고 개인정보를 가려서 넘긴다. 회의록·OCR·클립보드 캡처·문서 검색·EVS 타임테이블. /hai:guide 로 시작",
   "author": {
     "name": "헥토 총무팀"
   },
@@ -15,10 +15,10 @@
   "userConfig": {
     "hai_api_key": {
       "type": "string",
-      "title": "HAI API 키",
-      "description": "HAI 포털(https://hai-gateway.idc.hectoai.co.kr/)에 헥토 이메일로 가입 → API 키 관리에서 발급한 개인 키(hai-로 시작). 비밀 값으로 따로 저장됩니다(macOS 키체인 · Windows 는 Claude Code 자격 증명 저장소).",
+      "title": "HAI API 키 (선택 — 보통은 비워 둡니다)",
+      "description": "비워 두고 Claude Code 에서 hai_login 으로 헥토 이메일 로그인을 하면 키 없이 씁니다(회사 밖에서도 됨). 개인 키(hai- 로 시작)를 넣으면 로그인하지 않았을 때 사내망에서 게이트웨이로 바로 부릅니다. 비밀 값으로 따로 저장됩니다.",
       "sensitive": true,
-      "required": true
+      "required": false
     },
     "protected_dirs": {
       "type": "string",

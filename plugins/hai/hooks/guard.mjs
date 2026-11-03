@@ -718,8 +718,17 @@ process.stdin.on('data', (d) => (input += d)).on('end', () => {
   process.exit(0);
 });
 
+/** hai 로그인 토큰(기간 제한 없음) — 파일(~/.hai-mcp/agent-token*)·키체인 항목(hai-agent-token)을 Claude 가 직접 읽거나 고치지 못하게 */
+const TOKEN_STORE = /hai-agent-token|agent-token(\.dpapi)?\b/i;
+function denyToken() {
+  process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'deny',
+    permissionDecisionReason: 'hai 로그인 토큰 저장소입니다 — 직접 열거나 고치지 않습니다. 로그인 상태는 hai_status, 다시 로그인은 hai_login, 끊기는 hai_logout 을 쓰세요.' } }));
+  process.exit(0);
+}
+
 function check(ev) {
   const t = ev.tool_input ?? {};
+  if (TOKEN_STORE.test(canonText(JSON.stringify(t)))) denyToken();
   const cwd = toP(ev.cwd || process.cwd());
   const abs = (p) => key(expand(p, cwd));
 
