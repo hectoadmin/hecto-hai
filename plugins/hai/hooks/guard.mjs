@@ -73,9 +73,19 @@ try {
     .filter((f) => fs.existsSync(f)) // 지운 파일 때문에 그 폴더 검색이 계속 막히지 않게
     .map((f) => ({ shown: tilde(toP(f)), key: key(toP(f)), dir: false, base: fold(P.basename(toP(f))) }));
 } catch { /* 없음 */ }
-const targets = [...userDirs, internal, ...raws];
-const watched = [...userDirs, ...raws]; // 상위 폴더 검사 대상(내부 tmp 제외)
-const guarded = () => userDirs.length > 0 || raws.length > 0;
+// hai 로그인 토큰(기간 제한 없음) — Windows 는 DPAPI 파일, 그 밖은 0600 파일(macOS 는 키체인이라 보통 없다).
+// 이름이 아니라 경로로 비교한다(와일드카드·상대 경로·변수로 쪼갠 이름도 위 검사들이 같은 길로 푼다). 아직 없어도 그 자리는 막는다
+const tokens = ['agent-token', 'agent-token.dpapi'].map((n) => {
+  const p = P.join(DATA, n);
+  return { shown: tilde(p), key: key(p), dir: false, token: true, live: exists(p), forms: [...new Set([fold(p), norm(real(p)), fold(tilde(p)), fold(`$HOME${p.slice(HOME.length)}`)])] };
+});
+const STORE = key(DATA);
+const loggedIn = tokens.some((t) => t.live) || exists(P.join(DATA, 'agent-user.json'));
+const targets = [...userDirs, internal, ...raws, ...tokens];
+const watched = [...userDirs, ...raws, ...tokens.filter((t) => t.live)]; // 상위 폴더 검사 대상(내부 tmp 제외, 토큰은 파일이 있을 때만)
+const guarded = () => userDirs.length > 0 || raws.length > 0 || loggedIn;
+/** 무엇을 여는지 알 수 없는 명령을 막을 때 이유에 쓸 대상 */
+const first = () => userDirs[0] ?? raws[0] ?? tokens[0];
 
 const inside = (p, dir) => { const rel = P.relative(dir, p); return rel === '' || (!rel.startsWith('..') && !P.isAbsolute(rel)); };
 /** p(정규화)가 보호 대상 안이면 그 대상 */
@@ -85,13 +95,38 @@ const ancestorOf = (p) => watched.find((t) => t.key !== p && inside(t.key, p));
 /** 이름만 보는 검색용 — 원문 파일은 이름을 Claude 가 이미 알고(자기가 만들었다) 내용이 나가지 않으니 보호 폴더만 */
 const ancestorDirOf = (p) => userDirs.find((t) => !t.rawdir && t.key !== p && inside(t.key, p));
 
+const TOKEN_NEXT = '직접 열거나 고치지 않습니다. 로그인 상태는 hai_status, 다시 로그인은 hai_login, 끊기는 hai_logout 을 쓰세요.';
+function refuse(reason) {
+  process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'deny', permissionDecisionReason: reason } }));
+  process.exit(0);
+}
 function deny(t, why, { scope = false } = {}) {
-  const what = t.dir ? `${t.shown} 은 보호 폴더입니다` : `${t.shown} 은 HAI 가 만든 원문 파일입니다(실명·받아쓰기 원문)`;
+  const what = t.token ? `${t.shown} 은 hai 로그인 토큰입니다(기간 제한 없음)` : t.dir ? `${t.shown} 은 보호 폴더입니다` : `${t.shown} 은 HAI 가 만든 원문 파일입니다(실명·받아쓰기 원문)`;
   const next = scope
     ? '보호 폴더 밖의 더 좁은 폴더를 지정해서 다시 하세요(예: ~/Documents/계약). 보호 폴더 안의 내용이 필요하면 hai_search·hai_ask_files 를 쓰세요.'
-    : '원본을 직접 열지 말고 hai_ask_file(HAI 만 읽고 답) 또는 hai_mask_file(가려서 읽기)을 쓰세요. 원문 파일 확인은 사용자가 직접 합니다.';
-  process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'deny', permissionDecisionReason: `${what} — ${why}. ${next}` } }));
-  process.exit(0);
+    : t.token ? TOKEN_NEXT
+      : '원본을 직접 열지 말고 hai_ask_file(HAI 만 읽고 답) 또는 hai_mask_file(가려서 읽기)을 쓰세요. 원문 파일 확인은 사용자가 직접 합니다.';
+  refuse(`${what} — ${why}. ${next}`);
+}
+
+/**
+ * 키체인·자격 증명 저장소에서 비밀값을 꺼내는 명령 — 항목 이름은 와일드카드·변수로 얼마든지 바꿀 수 있으니 이름이 아니라 명령 꼴로 본다.
+ * macOS security(find-*-password 의 -w·-g, dump-keychain, export, -i 로 명령 넘기기)·키체인 API, Windows DPAPI·자격 증명 관리자, 리눅스 secret-tool
+ */
+const SECRET_FLAG = /(^|[\s'"`[,(=])-[a-z]*[wg][a-z]*(?=$|[\s'"`\],)])/;
+const SECRET_CMD = [
+  /\bsecurity(\.exe)?['"]?[\s,]+(['"]?-[a-z]+['"]?[\s,]+)*['"]?(export|-i|interactive)\b/, /\bdump-keychain\b/,
+  /secitemcopymatching|seckeychainfind(generic|internet)password|seckeychainitemcopycontent/, /\bkeyring\b[\s.]+get(_password|_credential)?\b/,
+  /securestringto(bstr|globalalloc|cotaskmem)/, /getnetworkcredential\s*\(|\bnetworkcredential\b/, /convertfrom-securestring\b[^\n;|]*-asplaintext/,
+  /protecteddata\]?\s*(::|\.)\s*unprotect|\bcryptunprotectdata\b|\bwin32crypt\b|dpapi::/,
+  /passwordvault|\bcred(read|enumerate)\w*|get-storedcredential|\bget-secret\b|\bvaultcmd\b|keymgr\.dll/, /\bsecret-tool\s+lookup\b/,
+];
+function secretCheck(texts, where = '명령') {
+  for (const x of [].concat(texts).map(fold)) {
+    if ((/find-(generic|internet)-password\b/.test(x) && SECRET_FLAG.test(x)) || SECRET_CMD.some((re) => re.test(x))) {
+      refuse(`${where}가 키체인·자격 증명 저장소의 비밀값을 꺼냅니다(hai 로그인 토큰 등) — ${TOKEN_NEXT}`);
+    }
+  }
 }
 
 // 여러 폴더를 훑는 명령만 — grep·cp 계열의 -r/-R, ls -R, find·rg·tar·zip, 하위로 내려가는 와일드카드(*/ · **/ · /**).
@@ -332,7 +367,7 @@ function globTargets(word, base) {
     for (const t of targets) {
       const ts = t.key.split('/').filter(Boolean);
       const rel = relate(res, ts);
-      if (rel) out.push({ t, rel });
+      if (rel && !(rel === 'ancestor' && t.token && !t.live)) out.push({ t, rel }); // 없는 토큰 파일 위를 훑는 것은 읽을 것이 없다
     }
   }
   return out;
@@ -404,6 +439,9 @@ const WALK = /rglob|os\.walk|\bwalk\(|walkdir|recursive\s*=\s*true|\*\*[/\\]|[/\
 function codeCheck(txt, where, cwds = []) {
   const raw = fold(txt);
   const T = [...new Set([raw, canonText(txt)])];
+  // 토큰 폴더를 조각으로 잇는 코드 — os.path.join(expanduser('~'), '.hai-mcp', …) · Path.home() / '.hai-mcp'
+  const sb = fold(P.basename(DATA));
+  if (sb.length >= 4 && quotedIs(raw, sb) && (HOME_REF.test(raw) || raw.includes(fold(HOME)))) deny(tokens[0], `${where}가 홈 폴더에 ${sb} 를 이어 붙여 그 안을 가리킴`);
   const walk = WALK.test(raw);
   // 작업 폴더(cd 로 옮긴 곳 포함)가 보호 폴더의 상위면 코드 속 '인사' · os.walk('.') 는 그 아래를 가리킨다
   const cwdKeys = [].concat(cwds).filter(Boolean).map((c) => key(c));
@@ -451,6 +489,7 @@ function codeCheck(txt, where, cwds = []) {
 function textCheck(txt, { names = false, where = '명령' } = {}) {
   const T = [...new Set([fold(txt), canonText(txt)])];
   if (!names) for (const r of raws) if (r.base.length >= 4 && T.some((x) => x.includes(r.base))) deny(r, `${where}에 그 파일 이름이 들어 있음`);
+  if (!names) for (const t of tokens) if (t.forms.some((f) => T.some((x) => x.includes(f)))) deny(t, `${where}에 그 파일 경로가 들어 있음`);
   for (const d of userDirs) {
     if (names && d.rawdir) continue;
     for (const f of d.forms) for (const x of T) {
@@ -495,6 +534,7 @@ function scriptCheck(ws, bases) {
     if (!st.isFile() || st.size > 2_000_000) continue;
     const body = fs.readFileSync(f, 'utf8').normalize('NFC');
     const where = `실행하는 스크립트(${P.basename(toP(f))})`;
+    secretCheck(body, where);
     textCheck(body, { where });
     codeCheck(body, where, bases);
   }
@@ -605,9 +645,10 @@ function psCheck(cmd0, cwd, where = 'PowerShell 명령', depth = 0) {
     .replace(/(^|[\s(;|{])[\u2013\u2014\u2015](?=[A-Za-z])/g, '$1-'); // –Recurse · —Path 도 옵션이다
   const cleaned = psClean(s);
   s = cleaned.text;
+  secretCheck([s, cmd0], where);
   // 문자열 안의 $( … ) 는 따로 명령으로
   if (depth < 3) for (const x of cleaned.subs) psCheck(x, cwd, '문자열 안에서 실행하는 PowerShell 명령', depth + 1);
-  if (guarded() && PS_OPAQUE.test(s)) deny(userDirs[0] ?? raws[0], `${where}에 글자를 풀거나 만들어 실행하는 부분(iex·base64·[char]·-EncodedCommand)이 있어 어떤 파일을 여는지 확인할 수 없음. 설치 명령(irm … | iex)이면 사용자가 직접 실행하세요`);
+  if (guarded() && PS_OPAQUE.test(s)) deny(first(), `${where}에 글자를 풀거나 만들어 실행하는 부분(iex·base64·[char]·-EncodedCommand)이 있어 어떤 파일을 여는지 확인할 수 없음. 설치 명령(irm … | iex)이면 사용자가 직접 실행하세요`);
   // 백틱 이스케이프, 문자열 잇기('C:\Users\' + '인사'), 변수($d = '…'), Join-Path·[IO.Path]::Combine 을 풀어서 본다
   s = s.replace(/(['"])\s*\+\s*(['"])/g, ''); // 백틱은 psClean 이 풀었다
   for (let k = 0; k < 3; k++) {
@@ -684,10 +725,10 @@ function psCheck(cmd0, cwd, where = 'PowerShell 명령', depth = 0) {
         const a = rec ? (content ? ancestorOf(p) : ancestorDirOf(p)) : null;
         if (a) deny(a, `${tilde(p)} 를 하위 폴더까지 훑는 명령인데 그 아래에 보호 대상이 있음`, { scope: true });
         // 폴더 목록을 읽는 명령으로 넘기면(gci 폴더 | Get-Content) 그 폴더 바로 아래 원문 파일도 읽힌다
-        if (content && PS_LISTERS.has(psn(ws[0]?.w ?? ''))) for (const r of raws) if (P.dirname(r.key) === p) deny(r, `${tilde(p)} 의 파일을 목록으로 받아 읽는 명령인데 그 안에 원문 파일이 있음`);
+        if (content && PS_LISTERS.has(psn(ws[0]?.w ?? ''))) for (const r of [...raws, ...tokens]) if (P.dirname(r.key) === p) deny(r, `${tilde(p)} 의 파일을 목록으로 받아 읽는 명령인데 그 안에 원문 파일이 있음`);
       }
     }
-    if (content && PS_LISTERS.has(psn(ws[0]?.w ?? '')) && !args.some((w) => !/^[*?[]/.test(w))) for (const b of bases) for (const r of raws) if (P.dirname(r.key) === key(b)) deny(r, '작업 폴더의 파일을 목록으로 받아 읽는 명령인데 그 안에 원문 파일이 있음');
+    if (content && PS_LISTERS.has(psn(ws[0]?.w ?? '')) && !args.some((w) => !/^[*?[]/.test(w))) for (const b of bases) for (const r of [...raws, ...tokens]) if (P.dirname(r.key) === key(b)) deny(r, '작업 폴더의 파일을 목록으로 받아 읽는 명령인데 그 안에 원문 파일이 있음');
   });
   if (rec && !hasPath) for (const b of bases) {
     const a = content ? ancestorOf(key(b)) : ancestorDirOf(key(b));
@@ -711,24 +752,15 @@ function psCheck(cmd0, cwd, where = 'PowerShell 명령', depth = 0) {
 let input = '';
 process.stdin.on('data', (d) => (input += d)).on('end', () => {
   let ev;
-  try { ev = JSON.parse(input); } catch { if (guarded()) deny(userDirs[0] ?? raws[0], '훅 입력을 읽지 못해 안전하게 막음'); process.exit(0); }
+  try { ev = JSON.parse(input); } catch { if (guarded()) deny(first(), '훅 입력을 읽지 못해 안전하게 막음'); process.exit(0); }
   try { check(ev); } catch (err) {
-    if (guarded()) deny(userDirs[0] ?? raws[0], err?.tooMany ? '중괄호 펼침이 너무 많아 확인할 수 없음' : '검사 중 오류가 나 안전하게 막음');
+    if (guarded()) deny(first(), err?.tooMany ? '중괄호 펼침이 너무 많아 확인할 수 없음' : '검사 중 오류가 나 안전하게 막음');
   }
   process.exit(0);
 });
 
-/** hai 로그인 토큰(기간 제한 없음) — 파일(~/.hai-mcp/agent-token*)·키체인 항목(hai-agent-token)을 Claude 가 직접 읽거나 고치지 못하게 */
-const TOKEN_STORE = /hai-agent-token|agent-token(\.dpapi)?\b/i;
-function denyToken() {
-  process.stdout.write(JSON.stringify({ hookSpecificOutput: { hookEventName: 'PreToolUse', permissionDecision: 'deny',
-    permissionDecisionReason: 'hai 로그인 토큰 저장소입니다 — 직접 열거나 고치지 않습니다. 로그인 상태는 hai_status, 다시 로그인은 hai_login, 끊기는 hai_logout 을 쓰세요.' } }));
-  process.exit(0);
-}
-
 function check(ev) {
   const t = ev.tool_input ?? {};
-  if (TOKEN_STORE.test(canonText(JSON.stringify(t)))) denyToken();
   const cwd = toP(ev.cwd || process.cwd());
   const abs = (p) => key(expand(p, cwd));
 
@@ -782,9 +814,9 @@ function check(ev) {
         const safeEval = (c) => { const ws = unwrap(c).map(unq); return bn(ws[0] ?? '') === 'eval' && ws.length === 2 && SAFE_EVAL.test(ws[1]); };
         const bareAll = cmds.filter((c) => !safeEval(c)).flat().map((w) => bn(unq(w)));
         const op = cmds.find(opaque) ?? (bareAll.some((w) => w === 'eval' || w === 'uudecode') || (bareAll.includes('base64') && words.some((w) => /^(-d|-D|--decode)$/.test(w))) || (bareAll.includes('xxd') && words.some((w) => /^-r/.test(w))) ? [bareAll.find((w) => /^(eval|uudecode|base64|xxd)$/.test(w))] : null);
-        if (op) deny(userDirs[0] ?? raws[0], `${unq(op[0])} 가 든 명령은 어떤 파일을 여는지 확인할 수 없음`);
+        if (op) deny(first(), `${unq(op[0])} 가 든 명령은 어떤 파일을 여는지 확인할 수 없음`);
         const inner = [...shell.matchAll(/\$\(([^()]*)\)|`([^`]*)`/g)].map((m) => m[1] ?? m[2]);
-        if (inner.some((x) => ENCODED.test(x))) deny(userDirs[0] ?? raws[0], '명령 치환 안에서 이스케이프로 글자를 만드는 명령은 어떤 파일을 여는지 확인할 수 없음');
+        if (inner.some((x) => ENCODED.test(x))) deny(first(), '명령 치환 안에서 이스케이프로 글자를 만드는 명령은 어떤 파일을 여는지 확인할 수 없음');
       }
       // 변수: VAR=값, for X in 목록, 환경 변수는 그 값. $(…)·read 로 정한 것만 "모르는 값"(그 폴더의 아무 파일 = *)
       const vars = {}, unknown = new Set();
@@ -805,6 +837,7 @@ function check(ev) {
         if (unknown.has(n)) return '*';
         return process.env[n] ?? all; // PATH·TMPDIR 등은 실제 값, 모르는 건 글자 그대로(어떤 파일과도 맞지 않음)
       });
+      secretCheck([cmd, cmd.replace(/\\(.)/g, '$1'), words.map((w) => unq(sub(w))).join(' ')]);
       const segsFirst = cmds.map((ws) => unwrap(ws)[0] ?? ws[0]);
       // 명령 치환·프로세스 치환이 있으면 안에서 무엇이든 돌 수 있다 — echo "$(cat 원문)" 은 이름 보기가 아니다
       const namesOnly = !/\$\(|`|[<>]\(/.test(shell) && segsFirst.length > 0 && segsFirst.every((c) => NAMES_ONLY.has(bn(unq(c))));
@@ -886,6 +919,12 @@ function check(ev) {
           const tg = userDirs.find((d) => !(namesOnly && d.rawdir) && bn(d.key).length >= 2 && parts.includes(bn(d.key)));
           if (tg) deny(tg, '명령에 그 폴더 이름이 경로로 들어 있음');
         }
+      }
+      // 토큰 폴더(~/.hai-mcp)를 가리키면서 열 파일 이름은 실행 중에 정하는 명령(ls … | xargs cat · cat …/$(…) · read) — 무엇을 여는지 글자로 알 수 없다
+      const dyn = /\$\(|`|[<>]\(/.test(shell) || unknown.size > 0 || bare.some((w) => /^(xargs|parallel|eval)$/.test(w));
+      if (!namesOnly && dyn) {
+        const dirs = pieces.map((w) => unq(w.replace(/[*?[{].*$/, '')).replace(/\/+$/, '')).filter(Boolean).flatMap((c) => bases.map((b) => key(expand(c, b))));
+        if ([...dirs, ...bases.map(key)].includes(STORE)) deny(tokens[0], '명령이 그 폴더에서 열 파일 이름을 실행 중에 정해 무엇을 여는지 확인할 수 없음');
       }
       // 경로 없이 재귀로 훑는 명령(grep -r 홍길동 / rg 홍길동 / find -name …)은 기준 폴더 아래 전체를 본다.
       // 경로를 준 명령은 위에서 그 경로로 판단했다 — 실제로 있는 폴더 이름(Desktop)도 경로로 친다. 와일드카드로 시작하는 단어(*/*.txt)는 아니다
