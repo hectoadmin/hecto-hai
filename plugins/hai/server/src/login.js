@@ -14,6 +14,8 @@ import os from 'node:os';
 import path from 'node:path';
 import { config } from './config.js';
 
+// 키체인 항목을 -T 로 node 에만 허용하는 것은 쓰지 않는다 — 읽는 쪽이 node 가 아니라 /usr/bin/security(Claude 가 Bash 로 부를 수 있는 같은 프로그램)라
+// 허용 목록으로 둘을 가를 수 없고, security 를 빼면 서버가 읽을 때마다 사용자에게 묻는다. Claude 쪽은 훅(hooks/guard.mjs)이 비밀값 꺼내는 명령을 막는다
 const KEYCHAIN = 'hai-agent-token';
 // HAI_TOKEN_STORE=file: 운영체제 저장소 대신 0600 파일(시험·리눅스용)
 const store = () => (process.env.HAI_TOKEN_STORE === 'file' ? 'file' : os.platform());

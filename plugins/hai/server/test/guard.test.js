@@ -311,11 +311,11 @@ test('원문 결과 폴더: 이름 보기·크기·셸 설정 eval 은 괜찮고
     ['Bash', { command: `grep -r 결정 ${docs}` }], ['Grep', { pattern: '결정', path: rawDir }], ['Bash', { command: 'eval "$(cat x)"' }]]) assert.equal(run(t, i), 'deny', JSON.stringify(i));
 });
 
-test('hai 로그인 토큰 저장소는 직접 열지 못한다(파일·키체인·DPAPI)', () => {
+test('hai 로그인 토큰 저장소는 직접 열지 못한다(파일·키체인·DPAPI) — 자세한 우회 시험은 guard-token.test.js', () => {
   for (const [tool, input] of [
-    ['Read', { file_path: '~/.hai-mcp/agent-token' }],
+    ['Read', { file_path: path.join(data, 'agent-token') }],
     ['Bash', { command: 'security find-generic-password -s hai-agent-token -w' }],
-    ['Bash', { command: 'cat "$HOME/.hai-mcp/agent-token"' }],
-    ['PowerShell', { command: 'Get-Content $env:USERPROFILE\\.hai-mcp\\agent-token.dpapi | ConvertTo-SecureString' }],
+    ['Bash', { command: `cat "${data}/agent-token"` }],
+    ['PowerShell', { command: `Get-Content '${path.join(data, 'agent-token.dpapi')}' | ConvertTo-SecureString` }],
   ]) assert.equal(decide(tool, input), 'deny', `${tool} ${JSON.stringify(input)}`);
 });
