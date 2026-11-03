@@ -127,7 +127,8 @@ const SECRET_ITEM = /hai-agent-token/;
 const SECRET_CALLER = /\bsecurity\b|\bkeyring\b|subprocess|execfile|execsync|\bspawn|popen|os\.system|child_process|osascript/;
 const CODE_SECURITY = /(['"])(\/usr\/bin\/)?security\1\s*[,\])]|(['"])\/usr\/bin\/security\3/;
 function secretCheck(texts, where = '명령') {
-  for (const x of [].concat(texts).map(fold)) {
+  // 명령 꼴은 운영체제와 상관없이 대소문자를 가리지 않는다 — fold 는 리눅스에서 소문자로 바꾸지 않는다(ConvertTo-SecureString 등)
+  for (const x of [].concat(texts).map((t) => fold(t).toLowerCase())) {
     if ((/find-(generic|internet)-password\b/.test(x) && SECRET_FLAG.test(x)) || SECRET_CMD.some((re) => re.test(x))
       || (SECRET_ITEM.test(x) && SECRET_CALLER.test(x)) || CODE_SECURITY.test(x)) {
       refuse(`${where}가 키체인·자격 증명 저장소의 비밀값을 꺼냅니다(hai 로그인 토큰 등) — ${TOKEN_NEXT}`);
