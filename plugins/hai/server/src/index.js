@@ -12,6 +12,7 @@
  *   hai_chat       Qwen·Gemma 에 바로 묻기(이미지 포함, 추론 모드)
  *   hai_status     로그인·서비스 연결 점검
  *   hai_login      헥토 통합인증으로 로그인 — 개인 키 없이 agent 서버가 사내 AI 를 대신 부른다 (hai_logout)
+ *   agent_recipes · agent_run · agent_status · agent_answer  크롬 헥토 에이전트에 저장한 작업을 실행(실행은 크롬에서, 확인은 대화 또는 패널)
  *   hai_timetable_fill  EVS 타임테이블 양식 엑셀에 업무·법인별 시간 채우기 (HAI 를 부르지 않는다)
  * 가리기 전 원래 값은 이 프로세스 메모리(Vault)에만 있다. 원문 파일(받아쓰기·OCR·되돌린 결과)은 장부에 올라 훅이 Claude 의 직접 열람을 막는다.
  */
@@ -25,6 +26,7 @@ import { z } from 'zod';
 import { config, apiKey } from './config.js';
 import { chat, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { login, logout, loginUser } from './login.js';
+import { answerRun, describeRun, listRecipes, pickRecipe, startRun, waitRun } from './agent.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
 import { findSpans, chunk } from './ner.js';
 import { readText, readClipboard, resolvePath, kindOf, SUPPORTED } from './extract.js';
@@ -34,7 +36,7 @@ import { search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.6.1';
+export const VERSION = '0.7.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -405,6 +407,66 @@ server.registerTool('hai_logout', {
 }, guard(async () => {
   await logout();
   return ok('로그아웃했습니다. 다시 쓰려면 hai_login 을 실행하세요.');
+}));
+
+// ── 크롬 헥토 에이전트의 저장한 작업(연동 2단계) ─────────────────────────────
+const waitSchema = z.number().int().min(5).max(280).optional().describe('끝나거나 확인이 필요할 때까지 기다릴 최대 초(기본 120). 넘으면 "진행 중"과 실행 번호를 돌려준다');
+
+server.registerTool('agent_recipes', {
+  title: '저장한 작업 목록',
+  description: '사용자가 크롬 "헥토 AI 브라우저 에이전트" 확장에서 녹화·저장한 작업(그룹웨어·EVS 같은 사내 화면 작업) 목록. 이름·분류·바꿀 값(예시)·시작 사이트. 사내 웹 화면에서 할 일을 맡기기 전에 먼저 부르고, 맞는 작업이 있으면 agent_run 으로 실행한다. 크롬이 켜져 있고 확장에 로그인돼 있어야 실행할 수 있다.',
+  inputSchema: {},
+}, guard(async () => {
+  const { online, recipes } = await listRecipes();
+  if (!recipes.length) return ok('저장한 작업이 없습니다. 크롬 헥토 에이전트 패널에서 할 일을 시켜 성공했거나 녹화한 작업을 "저장"하면 여기서 실행할 수 있습니다.');
+  const lines = recipes.map((r) => `- #${r.id} ${r.name}${r.category ? ` [${r.category}]` : ''}${r.site ? ` · ${r.site}` : ''} · ${r.steps}단계`
+    + (r.params.length ? ` · 바꿀 값: ${r.params.map((p) => `${p.key}(예: ${p.example})`).join(', ')}` : ''));
+  return ok([`저장한 작업 ${recipes.length}개${online ? '' : ' — 지금 크롬 확장이 연결되어 있지 않습니다(크롬을 켜고 확장 패널에서 로그인해야 실행됩니다)'}`, ...lines,
+    '', '실행: agent_run {recipe: "이름 또는 #번호", params: {키: 값}}. 바꿀 값을 비우면 예시 값으로 실행된다. {이번달}·{지난달} 같은 날짜 자리는 실행하는 날로 채워진다.'].join('\n'));
+}));
+
+server.registerTool('agent_run', {
+  title: '저장한 작업 실행',
+  description: '크롬 헥토 에이전트에 저장한 작업을 사용자의 크롬에서 실행한다(화면 조작은 확장이, 화면 판단은 사내 AI 가 한다 — 화면 내용은 이쪽으로 오지 않는다). 끝나거나 확인·질문이 필요하거나 wait_sec 이 지나면 돌려준다. '
+    + '확인이 오면 반드시 사용자에게 그대로 묻고 답을 받아 agent_answer 로 보낸다 — 스스로 승인하지 않는다. 상신·승인·삭제·제출 같은 되돌릴 수 없는 동작은 크롬 패널에서만 확인할 수 있다. 크롬이 꺼져 있으면 바로 알려 준다.',
+  inputSchema: {
+    recipe: z.string().describe('저장한 작업 이름 또는 번호(#12). agent_recipes 의 이름'),
+    params: z.record(z.string(), z.string()).optional().describe('바꿀 값 {키: 값}. agent_recipes 에 나온 키만. 비우면 저장 때 예시 값'),
+    wait_sec: waitSchema,
+  },
+}, guard(async ({ recipe, params, wait_sec }, ex) => {
+  const { recipes } = await listRecipes();
+  const r = pickRecipe(recipes, recipe);
+  const { id } = await startRun(r.id, params ?? {});
+  progress(ex, `실행 #${id} 맡김 — 크롬에서 시작을 기다리는 중`);
+  const st = await waitRun(id, { waitMs: (wait_sec ?? 120) * 1000, onProgress: (m) => progress(ex, m) });
+  return ok(describeRun(st));
+}));
+
+server.registerTool('agent_status', {
+  title: '저장한 작업 진행 보기',
+  description: 'agent_run 으로 맡긴 실행의 진행을 본다 — 끝나거나 확인·질문이 생기거나 wait_sec 이 지날 때까지 기다렸다 돌려준다.',
+  inputSchema: { run: z.number().int().describe('실행 번호(agent_run 결과의 #)'), wait_sec: waitSchema },
+}, guard(async ({ run, wait_sec }, ex) => {
+  const st = await waitRun(run, { waitMs: (wait_sec ?? 120) * 1000, onProgress: (m) => progress(ex, m) });
+  return ok(describeRun(st));
+}));
+
+server.registerTool('agent_answer', {
+  title: '저장한 작업의 확인·질문에 답',
+  description: '실행 중 온 확인·질문에 사용자의 답을 전한다. 사용자가 대화에서 직접 답한 것만 보낸다 — 스스로 판단해 "run" 을 보내지 않는다. 확인은 answer: "run"(실행) | "reject"(이 동작 안 함) | "stop"(멈춤), 질문은 사용자가 답한 글. '
+    + '크롬 패널에서만 확인할 수 있는 동작(상신·승인·삭제·제출·이동·파일)은 "stop" 말고는 거절된다. 보낸 뒤 이어서 끝날 때까지 기다렸다 돌려준다.',
+  inputSchema: {
+    run: z.number().int().describe('실행 번호'),
+    q: z.number().int().describe('질문 번호(agent_run·agent_status 결과의 q)'),
+    answer: z.string().describe('"run" | "reject" | "stop" 또는 질문에 대한 사용자의 답'),
+    wait_sec: waitSchema,
+  },
+}, guard(async ({ run, q, answer, wait_sec }, ex) => {
+  const { answer: won } = await answerRun(run, q, answer);
+  const note = won.by === 'hai' ? '' : '(크롬 패널에서 먼저 답해 그 답을 따랐습니다) ';
+  const st = await waitRun(run, { waitMs: (wait_sec ?? 120) * 1000, onProgress: (m) => progress(ex, m) });
+  return ok(`${note}${describeRun(st)}`);
 }));
 
 server.registerTool('hai_status', {
