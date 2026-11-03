@@ -9807,7 +9807,7 @@ var require_setImmediate = __commonJS({
       function clearImmediate(handle) {
         delete tasksByHandle[handle];
       }
-      function run2(task) {
+      function run3(task) {
         var callback = task.callback;
         var args = task.args;
         switch (args.length) {
@@ -9836,7 +9836,7 @@ var require_setImmediate = __commonJS({
           if (task) {
             currentlyRunningATask = true;
             try {
-              run2(task);
+              run3(task);
             } finally {
               clearImmediate(handle);
               currentlyRunningATask = false;
@@ -29273,7 +29273,7 @@ var require_transforms = __commonJS({
   "node_modules/mammoth/lib/transforms.js"(exports) {
     var _4 = (init_index_all(), __toCommonJS(index_all_exports));
     exports.paragraph = paragraph;
-    exports.run = run2;
+    exports.run = run3;
     exports._elements = elements;
     exports._elementsOfType = elementsOfType;
     exports.getDescendantsOfType = getDescendantsOfType;
@@ -29281,7 +29281,7 @@ var require_transforms = __commonJS({
     function paragraph(transform2) {
       return elementsOfType("paragraph", transform2);
     }
-    function run2(transform2) {
+    function run3(transform2) {
       return elementsOfType("run", transform2);
     }
     function elementsOfType(elementType, transform2) {
@@ -30424,7 +30424,7 @@ var require_fs = __commonJS({
 var require_files = __commonJS({
   "node_modules/mammoth/lib/docx/files.js"(exports) {
     var url2 = __require("url");
-    var os6 = __require("os");
+    var os7 = __require("os");
     var dirname = __require("path").dirname;
     var isAbsolutePath = __require("path").isAbsolute;
     var resolvePath2 = __require("path").resolve;
@@ -30466,7 +30466,7 @@ var require_files = __commonJS({
     }
     function uriToPath(uriString, platform) {
       if (!platform) {
-        platform = os6.platform();
+        platform = os7.platform();
       }
       var uri = url2.parse(uriString);
       if (isLocalFileUri(uri) || isRelativeUri(uri)) {
@@ -31431,47 +31431,47 @@ var require_document_to_html = __commonJS({
           return defaultParagraphStyle;
         }
       }
-      function convertRun(run2, messages, context) {
+      function convertRun(run3, messages, context) {
         var nodes = function() {
-          return convertElements(run2.children, messages, context);
+          return convertElements(run3.children, messages, context);
         };
         var paths = [];
-        if (run2.highlight !== null) {
-          var path8 = findHtmlPath({ type: "highlight", color: run2.highlight });
+        if (run3.highlight !== null) {
+          var path8 = findHtmlPath({ type: "highlight", color: run3.highlight });
           if (path8) {
             paths.push(path8);
           }
         }
-        if (run2.isSmallCaps) {
+        if (run3.isSmallCaps) {
           paths.push(findHtmlPathForRunProperty("smallCaps"));
         }
-        if (run2.isAllCaps) {
+        if (run3.isAllCaps) {
           paths.push(findHtmlPathForRunProperty("allCaps"));
         }
-        if (run2.isStrikethrough) {
+        if (run3.isStrikethrough) {
           paths.push(findHtmlPathForRunProperty("strikethrough", "s"));
         }
-        if (run2.isUnderline) {
+        if (run3.isUnderline) {
           paths.push(findHtmlPathForRunProperty("underline"));
         }
-        if (run2.verticalAlignment === documents.verticalAlignment.subscript) {
+        if (run3.verticalAlignment === documents.verticalAlignment.subscript) {
           paths.push(htmlPaths.element("sub", {}, { fresh: false }));
         }
-        if (run2.verticalAlignment === documents.verticalAlignment.superscript) {
+        if (run3.verticalAlignment === documents.verticalAlignment.superscript) {
           paths.push(htmlPaths.element("sup", {}, { fresh: false }));
         }
-        if (run2.isItalic) {
+        if (run3.isItalic) {
           paths.push(findHtmlPathForRunProperty("italic", "em"));
         }
-        if (run2.isBold) {
+        if (run3.isBold) {
           paths.push(findHtmlPathForRunProperty("bold", "strong"));
         }
         var stylePath = htmlPaths.empty;
-        var style = findStyle(run2);
+        var style = findStyle(run3);
         if (style) {
           stylePath = style.to;
-        } else if (run2.styleId) {
-          messages.push(unrecognisedStyleWarning("run", run2));
+        } else if (run3.styleId) {
+          messages.push(unrecognisedStyleWarning("run", run3));
         }
         paths.push(stylePath);
         paths.forEach(function(path9) {
@@ -32641,7 +32641,7 @@ var require_lop = __commonJS({
 var require_document_matchers = __commonJS({
   "node_modules/mammoth/lib/styles/document-matchers.js"(exports) {
     exports.paragraph = paragraph;
-    exports.run = run2;
+    exports.run = run3;
     exports.table = table;
     exports.bold = new Matcher("bold");
     exports.italic = new Matcher("italic");
@@ -32659,7 +32659,7 @@ var require_document_matchers = __commonJS({
     function paragraph(options) {
       return new Matcher("paragraph", options);
     }
-    function run2(options) {
+    function run3(options) {
       return new Matcher("run", options);
     }
     function table(options) {
@@ -34281,7 +34281,7 @@ async function JBig2(e2 = {}) {
   };
   if (n2.noExitRuntime && n2.noExitRuntime, n2.print && n2.print, n2.printErr && n2.printErr, n2.wasmBinary && n2.wasmBinary, n2.arguments && n2.arguments, n2.thisProgram && n2.thisProgram, n2.preInit) for (typeof n2.preInit == `function` && (n2.preInit = [n2.preInit]); n2.preInit.length > 0; ) n2.preInit.shift()();
   n2.writeArrayToMemory = writeArrayToMemory;
-  function run2() {
+  function run3() {
     preRun();
     function doRun() {
       n2.calledRun = true, initRuntime(), a2?.(n2), n2.onRuntimeInitialized?.(), postRun();
@@ -34291,7 +34291,7 @@ async function JBig2(e2 = {}) {
     }, 1)) : doRun();
   }
   var u2 = {}();
-  return run2(), t2 = s2 ? n2 : new Promise((e3, t3) => {
+  return run3(), t2 = s2 ? n2 : new Promise((e3, t3) => {
     a2 = e3;
   }), t2;
 }
@@ -34336,7 +34336,7 @@ async function OpenJPEG(e2 = {}) {
   };
   if (n2.noExitRuntime && n2.noExitRuntime, n2.print && n2.print, n2.printErr && n2.printErr, n2.wasmBinary && n2.wasmBinary, n2.arguments && n2.arguments, n2.thisProgram && (i2 = n2.thisProgram), n2.preInit) for (typeof n2.preInit == `function` && (n2.preInit = [n2.preInit]); n2.preInit.length > 0; ) n2.preInit.shift()();
   n2.writeArrayToMemory = writeArrayToMemory;
-  function run2() {
+  function run3() {
     preRun();
     function doRun() {
       n2.calledRun = true, initRuntime(), o2?.(n2), n2.onRuntimeInitialized?.(), postRun();
@@ -34346,7 +34346,7 @@ async function OpenJPEG(e2 = {}) {
     }, 1)) : doRun();
   }
   var f2 = {}();
-  return run2(), t2 = s2 ? n2 : new Promise((e3, t3) => {
+  return run3(), t2 = s2 ? n2 : new Promise((e3, t3) => {
     o2 = e3;
   }), t2;
 }
@@ -37735,7 +37735,7 @@ function normalizeEdgeBoundary(e2, t2, n2) {
 function percentage(e2) {
   return `${(e2 * 100).toFixed(2)}%`;
 }
-var e, t, n, r, i, a, o, s, c, l, u, d, f, p, m, h, g, _3, v, y, b, x, S, C, w, T, E, D, O, k, PasswordException$1, UnknownErrorException$1, InvalidPDFException$1, ResponseException$1, FormatError$1, AbortException$1, FeatureTest$1, Util$1, j, ee, makeArr$1, makeMap$1, makeObj$1, M, te, ne, re, ie, N, ae, oe, F, L, RefSet, RefSetCache, BaseStream, se, ce, le, ue, de, fe, MissingDataException, ParserEOFException, XRefEntryException, XRefParseException, pe, me, QCMS, he, ge, _e, ve, ye, be, xe, Se, AlternateCS, PatternCS, IndexedCS, DeviceGrayCS, DeviceRgbCS, DeviceRgbaCS, DeviceCmykCS, CalGrayCS, Ce, LabCS, we, Te, Ee, StringStream, NullStream, ChunkedStream, ChunkedStreamManager, De, Oe, ke, DecodeStream, StreamsSequenceStream, ColorSpaceUtils, JpegError, DNLMarkerError, EOIMarkerError, Ae, je, Me, Ne, Pe, Fe, Ie, Le, JpegImage, Re, ze, NullOptimizer, QueueOptimizer, Be, CheckedOperatorList, Ve, Pattern, BaseShading, RadialAxialShading, He, MeshStreamReader, Ue, We, DummyShading, BinaryCMapStream, BinaryCMapReader, Ascii85Stream, AsciiHexStream, makeBrotliDecode, Ge, BrotliStream, Ke, qe, Jbig2Error, Je, CCITTFaxStream, Ye, Xe, Ze, Qe, $e, FlateStream, et, tt, JpxError, nt, JpxStream, LZWStream, PredictorStream, RunLengthStream, Parser, rt, Lexer, Linearization, it, at, CMap, IdentityCMap, CMapFactory, CSS_FONT_INFO$1, SYSTEM_FONT_INFO$1, FONT_INFO$1, PATTERN_INFO$1, ot, st, ct, lt, ut, dt, ft, pt, mt, ht, gt, _t, vt, yt, bt, xt, St, Ct, wt, Tt, DataBuilder, Et, Dt, Ot, kt, At, CFFParser, CFF, CFFHeader, CFFStrings, CFFIndex, CFFDict, jt, Mt, Nt, Pt, Ft, CFFCharset, CFFEncoding, CFFFDSelect, CFFOffsetTracker, It, Lt, Rt, zt, Bt, Vt, Ht, Ut, Wt, GlyfTable, Gt, Kt, Contour, qt, Jt, ToUnicodeMap, IdentityToUnicodeMap, CFFFont, Commands, Yt, TrueTypeCompiled, Type2Compiled, FontRendererFactory, Xt, Zt, Qt, $t, Type1CharString, en, Type1Parser, Type1Font, tn, nn, rn, an, fonts_Glyph, Font, ErrorFont, on, sn, cn, ln, un, dn, fn, pn, mn, hn, gn, _n, vn, yn, bn, xn, Sn, Cn, wn, Tn, En, Dn, On, kn, An, jn, Mn, Nn, Pn, Fn, In, Ln, Rn, zn, Bn, Vn, Hn, Un, Wn, Gn, Kn, R, Token, qn, Jn, z2, PsNode, PsProgram, PsBlock, PsNumber, PsOperator, PsIf, PsIfElse, PsArgNode, PsConstNode, PsUnaryNode, PsBinaryNode, PsTernaryNode, Yn, Xn, V, Zn, Qn, PsJsCompiler, PSStackBasedInterpreter, H, $n, er, tr, nr, BaseLocalCache, LocalImageCache, LocalColorSpaceCache, LocalFunctionCache, LocalGStateCache, LocalTilingPatternCache, RegionalImageCache, GlobalColorSpaceCache, rr, ir, ar, PDFFunction, or, sr, cr, lr, ur, dr, fr, pr, mr, hr, gr, _r, vr, yr, MurmurHash3_64$1, br, xr, Sr, Cr, wr, Tr, TranslatedFont, StateManager, TextState, EvalState, Er, DefaultAppearanceEvaluator, AppearanceStreamEvaluator, Dr, Or, kr, NameOrNumberTree, NameTree, NumberTree, Ar, jr, Mr, SimpleDOMNode, SimpleXMLParser, MetadataParser, Nr, Pr, StructElementNode, StructElement, StructTreePage, isRef2, Fr, Ir, Lr, Rr, zr, Vr, Hr, Ur, Wr, Gr, Kr, qr, U, Jr, Yr, W, Xr, Zr, Qr, $r, ei, ti, ni, ri, ii, ai, oi, si, ci, li, ui, G, di, fi, pi, mi, hi, gi, _i, vi, yi, bi, xi, Si, Ci, wi, Ti, Ei, Di, Oi, ki, Ai, ji, Mi, Ni, Pi, Fi, Ii, Ri, zi, Bi, Vi, Hi, Wi, Gi, Ki, qi, K, Ji, Yi, Xi, Zi, Qi, $i, ea, q, FontFinder, FontInfo$1, FontSelector, TextMeasure, ta, na, ra, ia, aa, oa, sa, ca, J, la, ua, da, fa, pa, ma, ha, ga, _a3, va, ya, ba, xa, Sa, Ca, Y, X, XFAAttribute, wa, ContentObject, OptionObject, StringObject, IntegerObject, Option01, Option10, Ta, Z, Ea, Da, Oa, AppearanceFilter, Arc, Area, Assist, Barcode, Bind, BindItems, Bookend, BooleanElement, Border, Break, BreakAfter, BreakBefore, Button, Calculate, Caption, Certificate, Certificates, CheckButton, ChoiceList, Color, Comb, Connect, ContentArea, Corner, DateElement, DateTime, DateTimeEdit, Decimal, DefaultUi, Desc, DigestMethod, DigestMethods, Draw, Edge, Encoding, Encodings, Encrypt, EncryptData, Encryption, EncryptionMethod, EncryptionMethods, Event$1, ExData, ExObject, ExclGroup, Execute, Extras, Field, Fill, Filter, Float, template_Font, Format, Handler, Hyphenation, Image$1, ImageEdit, Integer, Issuers, Items, Keep, KeyUsage, Line, Linear, LockDocument, Manifest, Margin, Mdp, Medium, Message, NumericEdit, Occur, Oid, Oids, Overflow, PageArea, ka, Para, PasswordEdit, template_Pattern, Picture, Proto, Radial, Reason, Reasons, Rectangle, RefElement, Script, SetProperty, SignData, Signature, Signing, Solid, Speak, Stipple, Subform, SubformSet, SubjectDN, SubjectDNs, Submit, Template, Text, TextEdit, Time, TimeStamp, ToolTip, Traversal, Traverse, Ui, Validate, Value, Variables, Aa, ja, Binder, DataHandler, Q, Acrobat, Acrobat7, ADBE_JSConsole, ADBE_JSDebugger, AddSilentPrint, AddViewerPreferences, AdjustData, AdobeExtensionLevel, Agent, AlwaysEmbed, Amd, config_Area, Attributes, AutoSave, Base, BatchOutput, BehaviorOverride, Cache, Change, Common, Compress, CompressLogicalStructure, CompressObjectStream, Compression, Config, Conformance, ContentCopy, Copies, Creator, CurrentPage, Data, Debug, DefaultTypeface, Destination, DocumentAssembly, Driver, DuplexOption, DynamicRender, Embed, config_Encrypt, config_Encryption, EncryptionLevel, Enforce, Equate, EquateRange, Exclude, ExcludeNS, FlipLabel, config_FontInfo, FormFieldFilling, GroupParent, IfEmpty, IncludeXDPContent, IncrementalLoad, IncrementalMerge, Interactive, Jog, LabelPrinter, Layout, Level, Linearized, Locale, LocaleSet, Log, MapElement, MediumInfo, config_Message, Messaging, Mode, ModifyAnnots, MsgId, NameAttr, NeverEmbed, NumberOfCopies, OpenAction, Output, OutputBin, OutputXSL, Overprint, Packets, PageOffset, PageRange, Pagination, PaginationOverride, Part, Pcl, Pdf, Pdfa, Permissions, PickTrayByPDFSize, config_Picture, PlaintextMetadata, Presence, Present, Print, PrintHighQuality, PrintScaling, PrinterName, Producer, Ps, Range$1, Record, Relevant, Rename, RenderPolicy, RunScripts, config_Script, ScriptModel, Severity, SilentPrint, Staple, StartNode, StartPage, SubmitFormat, SubmitUrl, SubsetBelow, SuppressBanner, Tagged, config_Template, Threshold, To, TemplateCache, Trace, Transform, Type, Uri, config_Validate, ValidateApprovalSignatures, ValidationMessaging, Version, VersionControl, ViewerPreferences, WebClient, Whitespace, Window, Xdc, Xdp, Xsl, Zpl, Ma, Na, ConnectionSet, EffectiveInputPolicy, EffectiveOutputPolicy, Operation, RootElement, SoapAction, SoapAddress, connection_set_Uri, WsdlAddress, WsdlConnection, XmlConnection, XsdConnection, Pa, Fa, datasets_Data, Datasets, Ia, La, CalendarSymbols, CurrencySymbol, CurrencySymbols, DatePattern, DatePatterns, DateTimeSymbols, Day, DayNames, Era, EraNames, locale_set_Locale, locale_set_LocaleSet, Meridiem, MeridiemNames, Month, MonthNames, NumberPattern, NumberPatterns, NumberSymbol, NumberSymbols, TimePattern, TimePatterns, TypeFace, TypeFaces, Ra, za, signature_Signature, Ba, Va, Stylesheet, Ha, Ua, xdp_Xdp, Wa, Ga, Ka, qa, Ja, Ya, Xa, Za, Qa, XhtmlObject, A, B, Body, Br, Html, I, Li, Ol, P, Span, Sub, Sup, Ul, $a, eo, UnknownNamespace, Root, Empty, Builder, to, no, AnnotationFactory, Annotation, AnnotationBorderStyle, MarkupAnnotation, ro, TextWidgetAnnotation, ButtonWidgetAnnotation, ChoiceWidgetAnnotation, SignatureWidgetAnnotation, TextAnnotation, LinkAnnotation, PopupAnnotation, FreeTextAnnotation, LineAnnotation, SquareAnnotation, CircleAnnotation, PolylineAnnotation, PolygonAnnotation, CaretAnnotation, InkAnnotation, HighlightAnnotation, UnderlineAnnotation, SquigglyAnnotation, StrikeOutAnnotation, StampAnnotation, FileAttachmentAnnotation, io, ao, oo, so, DatasetXMLParser, DatasetReader, SingleIntersector, Intersector, Word64, co, lo, DecryptStream, ARCFourCipher, NullCipher, AESBaseCipher, AES128Cipher, AES256Cipher, PDFBase, PDF17, PDF20, CipherTransform, uo, XRef, fo, Page, po, mo, ho, PDFDocument, BasePdfManager, LocalPdfManager, NetworkPdfManager, go, _o, MessageHandler$1, PageData, DocumentData, XRefWrapper, PDFEditor, BasePDFStream$1, BasePDFStreamReader$1, BasePDFStreamRangeReader$1, PDFWorkerStream, PDFWorkerStreamReader, PDFWorkerStreamRangeReader, WorkerTask, WorkerMessageHandler, vo, yo, bo, xo, So, Co, wo, Eo, Do, Oo, $, ko, Ao, jo, Mo, No, Po, Fo, Io, Lo, Ro, zo, Bo, PasswordException, UnknownErrorException, InvalidPDFException, ResponseException, FormatError, AbortException, FeatureTest, Util, Vo, Ho, makeArr, makeMap, makeObj, Uo, Wo, XfaLayer, PixelsPerInch, RenderingCancelledException, StatTimer, PDFDateString, Go, Ko, ColorScheme, CSSConstants, qo, Jo, FloatingToolbar, Yo, Xo, IdManager, Zo, CommandManager, Qo, $o, es, ts, Comment, ns, rs, FakeEditor, is, as, os3, MurmurHash3_64, ss, AnnotationStorage, PrintAnnotationStorage, cs, ls, us, ds, BBoxReader, ensureDebugMetadata, CanvasBBoxTracker, CanvasDependencyTracker, fs4, ps2, ms, FontLoader, FontFaceObject, CSS_FONT_INFO, SYSTEM_FONT_INFO, FONT_INFO, PATTERN_INFO, CssFontInfo, SystemFontInfo, FontInfo, PatternInfo, FontPathInfo, isRefProxy, isNameProxy, hs, LoopbackPort, gs, _s, MessageHandler, BaseBinaryDataFactory, DOMBinaryDataFactory, BaseCanvasFactory, DOMCanvasFactory, BaseFilterFactory, DOMFilterFactory, NodeFilterFactory, NodeCanvasFactory, NodeBinaryDataFactory, WebGPU, vs, ys, BaseShadingPattern, RadialAxialShadingPattern, MeshShadingPattern, DummyShadingPattern, bs, xs, Ss, Cs, CanvasExtraState, ws, Ts, Es, Ds, Os, BasePDFStream, BasePDFStreamReader, BasePDFStreamRangeReader, PDFFetchStream, PDFFetchStreamReader, PDFFetchStreamRangeReader, PDFDataTransportStream, PDFDataTransportStreamReader, PDFDataTransportStreamRangeReader, PDFNetworkStream, PDFNetworkStreamReader, PDFNetworkStreamRangeReader, PDFNodeStream, PDFNodeStreamReader, PDFNodeStreamRangeReader, GlobalWorkerOptions, Metadata, ks, OptionalContentGroup, As, PagesMapper, js, dataObj, PDFObjects, Ms, Ns, PDFDataRangeTransport, PDFDocumentProxy, Fs, Is, WorkerTransport, RenderTask, Ls, Rs, zs, Bs, Vs, ColorConverters, BaseSVGFactory, DOMSVGFactory, Hs, Us, AnnotationElementFactory, Ws, EditorAnnotationElement, LinkAnnotationElement, TextAnnotationElement, WidgetAnnotationElement, TextWidgetAnnotationElement, SignatureWidgetAnnotationElement, CheckboxWidgetAnnotationElement, RadioButtonWidgetAnnotationElement, PushButtonWidgetAnnotationElement, ChoiceWidgetAnnotationElement, PopupAnnotationElement, PopupElement, FreeTextAnnotationElement, LineAnnotationElement, SquareAnnotationElement, CircleAnnotationElement, PolylineAnnotationElement, PolygonAnnotationElement, CaretAnnotationElement, InkAnnotationElement, HighlightAnnotationElement, UnderlineAnnotationElement, SquigglyAnnotationElement, StrikeOutAnnotationElement, StampAnnotationElement, FileAttachmentAnnotationElement, MediaAnnotationElement, Gs, Ks, qs, Outline, Js, FreeDrawOutline, HighlightOutliner, HighlightOutline, FreeHighlightOutliner, FreeHighlightOutline, Ys, DrawingOptions, Xs, InkDrawOutliner, InkDrawOutline, Zs, Qs, ContourDrawOutline, SignatureExtractor, $s, ec, tc, StampEditor, nc, rc, ic;
+var e, t, n, r, i, a, o, s, c, l, u, d, f, p, m, h, g, _3, v, y, b, x, S, C, w, T, E, D, O, k, PasswordException$1, UnknownErrorException$1, InvalidPDFException$1, ResponseException$1, FormatError$1, AbortException$1, FeatureTest$1, Util$1, j, ee, makeArr$1, makeMap$1, makeObj$1, M, te, ne, re, ie, N, ae, oe, F, L, RefSet, RefSetCache, BaseStream, se, ce, le, ue, de, fe, MissingDataException, ParserEOFException, XRefEntryException, XRefParseException, pe, me, QCMS, he, ge, _e, ve, ye, be, xe, Se, AlternateCS, PatternCS, IndexedCS, DeviceGrayCS, DeviceRgbCS, DeviceRgbaCS, DeviceCmykCS, CalGrayCS, Ce, LabCS, we, Te, Ee, StringStream, NullStream, ChunkedStream, ChunkedStreamManager, De, Oe, ke, DecodeStream, StreamsSequenceStream, ColorSpaceUtils, JpegError, DNLMarkerError, EOIMarkerError, Ae, je, Me, Ne, Pe, Fe, Ie, Le, JpegImage, Re, ze, NullOptimizer, QueueOptimizer, Be, CheckedOperatorList, Ve, Pattern, BaseShading, RadialAxialShading, He, MeshStreamReader, Ue, We, DummyShading, BinaryCMapStream, BinaryCMapReader, Ascii85Stream, AsciiHexStream, makeBrotliDecode, Ge, BrotliStream, Ke, qe, Jbig2Error, Je, CCITTFaxStream, Ye, Xe, Ze, Qe, $e, FlateStream, et, tt, JpxError, nt, JpxStream, LZWStream, PredictorStream, RunLengthStream, Parser, rt, Lexer, Linearization, it, at, CMap, IdentityCMap, CMapFactory, CSS_FONT_INFO$1, SYSTEM_FONT_INFO$1, FONT_INFO$1, PATTERN_INFO$1, ot, st, ct, lt, ut, dt, ft, pt, mt, ht, gt, _t, vt, yt, bt, xt, St, Ct, wt, Tt, DataBuilder, Et, Dt, Ot, kt, At, CFFParser, CFF, CFFHeader, CFFStrings, CFFIndex, CFFDict, jt, Mt, Nt, Pt, Ft, CFFCharset, CFFEncoding, CFFFDSelect, CFFOffsetTracker, It, Lt, Rt, zt, Bt, Vt, Ht, Ut, Wt, GlyfTable, Gt, Kt, Contour, qt, Jt, ToUnicodeMap, IdentityToUnicodeMap, CFFFont, Commands, Yt, TrueTypeCompiled, Type2Compiled, FontRendererFactory, Xt, Zt, Qt, $t, Type1CharString, en, Type1Parser, Type1Font, tn, nn, rn, an, fonts_Glyph, Font, ErrorFont, on, sn, cn, ln, un, dn, fn, pn, mn, hn, gn, _n, vn, yn, bn, xn, Sn, Cn, wn, Tn, En, Dn, On, kn, An, jn, Mn, Nn, Pn, Fn, In, Ln, Rn, zn, Bn, Vn, Hn, Un, Wn, Gn, Kn, R, Token, qn, Jn, z2, PsNode, PsProgram, PsBlock, PsNumber, PsOperator, PsIf, PsIfElse, PsArgNode, PsConstNode, PsUnaryNode, PsBinaryNode, PsTernaryNode, Yn, Xn, V, Zn, Qn, PsJsCompiler, PSStackBasedInterpreter, H, $n, er, tr, nr, BaseLocalCache, LocalImageCache, LocalColorSpaceCache, LocalFunctionCache, LocalGStateCache, LocalTilingPatternCache, RegionalImageCache, GlobalColorSpaceCache, rr, ir, ar, PDFFunction, or, sr, cr, lr, ur, dr, fr, pr, mr, hr, gr, _r, vr, yr, MurmurHash3_64$1, br, xr, Sr, Cr, wr, Tr, TranslatedFont, StateManager, TextState, EvalState, Er, DefaultAppearanceEvaluator, AppearanceStreamEvaluator, Dr, Or, kr, NameOrNumberTree, NameTree, NumberTree, Ar, jr, Mr, SimpleDOMNode, SimpleXMLParser, MetadataParser, Nr, Pr, StructElementNode, StructElement, StructTreePage, isRef2, Fr, Ir, Lr, Rr, zr, Vr, Hr, Ur, Wr, Gr, Kr, qr, U, Jr, Yr, W, Xr, Zr, Qr, $r, ei, ti, ni, ri, ii, ai, oi, si, ci, li, ui, G, di, fi, pi, mi, hi, gi, _i, vi, yi, bi, xi, Si, Ci, wi, Ti, Ei, Di, Oi, ki, Ai, ji, Mi, Ni, Pi, Fi, Ii, Ri, zi, Bi, Vi, Hi, Wi, Gi, Ki, qi, K, Ji, Yi, Xi, Zi, Qi, $i, ea, q, FontFinder, FontInfo$1, FontSelector, TextMeasure, ta, na, ra, ia, aa, oa, sa, ca, J, la, ua, da, fa, pa, ma, ha, ga, _a3, va, ya, ba, xa, Sa, Ca, Y, X, XFAAttribute, wa, ContentObject, OptionObject, StringObject, IntegerObject, Option01, Option10, Ta, Z, Ea, Da, Oa, AppearanceFilter, Arc, Area, Assist, Barcode, Bind, BindItems, Bookend, BooleanElement, Border, Break, BreakAfter, BreakBefore, Button, Calculate, Caption, Certificate, Certificates, CheckButton, ChoiceList, Color, Comb, Connect, ContentArea, Corner, DateElement, DateTime, DateTimeEdit, Decimal, DefaultUi, Desc, DigestMethod, DigestMethods, Draw, Edge, Encoding, Encodings, Encrypt, EncryptData, Encryption, EncryptionMethod, EncryptionMethods, Event$1, ExData, ExObject, ExclGroup, Execute, Extras, Field, Fill, Filter, Float, template_Font, Format, Handler, Hyphenation, Image$1, ImageEdit, Integer, Issuers, Items, Keep, KeyUsage, Line, Linear, LockDocument, Manifest, Margin, Mdp, Medium, Message, NumericEdit, Occur, Oid, Oids, Overflow, PageArea, ka, Para, PasswordEdit, template_Pattern, Picture, Proto, Radial, Reason, Reasons, Rectangle, RefElement, Script, SetProperty, SignData, Signature, Signing, Solid, Speak, Stipple, Subform, SubformSet, SubjectDN, SubjectDNs, Submit, Template, Text, TextEdit, Time, TimeStamp, ToolTip, Traversal, Traverse, Ui, Validate, Value, Variables, Aa, ja, Binder, DataHandler, Q, Acrobat, Acrobat7, ADBE_JSConsole, ADBE_JSDebugger, AddSilentPrint, AddViewerPreferences, AdjustData, AdobeExtensionLevel, Agent, AlwaysEmbed, Amd, config_Area, Attributes, AutoSave, Base, BatchOutput, BehaviorOverride, Cache, Change, Common, Compress, CompressLogicalStructure, CompressObjectStream, Compression, Config, Conformance, ContentCopy, Copies, Creator, CurrentPage, Data, Debug, DefaultTypeface, Destination, DocumentAssembly, Driver, DuplexOption, DynamicRender, Embed, config_Encrypt, config_Encryption, EncryptionLevel, Enforce, Equate, EquateRange, Exclude, ExcludeNS, FlipLabel, config_FontInfo, FormFieldFilling, GroupParent, IfEmpty, IncludeXDPContent, IncrementalLoad, IncrementalMerge, Interactive, Jog, LabelPrinter, Layout, Level, Linearized, Locale, LocaleSet, Log, MapElement, MediumInfo, config_Message, Messaging, Mode, ModifyAnnots, MsgId, NameAttr, NeverEmbed, NumberOfCopies, OpenAction, Output, OutputBin, OutputXSL, Overprint, Packets, PageOffset, PageRange, Pagination, PaginationOverride, Part, Pcl, Pdf, Pdfa, Permissions, PickTrayByPDFSize, config_Picture, PlaintextMetadata, Presence, Present, Print, PrintHighQuality, PrintScaling, PrinterName, Producer, Ps, Range$1, Record, Relevant, Rename, RenderPolicy, RunScripts, config_Script, ScriptModel, Severity, SilentPrint, Staple, StartNode, StartPage, SubmitFormat, SubmitUrl, SubsetBelow, SuppressBanner, Tagged, config_Template, Threshold, To, TemplateCache, Trace, Transform, Type, Uri, config_Validate, ValidateApprovalSignatures, ValidationMessaging, Version, VersionControl, ViewerPreferences, WebClient, Whitespace, Window, Xdc, Xdp, Xsl, Zpl, Ma, Na, ConnectionSet, EffectiveInputPolicy, EffectiveOutputPolicy, Operation, RootElement, SoapAction, SoapAddress, connection_set_Uri, WsdlAddress, WsdlConnection, XmlConnection, XsdConnection, Pa, Fa, datasets_Data, Datasets, Ia, La, CalendarSymbols, CurrencySymbol, CurrencySymbols, DatePattern, DatePatterns, DateTimeSymbols, Day, DayNames, Era, EraNames, locale_set_Locale, locale_set_LocaleSet, Meridiem, MeridiemNames, Month, MonthNames, NumberPattern, NumberPatterns, NumberSymbol, NumberSymbols, TimePattern, TimePatterns, TypeFace, TypeFaces, Ra, za, signature_Signature, Ba, Va, Stylesheet, Ha, Ua, xdp_Xdp, Wa, Ga, Ka, qa, Ja, Ya, Xa, Za, Qa, XhtmlObject, A, B, Body, Br, Html, I, Li, Ol, P, Span, Sub, Sup, Ul, $a, eo, UnknownNamespace, Root, Empty, Builder, to, no, AnnotationFactory, Annotation, AnnotationBorderStyle, MarkupAnnotation, ro, TextWidgetAnnotation, ButtonWidgetAnnotation, ChoiceWidgetAnnotation, SignatureWidgetAnnotation, TextAnnotation, LinkAnnotation, PopupAnnotation, FreeTextAnnotation, LineAnnotation, SquareAnnotation, CircleAnnotation, PolylineAnnotation, PolygonAnnotation, CaretAnnotation, InkAnnotation, HighlightAnnotation, UnderlineAnnotation, SquigglyAnnotation, StrikeOutAnnotation, StampAnnotation, FileAttachmentAnnotation, io, ao, oo, so, DatasetXMLParser, DatasetReader, SingleIntersector, Intersector, Word64, co, lo, DecryptStream, ARCFourCipher, NullCipher, AESBaseCipher, AES128Cipher, AES256Cipher, PDFBase, PDF17, PDF20, CipherTransform, uo, XRef, fo, Page, po, mo, ho, PDFDocument, BasePdfManager, LocalPdfManager, NetworkPdfManager, go, _o, MessageHandler$1, PageData, DocumentData, XRefWrapper, PDFEditor, BasePDFStream$1, BasePDFStreamReader$1, BasePDFStreamRangeReader$1, PDFWorkerStream, PDFWorkerStreamReader, PDFWorkerStreamRangeReader, WorkerTask, WorkerMessageHandler, vo, yo, bo, xo, So, Co, wo, Eo, Do, Oo, $, ko, Ao, jo, Mo, No, Po, Fo, Io, Lo, Ro, zo, Bo, PasswordException, UnknownErrorException, InvalidPDFException, ResponseException, FormatError, AbortException, FeatureTest, Util, Vo, Ho, makeArr, makeMap, makeObj, Uo, Wo, XfaLayer, PixelsPerInch, RenderingCancelledException, StatTimer, PDFDateString, Go, Ko, ColorScheme, CSSConstants, qo, Jo, FloatingToolbar, Yo, Xo, IdManager, Zo, CommandManager, Qo, $o, es, ts, Comment, ns, rs, FakeEditor, is, as, os4, MurmurHash3_64, ss, AnnotationStorage, PrintAnnotationStorage, cs, ls, us, ds, BBoxReader, ensureDebugMetadata, CanvasBBoxTracker, CanvasDependencyTracker, fs4, ps2, ms, FontLoader, FontFaceObject, CSS_FONT_INFO, SYSTEM_FONT_INFO, FONT_INFO, PATTERN_INFO, CssFontInfo, SystemFontInfo, FontInfo, PatternInfo, FontPathInfo, isRefProxy, isNameProxy, hs, LoopbackPort, gs, _s, MessageHandler, BaseBinaryDataFactory, DOMBinaryDataFactory, BaseCanvasFactory, DOMCanvasFactory, BaseFilterFactory, DOMFilterFactory, NodeFilterFactory, NodeCanvasFactory, NodeBinaryDataFactory, WebGPU, vs, ys, BaseShadingPattern, RadialAxialShadingPattern, MeshShadingPattern, DummyShadingPattern, bs, xs, Ss, Cs, CanvasExtraState, ws, Ts, Es, Ds, Os, BasePDFStream, BasePDFStreamReader, BasePDFStreamRangeReader, PDFFetchStream, PDFFetchStreamReader, PDFFetchStreamRangeReader, PDFDataTransportStream, PDFDataTransportStreamReader, PDFDataTransportStreamRangeReader, PDFNetworkStream, PDFNetworkStreamReader, PDFNetworkStreamRangeReader, PDFNodeStream, PDFNodeStreamReader, PDFNodeStreamRangeReader, GlobalWorkerOptions, Metadata, ks, OptionalContentGroup, As, PagesMapper, js, dataObj, PDFObjects, Ms, Ns, PDFDataRangeTransport, PDFDocumentProxy, Fs, Is, WorkerTransport, RenderTask, Ls, Rs, zs, Bs, Vs, ColorConverters, BaseSVGFactory, DOMSVGFactory, Hs, Us, AnnotationElementFactory, Ws, EditorAnnotationElement, LinkAnnotationElement, TextAnnotationElement, WidgetAnnotationElement, TextWidgetAnnotationElement, SignatureWidgetAnnotationElement, CheckboxWidgetAnnotationElement, RadioButtonWidgetAnnotationElement, PushButtonWidgetAnnotationElement, ChoiceWidgetAnnotationElement, PopupAnnotationElement, PopupElement, FreeTextAnnotationElement, LineAnnotationElement, SquareAnnotationElement, CircleAnnotationElement, PolylineAnnotationElement, PolygonAnnotationElement, CaretAnnotationElement, InkAnnotationElement, HighlightAnnotationElement, UnderlineAnnotationElement, SquigglyAnnotationElement, StrikeOutAnnotationElement, StampAnnotationElement, FileAttachmentAnnotationElement, MediaAnnotationElement, Gs, Ks, qs, Outline, Js, FreeDrawOutline, HighlightOutliner, HighlightOutline, FreeHighlightOutliner, FreeHighlightOutline, Ys, DrawingOptions, Xs, InkDrawOutliner, InkDrawOutline, Zs, Qs, ContourDrawOutline, SignatureExtractor, $s, ec, tc, StampEditor, nc, rc, ic;
 var init_pdfjs = __esm({
   "node_modules/unpdf/dist/pdfjs.mjs"() {
     if (polyfillDOMMatrix(), globalThis.FinalizationRegistry === void 0 && (globalThis.FinalizationRegistry = class FinalizationRegistry2 {
@@ -63551,7 +63551,7 @@ var init_pdfjs = __esm({
     };
     is = 3285377520;
     as = 4294901760;
-    os3 = 65535;
+    os4 = 65535;
     MurmurHash3_64 = class {
       constructor(e2) {
         this.h1 = e2 ? e2 & 4294967295 : is, this.h2 = e2 ? e2 & 4294967295 : is;
@@ -63567,20 +63567,20 @@ var init_pdfjs = __esm({
         } else if (ArrayBuffer.isView(e2)) t2 = e2.slice(), n2 = t2.byteLength;
         else throw Error(`Invalid data format, must be a string or TypedArray.`);
         let r2 = n2 >> 2, i2 = n2 - r2 * 4, a2 = new Uint32Array(t2.buffer, 0, r2), o2 = 0, s2 = 0, c2 = this.h1, l2 = this.h2, u2 = 3432918353, d2 = 461845907, f2 = 11601, p2 = 13715;
-        for (let e3 = 0; e3 < r2; e3++) e3 & 1 ? (o2 = a2[e3], o2 = o2 * u2 & as | o2 * f2 & os3, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os3, c2 ^= o2, c2 = c2 << 13 | c2 >>> 19, c2 = c2 * 5 + 3864292196) : (s2 = a2[e3], s2 = s2 * u2 & as | s2 * f2 & os3, s2 = s2 << 15 | s2 >>> 17, s2 = s2 * d2 & as | s2 * p2 & os3, l2 ^= s2, l2 = l2 << 13 | l2 >>> 19, l2 = l2 * 5 + 3864292196);
+        for (let e3 = 0; e3 < r2; e3++) e3 & 1 ? (o2 = a2[e3], o2 = o2 * u2 & as | o2 * f2 & os4, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os4, c2 ^= o2, c2 = c2 << 13 | c2 >>> 19, c2 = c2 * 5 + 3864292196) : (s2 = a2[e3], s2 = s2 * u2 & as | s2 * f2 & os4, s2 = s2 << 15 | s2 >>> 17, s2 = s2 * d2 & as | s2 * p2 & os4, l2 ^= s2, l2 = l2 << 13 | l2 >>> 19, l2 = l2 * 5 + 3864292196);
         switch (o2 = 0, i2) {
           case 3:
             o2 ^= t2[r2 * 4 + 2] << 16;
           case 2:
             o2 ^= t2[r2 * 4 + 1] << 8;
           case 1:
-            o2 ^= t2[r2 * 4], o2 = o2 * u2 & as | o2 * f2 & os3, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os3, r2 & 1 ? c2 ^= o2 : l2 ^= o2;
+            o2 ^= t2[r2 * 4], o2 = o2 * u2 & as | o2 * f2 & os4, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os4, r2 & 1 ? c2 ^= o2 : l2 ^= o2;
         }
         this.h1 = c2, this.h2 = l2;
       }
       hexdigest() {
         let e2 = this.h1, t2 = this.h2;
-        return e2 ^= t2 >>> 1, e2 = e2 * 3981806797 & as | e2 * 36045 & os3, t2 = t2 * 4283543511 & as | ((t2 << 16 | e2 >>> 16) * 2950163797 & as) >>> 16, e2 ^= t2 >>> 1, e2 = e2 * 444984403 & as | e2 * 60499 & os3, t2 = t2 * 3301882366 & as | ((t2 << 16 | e2 >>> 16) * 3120437893 & as) >>> 16, e2 ^= t2 >>> 1, (e2 >>> 0).toString(16).padStart(8, `0`) + (t2 >>> 0).toString(16).padStart(8, `0`);
+        return e2 ^= t2 >>> 1, e2 = e2 * 3981806797 & as | e2 * 36045 & os4, t2 = t2 * 4283543511 & as | ((t2 << 16 | e2 >>> 16) * 2950163797 & as) >>> 16, e2 ^= t2 >>> 1, e2 = e2 * 444984403 & as | e2 * 60499 & os4, t2 = t2 * 3301882366 & as | ((t2 << 16 | e2 >>> 16) * 3120437893 & as) >>> 16, e2 ^= t2 >>> 1, (e2 >>> 0).toString(16).padStart(8, `0`) + (t2 >>> 0).toString(16).padStart(8, `0`);
       }
     };
     ss = Object.freeze({ map: null, hash: ``, transfer: void 0 });
@@ -73208,7 +73208,7 @@ var init_dist = __esm({
 // src/index.js
 import fs7 from "node:fs/promises";
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
-import os5 from "node:os";
+import os6 from "node:os";
 import path7 from "node:path";
 
 // node_modules/zod/v3/helpers/util.js
@@ -93887,7 +93887,7 @@ function visit(schema, fnOrHandlers) {
     return h2 ? h2(node2, rewritten) : node2;
   };
   const cache2 = /* @__PURE__ */ new Map();
-  function run2(s2) {
+  function run3(s2) {
     const cached4 = cache2.get(s2);
     if (cached4 === RESOLVING) {
       return new $ZodLazy({
@@ -93913,21 +93913,21 @@ function visit(schema, fnOrHandlers) {
         let changed = false;
         const newShape = {};
         for (const k2 of keys2) {
-          const mapped = run2(oldShape[k2]);
+          const mapped = run3(oldShape[k2]);
           if (mapped !== oldShape[k2])
             changed = true;
           newShape[k2] = mapped;
         }
         let newCatchall = def.catchall;
         if (def.catchall) {
-          newCatchall = run2(def.catchall);
+          newCatchall = run3(def.catchall);
           if (newCatchall !== def.catchall)
             changed = true;
         }
         return changed ? clone(s2, { ...def, shape: newShape, catchall: newCatchall }) : s2;
       }
       case "array": {
-        const mapped = run2(def.element);
+        const mapped = run3(def.element);
         return mapped === def.element ? s2 : clone(s2, { ...def, element: mapped });
       }
       case "tuple": {
@@ -93935,14 +93935,14 @@ function visit(schema, fnOrHandlers) {
         let changed = false;
         const newItems = [];
         for (const item of oldItems) {
-          const mapped = run2(item);
+          const mapped = run3(item);
           if (mapped !== item)
             changed = true;
           newItems.push(mapped);
         }
         let newRest = def.rest;
         if (def.rest) {
-          newRest = run2(def.rest);
+          newRest = run3(def.rest);
           if (newRest !== def.rest)
             changed = true;
         }
@@ -93950,12 +93950,12 @@ function visit(schema, fnOrHandlers) {
       }
       case "record":
       case "map": {
-        const newKey = run2(def.keyType);
-        const newVal = run2(def.valueType);
+        const newKey = run3(def.keyType);
+        const newVal = run3(def.valueType);
         return newKey === def.keyType && newVal === def.valueType ? s2 : clone(s2, { ...def, keyType: newKey, valueType: newVal });
       }
       case "set": {
-        const newVal = run2(def.valueType);
+        const newVal = run3(def.valueType);
         return newVal === def.valueType ? s2 : clone(s2, { ...def, valueType: newVal });
       }
       case "union": {
@@ -93963,7 +93963,7 @@ function visit(schema, fnOrHandlers) {
         let changed = false;
         const newOptions = [];
         for (const opt of oldOptions) {
-          const mapped = run2(opt);
+          const mapped = run3(opt);
           if (mapped !== opt)
             changed = true;
           newOptions.push(mapped);
@@ -93971,8 +93971,8 @@ function visit(schema, fnOrHandlers) {
         return changed ? clone(s2, { ...def, options: newOptions }) : s2;
       }
       case "intersection": {
-        const newLeft = run2(def.left);
-        const newRight = run2(def.right);
+        const newLeft = run3(def.left);
+        const newRight = run3(def.right);
         return newLeft === def.left && newRight === def.right ? s2 : clone(s2, { ...def, left: newLeft, right: newRight });
       }
       case "optional":
@@ -93984,23 +93984,23 @@ function visit(schema, fnOrHandlers) {
       case "nonoptional":
       case "promise":
       case "success": {
-        const newInner = run2(def.innerType);
+        const newInner = run3(def.innerType);
         return newInner === def.innerType ? s2 : clone(s2, { ...def, innerType: newInner });
       }
       case "pipe": {
-        const newIn = run2(def.in);
-        const newOut = run2(def.out);
+        const newIn = run3(def.in);
+        const newOut = run3(def.out);
         return newIn === def.in && newOut === def.out ? s2 : clone(s2, { ...def, in: newIn, out: newOut });
       }
       case "function": {
-        const newInput = run2(def.input);
-        const newOutput = run2(def.output);
+        const newInput = run3(def.input);
+        const newOutput = run3(def.output);
         return newInput === def.input && newOutput === def.output ? s2 : clone(s2, { ...def, input: newInput, output: newOutput });
       }
       case "lazy": {
         const original = def.getter;
         const { _cachedInner, ...rest2 } = def;
-        return clone(s2, { ...rest2, getter: () => run2(original()) });
+        return clone(s2, { ...rest2, getter: () => run3(original()) });
       }
       // A leaf by choice: `parts` are regex fragments, not data positions.
       case "template_literal":
@@ -94031,7 +94031,7 @@ function visit(schema, fnOrHandlers) {
       }
     }
   }
-  return run2(schema);
+  return run3(schema);
 }
 
 // node_modules/@modelcontextprotocol/sdk/dist/esm/server/zod-compat.js
@@ -102932,7 +102932,8 @@ async function transcribe(file2, { engine = "whisper", terms, timestamps = false
 }
 async function ocr(file2, { waitMs = 15 * 6e4, docx = false } = {}) {
   const form = new FormData();
-  form.set("file", new Blob([await fs2.readFile(file2)]), path3.basename(file2));
+  if (typeof file2 === "string") form.set("file", new Blob([await fs2.readFile(file2)]), path3.basename(file2));
+  else form.set("file", new Blob([file2.data]), file2.name);
   if (docx) form.set("outputFormats", JSON.stringify(["docx"]));
   const { data } = await call(config2.services.ocr, "/layout-parsing/async", { body: form, timeoutMs: 12e4, retries: 3 });
   const jobId = data.result?.jobId;
@@ -103205,12 +103206,12 @@ ${part}
 }
 
 // src/extract.js
-import { execFile } from "node:child_process";
-import { randomUUID as randomUUID2 } from "node:crypto";
+import { execFile as execFile2 } from "node:child_process";
+import { createHash as createHash2, randomUUID as randomUUID2 } from "node:crypto";
 import fs5 from "node:fs/promises";
-import os4 from "node:os";
+import os5 from "node:os";
 import path5 from "node:path";
-import { promisify } from "node:util";
+import { promisify as promisify2 } from "node:util";
 import { fileURLToPath } from "node:url";
 
 // src/office.js
@@ -103348,8 +103349,77 @@ async function writeMasked(name, text) {
   return p2;
 }
 
-// src/extract.js
+// src/clipboard.js
+import { execFile } from "node:child_process";
+import os3 from "node:os";
+import { promisify } from "node:util";
 var run = promisify(execFile);
+var MAX = 20 * 1024 * 1024;
+var NO_IMAGE = "NO_IMAGE";
+var WIN = `$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.Windows.Forms, System.Drawing
+$img = [System.Windows.Forms.Clipboard]::GetImage()
+if (-not $img) { [Console]::Out.Write('${NO_IMAGE}'); exit 0 }
+$ms = New-Object System.IO.MemoryStream
+$img.Save($ms, [System.Drawing.Imaging.ImageFormat]::Png)
+[Console]::Out.Write([Convert]::ToBase64String($ms.ToArray()))`;
+var MAC = `ObjC.import('AppKit');
+const pb = $.NSPasteboard.generalPasteboard;
+let d = pb.dataForType($.NSPasteboardTypePNG);
+if (d.isNil()) {
+  const t = pb.dataForType($.NSPasteboardTypeTIFF);
+  if (!t.isNil()) d = $.NSBitmapImageRep.imageRepWithData(t).representationUsingTypeProperties($.NSBitmapImageFileTypePNG, $());
+}
+d.isNil() ? '${NO_IMAGE}' : d.base64EncodedStringWithOptions(0).js;`;
+var PNG = Buffer.from([137, 80, 78, 71]);
+function decodeOutput(out) {
+  const s2 = String(out ?? "").trim();
+  if (!s2 || s2 === NO_IMAGE) return null;
+  const buf = Buffer.from(s2, "base64");
+  if (!buf.subarray(0, 4).equals(PNG)) throw new HaiError("HAI_BAD_INPUT", "\uD074\uB9BD\uBCF4\uB4DC \uADF8\uB9BC\uC744 PNG \uB85C \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4");
+  return buf;
+}
+async function readClipboardImage() {
+  const opt = { encoding: "utf8", maxBuffer: MAX * 2, timeout: 3e4, windowsHide: true };
+  let data;
+  try {
+    const p2 = os3.platform();
+    if (p2 === "win32") {
+      const { stdout } = await run("powershell.exe", ["-NoProfile", "-NonInteractive", "-STA", "-ExecutionPolicy", "Bypass", "-EncodedCommand", Buffer.from(WIN, "utf16le").toString("base64")], opt);
+      data = decodeOutput(stdout);
+    } else if (p2 === "darwin") {
+      const { stdout } = await run("osascript", ["-l", "JavaScript", "-e", MAC], opt);
+      data = decodeOutput(stdout);
+    } else {
+      data = await linux();
+    }
+  } catch (err) {
+    if (err instanceof HaiError) throw err;
+    if (process.env.HAI_DEBUG) process.stderr.write(`clipboard: ${String(err?.stderr || err?.message).slice(0, 300)}
+`);
+    throw new HaiError("HAI_BAD_INPUT", "\uD074\uB9BD\uBCF4\uB4DC\uB97C \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. \uB2E4\uC2DC \uCEA1\uCC98\uD55C \uB4A4 \uD574 \uBCF4\uC138\uC694.");
+  }
+  if (!data) throw new HaiError("HAI_BAD_INPUT", '\uD074\uB9BD\uBCF4\uB4DC\uC5D0 \uADF8\uB9BC\uC774 \uC5C6\uC2B5\uB2C8\uB2E4. \uCEA1\uCC98(Windows: Win+Shift+S, macOS: Cmd+Ctrl+Shift+4)\uD55C \uB4A4 \uB2E4\uC2DC \uD558\uC138\uC694. \uD30C\uC77C\uC744 "\uBCF5\uC0AC"\uD55C \uAC83\uC740 \uADF8\uB9BC\uC774 \uC544\uB2D9\uB2C8\uB2E4 \u2014 \uADF8\uB54C\uB294 \uD30C\uC77C \uACBD\uB85C\uB97C \uC8FC\uC138\uC694.');
+  if (data.length > MAX) throw new HaiError("HAI_BAD_INPUT", "\uD074\uB9BD\uBCF4\uB4DC \uADF8\uB9BC\uC774 \uB108\uBB34 \uD07D\uB2C8\uB2E4(20MB \uCD08\uACFC). \uB098\uB220\uC11C \uCEA1\uCC98\uD558\uC138\uC694.");
+  return { data, name: `\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 ${stamp()}.png` };
+}
+async function linux() {
+  for (const [cmd, args] of [["wl-paste", ["--type", "image/png"]], ["xclip", ["-selection", "clipboard", "-t", "image/png", "-o"]]]) {
+    try {
+      const { stdout } = await run(cmd, args, { encoding: "buffer", maxBuffer: MAX * 2, timeout: 3e4 });
+      if (stdout.subarray(0, 4).equals(PNG)) return stdout;
+    } catch {
+    }
+  }
+  return null;
+}
+var stamp = (d2 = /* @__PURE__ */ new Date()) => {
+  const p2 = (n2) => String(n2).padStart(2, "0");
+  return `${d2.getFullYear()}${p2(d2.getMonth() + 1)}${p2(d2.getDate())}-${p2(d2.getHours())}${p2(d2.getMinutes())}${p2(d2.getSeconds())}`;
+};
+
+// src/extract.js
+var run2 = promisify2(execFile2);
 var TEXT = /* @__PURE__ */ new Set([".txt", ".md", ".csv", ".tsv", ".json", ".jsonl", ".log", ".html", ".htm", ".xml", ".yaml", ".yml"]);
 var IMAGE = /* @__PURE__ */ new Set([".png", ".jpg", ".jpeg", ".tif", ".tiff", ".bmp", ".webp"]);
 var AUDIO_OK = /* @__PURE__ */ new Set([".wav", ".mp3", ".ogg", ".flac"]);
@@ -103384,14 +103454,28 @@ async function readText(p2, opts = {}) {
   const key = `${file2}|${st2.mtimeMs}|${st2.size}|${opts.ocr ? 1 : opts.noOcr ? 2 : 0}|${opts.engine ?? ""}|${opts.terms ?? ""}|${opts.timestamps ? 1 : 0}`;
   let hit = cache.get(key);
   if (!hit) {
-    hit = await extract(file2, st2, opts);
-    hit.text = hit.text.replace(/\r\n/g, "\n").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
-    if (!hit.text) throw new Error(hit.via === "stt" ? "\uC74C\uC131\uC5D0\uC11C \uB9D0\uC18C\uB9AC\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4" : "\uAE00\uC790\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4");
-    if (hit.text.length > config2.maxChars) throw new Error(`\uB0B4\uC6A9\uC774 \uB108\uBB34 \uAE41\uB2C8\uB2E4(${hit.text.length.toLocaleString()}\uC790, \uC0C1\uD55C ${config2.maxChars.toLocaleString()}\uC790). \uB098\uB220\uC11C \uB123\uC73C\uC138\uC694.`);
+    hit = tidy(await extract(file2, st2, opts));
     cache.set(key, hit);
     if (cache.size > 50) cache.delete(cache.keys().next().value);
   }
   return { file: file2, ...hit };
+}
+async function readClipboard(img) {
+  img ??= await readClipboardImage();
+  const key = `clipboard|${createHash2("sha256").update(img.data).digest("hex")}`;
+  let hit = cache.get(key);
+  if (!hit) {
+    hit = tidy(await ocrPages(img));
+    cache.set(key, hit);
+    if (cache.size > 50) cache.delete(cache.keys().next().value);
+  }
+  return { file: img.name, ...hit };
+}
+function tidy(hit) {
+  hit.text = hit.text.replace(/\r\n/g, "\n").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  if (!hit.text) throw new Error(hit.via === "stt" ? "\uC74C\uC131\uC5D0\uC11C \uB9D0\uC18C\uB9AC\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4" : "\uAE00\uC790\uB97C \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4");
+  if (hit.text.length > config2.maxChars) throw new Error(`\uB0B4\uC6A9\uC774 \uB108\uBB34 \uAE41\uB2C8\uB2E4(${hit.text.length.toLocaleString()}\uC790, \uC0C1\uD55C ${config2.maxChars.toLocaleString()}\uC790). \uB098\uB220\uC11C \uB123\uC73C\uC138\uC694.`);
+  return hit;
 }
 async function extract(file2, st2, opts) {
   const ext = path5.extname(file2).toLowerCase();
@@ -103503,8 +103587,8 @@ async function toWav(file2) {
   const name = `${randomUUID2()}.wav`;
   const out = path5.join(dir, name);
   const tries = [];
-  if (os4.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file2, out]]);
-  if (os4.platform() === "win32") {
+  if (os5.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file2, out]]);
+  if (os5.platform() === "win32") {
     tries.push([
       "powershell.exe",
       ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-EncodedCommand", Buffer.from(WIN_TO_WAV, "utf16le").toString("base64")],
@@ -103515,7 +103599,7 @@ async function toWav(file2) {
   let why = "";
   for (const [cmd, args, opts] of tries) {
     try {
-      await run(cmd, args, { timeout: 3e5, ...opts });
+      await run2(cmd, args, { timeout: 3e5, ...opts });
       if ((await fs5.stat(out)).size > 44) return out;
     } catch (err) {
       if (process.env.HAI_DEBUG) why += `${cmd}: ${String(err?.stderr || err?.message).slice(0, 300)}
@@ -103524,7 +103608,7 @@ async function toWav(file2) {
   }
   await fs5.rm(out, { force: true });
   if (why) process.stderr.write(why);
-  throw new HaiError("HAI_BAD_INPUT", `${path5.extname(file2)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694${os4.platform() === "win32" ? "(winget install Gyan.FFmpeg)" : ""}.`);
+  throw new HaiError("HAI_BAD_INPUT", `${path5.extname(file2)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694${os5.platform() === "win32" ? "(winget install Gyan.FFmpeg)" : ""}.`);
 }
 var mmss = (sec) => {
   const s2 = Math.floor(Number(sec) || 0);
@@ -103532,14 +103616,14 @@ var mmss = (sec) => {
 };
 
 // src/search.js
-import { createHash as createHash2 } from "node:crypto";
+import { createHash as createHash3 } from "node:crypto";
 import fs6 from "node:fs/promises";
 import path6 from "node:path";
 var CHUNK = 700;
 var OVERLAP = 120;
 var MAX_FILES = 400;
 var SKIP_DIR = /^(\.|node_modules$|__pycache__$|Library$)/;
-var indexPath = async (dir) => path6.join(await ensureDataDir(), "index", `${createHash2("sha256").update(dir).digest("hex").slice(0, 16)}.json`);
+var indexPath = async (dir) => path6.join(await ensureDataDir(), "index", `${createHash3("sha256").update(dir).digest("hex").slice(0, 16)}.json`);
 function spans(text, size2 = CHUNK, overlap = OVERLAP) {
   const out = [];
   let start = 0;
@@ -103834,7 +103918,7 @@ async function fillTimetable(buf, rows) {
 }
 
 // src/index.js
-var VERSION2 = "0.5.0";
+var VERSION2 = "0.6.0";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -103941,11 +104025,20 @@ var audioSchema = {
   engine: external_exports.enum(["whisper", "qwen"]).optional().describe("\uB179\uC74C\uC77C \uB54C: whisper(\uAE30\uBCF8, \uD68C\uC758\xB7\uC77C\uBC18 \uB179\uC74C) / qwen(\uC804\uD654\xB7\uC0C1\uB2F4\xB7\uC7A1\uC74C \uB9CE\uC740 \uB179\uC74C)"),
   terms: external_exports.string().optional().describe('\uB179\uC74C\uC77C \uB54C: \uC778\uC2DD\uC744 \uB3D5\uB294 \uACE0\uC720\uBA85\uC0AC\xB7\uC6A9\uC5B4(\uC27C\uD45C). \uC608: "\uD5E5\uD1A0, \uD2D4\uC6C0, \uBC95\uC778\uCC28\uB7C9"')
 };
+var pathSchema = external_exports.string().optional().describe("\uB85C\uCEEC \uD30C\uC77C \uACBD\uB85C (clipboard \uB97C \uC4F0\uBA74 \uBE44\uC6B4\uB2E4)");
+var clipboardSchema = external_exports.boolean().optional().describe('true \uBA74 path \uB300\uC2E0 \uD074\uB9BD\uBCF4\uB4DC\uC758 \uCEA1\uCC98 \uADF8\uB9BC\uC744 \uC77D\uB294\uB2E4(\uBA54\uBAA8\uB9AC\uB85C\uB9CC HAI OCR \uC5D0 \uBCF4\uB0B8\uB2E4 \u2014 \uD30C\uC77C\uC744 \uB9CC\uB4E4\uC9C0 \uC54A\uC544 \uC800\uC7A5\uD558\uBA74 DRM \uC774 \uAC78\uB9AC\uB294 PC \uC5D0\uC11C\uB3C4 \uB41C\uB2E4). \uC0AC\uC6A9\uC790\uAC00 "\uD074\uB9BD\uBCF4\uB4DC", "\uBC29\uAE08 \uCEA1\uCC98\uD55C \uAC83"\uC774\uB77C\uACE0 \uD560 \uB54C. \uCEA1\uCC98\uB97C \uCC44\uD305\uC5D0 \uBD99\uC5EC \uB123\uAC8C \uD558\uC9C0 \uC54A\uB294\uB2E4');
+function readSource({ path: p2, clipboard }, opts) {
+  if (clipboard && p2) throw new Error("path \uC640 clipboard \uC911 \uD558\uB098\uB9CC \uC8FC\uC138\uC694");
+  if (clipboard) return readClipboard();
+  if (!p2) throw new Error("path \uB098 clipboard: true \uC911 \uD558\uB098\uAC00 \uD544\uC694\uD569\uB2C8\uB2E4");
+  return readText(p2, opts);
+}
 var server = new McpServer({ name: "hai", version: VERSION2 }, {
   instructions: [
     "\uC0AC\uB0B4 AI(HAI) \uB3C4\uAD6C. \uAC1C\uC778\uC815\uBCF4\xB7\uBBFC\uAC10\uC815\uBCF4\uAC00 \uB4E0 \uB85C\uCEEC \uD30C\uC77C\uC740 Read \uB300\uC2E0 \uC774 \uB3C4\uAD6C\uB85C \uC77D\uB294\uB2E4 \u2014 \uC6D0\uBB38\uC740 HAI \uB9CC \uC77D\uACE0 Claude \uC5D0\uB294 \uAC00\uB9B0 \uAE00\uC774\uB098 \uB2F5\uB9CC \uC628\uB2E4.",
     `\uC77D\uB294 \uD615\uC2DD: ${SUPPORTED.join(" ")} (\uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4\uC740 OCR, \uB179\uC74C\uC740 \uBC1B\uC544\uC4F0\uAE30\uAC00 \uC790\uB3D9\uC73C\uB85C \uBD99\uB294\uB2E4).`,
-    "\uC694\uC57D\xB7\uCC3E\uAE30 \u2192 hai_ask_file, \uC5EC\uB7EC \uD30C\uC77C \u2192 hai_ask_files, \uAC19\uC774 \uB2E4\uB4EC\uAE30\xB7\uC9D1\uACC4 \u2192 hai_mask_file, \uC2E4\uBA85 \uACB0\uACFC\uBB3C \u2192 hai_restore, \uBB38\uC11C \uCC3E\uAE30 \u2192 hai_search."
+    "\uC694\uC57D\xB7\uCC3E\uAE30 \u2192 hai_ask_file, \uC5EC\uB7EC \uD30C\uC77C \u2192 hai_ask_files, \uAC19\uC774 \uB2E4\uB4EC\uAE30\xB7\uC9D1\uACC4 \u2192 hai_mask_file, \uC2E4\uBA85 \uACB0\uACFC\uBB3C \u2192 hai_restore, \uBB38\uC11C \uCC3E\uAE30 \u2192 hai_search.",
+    "\uAC1C\uC778\uC815\uBCF4\uAC00 \uBCF4\uC774\uB294 \uD654\uBA74 \uCEA1\uCC98\uB294 \uCC44\uD305\uC5D0 \uBD99\uC5EC \uB123\uAC8C \uD558\uC9C0 \uB9D0\uACE0 \uD074\uB9BD\uBCF4\uB4DC\uC5D0 \uB454 \uCC44 hai_ask_file\xB7hai_mask_file\xB7hai_ocr \uC5D0 clipboard: true \uB85C \uC77D\uB294\uB2E4."
   ].join(" ")
 });
 server.registerTool("hai_ask_file", {
@@ -103953,10 +104046,12 @@ server.registerTool("hai_ask_file", {
   description: [
     "\uB85C\uCEEC \uD30C\uC77C\uC744 \uC0AC\uB0B4 AI(HAI)\uB9CC \uC77D\uACE0 instruction \uC5D0 \uB300\uD55C \uB2F5\uB9CC \uB3CC\uB824\uC900\uB2E4. \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4. \uB2F5\uC5D0 \uC11E\uC778 \uAC1C\uC778\uC815\uBCF4\uB3C4 [\uC774\uB9841] \uAC19\uC740 \uC790\uB9AC\uD45C\uC2DC\uB85C \uAC00\uB9B0\uB2E4(mask_id \uB85C hai_restore \uAC00\uB2A5).",
     "\uBB38\uC11C(pdf\xB7docx\xB7xlsx\xB7hwpx\xB7csv\xB7txt), \uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4(\uC790\uB3D9 OCR), \uB179\uC74C(wav\xB7mp3\xB7m4a \uB4F1, \uC790\uB3D9 \uBC1B\uC544\uC4F0\uAE30) \uBAA8\uB450 \uB41C\uB2E4.",
-    "\uC694\uC57D\xB7\uC870\uD56D \uCC3E\uAE30\xB7\uD68C\uC758\uB85D \uC791\uC131\xB7\uBAA9\uB85D \uBF51\uAE30\uC5D0 \uC4F4\uB2E4. \uC815\uD655\uD55C \uAC1C\uC218\xB7\uD569\uACC4\uAC00 \uD544\uC694\uD558\uBA74 hai_mask_file \uB85C \uBC1B\uC544 \uC9C1\uC811 \uC13C\uB2E4(LLM \uC740 \uAE34 \uAE00\uC758 \uAC1C\uC218\uB97C \uC790\uC8FC \uD2C0\uB9B0\uB2E4)."
+    "\uC694\uC57D\xB7\uC870\uD56D \uCC3E\uAE30\xB7\uD68C\uC758\uB85D \uC791\uC131\xB7\uBAA9\uB85D \uBF51\uAE30\uC5D0 \uC4F4\uB2E4. \uC815\uD655\uD55C \uAC1C\uC218\xB7\uD569\uACC4\uAC00 \uD544\uC694\uD558\uBA74 hai_mask_file \uB85C \uBC1B\uC544 \uC9C1\uC811 \uC13C\uB2E4(LLM \uC740 \uAE34 \uAE00\uC758 \uAC1C\uC218\uB97C \uC790\uC8FC \uD2C0\uB9B0\uB2E4).",
+    "\uD30C\uC77C \uB300\uC2E0 \uD074\uB9BD\uBCF4\uB4DC\uC758 \uCEA1\uCC98\uB3C4 \uB41C\uB2E4(clipboard: true)."
   ].join(" "),
   inputSchema: {
-    path: external_exports.string(),
+    path: pathSchema,
+    clipboard: clipboardSchema,
     instruction: external_exports.string().describe('HAI \uC5D0 \uC2DC\uD0AC \uC77C. \uC608: "\uACC4\uC57D \uAE30\uAC04\xB7\uD574\uC9C0 \uC870\uAC74\xB7\uC704\uC57D\uAE08\uC744 \uC870\uD56D \uBC88\uD638\uC640 \uD568\uAED8 \uD45C\uB85C", "\uD68C\uC758\uB85D: \uC548\uAC74\xB7\uACB0\uC815\xB7\uD560 \uC77C(\uB2F4\uB2F9\xB7\uAE30\uD55C)"'),
     model: modelSchema,
     thinking: thinkingSchema,
@@ -103964,9 +104059,9 @@ server.registerTool("hai_ask_file", {
     mask_id: maskIdSchema,
     ...audioSchema
   }
-}, guard(async ({ path: p2, instruction, model, thinking, extra, mask_id, engine, terms }, ex) => {
-  progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911");
-  const { file: file2, text, via: how, meta: meta3 } = await readText(p2, { engine, terms });
+}, guard(async ({ path: p2, clipboard, instruction, model, thinking, extra, mask_id, engine, terms }, ex) => {
+  progress(ex, clipboard ? "\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 \uC77D\uB294 \uC911" : "\uD30C\uC77C \uC77D\uB294 \uC911");
+  const { file: file2, text, via: how, meta: meta3 } = await readSource({ path: p2, clipboard }, { engine, terms });
   progress(ex, "HAI \uAC00 \uC77D\uB294 \uC911");
   const answer = await askText(text, instruction, { model, thinking }, (m2) => progress(ex, m2));
   const vault = vaultOf(mask_id);
@@ -104036,14 +104131,14 @@ server.registerTool("hai_mask_file", {
   title: "\uD30C\uC77C\uC744 \uAC00\uB824\uC11C \uC77D\uAE30",
   description: [
     "\uB85C\uCEEC \uD30C\uC77C\uC744 HAI \uAC00 \uBA3C\uC800 \uC77D\uC5B4 \uAC1C\uC778\uC815\uBCF4\uB97C [\uC774\uB9841]\xB7[\uD734\uB300\uC804\uD6541] \uAC19\uC740 \uC790\uB9AC\uD45C\uC2DC\uB85C \uBC14\uAFBC \uAE00\uC744 \uB3CC\uB824\uC900\uB2E4. \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4.",
-    "\uBCF4\uACE0\uC11C \uCD08\uC548\xB7\uD45C \uC815\uB9AC\xB7\uAC1C\uC218 \uC138\uAE30\uCC98\uB7FC Claude \uAC00 \uAE00 \uC804\uCCB4\uB97C \uB2E4\uB904\uC57C \uD560 \uB54C \uC4F4\uB2E4. \uC2A4\uCE94\xB7\uC0AC\uC9C4\xB7\uB179\uC74C\uB3C4 \uB41C\uB2E4.",
+    "\uBCF4\uACE0\uC11C \uCD08\uC548\xB7\uD45C \uC815\uB9AC\xB7\uAC1C\uC218 \uC138\uAE30\uCC98\uB7FC Claude \uAC00 \uAE00 \uC804\uCCB4\uB97C \uB2E4\uB904\uC57C \uD560 \uB54C \uC4F4\uB2E4. \uC2A4\uCE94\xB7\uC0AC\uC9C4\xB7\uB179\uC74C, \uD074\uB9BD\uBCF4\uB4DC\uC758 \uCEA1\uCC98(clipboard: true)\uB3C4 \uB41C\uB2E4.",
     "\uAC19\uC740 \uBB38\uC11C\uB97C \uB2E4\uC2DC \uAC00\uB9B4 \uB54C\uB294 mask_id \uB97C \uB118\uACA8 \uBC88\uD638\uB97C \uB9DE\uCD98\uB2E4. \uACB0\uACFC\uBB3C\uC744 \uC2E4\uBA85\uC73C\uB85C \uB0A8\uAE30\uB824\uBA74 hai_restore.",
     "\uC790\uB3D9 \uAC00\uB9BC\uC774\uB77C \uB193\uCE60 \uC218 \uC788\uB2E4 \u2014 \uC2E4\uBA85\xB7\uC5F0\uB77D\uCC98\uAC00 \uBCF4\uC774\uBA74 \uC0AC\uC6A9\uC790\uC5D0\uAC8C \uC54C\uB9AC\uACE0 extra \uB85C \uC720\uD615\uC744 \uB354\uD574 \uB2E4\uC2DC \uBD80\uB978\uB2E4."
   ].join(" "),
-  inputSchema: { path: external_exports.string(), extra: extraSchema, mask_id: maskIdSchema, ...audioSchema }
-}, guard(async ({ path: p2, extra, mask_id, engine, terms }, ex) => {
-  progress(ex, "\uD30C\uC77C \uC77D\uB294 \uC911");
-  const { file: file2, text, via: how, table } = await readText(p2, { engine, terms });
+  inputSchema: { path: pathSchema, clipboard: clipboardSchema, extra: extraSchema, mask_id: maskIdSchema, ...audioSchema }
+}, guard(async ({ path: p2, clipboard, extra, mask_id, engine, terms }, ex) => {
+  progress(ex, clipboard ? "\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 \uC77D\uB294 \uC911" : "\uD30C\uC77C \uC77D\uB294 \uC911");
+  const { file: file2, text, via: how, table } = await readSource({ path: p2, clipboard }, { engine, terms });
   const vault = vaultOf(mask_id);
   progress(ex, "\uAC1C\uC778\uC815\uBCF4 \uCC3E\uB294 \uC911");
   const masked = await maskAll(text, vault, extra, { table });
@@ -104102,14 +104197,17 @@ ${dur(meta3?.seconds)} \uB179\uC74C \xB7 ${text.length.toLocaleString()}\uC790 \
 }));
 server.registerTool("hai_ocr", {
   title: "\uC2A4\uCE94\xB7\uC0AC\uC9C4\uC5D0\uC11C \uAE00\uC790 \uBF51\uAE30",
-  description: "\uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4(png\xB7jpg\xB7tif)\uC744 HAI OCR(\uD45C\xB7\uB808\uC774\uC544\uC6C3 \uC778\uC2DD)\uB85C \uAE00\uB85C \uBC14\uAFD4 \uB0B4 PC \uD30C\uC77C\uB85C \uC800\uC7A5\uD55C\uB2E4. format: md(\uAE30\uBCF8, Markdown) \uB610\uB294 docx(\uACE0\uCE60 \uC218 \uC788\uB294 \uC6CC\uB4DC \uD30C\uC77C \u2014 \uC5EC\uB7EC \uCABD\uC740 \uCABD \uACBD\uACC4\uC5D0\uC11C \uC798\uB9B0 \uD45C\uB97C \uC774\uC5B4 \uD55C \uBC8C\uB85C). \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4. \uB0B4\uC6A9\uC744 \uBB3B\uAC70\uB098 \uB2E4\uB4EC\uC744 \uB54C\uB294 \uC6D0\uBCF8\uC774\uB098 \uC800\uC7A5 \uD30C\uC77C\uC5D0 hai_ask_file\xB7hai_mask_file \uC744 \uC4F4\uB2E4(\uADF8 \uB3C4\uAD6C\uB4E4\uB3C4 \uC2A4\uCE94\uBCF8\uC774\uBA74 OCR \uC744 \uC54C\uC544\uC11C \uD55C\uB2E4).",
-  inputSchema: { path: external_exports.string(), format: external_exports.enum(["md", "docx"]).optional(), out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354\uC758 "<\uC774\uB984> OCR.md" \uB610\uB294 ".docx")') }
-}, guard(async ({ path: p2, format, out_path }, ex) => {
-  const file2 = resolvePath(p2);
-  if (!["pdf", "image"].includes(kindOf(file2))) throw new Error("PDF \uB098 \uC774\uBBF8\uC9C0(png\xB7jpg\xB7tif\xB7bmp\xB7webp)\uB9CC \uB429\uB2C8\uB2E4");
+  description: "\uC2A4\uCE94 PDF\xB7\uC0AC\uC9C4(png\xB7jpg\xB7tif) \uB610\uB294 \uD074\uB9BD\uBCF4\uB4DC\uC758 \uCEA1\uCC98(clipboard: true)\uB97C HAI OCR(\uD45C\xB7\uB808\uC774\uC544\uC6C3 \uC778\uC2DD)\uB85C \uAE00\uB85C \uBC14\uAFD4 \uB0B4 PC \uD30C\uC77C\uB85C \uC800\uC7A5\uD55C\uB2E4. format: md(\uAE30\uBCF8, Markdown) \uB610\uB294 docx(\uACE0\uCE60 \uC218 \uC788\uB294 \uC6CC\uB4DC \uD30C\uC77C \u2014 \uC5EC\uB7EC \uCABD\uC740 \uCABD \uACBD\uACC4\uC5D0\uC11C \uC798\uB9B0 \uD45C\uB97C \uC774\uC5B4 \uD55C \uBC8C\uB85C). \uC6D0\uBB38\uC740 Claude \uC5D0 \uC624\uC9C0 \uC54A\uB294\uB2E4. \uB0B4\uC6A9\uC744 \uBB3B\uAC70\uB098 \uB2E4\uB4EC\uC744 \uB54C\uB294 \uC6D0\uBCF8\uC774\uB098 \uC800\uC7A5 \uD30C\uC77C\uC5D0 hai_ask_file\xB7hai_mask_file \uC744 \uC4F4\uB2E4(\uADF8 \uB3C4\uAD6C\uB4E4\uB3C4 \uC2A4\uCE94\uBCF8\uC774\uBA74 OCR \uC744 \uC54C\uC544\uC11C \uD55C\uB2E4).",
+  inputSchema: { path: pathSchema, clipboard: clipboardSchema, format: external_exports.enum(["md", "docx"]).optional(), out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354\uC758 "<\uC774\uB984> OCR.md" \uB610\uB294 ".docx", \uD074\uB9BD\uBCF4\uB4DC\uB294 "\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 <\uC2DC\uAC01> OCR")') }
+}, guard(async ({ path: p2, clipboard, format, out_path }, ex) => {
+  if (clipboard && p2) throw new Error("path \uC640 clipboard \uC911 \uD558\uB098\uB9CC \uC8FC\uC138\uC694");
+  if (!clipboard && !p2) throw new Error("path \uB098 clipboard: true \uC911 \uD558\uB098\uAC00 \uD544\uC694\uD569\uB2C8\uB2E4");
+  const file2 = clipboard ? await readClipboardImage() : resolvePath(p2);
+  const name = clipboard ? file2.name : file2;
+  if (!clipboard && !["pdf", "image"].includes(kindOf(file2))) throw new Error("PDF \uB098 \uC774\uBBF8\uC9C0(png\xB7jpg\xB7tif\xB7bmp\xB7webp)\uB9CC \uB429\uB2C8\uB2E4");
   progress(ex, "OCR \uC911");
   const ext = format === "docx" ? ".docx" : ".md";
-  const target = out_path ? resolvePath(out_path) : path7.join(config2.rawDir, `${path7.parse(file2).name} OCR${ext}`);
+  const target = out_path ? resolvePath(out_path) : path7.join(config2.rawDir, `${path7.parse(name).name} OCR${ext}`);
   if (format === "docx") {
     const { count, docx } = await ocr(file2, { docx: true });
     if (!docx) throw new Error("HAI \uAC00 \uC6CC\uB4DC \uD30C\uC77C\uC744 \uB3CC\uB824\uC8FC\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. format \uC5C6\uC774(Markdown) \uB2E4\uC2DC \uD574 \uBCF4\uC138\uC694.");
@@ -104117,7 +104215,7 @@ server.registerTool("hai_ocr", {
     return ok(`\uC800\uC7A5: ${saved2}
 ${count}\uCABD \u2192 \uC6CC\uB4DC(docx) \xB7 \uC6D0\uBB38\uC740 Claude \uC5D0 \uBCF4\uC774\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC6CC\uB4DC\uB85C \uC5F4\uC5B4 \uACE0\uCE58\uC138\uC694.`);
   }
-  const { text, meta: meta3 } = await readText(file2, { ocr: true });
+  const { text, meta: meta3 } = clipboard ? await readClipboard(file2) : await readText(file2, { ocr: true });
   const saved = await writeRaw(target, `${text}
 `);
   return ok(`\uC800\uC7A5: ${saved}
@@ -104179,7 +104277,7 @@ ${await maskAll(r2.content, vault)}
 (\uBAA8\uB378: ${r2.model} \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)})`);
 }));
 async function isProtected(file2) {
-  const fold = os5.platform() === "darwin" || os5.platform() === "win32";
+  const fold = os6.platform() === "darwin" || os6.platform() === "win32";
   const canon = async (p2) => {
     let r2 = path7.resolve(p2);
     try {
@@ -104275,7 +104373,7 @@ server.registerTool("hai_status", {
     `\uBCF4\uD638 \uD3F4\uB354: ${config2.protectedDirs.length ? config2.protectedDirs.join(", ") : "\uC5C6\uC74C(\uC124\uC815 \uAD8C\uC7A5)"}`
   ];
   if (!via2) return ok([...lines, "\u2192 \uB85C\uADF8\uC778\uC774 \uD544\uC694\uD569\uB2C8\uB2E4. hai_login \uC744 \uC2E4\uD589\uD558\uBA74 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC5F4\uB9AC\uACE0, \uD5E5\uD1A0 \uC774\uBA54\uC77C\uB85C \uB85C\uADF8\uC778\uD558\uBA74 \uB05D\uB0A9\uB2C8\uB2E4."].join("\n"));
-  lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os5.homedir(), "~")}`);
+  lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os6.homedir(), "~")}`);
   lines.push(sandboxLine());
   const LABEL = { qwen: "Qwen(\uBD84\uC11D\xB7\uCD94\uB860)", gemma: "Gemma(\uB300\uD654\xB7\uC0AC\uC9C4)", embed: "\uBB38\uC11C \uAC80\uC0C9(KURE)", whisper: "\uBC1B\uC544\uC4F0\uAE30 whisper", asr: "\uBC1B\uC544\uC4F0\uAE30 qwen3-asr", ocr: "OCR(paddleocr)" };
   const rows = await probe();
@@ -104288,14 +104386,14 @@ server.registerTool("hai_status", {
 function sandboxLine() {
   let st2 = {};
   try {
-    st2 = JSON.parse(readFileSync(path7.join(os5.homedir(), ".claude", "settings.json"), "utf8"));
+    st2 = JSON.parse(readFileSync(path7.join(os6.homedir(), ".claude", "settings.json"), "utf8"));
   } catch {
   }
   const sb = st2.sandbox ?? {};
-  const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path7.resolve(String(d2).replace(/^~(?=\/|$)/, os5.homedir())));
+  const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path7.resolve(String(d2).replace(/^~(?=\/|$)/, os6.homedir())));
   const want = [...config2.protectedDirs, config2.rawDir];
   const covered = want.filter((w2) => deny.some((d2) => w2 === d2 || w2.startsWith(d2 + path7.sep)));
-  if (os5.platform() === "win32") return "\uBCF4\uD638: Windows \uB294 \uC0CC\uB4DC\uBC15\uC2A4\uAC00 \uC5C6\uC5B4 \uAC00\uB4DC \uD6C5(\uBA85\uB839 \uAE00\uC790 \uAC80\uC0AC)\uB9CC \uB3D9\uC791\uD569\uB2C8\uB2E4 \u2014 /hai:protect \uB85C \uAE30\uBCF8 \uB3C4\uAD6C \uCC28\uB2E8 \uADDC\uCE59\uC744 \uB354\uD558\uACE0, \uBBFC\uAC10\uD55C \uD3F4\uB354\uC5D0\uC11C Claude \uB97C \uC2DC\uC791\uD558\uC9C0 \uB9C8\uC138\uC694";
+  if (os6.platform() === "win32") return "\uBCF4\uD638: Windows \uB294 \uC0CC\uB4DC\uBC15\uC2A4\uAC00 \uC5C6\uC5B4 \uAC00\uB4DC \uD6C5(\uBA85\uB839 \uAE00\uC790 \uAC80\uC0AC)\uB9CC \uB3D9\uC791\uD569\uB2C8\uB2E4 \u2014 /hai:protect \uB85C \uAE30\uBCF8 \uB3C4\uAD6C \uCC28\uB2E8 \uADDC\uCE59\uC744 \uB354\uD558\uACE0, \uBBFC\uAC10\uD55C \uD3F4\uB354\uC5D0\uC11C Claude \uB97C \uC2DC\uC791\uD558\uC9C0 \uB9C8\uC138\uC694";
   if (!sb.enabled) return "\uC0CC\uB4DC\uBC15\uC2A4: \uAEBC\uC9D0 \u2014 /hai:protect \uB85C \uCF1C\uBA74 \uBCF4\uD638 \uD3F4\uB354\uB97C \uC6B4\uC601\uCCB4\uC81C \uC218\uC900\uC5D0\uC11C \uB9C9\uC2B5\uB2C8\uB2E4(\uAD8C\uC7A5)";
   return covered.length === want.length ? `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uBCF4\uD638 \uD3F4\uB354\xB7\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354 \uC77D\uAE30 \uCC28\uB2E8\uB428(${covered.length}\uACF3)` : `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uC77D\uAE30 \uCC28\uB2E8\uC5D0 \uBE60\uC9C4 \uACF3 ${want.length - covered.length}\uACF3 \u2014 /hai:protect \uB85C \uCD94\uAC00\uD558\uC138\uC694`;
 }

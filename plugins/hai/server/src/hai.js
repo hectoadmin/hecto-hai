@@ -156,7 +156,9 @@ export async function transcribe(file, { engine = 'whisper', terms, timestamps =
  */
 export async function ocr(file, { waitMs = 15 * 60_000, docx = false } = {}) {
   const form = new FormData();
-  form.set('file', new Blob([await fs.readFile(file)]), path.basename(file));
+  // file: 경로, 또는 { data: Buffer, name } — 클립보드 캡처처럼 디스크에 없는 그림
+  if (typeof file === 'string') form.set('file', new Blob([await fs.readFile(file)]), path.basename(file));
+  else form.set('file', new Blob([file.data]), file.name);
   if (docx) form.set('outputFormats', JSON.stringify(['docx']));
   const { data } = await call(config.services.ocr, '/layout-parsing/async', { body: form, timeoutMs: 120_000, retries: 3 });
   const jobId = data.result?.jobId;
