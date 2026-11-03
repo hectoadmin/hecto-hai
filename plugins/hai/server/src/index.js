@@ -7,6 +7,7 @@
  *   hai_restore    자리표시가 든 글을 실명으로 되돌려 내 PC 파일로만 저장
  *   hai_transcribe 녹음 → 받아쓰기 파일 (whisper·qwen3-asr)
  *   hai_ocr        스캔 PDF·사진 → 글 파일 (paddleocr)
+ *   (ask_file·mask_file·ocr 은 clipboard: true 로 클립보드 캡처도 읽는다 — 파일을 만들지 않아 저장 즉시 DRM 이 걸리는 PC 에서 쓴다)
  *   hai_search     폴더 문서에서 뜻으로 찾기 (kure-embedding)
  *   hai_chat       Qwen·Gemma 에 바로 묻기(이미지 포함, 추론 모드)
  *   hai_status     로그인·서비스 연결 점검
@@ -26,13 +27,14 @@ import { chat, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { login, logout, loginUser } from './login.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
 import { findSpans, chunk } from './ner.js';
-import { readText, resolvePath, kindOf, SUPPORTED } from './extract.js';
+import { readText, readClipboard, resolvePath, kindOf, SUPPORTED } from './extract.js';
+import { readClipboardImage } from './clipboard.js';
 import { writeRaw, writeMasked, rawFiles } from './ledger.js';
 import { search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.5.1';
+export const VERSION = '0.6.1';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -124,11 +126,24 @@ const audioSchema = {
   terms: z.string().optional().describe('녹음일 때: 인식을 돕는 고유명사·용어(쉼표). 예: "헥토, 틔움, 법인차량"'),
 };
 
+const pathSchema = z.string().optional().describe('로컬 파일 경로 (clipboard 를 쓰면 비운다)');
+const clipboardSchema = z.boolean().optional()
+  .describe('true 면 path 대신 클립보드의 캡처 그림을 읽는다(메모리로만 HAI OCR 에 보낸다 — 파일을 만들지 않아 저장하면 DRM 이 걸리는 PC 에서도 된다). 사용자가 "클립보드", "방금 캡처한 것"이라고 할 때. 캡처를 채팅에 붙여 넣게 하지 않는다');
+
+/** path 또는 클립보드 → readText 결과 */
+function readSource({ path: p, clipboard }, opts) {
+  if (clipboard && p) throw new Error('path 와 clipboard 중 하나만 주세요');
+  if (clipboard) return readClipboard();
+  if (!p) throw new Error('path 나 clipboard: true 중 하나가 필요합니다');
+  return readText(p, opts);
+}
+
 const server = new McpServer({ name: 'hai', version: VERSION }, {
   instructions: [
     '사내 AI(HAI) 도구. 개인정보·민감정보가 든 로컬 파일은 Read 대신 이 도구로 읽는다 — 원문은 HAI 만 읽고 Claude 에는 가린 글이나 답만 온다.',
     `읽는 형식: ${SUPPORTED.join(' ')} (스캔 PDF·사진은 OCR, 녹음은 받아쓰기가 자동으로 붙는다).`,
     '요약·찾기 → hai_ask_file, 여러 파일 → hai_ask_files, 같이 다듬기·집계 → hai_mask_file, 실명 결과물 → hai_restore, 문서 찾기 → hai_search.',
+    '개인정보가 보이는 화면 캡처는 채팅에 붙여 넣게 하지 말고 클립보드에 둔 채 hai_ask_file·hai_mask_file·hai_ocr 에 clipboard: true 로 읽는다.',
   ].join(' '),
 });
 
@@ -138,12 +153,13 @@ server.registerTool('hai_ask_file', {
     '로컬 파일을 사내 AI(HAI)만 읽고 instruction 에 대한 답만 돌려준다. 원문은 Claude 에 오지 않는다. 답에 섞인 개인정보도 [이름1] 같은 자리표시로 가린다(mask_id 로 hai_restore 가능).',
     '문서(pdf·docx·xlsx·hwpx·csv·txt), 스캔 PDF·사진(자동 OCR), 녹음(wav·mp3·m4a 등, 자동 받아쓰기) 모두 된다.',
     '요약·조항 찾기·회의록 작성·목록 뽑기에 쓴다. 정확한 개수·합계가 필요하면 hai_mask_file 로 받아 직접 센다(LLM 은 긴 글의 개수를 자주 틀린다).',
+    '파일 대신 클립보드의 캡처도 된다(clipboard: true).',
   ].join(' '),
-  inputSchema: { path: z.string(), instruction: z.string().describe('HAI 에 시킬 일. 예: "계약 기간·해지 조건·위약금을 조항 번호와 함께 표로", "회의록: 안건·결정·할 일(담당·기한)"'),
+  inputSchema: { path: pathSchema, clipboard: clipboardSchema, instruction: z.string().describe('HAI 에 시킬 일. 예: "계약 기간·해지 조건·위약금을 조항 번호와 함께 표로", "회의록: 안건·결정·할 일(담당·기한)"'),
     model: modelSchema, thinking: thinkingSchema, extra: extraSchema, mask_id: maskIdSchema, ...audioSchema },
-}, guard(async ({ path: p, instruction, model, thinking, extra, mask_id, engine, terms }, ex) => {
-  progress(ex, '파일 읽는 중');
-  const { file, text, via: how, meta } = await readText(p, { engine, terms });
+}, guard(async ({ path: p, clipboard, instruction, model, thinking, extra, mask_id, engine, terms }, ex) => {
+  progress(ex, clipboard ? '클립보드 캡처 읽는 중' : '파일 읽는 중');
+  const { file, text, via: how, meta } = await readSource({ path: p, clipboard }, { engine, terms });
   progress(ex, 'HAI 가 읽는 중');
   const answer = await askText(text, instruction, { model, thinking }, (m) => progress(ex, m));
   const vault = vaultOf(mask_id);
@@ -204,14 +220,14 @@ server.registerTool('hai_mask_file', {
   title: '파일을 가려서 읽기',
   description: [
     '로컬 파일을 HAI 가 먼저 읽어 개인정보를 [이름1]·[휴대전화1] 같은 자리표시로 바꾼 글을 돌려준다. 원문은 Claude 에 오지 않는다.',
-    '보고서 초안·표 정리·개수 세기처럼 Claude 가 글 전체를 다뤄야 할 때 쓴다. 스캔·사진·녹음도 된다.',
+    '보고서 초안·표 정리·개수 세기처럼 Claude 가 글 전체를 다뤄야 할 때 쓴다. 스캔·사진·녹음, 클립보드의 캡처(clipboard: true)도 된다.',
     '같은 문서를 다시 가릴 때는 mask_id 를 넘겨 번호를 맞춘다. 결과물을 실명으로 남기려면 hai_restore.',
     '자동 가림이라 놓칠 수 있다 — 실명·연락처가 보이면 사용자에게 알리고 extra 로 유형을 더해 다시 부른다.',
   ].join(' '),
-  inputSchema: { path: z.string(), extra: extraSchema, mask_id: maskIdSchema, ...audioSchema },
-}, guard(async ({ path: p, extra, mask_id, engine, terms }, ex) => {
-  progress(ex, '파일 읽는 중');
-  const { file, text, via: how, table } = await readText(p, { engine, terms });
+  inputSchema: { path: pathSchema, clipboard: clipboardSchema, extra: extraSchema, mask_id: maskIdSchema, ...audioSchema },
+}, guard(async ({ path: p, clipboard, extra, mask_id, engine, terms }, ex) => {
+  progress(ex, clipboard ? '클립보드 캡처 읽는 중' : '파일 읽는 중');
+  const { file, text, via: how, table } = await readSource({ path: p, clipboard }, { engine, terms });
   const vault = vaultOf(mask_id);
   progress(ex, '개인정보 찾는 중');
   const masked = await maskAll(text, vault, extra, { table });
@@ -260,21 +276,24 @@ server.registerTool('hai_transcribe', {
 
 server.registerTool('hai_ocr', {
   title: '스캔·사진에서 글자 뽑기',
-  description: '스캔 PDF·사진(png·jpg·tif)을 HAI OCR(표·레이아웃 인식)로 글로 바꿔 내 PC 파일로 저장한다. format: md(기본, Markdown) 또는 docx(고칠 수 있는 워드 파일 — 여러 쪽은 쪽 경계에서 잘린 표를 이어 한 벌로). 원문은 Claude 에 오지 않는다. 내용을 묻거나 다듬을 때는 원본이나 저장 파일에 hai_ask_file·hai_mask_file 을 쓴다(그 도구들도 스캔본이면 OCR 을 알아서 한다).',
-  inputSchema: { path: z.string(), format: z.enum(['md', 'docx']).optional(), out_path: z.string().optional().describe('저장 위치(기본: 원문 결과 폴더의 "<이름> OCR.md" 또는 ".docx")') },
-}, guard(async ({ path: p, format, out_path }, ex) => {
-  const file = resolvePath(p);
-  if (!['pdf', 'image'].includes(kindOf(file))) throw new Error('PDF 나 이미지(png·jpg·tif·bmp·webp)만 됩니다');
+  description: '스캔 PDF·사진(png·jpg·tif) 또는 클립보드의 캡처(clipboard: true)를 HAI OCR(표·레이아웃 인식)로 글로 바꿔 내 PC 파일로 저장한다. format: md(기본, Markdown) 또는 docx(고칠 수 있는 워드 파일 — 여러 쪽은 쪽 경계에서 잘린 표를 이어 한 벌로). 원문은 Claude 에 오지 않는다. 내용을 묻거나 다듬을 때는 원본이나 저장 파일에 hai_ask_file·hai_mask_file 을 쓴다(그 도구들도 스캔본이면 OCR 을 알아서 한다).',
+  inputSchema: { path: pathSchema, clipboard: clipboardSchema, format: z.enum(['md', 'docx']).optional(), out_path: z.string().optional().describe('저장 위치(기본: 원문 결과 폴더의 "<이름> OCR.md" 또는 ".docx", 클립보드는 "클립보드 캡처 <시각> OCR")') },
+}, guard(async ({ path: p, clipboard, format, out_path }, ex) => {
+  if (clipboard && p) throw new Error('path 와 clipboard 중 하나만 주세요');
+  if (!clipboard && !p) throw new Error('path 나 clipboard: true 중 하나가 필요합니다');
+  const file = clipboard ? await readClipboardImage() : resolvePath(p);
+  const name = clipboard ? file.name : file;
+  if (!clipboard && !['pdf', 'image'].includes(kindOf(file))) throw new Error('PDF 나 이미지(png·jpg·tif·bmp·webp)만 됩니다');
   progress(ex, 'OCR 중');
   const ext = format === 'docx' ? '.docx' : '.md';
-  const target = out_path ? resolvePath(out_path) : path.join(config.rawDir, `${path.parse(file).name} OCR${ext}`);
+  const target = out_path ? resolvePath(out_path) : path.join(config.rawDir, `${path.parse(name).name} OCR${ext}`);
   if (format === 'docx') {
     const { count, docx } = await ocr(file, { docx: true });
     if (!docx) throw new Error('HAI 가 워드 파일을 돌려주지 않았습니다. format 없이(Markdown) 다시 해 보세요.');
     const saved = await writeRaw(target, docx);
     return ok(`저장: ${saved}\n${count}쪽 → 워드(docx) · 원문은 Claude 에 보이지 않습니다. 워드로 열어 고치세요.`);
   }
-  const { text, meta } = await readText(file, { ocr: true });
+  const { text, meta } = clipboard ? await readClipboard(file) : await readText(file, { ocr: true });
   const saved = await writeRaw(target, `${text}\n`);
   return ok(`저장: ${saved}\n${meta?.pages ?? 1}쪽 · ${text.length.toLocaleString()}자 · 원문은 Claude 에 보이지 않습니다.`);
 }));
