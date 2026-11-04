@@ -16,6 +16,7 @@
 | 스캔 계약서·사진 읽기 | "스캔본.pdf 에서 계약 기간만 뽑아줘" | PaddleOCR |
 | 스캔본을 고칠 수 있는 워드로 | "스캔본.pdf 워드 파일로 바꿔줘" | PaddleOCR(docx, 쪽 경계 표 잇기) |
 | 화면 캡처를 파일 없이 읽기 | 캡처만 하고(붙여 넣지 않음) "클립보드 캡처 가려서 읽고 금액 고쳐줘" | PaddleOCR(메모리로만, 저장 즉시 DRM 이 걸리는 PC 용) |
+| 폴더 파일 분류표 | `/hai:files ~/Documents/계약` — 하위 폴더까지 읽어 종류·날짜·상대방 표로. 파일은 옮기지 않음 | Qwen |
 | 폴더 문서 모아 보기 | "계약서 폴더 전부 만기일·자동갱신 표로" | Qwen |
 | 내 문서에서 뜻으로 찾기 | "~/Documents/계약 에서 위약금 조항 찾아줘" | KURE(한국어 임베딩) |
 | 사진·차트 설명, 문장 다듬기 | "이 사진 뭐가 문제인지 HAI 한테 물어봐줘" | Gemma · Qwen |
@@ -88,7 +89,7 @@ plugins/hai/
   .mcp.json                       MCP 서버 등록 → dist/hai-mcp.mjs
   dist/                           묶은 서버 한 파일 + pdf.js 한글 CMap (커밋한다 — 플러그인은 npm install 을 안 한다)
   hooks/guard.mjs                 보호 폴더·원문 파일 Read·Grep·Glob·Bash 차단 (PreToolUse)
-  skills/guide|privacy|doc|minutes|protect|timetable|browser|brief|works|todo|watch|schedule
+  skills/guide|privacy|doc|minutes|protect|timetable|browser|brief|works|todo|watch|files|schedule
   server/src                      config · hai(게이트웨이) · mask · ner · table · extract · office · search · ledger · index
   server/test                     가리기·표·형식·가드·매니페스트 (네트워크 없음)
 ```
