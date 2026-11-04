@@ -29,6 +29,6 @@ test('많으면 세다가 멈춘다', async () => {
 
 test('하위 폴더까지 목록 — 사진·녹음은 media 일 때만', async () => {
   const rel = (l) => l.map((p) => path.relative(root, p).normalize('NFC')).sort();
-  assert.deepEqual(rel(await listFiles(root)), ['a.pdf', 'b.docx', '계약/2026/d.txt', '계약/c.pdf'].map((p) => p.normalize('NFC')).sort());
+  assert.deepEqual(rel(await listFiles(root)), ['a.pdf', 'b.docx', path.join('계약', '2026', 'd.txt'), path.join('계약', 'c.pdf')].map((p) => p.normalize('NFC')).sort());
   assert.equal((await listFiles(root, { media: true })).length, 6);
 });
