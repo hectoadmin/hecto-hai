@@ -30,6 +30,34 @@ export function spans(text, size = CHUNK, overlap = OVERLAP) {
   return out;
 }
 
+/** 폴더(하위 포함)의 읽을 수 있는 파일 목록. 400개까지 */
+export const listFiles = (dir, { media = false } = {}) => walk(dir, media);
+
+/** 폴더 살펴보기 — 내용을 읽지 않고 파일 수·형식·하위 폴더·기간만 센다. 파일 이름을 돌려주지 않는다(실명이 흔하다) */
+export async function folderInfo(dir, { limit = 20_000 } = {}) {
+  const known = new Set(SUPPORTED);
+  const r = { files: 0, readable: 0, media: 0, truncated: false, types: {}, folders: {}, oldest: null, newest: null };
+  async function go(d, top) {
+    for (const ent of await fs.readdir(d, { withFileTypes: true }).catch(() => [])) {
+      if (r.files >= limit) { r.truncated = true; return; }
+      if (SKIP_DIR.test(ent.name) || ent.name.startsWith('~$')) continue;
+      const p = path.join(d, ent.name);
+      if (ent.isDirectory()) { await go(p, top ?? ent.name); continue; }
+      if (!ent.isFile()) continue;
+      const ext = path.extname(ent.name).toLowerCase() || '(확장자 없음)';
+      r.files++;
+      r.types[ext] = (r.types[ext] ?? 0) + 1;
+      const key = top ?? '(이 폴더)';
+      r.folders[key] = (r.folders[key] ?? 0) + 1;
+      if (known.has(ext)) { if (AUDIO.has(ext) || IMAGE.has(ext)) r.media++; else r.readable++; }
+      const m = (await fs.stat(p).catch(() => null))?.mtimeMs;
+      if (m) { r.oldest = Math.min(r.oldest ?? m, m); r.newest = Math.max(r.newest ?? m, m); }
+    }
+  }
+  await go(dir, null);
+  return r;
+}
+
 async function walk(dir, media) {
   const exts = new Set(SUPPORTED.filter((e) => media || (!AUDIO.has(e) && !IMAGE.has(e))));
   const out = [];

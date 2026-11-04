@@ -103855,6 +103855,42 @@ function spans(text, size2 = CHUNK, overlap = OVERLAP) {
   }
   return out;
 }
+var listFiles = (dir, { media = false } = {}) => walk(dir, media);
+async function folderInfo(dir, { limit = 2e4 } = {}) {
+  const known = new Set(SUPPORTED);
+  const r2 = { files: 0, readable: 0, media: 0, truncated: false, types: {}, folders: {}, oldest: null, newest: null };
+  async function go2(d2, top) {
+    for (const ent of await fs7.readdir(d2, { withFileTypes: true }).catch(() => [])) {
+      if (r2.files >= limit) {
+        r2.truncated = true;
+        return;
+      }
+      if (SKIP_DIR.test(ent.name) || ent.name.startsWith("~$")) continue;
+      const p2 = path8.join(d2, ent.name);
+      if (ent.isDirectory()) {
+        await go2(p2, top ?? ent.name);
+        continue;
+      }
+      if (!ent.isFile()) continue;
+      const ext = path8.extname(ent.name).toLowerCase() || "(\uD655\uC7A5\uC790 \uC5C6\uC74C)";
+      r2.files++;
+      r2.types[ext] = (r2.types[ext] ?? 0) + 1;
+      const key = top ?? "(\uC774 \uD3F4\uB354)";
+      r2.folders[key] = (r2.folders[key] ?? 0) + 1;
+      if (known.has(ext)) {
+        if (AUDIO.has(ext) || IMAGE.has(ext)) r2.media++;
+        else r2.readable++;
+      }
+      const m2 = (await fs7.stat(p2).catch(() => null))?.mtimeMs;
+      if (m2) {
+        r2.oldest = Math.min(r2.oldest ?? m2, m2);
+        r2.newest = Math.max(r2.newest ?? m2, m2);
+      }
+    }
+  }
+  await go2(dir, null);
+  return r2;
+}
 async function walk(dir, media) {
   const exts = new Set(SUPPORTED.filter((e2) => media || !AUDIO.has(e2) && !IMAGE.has(e2)));
   const out = [];
@@ -104136,7 +104172,7 @@ async function fillTimetable(buf, rows) {
 }
 
 // src/index.js
-var VERSION2 = "0.10.1";
+var VERSION2 = "0.11.0";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -104292,32 +104328,59 @@ server.registerTool("hai_ask_file", {
     await inlineOrFile(`${vault.id}-\uB2F5.md`, masked)
   ].join("\n"));
 }));
+server.registerTool("hai_folder_info", {
+  title: "\uD3F4\uB354 \uC0B4\uD3B4\uBCF4\uAE30",
+  description: "\uD3F4\uB354(\uD558\uC704 \uD3EC\uD568)\uC758 \uD30C\uC77C \uC218\xB7\uD615\uC2DD\uBCC4 \uAC1C\uC218\xB7\uCCAB \uB2E8\uACC4 \uD558\uC704 \uD3F4\uB354\uBCC4 \uAC1C\uC218\xB7\uC218\uC815\uC77C \uBC94\uC704\uB97C \uC13C\uB2E4. \uD30C\uC77C \uB0B4\uC6A9\uC744 \uC77D\uC9C0 \uC54A\uACE0 \uD30C\uC77C \uC774\uB984\uB3C4 \uB3CC\uB824\uC8FC\uC9C0 \uC54A\uB294\uB2E4. \uD3F4\uB354\uB97C \uC77D\uAC70\uB098 \uBD84\uB958\uD558\uAE30 \uC804\uC5D0 \uC5BC\uB9C8\uB098 \uAC78\uB9B4\uC9C0 \uAC00\uB2A0\uD560 \uB54C \uBA3C\uC800 \uBD80\uB978\uB2E4.",
+  inputSchema: { dir: external_exports.string().describe("\uC0B4\uD3B4\uBCFC \uD3F4\uB354") }
+}, guard(async ({ dir }) => {
+  const r2 = await folderInfo(resolvePath(dir));
+  const top = (o2) => Object.entries(o2).sort((a2, b2) => b2[1] - a2[1]).slice(0, 15).map(([k2, n2]) => `${k2} ${n2}`).join(" \xB7 ");
+  const day = (ms2) => ms2 ? new Date(ms2).toISOString().slice(0, 10) : "-";
+  const vault = newVault();
+  const folders = await maskAll(top(r2.folders), vault);
+  return ok([
+    `\uD30C\uC77C ${r2.files}\uAC1C${r2.truncated ? " \uC774\uC0C1(\uB108\uBB34 \uB9CE\uC544 \uC5EC\uAE30\uAE4C\uC9C0\uB9CC \uC148)" : ""} \xB7 \uBC14\uB85C \uC77D\uAE30 ${r2.readable}\uAC1C \xB7 \uC0AC\uC9C4\xB7\uB179\uC74C ${r2.media}\uAC1C \xB7 \uC77D\uC9C0 \uBABB\uD558\uB294 \uD615\uC2DD ${r2.files - r2.readable - r2.media}\uAC1C`,
+    `\uC218\uC815\uC77C: ${day(r2.oldest)} ~ ${day(r2.newest)}`,
+    `\uD615\uC2DD: ${top(r2.types)}`,
+    `\uD3F4\uB354: ${folders}`,
+    r2.readable > 400 ? "\uD55C \uBC88\uC5D0 400\uAC1C\uAE4C\uC9C0\uB9CC \uB2E4\uB8F9\uB2C8\uB2E4. \uD558\uC704 \uD3F4\uB354\uB85C \uB098\uB220 \uC8FC\uC138\uC694." : ""
+  ].filter(Boolean).join("\n"));
+}));
 server.registerTool("hai_ask_files", {
   title: "\uC5EC\uB7EC \uD30C\uC77C\uC5D0 \uAC19\uC740 \uC9C8\uBB38",
   description: '\uD3F4\uB354(dir) \uB610\uB294 \uD30C\uC77C \uBAA9\uB85D(paths)\uC758 \uAC01 \uD30C\uC77C\uC744 HAI \uB9CC \uC77D\uACE0 \uAC19\uC740 \uC9C8\uBB38\uC5D0 \uB2F5\uD55C\uB2E4. \uC608: \uACC4\uC57D\uC11C \uD3F4\uB354\uC5D0\uC11C "\uACC4\uC57D \uC0C1\uB300\xB7\uB9CC\uAE30\uC77C\xB7\uC790\uB3D9\uAC31\uC2E0 \uC5EC\uBD80\uB97C \uD55C \uC904\uB85C". \uD30C\uC77C\uBCC4 \uB2F5\uC744 \uBAA8\uC544 \uAC00\uB824\uC11C \uB3CC\uB824\uC900\uB2E4 \u2014 Claude \uAC00 \uD45C\uB85C \uC815\uB9AC\uD558\uBA74 \uB41C\uB2E4.',
   inputSchema: {
     instruction: external_exports.string().describe('\uD30C\uC77C\uB9C8\uB2E4 \uC2DC\uD0AC \uC77C. \uC9E7\uAC8C \uB2F5\uD558\uAC8C \uD558\uBA74 \uBAA8\uC73C\uAE30 \uC88B\uB2E4(\uC608: "\uB9CC\uAE30\uC77C\uB9CC YYYY-MM-DD \uB85C, \uC5C6\uC73C\uBA74 \uC5C6\uC74C")'),
-    dir: external_exports.string().optional().describe("\uC774 \uD3F4\uB354\uC758 \uD30C\uC77C \uC804\uBD80(\uD558\uC704 \uD3F4\uB354 \uD3EC\uD568 \uC548 \uD568)"),
+    dir: external_exports.string().optional().describe("\uC774 \uD3F4\uB354\uC758 \uD30C\uC77C \uC804\uBD80(recursive \uB97C \uC8FC\uC9C0 \uC54A\uC73C\uBA74 \uD558\uC704 \uD3F4\uB354 \uD3EC\uD568 \uC548 \uD568)"),
+    recursive: external_exports.boolean().optional().describe("dir \uC758 \uD558\uC704 \uD3F4\uB354\uAE4C\uC9C0(\uCD5C\uB300 400\uAC1C). \uC0AC\uC9C4\xB7\uB179\uC74C\uC740 media \uB97C \uC904 \uB54C\uB9CC"),
+    media: external_exports.boolean().optional().describe("recursive \uC77C \uB54C \uC0AC\uC9C4\xB7\uB179\uC74C\uB3C4 \uC77D\uB294\uB2E4(OCR\xB7\uBC1B\uC544\uC4F0\uAE30\uB77C \uC624\uB798 \uAC78\uB9BC)"),
     paths: external_exports.array(external_exports.string()).optional().describe("\uB610\uB294 \uD30C\uC77C \uACBD\uB85C \uBAA9\uB85D"),
     pattern: external_exports.string().optional().describe('dir \uC77C \uB54C \uD30C\uC77C \uC774\uB984\uC5D0 \uB4E4\uC5B4\uAC04 \uAE00\uC790\uB85C \uAC70\uB974\uAE30. \uC608: "\uACC4\uC57D"'),
-    max_files: external_exports.number().int().min(1).max(100).optional().describe("\uCD5C\uB300 \uD30C\uC77C \uC218(\uAE30\uBCF8 30)"),
+    max_files: external_exports.number().int().min(1).max(100).optional().describe("\uC774\uBC88\uC5D0 \uC77D\uC744 \uCD5C\uB300 \uD30C\uC77C \uC218(\uAE30\uBCF8 30)"),
+    offset: external_exports.number().int().min(0).optional().describe('\uC55E\uC5D0\uC11C \uAC74\uB108\uB6F8 \uD30C\uC77C \uC218. \uB9CE\uC740 \uD3F4\uB354\uB97C \uB098\uB220 \uC77D\uC744 \uB54C \u2014 \uACB0\uACFC\uC758 "\uB2E4\uC74C offset" \uC744 \uADF8\uB300\uB85C \uC900\uB2E4'),
     model: modelSchema,
     extra: extraSchema,
     mask_id: maskIdSchema
   }
-}, guard(async ({ instruction, dir, paths, pattern, max_files, model, extra, mask_id }, ex) => {
+}, guard(async ({ instruction, dir, recursive: recursive2, media, paths, pattern, max_files, offset, model, extra, mask_id }, ex) => {
   let files = (paths ?? []).map(resolvePath);
+  const root2 = dir ? resolvePath(dir) : null;
   if (dir) {
-    const d2 = resolvePath(dir);
-    const names = (await fs8.readdir(d2, { withFileTypes: true })).filter((e2) => e2.isFile() && !e2.name.startsWith(".") && !e2.name.startsWith("~$")).map((e2) => e2.name);
     const want = pattern?.normalize("NFC");
-    files.push(...names.filter((n2) => SUPPORTED.includes(path9.extname(n2).toLowerCase()) && (!want || n2.normalize("NFC").includes(want))).sort().map((n2) => path9.join(d2, n2)));
+    const named = (n2) => !want || n2.normalize("NFC").includes(want);
+    if (recursive2) files.push(...(await listFiles(root2, { media })).filter((p2) => named(path9.basename(p2))).sort());
+    else {
+      const names = (await fs8.readdir(root2, { withFileTypes: true })).filter((e2) => e2.isFile() && !e2.name.startsWith(".") && !e2.name.startsWith("~$")).map((e2) => e2.name);
+      files.push(...names.filter((n2) => SUPPORTED.includes(path9.extname(n2).toLowerCase()) && named(n2)).sort().map((n2) => path9.join(root2, n2)));
+    }
   }
   const all = [...new Set(files)];
   const limit = max_files ?? 30;
-  files = all.slice(0, limit);
-  if (!files.length) throw new Error("\uC77D\uC744 \uD30C\uC77C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4(\uC9C0\uC6D0 \uD615\uC2DD\uC778\uC9C0, pattern \uC774 \uB9DE\uB294\uC9C0 \uD655\uC778)");
-  const cut = all.length > files.length ? ` \xB7 \uC804\uCCB4 ${all.length}\uAC1C \uC911 \uC55E ${files.length}\uAC1C\uB9CC \uC77D\uC74C(\uC774\uB984\uC21C) \u2014 \uB098\uBA38\uC9C0\uB294 max_files(\uCD5C\uB300 100)\uB97C \uB298\uB9AC\uAC70\uB098 pattern \uC73C\uB85C \uB098\uB220\uC11C` : "";
+  const from = offset ?? 0;
+  files = all.slice(from, from + limit);
+  if (!files.length) throw new Error(from ? `\uB354 \uC77D\uC744 \uD30C\uC77C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4(\uC804\uCCB4 ${all.length}\uAC1C)` : "\uC77D\uC744 \uD30C\uC77C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4(\uC9C0\uC6D0 \uD615\uC2DD\uC778\uC9C0, pattern \uC774 \uB9DE\uB294\uC9C0 \uD655\uC778)");
+  const rest2 = all.length - from - files.length;
+  const cut = from || rest2 > 0 ? ` \xB7 \uC804\uCCB4 ${all.length}\uAC1C \uC911 ${from + 1}~${from + files.length}\uBC88\uC9F8(\uC774\uB984\uC21C)${rest2 > 0 ? ` \xB7 \uB0A8\uC740 ${rest2}\uAC1C \u2014 \uB2E4\uC74C offset: ${from + files.length}` : ""}` : "";
   const results = new Array(files.length);
   let next = 0, done = 0;
   async function worker() {
@@ -104333,7 +104396,8 @@ server.registerTool("hai_ask_files", {
     }
   }
   await Promise.all([worker(), worker()]);
-  const body = results.map((r2, i2) => `### ${i2 + 1}. ${path9.basename(r2.file)}
+  const label = (f2) => root2 && recursive2 ? path9.relative(root2, f2) : path9.basename(f2);
+  const body = results.map((r2, i2) => `### ${from + i2 + 1}. ${label(r2.file)}
 ${r2.error ? `(\uC77D\uC9C0 \uBABB\uD568: ${r2.error})` : r2.answer}`).join("\n\n");
   const vault = vaultOf(mask_id);
   const masked = await maskAll(body, vault, extra);

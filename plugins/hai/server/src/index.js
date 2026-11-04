@@ -34,11 +34,11 @@ import { findSpans, chunk } from './ner.js';
 import { readText, readClipboard, resolvePath, kindOf, SUPPORTED } from './extract.js';
 import { readClipboardImage } from './clipboard.js';
 import { writeRaw, writeMasked, rawFiles } from './ledger.js';
-import { search } from './search.js';
+import { folderInfo, listFiles, search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.10.1';
+export const VERSION = '0.11.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -173,30 +173,54 @@ server.registerTool('hai_ask_file', {
     await inlineOrFile(`${vault.id}-답.md`, masked)].join('\n'));
 }));
 
+server.registerTool('hai_folder_info', {
+  title: '폴더 살펴보기',
+  description: '폴더(하위 포함)의 파일 수·형식별 개수·첫 단계 하위 폴더별 개수·수정일 범위를 센다. 파일 내용을 읽지 않고 파일 이름도 돌려주지 않는다. 폴더를 읽거나 분류하기 전에 얼마나 걸릴지 가늠할 때 먼저 부른다.',
+  inputSchema: { dir: z.string().describe('살펴볼 폴더') },
+}, guard(async ({ dir }) => {
+  const r = await folderInfo(resolvePath(dir));
+  const top = (o) => Object.entries(o).sort((a, b) => b[1] - a[1]).slice(0, 15).map(([k, n]) => `${k} ${n}`).join(' · ');
+  const day = (ms) => (ms ? new Date(ms).toISOString().slice(0, 10) : '-');
+  const vault = newVault();
+  const folders = await maskAll(top(r.folders), vault);   // 하위 폴더 이름에도 실명이 있을 수 있다
+  return ok([`파일 ${r.files}개${r.truncated ? ' 이상(너무 많아 여기까지만 셈)' : ''} · 바로 읽기 ${r.readable}개 · 사진·녹음 ${r.media}개 · 읽지 못하는 형식 ${r.files - r.readable - r.media}개`,
+    `수정일: ${day(r.oldest)} ~ ${day(r.newest)}`, `형식: ${top(r.types)}`, `폴더: ${folders}`,
+    r.readable > 400 ? '한 번에 400개까지만 다룹니다. 하위 폴더로 나눠 주세요.' : ''].filter(Boolean).join('\n'));
+}));
+
 server.registerTool('hai_ask_files', {
   title: '여러 파일에 같은 질문',
   description: '폴더(dir) 또는 파일 목록(paths)의 각 파일을 HAI 만 읽고 같은 질문에 답한다. 예: 계약서 폴더에서 "계약 상대·만기일·자동갱신 여부를 한 줄로". 파일별 답을 모아 가려서 돌려준다 — Claude 가 표로 정리하면 된다.',
   inputSchema: {
     instruction: z.string().describe('파일마다 시킬 일. 짧게 답하게 하면 모으기 좋다(예: "만기일만 YYYY-MM-DD 로, 없으면 없음")'),
-    dir: z.string().optional().describe('이 폴더의 파일 전부(하위 폴더 포함 안 함)'),
+    dir: z.string().optional().describe('이 폴더의 파일 전부(recursive 를 주지 않으면 하위 폴더 포함 안 함)'),
+    recursive: z.boolean().optional().describe('dir 의 하위 폴더까지(최대 400개). 사진·녹음은 media 를 줄 때만'),
+    media: z.boolean().optional().describe('recursive 일 때 사진·녹음도 읽는다(OCR·받아쓰기라 오래 걸림)'),
     paths: z.array(z.string()).optional().describe('또는 파일 경로 목록'),
     pattern: z.string().optional().describe('dir 일 때 파일 이름에 들어간 글자로 거르기. 예: "계약"'),
-    max_files: z.number().int().min(1).max(100).optional().describe('최대 파일 수(기본 30)'),
+    max_files: z.number().int().min(1).max(100).optional().describe('이번에 읽을 최대 파일 수(기본 30)'),
+    offset: z.number().int().min(0).optional().describe('앞에서 건너뛸 파일 수. 많은 폴더를 나눠 읽을 때 — 결과의 "다음 offset" 을 그대로 준다'),
     model: modelSchema, extra: extraSchema, mask_id: maskIdSchema,
   },
-}, guard(async ({ instruction, dir, paths, pattern, max_files, model, extra, mask_id }, ex) => {
+}, guard(async ({ instruction, dir, recursive, media, paths, pattern, max_files, offset, model, extra, mask_id }, ex) => {
   let files = (paths ?? []).map(resolvePath);
+  const root = dir ? resolvePath(dir) : null;
   if (dir) {
-    const d = resolvePath(dir);
-    const names = (await fs.readdir(d, { withFileTypes: true })).filter((e) => e.isFile() && !e.name.startsWith('.') && !e.name.startsWith('~$')).map((e) => e.name);
     const want = pattern?.normalize('NFC'); // macOS 파일 이름은 NFD 로 올 수 있다
-    files.push(...names.filter((n) => SUPPORTED.includes(path.extname(n).toLowerCase()) && (!want || n.normalize('NFC').includes(want))).sort().map((n) => path.join(d, n)));
+    const named = (n) => !want || n.normalize('NFC').includes(want);
+    if (recursive) files.push(...(await listFiles(root, { media })).filter((p) => named(path.basename(p))).sort());
+    else {
+      const names = (await fs.readdir(root, { withFileTypes: true })).filter((e) => e.isFile() && !e.name.startsWith('.') && !e.name.startsWith('~$')).map((e) => e.name);
+      files.push(...names.filter((n) => SUPPORTED.includes(path.extname(n).toLowerCase()) && named(n)).sort().map((n) => path.join(root, n)));
+    }
   }
   const all = [...new Set(files)];
   const limit = max_files ?? 30;
-  files = all.slice(0, limit);
-  if (!files.length) throw new Error('읽을 파일이 없습니다(지원 형식인지, pattern 이 맞는지 확인)');
-  const cut = all.length > files.length ? ` · 전체 ${all.length}개 중 앞 ${files.length}개만 읽음(이름순) — 나머지는 max_files(최대 100)를 늘리거나 pattern 으로 나눠서` : '';
+  const from = offset ?? 0;
+  files = all.slice(from, from + limit);
+  if (!files.length) throw new Error(from ? `더 읽을 파일이 없습니다(전체 ${all.length}개)` : '읽을 파일이 없습니다(지원 형식인지, pattern 이 맞는지 확인)');
+  const rest = all.length - from - files.length;
+  const cut = from || rest > 0 ? ` · 전체 ${all.length}개 중 ${from + 1}~${from + files.length}번째(이름순)${rest > 0 ? ` · 남은 ${rest}개 — 다음 offset: ${from + files.length}` : ''}` : '';
   const results = new Array(files.length);
   let next = 0, done = 0;
   async function worker() {
@@ -212,7 +236,8 @@ server.registerTool('hai_ask_files', {
     }
   }
   await Promise.all([worker(), worker()]);
-  const body = results.map((r, i) => `### ${i + 1}. ${path.basename(r.file)}\n${r.error ? `(읽지 못함: ${r.error})` : r.answer}`).join('\n\n');
+  const label = (f) => (root && recursive ? path.relative(root, f) : path.basename(f));   // 하위 폴더까지면 어느 폴더의 파일인지 보이게
+  const body = results.map((r, i) => `### ${from + i + 1}. ${label(r.file)}\n${r.error ? `(읽지 못함: ${r.error})` : r.answer}`).join('\n\n');
   const vault = vaultOf(mask_id);
   const masked = await maskAll(body, vault, extra); // 파일 이름에 든 실명도 같이 가린다
   const bad = results.filter((r) => r.error).length;
