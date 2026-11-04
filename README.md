@@ -24,6 +24,9 @@
 | 메일·메신저·캘린더·그룹웨어 읽기 | "오늘 안 읽은 메일 요약해줘", "결재함 뭐 와 있어?" — 크롬 뒤쪽 탭에서 사내 AI 가 읽고 답만 Claude 에 줍니다. 저장·보내기·승인은 막힙니다 | 화면 판단은 agent 서버가 HAI 로 |
 | 사내 화면 일 맡기기 | "그룹웨어에서 ○○ 해줘" — 크롬이 꺼져 있으면 켜고, 화면을 바꾸는 동작은 확인을 받습니다 | 화면 판단은 agent 서버가 HAI 로 |
 | 오늘 할 일 한눈에 | `/hai:brief` — 일정·결재·메일·메신저를 읽어 할 일부터 정리 | 화면 판단은 agent 서버가 HAI 로 |
+| 웍스 대화 요약 | `/hai:works` — 안 읽은 방을 읽어 방별 요약과 할 일 정리(방을 열면 읽음 처리) | 화면 판단은 agent 서버가 HAI 로 |
+| 할 일 정리 | `/hai:todo` — 메일·대화·회의록에서 내 일·남 일·확인할 일을 뽑아 내 PC 에 저장 | Claude(근거는 HAI 로) |
+| 규칙 알림 | `/hai:watch` — "긴급 메일 오면 알려줘". 나에게 웍스 봇 DM | 화면 판단은 agent 서버가 HAI 로 |
 | 정해진 시간에 돌리기 | `/hai:schedule` — "매일 아침 메일 요약", Claude 데스크톱 앱 예약으로 만들고 막히면 웍스 봇 DM | 화면 판단은 agent 서버가 HAI 로 |
 | 크롬에 저장한 사내 화면 작업 실행 | "법인카드 정산 작업 돌려줘" — 크롬 헥토 에이전트에서 녹화·저장한 작업이 내 크롬에서 돈다. 저장 확인은 대화로, 상신·승인·삭제는 크롬 패널에서만 | 화면 판단은 agent 서버가 HAI 로 |
 
@@ -85,7 +88,7 @@ plugins/hai/
   .mcp.json                       MCP 서버 등록 → dist/hai-mcp.mjs
   dist/                           묶은 서버 한 파일 + pdf.js 한글 CMap (커밋한다 — 플러그인은 npm install 을 안 한다)
   hooks/guard.mjs                 보호 폴더·원문 파일 Read·Grep·Glob·Bash 차단 (PreToolUse)
-  skills/guide|privacy|doc|minutes|protect|timetable|browser|brief|schedule
+  skills/guide|privacy|doc|minutes|protect|timetable|browser|brief|works|todo|watch|schedule
   server/src                      config · hai(게이트웨이) · mask · ner · table · extract · office · search · ledger · index
   server/test                     가리기·표·형식·가드·매니페스트 (네트워크 없음)
 ```

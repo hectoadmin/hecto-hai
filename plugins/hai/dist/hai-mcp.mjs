@@ -3278,8 +3278,8 @@ var require_utils = __commonJS({
       }
       return ind;
     }
-    function removeDotSegments(path9) {
-      let input2 = path9;
+    function removeDotSegments(path10) {
+      let input2 = path10;
       const output2 = [];
       let nextSlash = -1;
       let len = 0;
@@ -3353,11 +3353,11 @@ var require_utils = __commonJS({
       }
       return output2.join("");
     }
-    function removeDotSegmentsRelative(path9) {
-      if (path9 === "" || path9[0] === "/") {
-        return removeDotSegments(path9);
+    function removeDotSegmentsRelative(path10) {
+      if (path10 === "" || path10[0] === "/") {
+        return removeDotSegments(path10);
       }
-      const segments = path9.split("/");
+      const segments = path10.split("/");
       const last2 = segments.length - 1;
       const output2 = [];
       let trailingDirectory = false;
@@ -3720,8 +3720,8 @@ var require_schemes = __commonJS({
       }
       if (wsComponent.resourceName) {
         const queryIndex = wsComponent.resourceName.indexOf("?");
-        const path9 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
-        wsComponent.path = path9 && path9 !== "/" ? path9 : void 0;
+        const path10 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
+        wsComponent.path = path10 && path10 !== "/" ? path10 : void 0;
         wsComponent.query = queryIndex === -1 ? void 0 : wsComponent.resourceName.slice(queryIndex + 1);
         wsComponent.resourceName = void 0;
       }
@@ -7258,12 +7258,12 @@ var require_dist = __commonJS({
         throw new Error(`Unknown format "${name}"`);
       return f2;
     };
-    function addFormats(ajv, list2, fs8, exportName) {
+    function addFormats(ajv, list2, fs9, exportName) {
       var _a4;
       var _b;
       (_a4 = (_b = ajv.opts.code).formats) !== null && _a4 !== void 0 ? _a4 : _b.formats = (0, codegen_1._)`require("ajv-formats/dist/formats").${exportName}`;
       for (const f2 of list2)
-        ajv.addFormat(f2, fs8[f2]);
+        ajv.addFormat(f2, fs9[f2]);
     }
     module.exports = exports = formatsPlugin;
     Object.defineProperty(exports, "__esModule", { value: true });
@@ -10139,8 +10139,8 @@ var require_utils2 = __commonJS({
       var result2 = transform2[inputType][outputType](input2);
       return result2;
     };
-    exports.resolve = function(path9) {
-      var parts = path9.split("/");
+    exports.resolve = function(path10) {
+      var parts = path10.split("/");
       var result2 = [];
       for (var index = 0; index < parts.length; index++) {
         var part = parts[index];
@@ -15586,7 +15586,7 @@ var require_ZipFileWorker = __commonJS({
       return (dosPermissions || 0) & 63;
     };
     var generateZipParts = function(streamInfo, streamedContent, streamingEnded, offset, platform, encodeFileName) {
-      var file2 = streamInfo["file"], compression = streamInfo["compression"], useCustomEncoding = encodeFileName !== utf8.utf8encode, encodedFileName = utils.transformTo("string", encodeFileName(file2.name)), utfEncodedFileName = utils.transformTo("string", utf8.utf8encode(file2.name)), comment = file2.comment, encodedComment = utils.transformTo("string", encodeFileName(comment)), utfEncodedComment = utils.transformTo("string", utf8.utf8encode(comment)), useUTF8ForFileName = utfEncodedFileName.length !== file2.name.length, useUTF8ForComment = utfEncodedComment.length !== comment.length, dosTime, dosDate, extraFields = "", unicodePathExtraField = "", unicodeCommentExtraField = "", dir = file2.dir, date5 = file2.date;
+      var file3 = streamInfo["file"], compression = streamInfo["compression"], useCustomEncoding = encodeFileName !== utf8.utf8encode, encodedFileName = utils.transformTo("string", encodeFileName(file3.name)), utfEncodedFileName = utils.transformTo("string", utf8.utf8encode(file3.name)), comment = file3.comment, encodedComment = utils.transformTo("string", encodeFileName(comment)), utfEncodedComment = utils.transformTo("string", utf8.utf8encode(comment)), useUTF8ForFileName = utfEncodedFileName.length !== file3.name.length, useUTF8ForComment = utfEncodedComment.length !== comment.length, dosTime, dosDate, extraFields = "", unicodePathExtraField = "", unicodeCommentExtraField = "", dir = file3.dir, date5 = file3.date;
       var dataInfo = {
         crc32: 0,
         compressedSize: 0,
@@ -15611,10 +15611,10 @@ var require_ZipFileWorker = __commonJS({
       }
       if (platform === "UNIX") {
         versionMadeBy = 798;
-        extFileAttr |= generateUnixExternalFileAttr(file2.unixPermissions, dir);
+        extFileAttr |= generateUnixExternalFileAttr(file3.unixPermissions, dir);
       } else {
         versionMadeBy = 20;
-        extFileAttr |= generateDosExternalFileAttr(file2.dosPermissions, dir);
+        extFileAttr |= generateDosExternalFileAttr(file3.dosPermissions, dir);
       }
       dosTime = date5.getUTCHours();
       dosTime = dosTime << 6;
@@ -15860,18 +15860,18 @@ var require_generate = __commonJS({
       var zipFileWorker = new ZipFileWorker(options.streamFiles, comment, options.platform, options.encodeFileName);
       var entriesCount = 0;
       try {
-        zip.forEach(function(relativePath, file2) {
+        zip.forEach(function(relativePath, file3) {
           entriesCount++;
-          var compression = getCompression(file2.options.compression, options.compression);
-          var compressionOptions = file2.options.compressionOptions || options.compressionOptions || {};
-          var dir = file2.dir, date5 = file2.date;
-          file2._compressWorker(compression, compressionOptions).withStreamInfo("file", {
+          var compression = getCompression(file3.options.compression, options.compression);
+          var compressionOptions = file3.options.compressionOptions || options.compressionOptions || {};
+          var dir = file3.dir, date5 = file3.date;
+          file3._compressWorker(compression, compressionOptions).withStreamInfo("file", {
             name: relativePath,
             dir,
             date: date5,
-            comment: file2.comment || "",
-            unixPermissions: file2.unixPermissions,
-            dosPermissions: file2.dosPermissions
+            comment: file3.comment || "",
+            unixPermissions: file3.unixPermissions,
+            dosPermissions: file3.dosPermissions
           }).pipe(zipFileWorker);
         });
         zipFileWorker.entriesCount = entriesCount;
@@ -16001,18 +16001,18 @@ var require_object = __commonJS({
       var object4 = new ZipObject(name, zipObjectContent, o2);
       this.files[name] = object4;
     };
-    var parentFolder = function(path9) {
-      if (path9.slice(-1) === "/") {
-        path9 = path9.substring(0, path9.length - 1);
+    var parentFolder = function(path10) {
+      if (path10.slice(-1) === "/") {
+        path10 = path10.substring(0, path10.length - 1);
       }
-      var lastSlash = path9.lastIndexOf("/");
-      return lastSlash > 0 ? path9.substring(0, lastSlash) : "";
+      var lastSlash = path10.lastIndexOf("/");
+      return lastSlash > 0 ? path10.substring(0, lastSlash) : "";
     };
-    var forceTrailingSlash = function(path9) {
-      if (path9.slice(-1) !== "/") {
-        path9 += "/";
+    var forceTrailingSlash = function(path10) {
+      if (path10.slice(-1) !== "/") {
+        path10 += "/";
       }
-      return path9;
+      return path10;
     };
     var folderAdd = function(name, createFolders) {
       createFolders = typeof createFolders !== "undefined" ? createFolders : defaults.createFolders;
@@ -16042,12 +16042,12 @@ var require_object = __commonJS({
        * It takes 2 arguments : the relative path and the file.
        */
       forEach: function(cb2) {
-        var filename, relativePath, file2;
+        var filename, relativePath, file3;
         for (filename in this.files) {
-          file2 = this.files[filename];
+          file3 = this.files[filename];
           relativePath = filename.slice(this.root.length, filename.length);
           if (relativePath && filename.slice(0, this.root.length) === this.root) {
-            cb2(relativePath, file2);
+            cb2(relativePath, file3);
           }
         }
       },
@@ -16080,8 +16080,8 @@ var require_object = __commonJS({
         if (arguments.length === 1) {
           if (isRegExp(name)) {
             var regexp = name;
-            return this.filter(function(relativePath, file2) {
-              return !file2.dir && regexp.test(relativePath);
+            return this.filter(function(relativePath, file3) {
+              return !file3.dir && regexp.test(relativePath);
             });
           } else {
             var obj = this.files[this.root + name];
@@ -16107,8 +16107,8 @@ var require_object = __commonJS({
           return this;
         }
         if (isRegExp(arg)) {
-          return this.filter(function(relativePath, file2) {
-            return file2.dir && arg.test(relativePath);
+          return this.filter(function(relativePath, file3) {
+            return file3.dir && arg.test(relativePath);
           });
         }
         var name = this.root + arg;
@@ -16124,18 +16124,18 @@ var require_object = __commonJS({
        */
       remove: function(name) {
         name = this.root + name;
-        var file2 = this.files[name];
-        if (!file2) {
+        var file3 = this.files[name];
+        if (!file3) {
           if (name.slice(-1) !== "/") {
             name += "/";
           }
-          file2 = this.files[name];
+          file3 = this.files[name];
         }
-        if (file2 && !file2.dir) {
+        if (file3 && !file3.dir) {
           delete this.files[name];
         } else {
-          var kids = this.filter(function(relativePath, file3) {
-            return file3.name.slice(0, name.length) === name;
+          var kids = this.filter(function(relativePath, file4) {
+            return file4.name.slice(0, name.length) === name;
           });
           for (var i2 = 0; i2 < kids.length; i2++) {
             delete this.files[kids[i2].name];
@@ -16796,28 +16796,28 @@ var require_zipEntries = __commonJS({
        * Read the local files, based on the offset read in the central part.
        */
       readLocalFiles: function() {
-        var i2, file2;
+        var i2, file3;
         for (i2 = 0; i2 < this.files.length; i2++) {
-          file2 = this.files[i2];
-          this.reader.setIndex(file2.localHeaderOffset);
+          file3 = this.files[i2];
+          this.reader.setIndex(file3.localHeaderOffset);
           this.checkSignature(sig.LOCAL_FILE_HEADER);
-          file2.readLocalPart(this.reader);
-          file2.handleUTF8();
-          file2.processAttributes();
+          file3.readLocalPart(this.reader);
+          file3.handleUTF8();
+          file3.processAttributes();
         }
       },
       /**
        * Read the central directory.
        */
       readCentralDir: function() {
-        var file2;
+        var file3;
         this.reader.setIndex(this.centralDirOffset);
         while (this.reader.readAndCheckSignature(sig.CENTRAL_FILE_HEADER)) {
-          file2 = new ZipEntry({
+          file3 = new ZipEntry({
             zip64: this.zip64
           }, this.loadOptions);
-          file2.readCentralPart(this.reader);
-          this.files.push(file2);
+          file3.readCentralPart(this.reader);
+          this.files.push(file3);
         }
         if (this.centralDirRecords !== this.files.length) {
           if (this.centralDirRecords !== 0 && this.files.length === 0) {
@@ -17883,8 +17883,8 @@ var init_tap = __esm({
 });
 
 // node_modules/underscore/modules/toPath.js
-function toPath(path9) {
-  return isArray_default(path9) ? path9 : [path9];
+function toPath(path10) {
+  return isArray_default(path10) ? path10 : [path10];
 }
 var init_toPath = __esm({
   "node_modules/underscore/modules/toPath.js"() {
@@ -17895,8 +17895,8 @@ var init_toPath = __esm({
 });
 
 // node_modules/underscore/modules/_toPath.js
-function toPath2(path9) {
-  return _.toPath(path9);
+function toPath2(path10) {
+  return _.toPath(path10);
 }
 var init_toPath2 = __esm({
   "node_modules/underscore/modules/_toPath.js"() {
@@ -17906,11 +17906,11 @@ var init_toPath2 = __esm({
 });
 
 // node_modules/underscore/modules/_deepGet.js
-function deepGet(obj, path9) {
-  var length = path9.length;
+function deepGet(obj, path10) {
+  var length = path10.length;
   for (var i2 = 0; i2 < length; i2++) {
     if (obj == null) return void 0;
-    obj = obj[path9[i2]];
+    obj = obj[path10[i2]];
   }
   return length ? obj : void 0;
 }
@@ -17920,8 +17920,8 @@ var init_deepGet = __esm({
 });
 
 // node_modules/underscore/modules/get.js
-function get(object4, path9, defaultValue) {
-  var value = deepGet(object4, toPath2(path9));
+function get(object4, path10, defaultValue) {
+  var value = deepGet(object4, toPath2(path10));
   return isUndefined(value) ? defaultValue : value;
 }
 var init_get = __esm({
@@ -17933,11 +17933,11 @@ var init_get = __esm({
 });
 
 // node_modules/underscore/modules/has.js
-function has2(obj, path9) {
-  path9 = toPath2(path9);
-  var length = path9.length;
+function has2(obj, path10) {
+  path10 = toPath2(path10);
+  var length = path10.length;
   for (var i2 = 0; i2 < length; i2++) {
-    var key = path9[i2];
+    var key = path10[i2];
     if (!has(obj, key)) return false;
     obj = obj[key];
   }
@@ -17974,10 +17974,10 @@ var init_matcher = __esm({
 });
 
 // node_modules/underscore/modules/property.js
-function property(path9) {
-  path9 = toPath2(path9);
+function property(path10) {
+  path10 = toPath2(path10);
   return function(obj) {
-    return deepGet(obj, path9);
+    return deepGet(obj, path10);
   };
 }
 var init_property = __esm({
@@ -18086,8 +18086,8 @@ var init_noop = __esm({
 // node_modules/underscore/modules/propertyOf.js
 function propertyOf(obj) {
   if (obj == null) return noop;
-  return function(path9) {
-    return get(obj, path9);
+  return function(path10) {
+    return get(obj, path10);
   };
 }
 var init_propertyOf = __esm({
@@ -18281,14 +18281,14 @@ var init_template = __esm({
 });
 
 // node_modules/underscore/modules/result.js
-function result(obj, path9, fallback) {
-  path9 = toPath2(path9);
-  var length = path9.length;
+function result(obj, path10, fallback) {
+  path10 = toPath2(path10);
+  var length = path10.length;
   if (!length) {
     return isFunction_default(fallback) ? fallback.call(obj) : fallback;
   }
   for (var i2 = 0; i2 < length; i2++) {
-    var prop = obj == null ? void 0 : obj[path9[i2]];
+    var prop = obj == null ? void 0 : obj[path10[i2]];
     if (prop === void 0) {
       prop = fallback;
       i2 = length;
@@ -18971,14 +18971,14 @@ var init_invoke = __esm({
     init_map();
     init_deepGet();
     init_toPath2();
-    invoke_default = restArguments(function(obj, path9, args) {
+    invoke_default = restArguments(function(obj, path10, args) {
       var contextPath, func;
-      if (isFunction_default(path9)) {
-        func = path9;
+      if (isFunction_default(path10)) {
+        func = path10;
       } else {
-        path9 = toPath2(path9);
-        contextPath = path9.slice(0, -1);
-        path9 = path9[path9.length - 1];
+        path10 = toPath2(path10);
+        contextPath = path10.slice(0, -1);
+        path10 = path10[path10.length - 1];
       }
       return map2(obj, function(context) {
         var method = func;
@@ -18987,7 +18987,7 @@ var init_invoke = __esm({
             context = deepGet(context, contextPath);
           }
           if (context == null) return void 0;
-          method = context[path9];
+          method = context[path10];
         }
         return method == null ? method : method.apply(context, args);
       });
@@ -20615,27 +20615,27 @@ var require_zipfile = __commonJS({
         };
       });
     }
-    function splitPath(path9) {
-      var lastIndex = path9.lastIndexOf("/");
+    function splitPath(path10) {
+      var lastIndex = path10.lastIndexOf("/");
       if (lastIndex === -1) {
-        return { dirname: "", basename: path9 };
+        return { dirname: "", basename: path10 };
       } else {
         return {
-          dirname: path9.substring(0, lastIndex),
-          basename: path9.substring(lastIndex + 1)
+          dirname: path10.substring(0, lastIndex),
+          basename: path10.substring(lastIndex + 1)
         };
       }
     }
     function joinPath() {
-      var nonEmptyPaths = Array.prototype.filter.call(arguments, function(path9) {
-        return path9;
+      var nonEmptyPaths = Array.prototype.filter.call(arguments, function(path10) {
+        return path10;
       });
       var relevantPaths = [];
-      nonEmptyPaths.forEach(function(path9) {
-        if (/^\//.test(path9)) {
-          relevantPaths = [path9];
+      nonEmptyPaths.forEach(function(path10) {
+        if (/^\//.test(path10)) {
+          relevantPaths = [path10];
         } else {
-          relevantPaths.push(path9);
+          relevantPaths.push(path10);
         }
       });
       return relevantPaths.join("/");
@@ -28115,9 +28115,9 @@ var require_office_xml_reader = __commonJS({
         return collapseAlternateContent(document2)[0];
       });
     }
-    function readXmlFromZipFile(docxFile, path9) {
-      if (docxFile.exists(path9)) {
-        return docxFile.read(path9, "utf-8").then(stripUtf8Bom).then(read);
+    function readXmlFromZipFile(docxFile, path10) {
+      if (docxFile.exists(path10)) {
+        return docxFile.read(path10, "utf-8").then(stripUtf8Bom).then(read);
       } else {
         return promises.resolve(null);
       }
@@ -29903,10 +29903,10 @@ var require_body_reader = __commonJS({
         }
       }
       function findEmbeddedImageFile(relationshipId) {
-        var path9 = uris.uriToZipEntryName("word", relationships.findTargetByRelationshipId(relationshipId));
+        var path10 = uris.uriToZipEntryName("word", relationships.findTargetByRelationshipId(relationshipId));
         return {
-          path: path9,
-          read: docxFile.read.bind(docxFile, path9)
+          path: path10,
+          read: docxFile.read.bind(docxFile, path10)
         };
       }
       function readImage(imageFile, altText) {
@@ -30144,12 +30144,12 @@ var require_content_types_reader = __commonJS({
     }
     function contentTypes(overrides, extensionDefaults) {
       return {
-        findContentType: function(path9) {
-          var overrideContentType = overrides[path9];
+        findContentType: function(path10) {
+          var overrideContentType = overrides[path10];
           if (overrideContentType) {
             return overrideContentType;
           } else {
-            var pathParts = path9.split(".");
+            var pathParts = path10.split(".");
             var extension = pathParts[pathParts.length - 1];
             if (Object.prototype.hasOwnProperty.call(extensionDefaults, extension)) {
               return extensionDefaults[extension];
@@ -30405,17 +30405,17 @@ var require_comments_reader = __commonJS({
 // node_modules/mammoth/lib/fs.js
 var require_fs = __commonJS({
   "node_modules/mammoth/lib/fs.js"(exports) {
-    var fs8 = __require("fs");
+    var fs9 = __require("fs");
     var promises = require_promises();
-    function readFile(path9, options) {
-      return promises.resolve(fs8.promises.readFile(path9, options));
+    function readFile(path10, options) {
+      return promises.resolve(fs9.promises.readFile(path10, options));
     }
-    function writeFile(path9, data, options) {
-      return promises.resolve(fs8.promises.writeFile(path9, data, options));
+    function writeFile(path10, data, options) {
+      return promises.resolve(fs9.promises.writeFile(path10, data, options));
     }
-    exports.createWriteStream = fs8.createWriteStream.bind(fs8);
+    exports.createWriteStream = fs9.createWriteStream.bind(fs9);
     exports.readFile = readFile;
-    exports.readFileSync = fs8.readFileSync.bind(fs8);
+    exports.readFileSync = fs9.readFileSync.bind(fs9);
     exports.writeFile = writeFile;
   }
 });
@@ -30428,7 +30428,7 @@ var require_files = __commonJS({
     var dirname = __require("path").dirname;
     var isAbsolutePath = __require("path").isAbsolute;
     var resolvePath2 = __require("path").resolve;
-    var fs8 = require_fs();
+    var fs9 = require_fs();
     var promises = require_promises();
     exports.Files = Files;
     exports.uriToPath = uriToPath;
@@ -30443,19 +30443,19 @@ var require_files = __commonJS({
       }
       var base = options.relativeToFile ? dirname(options.relativeToFile) : null;
       function read(uri, encoding) {
-        return resolveUri(uri).then(function(path9) {
-          return fs8.readFile(path9, encoding).catch(function(error62) {
+        return resolveUri(uri).then(function(path10) {
+          return fs9.readFile(path10, encoding).catch(function(error62) {
             var message = "could not open external image: '" + uri + "' (document directory: '" + base + "')\n" + error62.message;
             return promises.reject(new Error(message));
           });
         });
       }
       function resolveUri(uri) {
-        var path9 = uriToPath(uri);
-        if (isAbsolutePath(path9)) {
-          return promises.resolve(path9);
+        var path10 = uriToPath(uri);
+        if (isAbsolutePath(path10)) {
+          return promises.resolve(path10);
         } else if (base) {
-          return promises.resolve(resolvePath2(base, path9));
+          return promises.resolve(resolvePath2(base, path10));
         } else {
           return promises.reject(new Error("could not find external image '" + uri + "', path of input document is unknown"));
         }
@@ -30470,11 +30470,11 @@ var require_files = __commonJS({
       }
       var uri = url2.parse(uriString);
       if (isLocalFileUri(uri) || isRelativeUri(uri)) {
-        var path9 = decodeURIComponent(uri.path);
-        if (platform === "win32" && /^\/[a-z]:/i.test(path9)) {
-          return path9.slice(1);
+        var path10 = decodeURIComponent(uri.path);
+        if (platform === "win32" && /^\/[a-z]:/i.test(path10)) {
+          return path10.slice(1);
         } else {
-          return path9;
+          return path10;
         }
       } else {
         throw new Error("Could not convert URI to path: " + uriString);
@@ -30674,18 +30674,18 @@ var require_docx_reader = __commonJS({
       readElement: contentTypesReader.readContentTypesFromXml,
       defaultValue: contentTypesReader.defaultContentTypes
     });
-    function readNumberingFromZipFile(zipFile, path9, styles) {
+    function readNumberingFromZipFile(zipFile, path10, styles) {
       return xmlFileReader({
-        filename: path9,
+        filename: path10,
         readElement: function(element) {
           return numberingXml.readNumberingXml(element, { styles });
         },
         defaultValue: numberingXml.defaultNumbering
       })(zipFile);
     }
-    function readStylesFromZipFile(zipFile, path9) {
+    function readStylesFromZipFile(zipFile, path10) {
       return xmlFileReader({
-        filename: path9,
+        filename: path10,
         readElement: stylesReader.readStylesXml,
         defaultValue: stylesReader.defaultStyles
       })(zipFile);
@@ -30716,10 +30716,10 @@ var require_style_map = __commonJS({
       });
     }
     function updateRelationships(docxFile) {
-      var path9 = "word/_rels/document.xml.rels";
+      var path10 = "word/_rels/document.xml.rels";
       var relationshipsUri = "http://schemas.openxmlformats.org/package/2006/relationships";
       var relationshipElementName = "{" + relationshipsUri + "}Relationship";
-      return docxFile.read(path9, "utf8").then(xml.readString).then(function(relationshipsContainer) {
+      return docxFile.read(path10, "utf8").then(xml.readString).then(function(relationshipsContainer) {
         var relationships = relationshipsContainer.children;
         addOrUpdateElement(relationships, relationshipElementName, "Id", {
           "Id": "rMammothStyleMap",
@@ -30727,21 +30727,21 @@ var require_style_map = __commonJS({
           "Target": styleMapAbsolutePath
         });
         var namespaces = { "": relationshipsUri };
-        return docxFile.write(path9, xml.writeString(relationshipsContainer, namespaces));
+        return docxFile.write(path10, xml.writeString(relationshipsContainer, namespaces));
       });
     }
     function updateContentTypes(docxFile) {
-      var path9 = "[Content_Types].xml";
+      var path10 = "[Content_Types].xml";
       var contentTypesUri = "http://schemas.openxmlformats.org/package/2006/content-types";
       var overrideName = "{" + contentTypesUri + "}Override";
-      return docxFile.read(path9, "utf8").then(xml.readString).then(function(typesElement) {
+      return docxFile.read(path10, "utf8").then(xml.readString).then(function(typesElement) {
         var children = typesElement.children;
         addOrUpdateElement(children, overrideName, "PartName", {
           "PartName": styleMapAbsolutePath,
           "ContentType": "text/prs.mammoth.style-map"
         });
         var namespaces = { "": contentTypesUri };
-        return docxFile.write(path9, xml.writeString(typesElement, namespaces));
+        return docxFile.write(path10, xml.writeString(typesElement, namespaces));
       });
     }
     function addOrUpdateElement(elements, name, identifyingAttribute, attributes) {
@@ -31437,9 +31437,9 @@ var require_document_to_html = __commonJS({
         };
         var paths = [];
         if (run3.highlight !== null) {
-          var path9 = findHtmlPath({ type: "highlight", color: run3.highlight });
-          if (path9) {
-            paths.push(path9);
+          var path10 = findHtmlPath({ type: "highlight", color: run3.highlight });
+          if (path10) {
+            paths.push(path10);
           }
         }
         if (run3.isSmallCaps) {
@@ -31474,15 +31474,15 @@ var require_document_to_html = __commonJS({
           messages.push(unrecognisedStyleWarning("run", run3));
         }
         paths.push(stylePath);
-        paths.forEach(function(path10) {
-          nodes = path10.wrap.bind(path10, nodes);
+        paths.forEach(function(path11) {
+          nodes = path11.wrap.bind(path11, nodes);
         });
         return nodes();
       }
       function findHtmlPathForRunProperty(elementType, defaultTagName) {
-        var path9 = findHtmlPath({ type: elementType });
-        if (path9) {
-          return path9;
+        var path10 = findHtmlPath({ type: elementType });
+        if (path10) {
+          return path10;
         } else if (defaultTagName) {
           return htmlPaths.element(defaultTagName, {}, { fresh: false });
         } else {
@@ -33184,13 +33184,13 @@ var require_options_reader = __commonJS({
 // node_modules/mammoth/lib/unzip.js
 var require_unzip = __commonJS({
   "node_modules/mammoth/lib/unzip.js"(exports) {
-    var fs8 = require_fs();
+    var fs9 = require_fs();
     var promises = require_promises();
     var zipfile = require_zipfile();
     exports.openZip = openZip;
     function openZip(options) {
       if (options.path) {
-        return fs8.readFile(options.path).then(zipfile.openArrayBuffer);
+        return fs9.readFile(options.path).then(zipfile.openArrayBuffer);
       } else if (options.buffer) {
         return promises.resolve(zipfile.openArrayBuffer(options.buffer));
       } else if (options.file) {
@@ -37735,7 +37735,7 @@ function normalizeEdgeBoundary(e2, t2, n2) {
 function percentage(e2) {
   return `${(e2 * 100).toFixed(2)}%`;
 }
-var e, t, n, r, i, a, o, s, c, l, u, d, f, p, m, h, g, _3, v, y, b, x, S, C, w, T, E, D, O, k, PasswordException$1, UnknownErrorException$1, InvalidPDFException$1, ResponseException$1, FormatError$1, AbortException$1, FeatureTest$1, Util$1, j, ee, makeArr$1, makeMap$1, makeObj$1, M, te, ne, re, ie, N, ae, oe, F, L, RefSet, RefSetCache, BaseStream, se, ce, le, ue, de, fe, MissingDataException, ParserEOFException, XRefEntryException, XRefParseException, pe, me, QCMS, he, ge, _e, ve, ye, be, xe, Se, AlternateCS, PatternCS, IndexedCS, DeviceGrayCS, DeviceRgbCS, DeviceRgbaCS, DeviceCmykCS, CalGrayCS, Ce, LabCS, we, Te, Ee, StringStream, NullStream, ChunkedStream, ChunkedStreamManager, De, Oe, ke, DecodeStream, StreamsSequenceStream, ColorSpaceUtils, JpegError, DNLMarkerError, EOIMarkerError, Ae, je, Me, Ne, Pe, Fe, Ie, Le, JpegImage, Re, ze, NullOptimizer, QueueOptimizer, Be, CheckedOperatorList, Ve, Pattern, BaseShading, RadialAxialShading, He, MeshStreamReader, Ue, We, DummyShading, BinaryCMapStream, BinaryCMapReader, Ascii85Stream, AsciiHexStream, makeBrotliDecode, Ge, BrotliStream, Ke, qe, Jbig2Error, Je, CCITTFaxStream, Ye, Xe, Ze, Qe, $e, FlateStream, et, tt, JpxError, nt, JpxStream, LZWStream, PredictorStream, RunLengthStream, Parser, rt, Lexer, Linearization, it, at, CMap, IdentityCMap, CMapFactory, CSS_FONT_INFO$1, SYSTEM_FONT_INFO$1, FONT_INFO$1, PATTERN_INFO$1, ot, st, ct, lt, ut, dt, ft, pt, mt, ht, gt, _t, vt, yt, bt, xt, St, Ct, wt, Tt, DataBuilder, Et, Dt, Ot, kt, At, CFFParser, CFF, CFFHeader, CFFStrings, CFFIndex, CFFDict, jt, Mt, Nt, Pt, Ft, CFFCharset, CFFEncoding, CFFFDSelect, CFFOffsetTracker, It, Lt, Rt, zt, Bt, Vt, Ht, Ut, Wt, GlyfTable, Gt, Kt, Contour, qt, Jt, ToUnicodeMap, IdentityToUnicodeMap, CFFFont, Commands, Yt, TrueTypeCompiled, Type2Compiled, FontRendererFactory, Xt, Zt, Qt, $t, Type1CharString, en, Type1Parser, Type1Font, tn, nn, rn, an, fonts_Glyph, Font, ErrorFont, on, sn, cn, ln, un, dn, fn, pn, mn, hn, gn, _n, vn, yn, bn, xn, Sn, Cn, wn, Tn, En, Dn, On, kn, An, jn, Mn, Nn, Pn, Fn, In, Ln, Rn, zn, Bn, Vn, Hn, Un, Wn, Gn, Kn, R, Token, qn, Jn, z2, PsNode, PsProgram, PsBlock, PsNumber, PsOperator, PsIf, PsIfElse, PsArgNode, PsConstNode, PsUnaryNode, PsBinaryNode, PsTernaryNode, Yn, Xn, V, Zn, Qn, PsJsCompiler, PSStackBasedInterpreter, H, $n, er, tr, nr, BaseLocalCache, LocalImageCache, LocalColorSpaceCache, LocalFunctionCache, LocalGStateCache, LocalTilingPatternCache, RegionalImageCache, GlobalColorSpaceCache, rr, ir, ar, PDFFunction, or, sr, cr, lr, ur, dr, fr, pr, mr, hr, gr, _r, vr, yr, MurmurHash3_64$1, br, xr, Sr, Cr, wr, Tr, TranslatedFont, StateManager, TextState, EvalState, Er, DefaultAppearanceEvaluator, AppearanceStreamEvaluator, Dr, Or, kr, NameOrNumberTree, NameTree, NumberTree, Ar, jr, Mr, SimpleDOMNode, SimpleXMLParser, MetadataParser, Nr, Pr, StructElementNode, StructElement, StructTreePage, isRef2, Fr, Ir, Lr, Rr, zr, Vr, Hr, Ur, Wr, Gr, Kr, qr, U, Jr, Yr, W, Xr, Zr, Qr, $r, ei, ti, ni, ri, ii, ai, oi, si, ci, li, ui, G, di, fi, pi, mi, hi, gi, _i, vi, yi, bi, xi, Si, Ci, wi, Ti, Ei, Di, Oi, ki, Ai, ji, Mi, Ni, Pi, Fi, Ii, Ri, zi, Bi, Vi, Hi, Wi, Gi, Ki, qi, K, Ji, Yi, Xi, Zi, Qi, $i, ea, q, FontFinder, FontInfo$1, FontSelector, TextMeasure, ta, na, ra, ia, aa, oa, sa, ca, J, la, ua, da, fa, pa, ma, ha, ga, _a3, va, ya, ba, xa, Sa, Ca, Y, X, XFAAttribute, wa, ContentObject, OptionObject, StringObject, IntegerObject, Option01, Option10, Ta, Z, Ea, Da, Oa, AppearanceFilter, Arc, Area, Assist, Barcode, Bind, BindItems, Bookend, BooleanElement, Border, Break, BreakAfter, BreakBefore, Button, Calculate, Caption, Certificate, Certificates, CheckButton, ChoiceList, Color, Comb, Connect, ContentArea, Corner, DateElement, DateTime, DateTimeEdit, Decimal, DefaultUi, Desc, DigestMethod, DigestMethods, Draw, Edge, Encoding, Encodings, Encrypt, EncryptData, Encryption, EncryptionMethod, EncryptionMethods, Event$1, ExData, ExObject, ExclGroup, Execute, Extras, Field, Fill, Filter, Float, template_Font, Format, Handler, Hyphenation, Image$1, ImageEdit, Integer, Issuers, Items, Keep, KeyUsage, Line, Linear, LockDocument, Manifest, Margin, Mdp, Medium, Message, NumericEdit, Occur, Oid, Oids, Overflow, PageArea, ka, Para, PasswordEdit, template_Pattern, Picture, Proto, Radial, Reason, Reasons, Rectangle, RefElement, Script, SetProperty, SignData, Signature, Signing, Solid, Speak, Stipple, Subform, SubformSet, SubjectDN, SubjectDNs, Submit, Template, Text, TextEdit, Time, TimeStamp, ToolTip, Traversal, Traverse, Ui, Validate, Value, Variables, Aa, ja, Binder, DataHandler, Q, Acrobat, Acrobat7, ADBE_JSConsole, ADBE_JSDebugger, AddSilentPrint, AddViewerPreferences, AdjustData, AdobeExtensionLevel, Agent, AlwaysEmbed, Amd, config_Area, Attributes, AutoSave, Base, BatchOutput, BehaviorOverride, Cache, Change, Common, Compress, CompressLogicalStructure, CompressObjectStream, Compression, Config, Conformance, ContentCopy, Copies, Creator, CurrentPage, Data, Debug, DefaultTypeface, Destination, DocumentAssembly, Driver, DuplexOption, DynamicRender, Embed, config_Encrypt, config_Encryption, EncryptionLevel, Enforce, Equate, EquateRange, Exclude, ExcludeNS, FlipLabel, config_FontInfo, FormFieldFilling, GroupParent, IfEmpty, IncludeXDPContent, IncrementalLoad, IncrementalMerge, Interactive, Jog, LabelPrinter, Layout, Level, Linearized, Locale, LocaleSet, Log, MapElement, MediumInfo, config_Message, Messaging, Mode, ModifyAnnots, MsgId, NameAttr, NeverEmbed, NumberOfCopies, OpenAction, Output, OutputBin, OutputXSL, Overprint, Packets, PageOffset, PageRange, Pagination, PaginationOverride, Part, Pcl, Pdf, Pdfa, Permissions, PickTrayByPDFSize, config_Picture, PlaintextMetadata, Presence, Present, Print, PrintHighQuality, PrintScaling, PrinterName, Producer, Ps, Range$1, Record, Relevant, Rename, RenderPolicy, RunScripts, config_Script, ScriptModel, Severity, SilentPrint, Staple, StartNode, StartPage, SubmitFormat, SubmitUrl, SubsetBelow, SuppressBanner, Tagged, config_Template, Threshold, To, TemplateCache, Trace, Transform, Type, Uri, config_Validate, ValidateApprovalSignatures, ValidationMessaging, Version, VersionControl, ViewerPreferences, WebClient, Whitespace, Window, Xdc, Xdp, Xsl, Zpl, Ma, Na, ConnectionSet, EffectiveInputPolicy, EffectiveOutputPolicy, Operation, RootElement, SoapAction, SoapAddress, connection_set_Uri, WsdlAddress, WsdlConnection, XmlConnection, XsdConnection, Pa, Fa, datasets_Data, Datasets, Ia, La, CalendarSymbols, CurrencySymbol, CurrencySymbols, DatePattern, DatePatterns, DateTimeSymbols, Day, DayNames, Era, EraNames, locale_set_Locale, locale_set_LocaleSet, Meridiem, MeridiemNames, Month, MonthNames, NumberPattern, NumberPatterns, NumberSymbol, NumberSymbols, TimePattern, TimePatterns, TypeFace, TypeFaces, Ra, za, signature_Signature, Ba, Va, Stylesheet, Ha, Ua, xdp_Xdp, Wa, Ga, Ka, qa, Ja, Ya, Xa, Za, Qa, XhtmlObject, A, B, Body, Br, Html, I, Li, Ol, P, Span, Sub, Sup, Ul, $a, eo, UnknownNamespace, Root, Empty, Builder, to, no, AnnotationFactory, Annotation, AnnotationBorderStyle, MarkupAnnotation, ro, TextWidgetAnnotation, ButtonWidgetAnnotation, ChoiceWidgetAnnotation, SignatureWidgetAnnotation, TextAnnotation, LinkAnnotation, PopupAnnotation, FreeTextAnnotation, LineAnnotation, SquareAnnotation, CircleAnnotation, PolylineAnnotation, PolygonAnnotation, CaretAnnotation, InkAnnotation, HighlightAnnotation, UnderlineAnnotation, SquigglyAnnotation, StrikeOutAnnotation, StampAnnotation, FileAttachmentAnnotation, io, ao, oo, so, DatasetXMLParser, DatasetReader, SingleIntersector, Intersector, Word64, co, lo, DecryptStream, ARCFourCipher, NullCipher, AESBaseCipher, AES128Cipher, AES256Cipher, PDFBase, PDF17, PDF20, CipherTransform, uo, XRef, fo, Page, po, mo, ho, PDFDocument, BasePdfManager, LocalPdfManager, NetworkPdfManager, go, _o, MessageHandler$1, PageData, DocumentData, XRefWrapper, PDFEditor, BasePDFStream$1, BasePDFStreamReader$1, BasePDFStreamRangeReader$1, PDFWorkerStream, PDFWorkerStreamReader, PDFWorkerStreamRangeReader, WorkerTask, WorkerMessageHandler, vo, yo, bo, xo, So, Co, wo, Eo, Do, Oo, $, ko, Ao, jo, Mo, No, Po, Fo, Io, Lo, Ro, zo, Bo, PasswordException, UnknownErrorException, InvalidPDFException, ResponseException, FormatError, AbortException, FeatureTest, Util, Vo, Ho, makeArr, makeMap, makeObj, Uo, Wo, XfaLayer, PixelsPerInch, RenderingCancelledException, StatTimer, PDFDateString, Go, Ko, ColorScheme, CSSConstants, qo, Jo, FloatingToolbar, Yo, Xo, IdManager, Zo, CommandManager, Qo, $o, es, ts, Comment, ns, rs, FakeEditor, is, as, os4, MurmurHash3_64, ss, AnnotationStorage, PrintAnnotationStorage, cs, ls, us, ds, BBoxReader, ensureDebugMetadata, CanvasBBoxTracker, CanvasDependencyTracker, fs4, ps2, ms, FontLoader, FontFaceObject, CSS_FONT_INFO, SYSTEM_FONT_INFO, FONT_INFO, PATTERN_INFO, CssFontInfo, SystemFontInfo, FontInfo, PatternInfo, FontPathInfo, isRefProxy, isNameProxy, hs, LoopbackPort, gs, _s, MessageHandler, BaseBinaryDataFactory, DOMBinaryDataFactory, BaseCanvasFactory, DOMCanvasFactory, BaseFilterFactory, DOMFilterFactory, NodeFilterFactory, NodeCanvasFactory, NodeBinaryDataFactory, WebGPU, vs, ys, BaseShadingPattern, RadialAxialShadingPattern, MeshShadingPattern, DummyShadingPattern, bs, xs, Ss, Cs, CanvasExtraState, ws, Ts, Es, Ds, Os, BasePDFStream, BasePDFStreamReader, BasePDFStreamRangeReader, PDFFetchStream, PDFFetchStreamReader, PDFFetchStreamRangeReader, PDFDataTransportStream, PDFDataTransportStreamReader, PDFDataTransportStreamRangeReader, PDFNetworkStream, PDFNetworkStreamReader, PDFNetworkStreamRangeReader, PDFNodeStream, PDFNodeStreamReader, PDFNodeStreamRangeReader, GlobalWorkerOptions, Metadata, ks, OptionalContentGroup, As, PagesMapper, js, dataObj, PDFObjects, Ms, Ns, PDFDataRangeTransport, PDFDocumentProxy, Fs, Is, WorkerTransport, RenderTask, Ls, Rs, zs, Bs, Vs, ColorConverters, BaseSVGFactory, DOMSVGFactory, Hs, Us, AnnotationElementFactory, Ws, EditorAnnotationElement, LinkAnnotationElement, TextAnnotationElement, WidgetAnnotationElement, TextWidgetAnnotationElement, SignatureWidgetAnnotationElement, CheckboxWidgetAnnotationElement, RadioButtonWidgetAnnotationElement, PushButtonWidgetAnnotationElement, ChoiceWidgetAnnotationElement, PopupAnnotationElement, PopupElement, FreeTextAnnotationElement, LineAnnotationElement, SquareAnnotationElement, CircleAnnotationElement, PolylineAnnotationElement, PolygonAnnotationElement, CaretAnnotationElement, InkAnnotationElement, HighlightAnnotationElement, UnderlineAnnotationElement, SquigglyAnnotationElement, StrikeOutAnnotationElement, StampAnnotationElement, FileAttachmentAnnotationElement, MediaAnnotationElement, Gs, Ks, qs, Outline, Js, FreeDrawOutline, HighlightOutliner, HighlightOutline, FreeHighlightOutliner, FreeHighlightOutline, Ys, DrawingOptions, Xs, InkDrawOutliner, InkDrawOutline, Zs, Qs, ContourDrawOutline, SignatureExtractor, $s, ec, tc, StampEditor, nc, rc, ic;
+var e, t, n, r, i, a, o, s, c, l, u, d, f, p, m, h, g, _3, v, y, b, x, S, C, w, T, E, D, O, k, PasswordException$1, UnknownErrorException$1, InvalidPDFException$1, ResponseException$1, FormatError$1, AbortException$1, FeatureTest$1, Util$1, j, ee, makeArr$1, makeMap$1, makeObj$1, M, te, ne, re, ie, N, ae, oe, F, L, RefSet, RefSetCache, BaseStream, se, ce, le, ue, de, fe, MissingDataException, ParserEOFException, XRefEntryException, XRefParseException, pe, me, QCMS, he, ge, _e, ve, ye, be, xe, Se, AlternateCS, PatternCS, IndexedCS, DeviceGrayCS, DeviceRgbCS, DeviceRgbaCS, DeviceCmykCS, CalGrayCS, Ce, LabCS, we, Te, Ee, StringStream, NullStream, ChunkedStream, ChunkedStreamManager, De, Oe, ke, DecodeStream, StreamsSequenceStream, ColorSpaceUtils, JpegError, DNLMarkerError, EOIMarkerError, Ae, je, Me, Ne, Pe, Fe, Ie, Le, JpegImage, Re, ze, NullOptimizer, QueueOptimizer, Be, CheckedOperatorList, Ve, Pattern, BaseShading, RadialAxialShading, He, MeshStreamReader, Ue, We, DummyShading, BinaryCMapStream, BinaryCMapReader, Ascii85Stream, AsciiHexStream, makeBrotliDecode, Ge, BrotliStream, Ke, qe, Jbig2Error, Je, CCITTFaxStream, Ye, Xe, Ze, Qe, $e, FlateStream, et, tt, JpxError, nt, JpxStream, LZWStream, PredictorStream, RunLengthStream, Parser, rt, Lexer, Linearization, it, at, CMap, IdentityCMap, CMapFactory, CSS_FONT_INFO$1, SYSTEM_FONT_INFO$1, FONT_INFO$1, PATTERN_INFO$1, ot, st, ct, lt, ut, dt, ft, pt, mt, ht, gt, _t, vt, yt, bt, xt, St, Ct, wt, Tt, DataBuilder, Et, Dt, Ot, kt, At, CFFParser, CFF, CFFHeader, CFFStrings, CFFIndex, CFFDict, jt, Mt, Nt, Pt, Ft, CFFCharset, CFFEncoding, CFFFDSelect, CFFOffsetTracker, It, Lt, Rt, zt, Bt, Vt, Ht, Ut, Wt, GlyfTable, Gt, Kt, Contour, qt, Jt, ToUnicodeMap, IdentityToUnicodeMap, CFFFont, Commands, Yt, TrueTypeCompiled, Type2Compiled, FontRendererFactory, Xt, Zt, Qt, $t, Type1CharString, en, Type1Parser, Type1Font, tn, nn, rn, an, fonts_Glyph, Font, ErrorFont, on, sn, cn, ln, un, dn, fn, pn, mn, hn, gn, _n, vn, yn, bn, xn, Sn, Cn, wn, Tn, En, Dn, On, kn, An, jn, Mn, Nn, Pn, Fn, In, Ln, Rn, zn, Bn, Vn, Hn, Un, Wn, Gn, Kn, R, Token, qn, Jn, z2, PsNode, PsProgram, PsBlock, PsNumber, PsOperator, PsIf, PsIfElse, PsArgNode, PsConstNode, PsUnaryNode, PsBinaryNode, PsTernaryNode, Yn, Xn, V, Zn, Qn, PsJsCompiler, PSStackBasedInterpreter, H, $n, er, tr, nr, BaseLocalCache, LocalImageCache, LocalColorSpaceCache, LocalFunctionCache, LocalGStateCache, LocalTilingPatternCache, RegionalImageCache, GlobalColorSpaceCache, rr, ir, ar, PDFFunction, or, sr, cr, lr, ur, dr, fr, pr, mr, hr, gr, _r, vr, yr, MurmurHash3_64$1, br, xr, Sr, Cr, wr, Tr, TranslatedFont, StateManager, TextState, EvalState, Er, DefaultAppearanceEvaluator, AppearanceStreamEvaluator, Dr, Or, kr, NameOrNumberTree, NameTree, NumberTree, Ar, jr, Mr, SimpleDOMNode, SimpleXMLParser, MetadataParser, Nr, Pr, StructElementNode, StructElement, StructTreePage, isRef2, Fr, Ir, Lr, Rr, zr, Vr, Hr, Ur, Wr, Gr, Kr, qr, U, Jr, Yr, W, Xr, Zr, Qr, $r, ei, ti, ni, ri, ii, ai, oi, si, ci, li, ui, G, di, fi, pi, mi, hi, gi, _i, vi, yi, bi, xi, Si, Ci, wi, Ti, Ei, Di, Oi, ki, Ai, ji, Mi, Ni, Pi, Fi, Ii, Ri, zi, Bi, Vi, Hi, Wi, Gi, Ki, qi, K, Ji, Yi, Xi, Zi, Qi, $i, ea, q, FontFinder, FontInfo$1, FontSelector, TextMeasure, ta, na, ra, ia, aa, oa, sa, ca, J, la, ua, da, fa, pa, ma, ha, ga, _a3, va, ya, ba, xa, Sa, Ca, Y, X, XFAAttribute, wa, ContentObject, OptionObject, StringObject, IntegerObject, Option01, Option10, Ta, Z, Ea, Da, Oa, AppearanceFilter, Arc, Area, Assist, Barcode, Bind, BindItems, Bookend, BooleanElement, Border, Break, BreakAfter, BreakBefore, Button, Calculate, Caption, Certificate, Certificates, CheckButton, ChoiceList, Color, Comb, Connect, ContentArea, Corner, DateElement, DateTime, DateTimeEdit, Decimal, DefaultUi, Desc, DigestMethod, DigestMethods, Draw, Edge, Encoding, Encodings, Encrypt, EncryptData, Encryption, EncryptionMethod, EncryptionMethods, Event$1, ExData, ExObject, ExclGroup, Execute, Extras, Field, Fill, Filter, Float, template_Font, Format, Handler, Hyphenation, Image$1, ImageEdit, Integer, Issuers, Items, Keep, KeyUsage, Line, Linear, LockDocument, Manifest, Margin, Mdp, Medium, Message, NumericEdit, Occur, Oid, Oids, Overflow, PageArea, ka, Para, PasswordEdit, template_Pattern, Picture, Proto, Radial, Reason, Reasons, Rectangle, RefElement, Script, SetProperty, SignData, Signature, Signing, Solid, Speak, Stipple, Subform, SubformSet, SubjectDN, SubjectDNs, Submit, Template, Text, TextEdit, Time, TimeStamp, ToolTip, Traversal, Traverse, Ui, Validate, Value, Variables, Aa, ja, Binder, DataHandler, Q, Acrobat, Acrobat7, ADBE_JSConsole, ADBE_JSDebugger, AddSilentPrint, AddViewerPreferences, AdjustData, AdobeExtensionLevel, Agent, AlwaysEmbed, Amd, config_Area, Attributes, AutoSave, Base, BatchOutput, BehaviorOverride, Cache, Change, Common, Compress, CompressLogicalStructure, CompressObjectStream, Compression, Config, Conformance, ContentCopy, Copies, Creator, CurrentPage, Data, Debug, DefaultTypeface, Destination, DocumentAssembly, Driver, DuplexOption, DynamicRender, Embed, config_Encrypt, config_Encryption, EncryptionLevel, Enforce, Equate, EquateRange, Exclude, ExcludeNS, FlipLabel, config_FontInfo, FormFieldFilling, GroupParent, IfEmpty, IncludeXDPContent, IncrementalLoad, IncrementalMerge, Interactive, Jog, LabelPrinter, Layout, Level, Linearized, Locale, LocaleSet, Log, MapElement, MediumInfo, config_Message, Messaging, Mode, ModifyAnnots, MsgId, NameAttr, NeverEmbed, NumberOfCopies, OpenAction, Output, OutputBin, OutputXSL, Overprint, Packets, PageOffset, PageRange, Pagination, PaginationOverride, Part, Pcl, Pdf, Pdfa, Permissions, PickTrayByPDFSize, config_Picture, PlaintextMetadata, Presence, Present, Print, PrintHighQuality, PrintScaling, PrinterName, Producer, Ps, Range$1, Record, Relevant, Rename, RenderPolicy, RunScripts, config_Script, ScriptModel, Severity, SilentPrint, Staple, StartNode, StartPage, SubmitFormat, SubmitUrl, SubsetBelow, SuppressBanner, Tagged, config_Template, Threshold, To, TemplateCache, Trace, Transform, Type, Uri, config_Validate, ValidateApprovalSignatures, ValidationMessaging, Version, VersionControl, ViewerPreferences, WebClient, Whitespace, Window, Xdc, Xdp, Xsl, Zpl, Ma, Na, ConnectionSet, EffectiveInputPolicy, EffectiveOutputPolicy, Operation, RootElement, SoapAction, SoapAddress, connection_set_Uri, WsdlAddress, WsdlConnection, XmlConnection, XsdConnection, Pa, Fa, datasets_Data, Datasets, Ia, La, CalendarSymbols, CurrencySymbol, CurrencySymbols, DatePattern, DatePatterns, DateTimeSymbols, Day, DayNames, Era, EraNames, locale_set_Locale, locale_set_LocaleSet, Meridiem, MeridiemNames, Month, MonthNames, NumberPattern, NumberPatterns, NumberSymbol, NumberSymbols, TimePattern, TimePatterns, TypeFace, TypeFaces, Ra, za, signature_Signature, Ba, Va, Stylesheet, Ha, Ua, xdp_Xdp, Wa, Ga, Ka, qa, Ja, Ya, Xa, Za, Qa, XhtmlObject, A, B, Body, Br, Html, I, Li, Ol, P, Span, Sub, Sup, Ul, $a, eo, UnknownNamespace, Root, Empty, Builder, to, no, AnnotationFactory, Annotation, AnnotationBorderStyle, MarkupAnnotation, ro, TextWidgetAnnotation, ButtonWidgetAnnotation, ChoiceWidgetAnnotation, SignatureWidgetAnnotation, TextAnnotation, LinkAnnotation, PopupAnnotation, FreeTextAnnotation, LineAnnotation, SquareAnnotation, CircleAnnotation, PolylineAnnotation, PolygonAnnotation, CaretAnnotation, InkAnnotation, HighlightAnnotation, UnderlineAnnotation, SquigglyAnnotation, StrikeOutAnnotation, StampAnnotation, FileAttachmentAnnotation, io, ao, oo, so, DatasetXMLParser, DatasetReader, SingleIntersector, Intersector, Word64, co, lo, DecryptStream, ARCFourCipher, NullCipher, AESBaseCipher, AES128Cipher, AES256Cipher, PDFBase, PDF17, PDF20, CipherTransform, uo, XRef, fo, Page, po, mo, ho, PDFDocument, BasePdfManager, LocalPdfManager, NetworkPdfManager, go, _o, MessageHandler$1, PageData, DocumentData, XRefWrapper, PDFEditor, BasePDFStream$1, BasePDFStreamReader$1, BasePDFStreamRangeReader$1, PDFWorkerStream, PDFWorkerStreamReader, PDFWorkerStreamRangeReader, WorkerTask, WorkerMessageHandler, vo, yo, bo, xo, So, Co, wo, Eo, Do, Oo, $, ko, Ao, jo, Mo, No, Po, Fo, Io, Lo, Ro, zo, Bo, PasswordException, UnknownErrorException, InvalidPDFException, ResponseException, FormatError, AbortException, FeatureTest, Util, Vo, Ho, makeArr, makeMap, makeObj, Uo, Wo, XfaLayer, PixelsPerInch, RenderingCancelledException, StatTimer, PDFDateString, Go, Ko, ColorScheme, CSSConstants, qo, Jo, FloatingToolbar, Yo, Xo, IdManager, Zo, CommandManager, Qo, $o, es, ts, Comment, ns, rs, FakeEditor, is, as, os4, MurmurHash3_64, ss, AnnotationStorage, PrintAnnotationStorage, cs, ls, us, ds, BBoxReader, ensureDebugMetadata, CanvasBBoxTracker, CanvasDependencyTracker, fs5, ps2, ms, FontLoader, FontFaceObject, CSS_FONT_INFO, SYSTEM_FONT_INFO, FONT_INFO, PATTERN_INFO, CssFontInfo, SystemFontInfo, FontInfo, PatternInfo, FontPathInfo, isRefProxy, isNameProxy, hs, LoopbackPort, gs, _s, MessageHandler, BaseBinaryDataFactory, DOMBinaryDataFactory, BaseCanvasFactory, DOMCanvasFactory, BaseFilterFactory, DOMFilterFactory, NodeFilterFactory, NodeCanvasFactory, NodeBinaryDataFactory, WebGPU, vs, ys, BaseShadingPattern, RadialAxialShadingPattern, MeshShadingPattern, DummyShadingPattern, bs, xs, Ss, Cs, CanvasExtraState, ws, Ts, Es, Ds, Os, BasePDFStream, BasePDFStreamReader, BasePDFStreamRangeReader, PDFFetchStream, PDFFetchStreamReader, PDFFetchStreamRangeReader, PDFDataTransportStream, PDFDataTransportStreamReader, PDFDataTransportStreamRangeReader, PDFNetworkStream, PDFNetworkStreamReader, PDFNetworkStreamRangeReader, PDFNodeStream, PDFNodeStreamReader, PDFNodeStreamRangeReader, GlobalWorkerOptions, Metadata, ks, OptionalContentGroup, As, PagesMapper, js, dataObj, PDFObjects, Ms, Ns, PDFDataRangeTransport, PDFDocumentProxy, Fs, Is, WorkerTransport, RenderTask, Ls, Rs, zs, Bs, Vs, ColorConverters, BaseSVGFactory, DOMSVGFactory, Hs, Us, AnnotationElementFactory, Ws, EditorAnnotationElement, LinkAnnotationElement, TextAnnotationElement, WidgetAnnotationElement, TextWidgetAnnotationElement, SignatureWidgetAnnotationElement, CheckboxWidgetAnnotationElement, RadioButtonWidgetAnnotationElement, PushButtonWidgetAnnotationElement, ChoiceWidgetAnnotationElement, PopupAnnotationElement, PopupElement, FreeTextAnnotationElement, LineAnnotationElement, SquareAnnotationElement, CircleAnnotationElement, PolylineAnnotationElement, PolygonAnnotationElement, CaretAnnotationElement, InkAnnotationElement, HighlightAnnotationElement, UnderlineAnnotationElement, SquigglyAnnotationElement, StrikeOutAnnotationElement, StampAnnotationElement, FileAttachmentAnnotationElement, MediaAnnotationElement, Gs, Ks, qs, Outline, Js, FreeDrawOutline, HighlightOutliner, HighlightOutline, FreeHighlightOutliner, FreeHighlightOutline, Ys, DrawingOptions, Xs, InkDrawOutliner, InkDrawOutline, Zs, Qs, ContourDrawOutline, SignatureExtractor, $s, ec, tc, StampEditor, nc, rc, ic;
 var init_pdfjs = __esm({
   "node_modules/unpdf/dist/pdfjs.mjs"() {
     if (polyfillDOMMatrix(), globalThis.FinalizationRegistry === void 0 && (globalThis.FinalizationRegistry = class FinalizationRegistry2 {
@@ -63991,7 +63991,7 @@ var init_pdfjs = __esm({
         return this.#a;
       }
     };
-    fs4 = class CanvasNestedDependencyTracker {
+    fs5 = class CanvasNestedDependencyTracker {
       #e;
       #t;
       #n;
@@ -65331,7 +65331,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
       }
       drawPattern(e2, t2, n2 = false, [r2, i2], a2) {
         let [o2, s2, c2, l2] = this.bbox, u2 = e2.dependencyTracker;
-        if (u2 && (e2.dependencyTracker = new fs4(u2, a2)), e2.save(), n2 ? e2.ctx.clip(t2, `evenodd`) : e2.ctx.clip(t2), e2.ctx.setTransform(...this.patternBaseMatrix), e2.ctx.translate(r2 * this.xstep, i2 * this.ystep), this.needsIsolation || e2.ctx.globalAlpha !== 1 || e2.ctx.globalCompositeOperation !== `source-over` || e2.inSMaskMode) {
+        if (u2 && (e2.dependencyTracker = new fs5(u2, a2)), e2.save(), n2 ? e2.ctx.clip(t2, `evenodd`) : e2.ctx.clip(t2), e2.ctx.setTransform(...this.patternBaseMatrix), e2.ctx.translate(r2 * this.xstep, i2 * this.ystep), this.needsIsolation || e2.ctx.globalAlpha !== 1 || e2.ctx.globalCompositeOperation !== `source-over` || e2.inSMaskMode) {
           let t3 = c2 - o2, n3 = l2 - s2, [r3, i3] = this._getCombinedScales(), u3 = this.getSizeAndScale(t3, this.ctx.canvas.width, r3), d2 = this.getSizeAndScale(n3, this.ctx.canvas.height, i3), f2 = this._renderTileCanvas(e2, a2, u3, d2);
           e2.ctx.drawImage(f2.canvas, o2, s2, t3, n3), e2.canvasFactory.destroy(f2);
         } else this.setFillAndStrokeStyleToContext(e2, this.paintType, this.color), this.clipBbox(e2, o2, s2, c2, l2), e2.baseTransformStack.push(e2.baseTransform), e2.baseTransform = getCurrentTransform(e2.ctx), e2.executeOperatorList(this.operatorList), e2.baseTransform = e2.baseTransformStack.pop();
@@ -66037,7 +66037,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
         if (p2 || a2 === 0) return;
         this._cachedScaleForStroking[0] = -1, this._cachedGetSinglePixelWidth = null, n2.save(), r2.textMatrix && n2.transform(...r2.textMatrix), n2.translate(r2.x, r2.y + r2.textRise), n2.scale(u2, o2);
         let v2 = this.dependencyTracker;
-        for (this.dependencyTracker = v2 ? new fs4(v2, e2) : null, m2 = 0; m2 < f2; ++m2) {
+        for (this.dependencyTracker = v2 ? new fs5(v2, e2) : null, m2 = 0; m2 < f2; ++m2) {
           if (h2 = t2[m2], typeof h2 == `number`) {
             _4 = s2 * h2 * a2 / 1e3, this.ctx.translate(_4, 0), r2.x += _4 * u2;
             continue;
@@ -66059,7 +66059,7 @@ fn fs_main(in : VertexOutput) -> @location(0) vec4<f32> {
         let n2;
         if (t2[0] === `TilingPattern`) {
           let e3 = this.baseTransform || getCurrentTransform(this.ctx);
-          n2 = new xs(t2, this.ctx, { createCanvasGraphics: (e4, t3) => new CanvasGraphics(e4, this.commonObjs, this.objs, this.canvasFactory, this.filterFactory, { optionalContentConfig: this.optionalContentConfig, markedContentStack: this.markedContentStack }, void 0, void 0, this.dependencyTracker ? new fs4(this.dependencyTracker, t3, true) : null) }, e3);
+          n2 = new xs(t2, this.ctx, { createCanvasGraphics: (e4, t3) => new CanvasGraphics(e4, this.commonObjs, this.objs, this.canvasFactory, this.filterFactory, { optionalContentConfig: this.optionalContentConfig, markedContentStack: this.markedContentStack }, void 0, void 0, this.dependencyTracker ? new fs5(this.dependencyTracker, t3, true) : null) }, e3);
         } else n2 = this._getPattern(e2, t2[1], t2[2]);
         return n2;
       }
@@ -73206,10 +73206,10 @@ var init_dist = __esm({
 });
 
 // src/index.js
-import fs7 from "node:fs/promises";
+import fs8 from "node:fs/promises";
 import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
 import os6 from "node:os";
-import path8 from "node:path";
+import path9 from "node:path";
 
 // node_modules/zod/v3/helpers/util.js
 var util;
@@ -73585,8 +73585,8 @@ function getErrorMap() {
 
 // node_modules/zod/v3/helpers/parseUtil.js
 var makeIssue = (params) => {
-  const { data, path: path9, errorMaps, issueData } = params;
-  const fullPath = [...path9, ...issueData.path || []];
+  const { data, path: path10, errorMaps, issueData } = params;
+  const fullPath = [...path10, ...issueData.path || []];
   const fullIssue = {
     ...issueData,
     path: fullPath
@@ -73701,11 +73701,11 @@ var errorUtil;
 
 // node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
-  constructor(parent, value, path9, key) {
+  constructor(parent, value, path10, key) {
     this._cachedPath = [];
     this.parent = parent;
     this.data = value;
-    this._path = path9;
+    this._path = path10;
     this._key = key;
   }
   get path() {
@@ -77660,10 +77660,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path9) {
-  if (!path9)
+function getElementAtPath(obj, path10) {
+  if (!path10)
     return obj;
-  return path9.reduce((acc, key) => acc?.[key], obj);
+  return path10.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys2 = Object.keys(promisesObj);
@@ -78003,11 +78003,11 @@ function explicitlyAborted(x2, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path9, issues) {
+function prefixIssues(path10, issues) {
   return issues.map((iss) => {
     var _a4;
     (_a4 = iss).path ?? (_a4.path = []);
-    iss.path.unshift(path9);
+    iss.path.unshift(path10);
     return iss;
   });
 }
@@ -78469,16 +78469,16 @@ function flattenError(error62, mapper = (issue2) => issue2.message) {
 }
 function formatError(error62, mapper = (issue2) => issue2.message) {
   const fieldErrors = { _errors: [] };
-  const processError = (error63, path9 = []) => {
+  const processError = (error63, path10 = []) => {
     for (const issue2 of error63.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path9, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path10, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path9, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path9, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
       } else {
-        const fullpath = [...path9, ...issue2.path];
+        const fullpath = [...path10, ...issue2.path];
         if (fullpath.length === 0) {
           fieldErrors._errors.push(mapper(issue2));
         } else {
@@ -78517,17 +78517,17 @@ function formatError(error62, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error62, mapper = (issue2) => issue2.message) {
   const result2 = { errors: [] };
-  const processError = (error63, path9 = []) => {
+  const processError = (error63, path10 = []) => {
     var _a4;
     for (const issue2 of error63.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path9, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path10, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path9, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path9, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path10, ...issue2.path]);
       } else {
-        const fullpath = [...path9, ...issue2.path];
+        const fullpath = [...path10, ...issue2.path];
         if (fullpath.length === 0) {
           result2.errors.push(mapper(issue2));
           continue;
@@ -78566,8 +78566,8 @@ function treeifyError(error62, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path9 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path9) {
+  const path10 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path10) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -94118,11 +94118,11 @@ function normalizeObjectSchema(schema) {
   }
   return void 0;
 }
-function getDotPath(path9) {
-  if (path9.length === 0) {
+function getDotPath(path10) {
+  if (path10.length === 0) {
     return "object root";
   }
-  return path9.reduce((acc, seg, index) => {
+  return path10.reduce((acc, seg, index) => {
     if (index === 0) {
       return String(seg);
     }
@@ -96349,13 +96349,13 @@ function resolveRef(ref, ctx) {
   if (!ref.startsWith("#")) {
     throw new Error("External $ref is not supported, only local refs (#/...) are allowed");
   }
-  const path9 = ref.slice(1).split("/").filter(Boolean);
-  if (path9.length === 0) {
+  const path10 = ref.slice(1).split("/").filter(Boolean);
+  if (path10.length === 0) {
     return ctx.rootSchema;
   }
   const defsKey = ctx.version === "draft-2020-12" ? "$defs" : "definitions";
-  if (path9[0] === defsKey) {
-    const key = path9[1] === void 0 ? void 0 : decodeJSONPointerSegment(path9[1]);
+  if (path10[0] === defsKey) {
+    const key = path10[1] === void 0 ? void 0 : decodeJSONPointerSegment(path10[1]);
     if (!key || !ctx.defs[key]) {
       throw new Error(`Reference not found: ${ref}`);
     }
@@ -102920,20 +102920,20 @@ async function embed(texts2) {
   }
   return out;
 }
-async function transcribe(file2, { engine = "whisper", terms, timestamps = false } = {}) {
+async function transcribe(file3, { engine = "whisper", terms, timestamps = false } = {}) {
   const service = engine === "qwen" ? config2.services.asr : config2.services.whisper;
   const form = new FormData();
-  form.set("file", new Blob([await fs2.readFile(file2)]), path3.basename(file2));
+  form.set("file", new Blob([await fs2.readFile(file3)]), path3.basename(file3));
   form.set("language", "ko");
   form.set("response_format", timestamps ? "verbose_json" : "json");
   if (terms) form.set("prompt", String(terms).slice(0, 2e3));
   const { data } = await call(service, "/v1/audio/transcriptions", { body: form, timeoutMs: 3e5, retries: 3 });
   return { text: String(data.text ?? "").trim(), seconds: data.usage?.audio_seconds ?? data.duration, segments: data.segments };
 }
-async function ocr(file2, { waitMs = 15 * 6e4, docx = false } = {}) {
+async function ocr(file3, { waitMs = 15 * 6e4, docx = false } = {}) {
   const form = new FormData();
-  if (typeof file2 === "string") form.set("file", new Blob([await fs2.readFile(file2)]), path3.basename(file2));
-  else form.set("file", new Blob([file2.data]), file2.name);
+  if (typeof file3 === "string") form.set("file", new Blob([await fs2.readFile(file3)]), path3.basename(file3));
+  else form.set("file", new Blob([file3.data]), file3.name);
   if (docx) form.set("outputFormats", JSON.stringify(["docx"]));
   const { data } = await call(config2.services.ocr, "/layout-parsing/async", { body: form, timeoutMs: 12e4, retries: 3 });
   const jobId = data.result?.jobId;
@@ -103037,12 +103037,12 @@ async function openChrome(urls = [], { run: run3 = spawn2 } = {}) {
 
 // src/agent.js
 var pause = (ms2) => new Promise((ok2) => setTimeout(ok2, ms2));
-async function api(path9, body) {
+async function api(path10, body) {
   const token = loadToken();
   if (!token) throw new HaiError("HAI_LOGIN_REQUIRED", "\uC800\uC7A5\uD55C \uC791\uC5C5\uC744 \uC2E4\uD589\uD558\uB824\uBA74 hai \uB85C\uADF8\uC778\uC774 \uD544\uC694\uD569\uB2C8\uB2E4. hai_login \uC744 \uC2E4\uD589\uD558\uC138\uC694(\uD06C\uB86C \uD655\uC7A5\uACFC \uAC19\uC740 \uD5E5\uD1A0 \uACC4\uC815).");
   let res;
   try {
-    res = await fetch(`${config2.agentUrl}/hai-api${path9}`, {
+    res = await fetch(`${config2.agentUrl}/hai-api${path10}`, {
       method: body ? "POST" : "GET",
       headers: { Authorization: `Bearer ${token}`, ...body ? { "Content-Type": "application/json" } : {} },
       body: body ? JSON.stringify(body) : void 0,
@@ -103057,6 +103057,7 @@ async function api(path9, body) {
   return json2;
 }
 var listRecipes = () => api("/recipes");
+var notifyMe = (text) => api("/notify", { text });
 var isOnline = async () => (await api("/online")).online;
 var startRun = (recipeId, params, scheduled = false) => api("/runs", { recipeId, params, scheduled });
 var startTask = ({ task, url: url2, readOnly = false, scheduled = false }) => api("/runs", { task, startUrl: url2 ?? void 0, readOnly, scheduled });
@@ -103152,6 +103153,57 @@ function describeRun(st2) {
     default:
       return `${head} \u2014 ${st2.status}`;
   }
+}
+
+// src/todo.js
+import fs3 from "node:fs";
+import path5 from "node:path";
+import { randomBytes as randomBytes2 } from "node:crypto";
+var KEEP_MS = 90 * 864e5;
+var LABEL = { me: "\uB0B4\uAC00 \uD560 \uC77C", other: "\uB0A8\uC774 \uD560 \uC77C", check: "\uD655\uC778\uD560 \uC77C" };
+var file2 = () => path5.join(config2.dataDir, "todos.json");
+var squash2 = (s2) => String(s2 ?? "").replace(/[\s.,!?·~]+/g, "").toLowerCase();
+function load() {
+  try {
+    return JSON.parse(fs3.readFileSync(file2(), "utf8"));
+  } catch {
+    return [];
+  }
+}
+function save(rows) {
+  fs3.mkdirSync(path5.dirname(file2()), { recursive: true });
+  const tmp = `${file2()}.tmp`;
+  fs3.writeFileSync(tmp, JSON.stringify(rows), { mode: 384 });
+  fs3.renameSync(tmp, file2());
+}
+function addTodos(items, now = Date.now()) {
+  const rows = load().filter((r2) => r2.status === "open" || now - r2.closedAt < KEEP_MS);
+  let added = 0;
+  for (const it2 of items) {
+    const text = String(it2.text ?? "").trim().slice(0, 300);
+    if (!text) continue;
+    if (rows.some((r2) => squash2(r2.text) === squash2(text))) continue;
+    rows.push({ id: randomBytes2(3).toString("hex"), text, owner: LABEL[it2.owner] ? it2.owner : "me", source: String(it2.source ?? "").slice(0, 80), due: String(it2.due ?? "").slice(0, 40), status: "open", at: now });
+    added++;
+  }
+  save(rows);
+  return { added, same: items.length - added };
+}
+var listTodos = () => load().filter((r2) => r2.status === "open").sort((a2, b2) => a2.at - b2.at);
+function closeTodo(id, status, now = Date.now()) {
+  const rows = load();
+  const row = rows.find((r2) => r2.id === id && r2.status === "open");
+  if (!row) throw new HaiError("TODO_NOT_FOUND", `\uC5F4\uB9B0 \uD560 \uC77C ${id} \uAC00 \uC5C6\uC2B5\uB2C8\uB2E4. action: "list" \uB85C \uBC88\uD638\uB97C \uBCF4\uC138\uC694.`);
+  Object.assign(row, { status, closedAt: now });
+  save(rows);
+  return row;
+}
+function todoText(rows) {
+  if (!rows.length) return "\uC5F4\uB9B0 \uD560 \uC77C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.";
+  return Object.entries(LABEL).flatMap(([k2, label]) => {
+    const part = rows.filter((r2) => r2.owner === k2);
+    return part.length ? [`${label} ${part.length}\uAC74`, ...part.map((r2) => `- [${r2.id}] ${r2.text}${r2.due ? ` (\uAE30\uD55C ${r2.due})` : ""}${r2.source ? ` \xB7 ${r2.source}` : ""}`)] : [];
+  }).join("\n");
 }
 
 // src/mask.js
@@ -103370,9 +103422,9 @@ ${part}
 // src/extract.js
 import { execFile as execFile2 } from "node:child_process";
 import { createHash as createHash2, randomUUID as randomUUID2 } from "node:crypto";
-import fs5 from "node:fs/promises";
+import fs6 from "node:fs/promises";
 import os5 from "node:os";
-import path6 from "node:path";
+import path7 from "node:path";
 import { promisify as promisify2 } from "node:util";
 import { fileURLToPath } from "node:url";
 
@@ -103453,44 +103505,44 @@ async function readHwpx(buf) {
 }
 
 // src/ledger.js
-import fs3 from "node:fs/promises";
-import path5 from "node:path";
-var LEDGER = () => path5.join(config2.dataDir, "raw-files.log");
+import fs4 from "node:fs/promises";
+import path6 from "node:path";
+var LEDGER = () => path6.join(config2.dataDir, "raw-files.log");
 async function ensureDataDir() {
-  await fs3.mkdir(config2.dataDir, { recursive: true, mode: 448 });
+  await fs4.mkdir(config2.dataDir, { recursive: true, mode: 448 });
   return config2.dataDir;
 }
 async function rawFiles() {
   try {
-    return [...new Set((await fs3.readFile(LEDGER(), "utf8")).split("\n").filter(Boolean))];
+    return [...new Set((await fs4.readFile(LEDGER(), "utf8")).split("\n").filter(Boolean))];
   } catch {
     return [];
   }
 }
-async function realish(file2) {
-  const abs = path5.resolve(file2);
+async function realish(file3) {
+  const abs = path6.resolve(file3);
   try {
-    return await fs3.realpath(abs);
+    return await fs4.realpath(abs);
   } catch {
   }
   try {
-    return path5.join(await fs3.realpath(path5.dirname(abs)), path5.basename(abs));
+    return path6.join(await fs4.realpath(path6.dirname(abs)), path6.basename(abs));
   } catch {
     return abs;
   }
 }
-async function addRaw(file2) {
+async function addRaw(file3) {
   await ensureDataDir();
-  const p2 = (await realish(file2)).replace(/\n/g, " ");
-  await fs3.appendFile(LEDGER(), `${p2}
+  const p2 = (await realish(file3)).replace(/\n/g, " ");
+  await fs4.appendFile(LEDGER(), `${p2}
 `, { mode: 384 });
 }
 async function freePath(p2) {
-  const { dir, name, ext } = path5.parse(p2);
+  const { dir, name, ext } = path6.parse(p2);
   for (let i2 = 1; ; i2++) {
-    const cand = i2 === 1 ? p2 : path5.join(dir, `${name} (${i2})${ext}`);
+    const cand = i2 === 1 ? p2 : path6.join(dir, `${name} (${i2})${ext}`);
     try {
-      await fs3.access(cand);
+      await fs4.access(cand);
     } catch {
       return cand;
     }
@@ -103498,16 +103550,16 @@ async function freePath(p2) {
 }
 async function writeRaw(p2, text, { overwrite = false } = {}) {
   const target = overwrite ? p2 : await freePath(p2);
-  await fs3.mkdir(path5.dirname(target), { recursive: true });
+  await fs4.mkdir(path6.dirname(target), { recursive: true });
   await addRaw(target);
-  await fs3.writeFile(target, text, { mode: 384 });
+  await fs4.writeFile(target, text, { mode: 384 });
   return target;
 }
 async function writeMasked(name, text) {
-  const dir = path5.join(await ensureDataDir(), "masked");
-  await fs3.mkdir(dir, { recursive: true, mode: 448 });
-  const p2 = path5.join(dir, name.replace(/[\\/:*?"<>|]/g, "_"));
-  await fs3.writeFile(p2, text, { mode: 384 });
+  const dir = path6.join(await ensureDataDir(), "masked");
+  await fs4.mkdir(dir, { recursive: true, mode: 448 });
+  const p2 = path6.join(dir, name.replace(/[\\/:*?"<>|]/g, "_"));
+  await fs4.writeFile(p2, text, { mode: 384 });
   return p2;
 }
 
@@ -103603,24 +103655,24 @@ function resolvePath(p2) {
   if (!s2) throw new Error("\uD30C\uC77C \uACBD\uB85C\uAC00 \uBE44\uC5C8\uC2B5\uB2C8\uB2E4");
   return resolveUserPath(s2);
 }
-var kindOf = (file2) => {
-  const ext = path6.extname(file2).toLowerCase();
+var kindOf = (file3) => {
+  const ext = path7.extname(file3).toLowerCase();
   return AUDIO.has(ext) ? "audio" : IMAGE.has(ext) ? "image" : ext === ".pdf" ? "pdf" : "doc";
 };
 var cache = /* @__PURE__ */ new Map();
 async function readText(p2, opts = {}) {
-  const file2 = resolvePath(p2);
-  if (DENY.some((re2) => re2.test(file2))) throw new Error(`\uBE44\uBC00\uAC12 \uD30C\uC77C\uB85C \uBCF4\uC774\uB294 \uACBD\uB85C\uB294 \uC77D\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4: ${path6.basename(file2)}`);
-  const st2 = await fs5.stat(file2).catch(() => null);
-  if (!st2?.isFile()) throw new Error(`\uD30C\uC77C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4: ${file2}`);
-  const key = `${file2}|${st2.mtimeMs}|${st2.size}|${opts.ocr ? 1 : opts.noOcr ? 2 : 0}|${opts.engine ?? ""}|${opts.terms ?? ""}|${opts.timestamps ? 1 : 0}`;
+  const file3 = resolvePath(p2);
+  if (DENY.some((re2) => re2.test(file3))) throw new Error(`\uBE44\uBC00\uAC12 \uD30C\uC77C\uB85C \uBCF4\uC774\uB294 \uACBD\uB85C\uB294 \uC77D\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4: ${path7.basename(file3)}`);
+  const st2 = await fs6.stat(file3).catch(() => null);
+  if (!st2?.isFile()) throw new Error(`\uD30C\uC77C\uC774 \uC5C6\uC2B5\uB2C8\uB2E4: ${file3}`);
+  const key = `${file3}|${st2.mtimeMs}|${st2.size}|${opts.ocr ? 1 : opts.noOcr ? 2 : 0}|${opts.engine ?? ""}|${opts.terms ?? ""}|${opts.timestamps ? 1 : 0}`;
   let hit = cache.get(key);
   if (!hit) {
-    hit = tidy(await extract(file2, st2, opts));
+    hit = tidy(await extract(file3, st2, opts));
     cache.set(key, hit);
     if (cache.size > 50) cache.delete(cache.keys().next().value);
   }
-  return { file: file2, ...hit };
+  return { file: file3, ...hit };
 }
 async function readClipboard(img) {
   img ??= await readClipboardImage();
@@ -103639,31 +103691,31 @@ function tidy(hit) {
   if (hit.text.length > config2.maxChars) throw new Error(`\uB0B4\uC6A9\uC774 \uB108\uBB34 \uAE41\uB2C8\uB2E4(${hit.text.length.toLocaleString()}\uC790, \uC0C1\uD55C ${config2.maxChars.toLocaleString()}\uC790). \uB098\uB220\uC11C \uB123\uC73C\uC138\uC694.`);
   return hit;
 }
-async function extract(file2, st2, opts) {
-  const ext = path6.extname(file2).toLowerCase();
+async function extract(file3, st2, opts) {
+  const ext = path7.extname(file3).toLowerCase();
   if (TEXT.has(ext)) {
-    let text = decode3(await fs5.readFile(file2));
+    let text = decode3(await fs6.readFile(file3));
     if (ext === ".html" || ext === ".htm") text = text.replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ");
     return { text, via: "text", table: ext === ".csv" ? "csv" : ext === ".tsv" ? "tsv" : void 0 };
   }
   if (ext === ".docx") {
     const mammoth = (await Promise.resolve().then(() => __toESM(require_lib6(), 1))).default;
-    return { text: (await mammoth.extractRawText({ path: file2 })).value, via: "text" };
+    return { text: (await mammoth.extractRawText({ path: file3 })).value, via: "text" };
   }
-  if (ext === ".xlsx" || ext === ".xlsm") return { text: await readXlsx(await fs5.readFile(file2)), via: "text", table: "tsv" };
-  if (ext === ".hwpx") return { text: await readHwpx(await fs5.readFile(file2)), via: "text" };
+  if (ext === ".xlsx" || ext === ".xlsm") return { text: await readXlsx(await fs6.readFile(file3)), via: "text", table: "tsv" };
+  if (ext === ".hwpx") return { text: await readHwpx(await fs6.readFile(file3)), via: "text" };
   if (ext === ".pdf") {
-    if (opts.ocr) return ocrPages(file2);
-    const { texts: pages, imageOnly } = await pdfPages(file2);
+    if (opts.ocr) return ocrPages(file3);
+    const { texts: pages, imageOnly } = await pdfPages(file3);
     const scan = imageOnly.map((v2, i2) => v2 ? i2 : -1).filter((i2) => i2 >= 0);
     if (!scan.length) return { text: joinPages(pages), via: "text", meta: { pages: pages.length } };
     if (opts.noOcr) {
       for (const i2 of scan) pages[i2] = "(\uC2A4\uCE94 \uCABD \u2014 \uC77D\uC9C0 \uC54A\uC74C)";
       return { text: joinPages(pages), via: "text", meta: { pages: pages.length, skippedScan: scan.length } };
     }
-    if (scan.length === pages.length) return ocrPages(file2);
+    if (scan.length === pages.length) return ocrPages(file3);
     try {
-      const scanned = await ocr(file2);
+      const scanned = await ocr(file3);
       if (scanned.length === pages.length) {
         for (const i2 of scan) pages[i2] = scanned[i2];
         return { text: joinPages(pages), via: "ocr", meta: { pages: pages.length, ocrPages: scan.length } };
@@ -103673,16 +103725,16 @@ async function extract(file2, st2, opts) {
     for (const i2 of scan) pages[i2] = "(\uC774 \uCABD\uC740 \uC2A4\uCE94 \uC774\uBBF8\uC9C0\uB77C \uAE00\uC790\uB97C \uC77D\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4)";
     return { text: joinPages(pages), via: "text", meta: { pages: pages.length } };
   }
-  if (IMAGE.has(ext)) return ocrPages(file2);
+  if (IMAGE.has(ext)) return ocrPages(file3);
   if (AUDIO.has(ext)) {
     if (st2.size > 200 * 1024 * 1024) throw new Error("\uC74C\uC131 \uD30C\uC77C\uC774 200MB \uB97C \uB118\uC2B5\uB2C8\uB2E4. \uB098\uB220\uC11C \uB123\uC73C\uC138\uC694(\uCD5C\uB300 60\uBD84).");
-    const wav = AUDIO_OK.has(ext) ? null : await toWav(file2);
+    const wav = AUDIO_OK.has(ext) ? null : await toWav(file3);
     try {
-      const r2 = await transcribe(wav ?? file2, { engine: opts.engine, terms: opts.terms, timestamps: opts.timestamps });
+      const r2 = await transcribe(wav ?? file3, { engine: opts.engine, terms: opts.terms, timestamps: opts.timestamps });
       const text = opts.timestamps && r2.segments?.length ? r2.segments.map((s2) => `[${mmss(s2.start)}] ${String(s2.text).trim()}`).join("\n") : r2.text;
       return { text, via: "stt", meta: { seconds: r2.seconds, engine: opts.engine ?? "whisper" } };
     } finally {
-      if (wav) await fs5.rm(wav, { force: true });
+      if (wav) await fs6.rm(wav, { force: true });
     }
   }
   if ([".hwp", ".xls", ".doc", ".ppt"].includes(ext)) {
@@ -103690,10 +103742,10 @@ async function extract(file2, st2, opts) {
   }
   throw new Error(`\uC9C0\uC6D0\uD558\uC9C0 \uC54A\uB294 \uD615\uC2DD\uC785\uB2C8\uB2E4(${ext || "\uD655\uC7A5\uC790 \uC5C6\uC74C"}). \uB429\uB2C8\uB2E4: \uBB38\uC11C txt\xB7md\xB7csv\xB7json\xB7pdf\xB7docx\xB7xlsx\xB7hwpx / \uC774\uBBF8\uC9C0 png\xB7jpg / \uC74C\uC131 wav\xB7mp3\xB7m4a \uB4F1`);
 }
-async function pdfPages(file2) {
+async function pdfPages(file3) {
   const { extractText: extractText2, getDocumentProxy: getDocumentProxy2, getResolvedPDFJS: getResolvedPDFJS2 } = await Promise.resolve().then(() => (init_dist(), dist_exports));
   const assets = fileURLToPath(new URL("./pdfjs/", import.meta.url));
-  const pdf = await getDocumentProxy2(new Uint8Array(await fs5.readFile(file2)), {
+  const pdf = await getDocumentProxy2(new Uint8Array(await fs6.readFile(file3)), {
     cMapUrl: `${assets}cmaps/`,
     cMapPacked: true,
     standardFontDataUrl: `${assets}standard_fonts/`,
@@ -103719,8 +103771,8 @@ async function pdfPages(file2) {
 }
 var joinPages = (pages) => pages.map((t2, i2) => `[${i2 + 1}\uCABD]
 ${t2}`).join("\n\n");
-async function ocrPages(file2) {
-  const pages = await ocr(file2);
+async function ocrPages(file3) {
+  const pages = await ocr(file3);
   return { text: pages.length > 1 ? pages.map((t2, i2) => `[${i2 + 1}\uCABD]
 ${t2}`).join("\n\n") : pages[0] ?? "", via: "ocr", meta: { pages: pages.length } };
 }
@@ -103743,34 +103795,34 @@ $tc = New-Object Windows.Media.Transcoding.MediaTranscoder
 $prep = Op ($tc.PrepareFileTranscodeAsync($src, $dst, $p)) ([Windows.Media.Transcoding.PrepareTranscodeResult])
 if (-not $prep.CanTranscode) { throw "CanTranscode=false: $($prep.FailureReason)" }
 $task = $asProg.MakeGenericMethod([double]).Invoke($null, @($prep.TranscodeAsync())); [void]$task.Wait(-1)`;
-async function toWav(file2) {
-  const dir = path6.join(await ensureDataDir(), "tmp");
-  await fs5.mkdir(dir, { recursive: true, mode: 448 });
+async function toWav(file3) {
+  const dir = path7.join(await ensureDataDir(), "tmp");
+  await fs6.mkdir(dir, { recursive: true, mode: 448 });
   const name = `${randomUUID2()}.wav`;
-  const out = path6.join(dir, name);
+  const out = path7.join(dir, name);
   const tries = [];
-  if (os5.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file2, out]]);
+  if (os5.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file3, out]]);
   if (os5.platform() === "win32") {
     tries.push([
       "powershell.exe",
       ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-EncodedCommand", Buffer.from(WIN_TO_WAV, "utf16le").toString("base64")],
-      { env: { ...process.env, HAI_SRC: path6.resolve(file2), HAI_OUT_DIR: dir, HAI_OUT_NAME: name }, windowsHide: true }
+      { env: { ...process.env, HAI_SRC: path7.resolve(file3), HAI_OUT_DIR: dir, HAI_OUT_NAME: name }, windowsHide: true }
     ]);
   }
-  tries.push(["ffmpeg", ["-y", "-loglevel", "error", "-i", file2, "-ac", "1", "-ar", "16000", out]]);
+  tries.push(["ffmpeg", ["-y", "-loglevel", "error", "-i", file3, "-ac", "1", "-ar", "16000", out]]);
   let why = "";
   for (const [cmd, args, opts] of tries) {
     try {
       await run2(cmd, args, { timeout: 3e5, ...opts });
-      if ((await fs5.stat(out)).size > 44) return out;
+      if ((await fs6.stat(out)).size > 44) return out;
     } catch (err) {
       if (process.env.HAI_DEBUG) why += `${cmd}: ${String(err?.stderr || err?.message).slice(0, 300)}
 `;
     }
   }
-  await fs5.rm(out, { force: true });
+  await fs6.rm(out, { force: true });
   if (why) process.stderr.write(why);
-  throw new HaiError("HAI_BAD_INPUT", `${path6.extname(file2)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694${os5.platform() === "win32" ? "(winget install Gyan.FFmpeg)" : ""}.`);
+  throw new HaiError("HAI_BAD_INPUT", `${path7.extname(file3)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694${os5.platform() === "win32" ? "(winget install Gyan.FFmpeg)" : ""}.`);
 }
 var mmss = (sec) => {
   const s2 = Math.floor(Number(sec) || 0);
@@ -103779,13 +103831,13 @@ var mmss = (sec) => {
 
 // src/search.js
 import { createHash as createHash3 } from "node:crypto";
-import fs6 from "node:fs/promises";
-import path7 from "node:path";
+import fs7 from "node:fs/promises";
+import path8 from "node:path";
 var CHUNK = 700;
 var OVERLAP = 120;
 var MAX_FILES = 400;
 var SKIP_DIR = /^(\.|node_modules$|__pycache__$|Library$)/;
-var indexPath = async (dir) => path7.join(await ensureDataDir(), "index", `${createHash3("sha256").update(dir).digest("hex").slice(0, 16)}.json`);
+var indexPath = async (dir) => path8.join(await ensureDataDir(), "index", `${createHash3("sha256").update(dir).digest("hex").slice(0, 16)}.json`);
 function spans(text, size2 = CHUNK, overlap = OVERLAP) {
   const out = [];
   let start = 0;
@@ -103804,11 +103856,11 @@ async function walk(dir, media) {
   const out = [];
   async function go2(d2) {
     if (out.length >= MAX_FILES) return;
-    for (const ent of await fs6.readdir(d2, { withFileTypes: true }).catch(() => [])) {
+    for (const ent of await fs7.readdir(d2, { withFileTypes: true }).catch(() => [])) {
       if (SKIP_DIR.test(ent.name)) continue;
-      const p2 = path7.join(d2, ent.name);
+      const p2 = path8.join(d2, ent.name);
       if (ent.isDirectory()) await go2(p2);
-      else if (ent.isFile() && exts.has(path7.extname(ent.name).toLowerCase()) && !ent.name.startsWith("~$")) out.push(p2);
+      else if (ent.isFile() && exts.has(path8.extname(ent.name).toLowerCase()) && !ent.name.startsWith("~$")) out.push(p2);
       if (out.length >= MAX_FILES) return;
     }
   }
@@ -103833,7 +103885,7 @@ async function buildIndex(dir, { media = false, rebuild = false } = {}) {
   const ip = await indexPath(dir);
   let idx = { dir, files: {} };
   if (!rebuild) try {
-    idx = JSON.parse(await fs6.readFile(ip, "utf8"));
+    idx = JSON.parse(await fs7.readFile(ip, "utf8"));
   } catch {
   }
   const files = await walk(dir, media);
@@ -103842,7 +103894,7 @@ async function buildIndex(dir, { media = false, rebuild = false } = {}) {
   let updated = 0;
   const failed = [];
   for (const f2 of files) {
-    const st2 = await fs6.stat(f2).catch(() => null);
+    const st2 = await fs7.stat(f2).catch(() => null);
     if (!st2) continue;
     const prev = idx.files[f2];
     const sameMode = !f2.toLowerCase().endsWith(".pdf") || Boolean(prev?.media) === Boolean(media);
@@ -103858,8 +103910,8 @@ async function buildIndex(dir, { media = false, rebuild = false } = {}) {
       delete idx.files[f2];
     }
   }
-  await fs6.mkdir(path7.dirname(ip), { recursive: true, mode: 448 });
-  await fs6.writeFile(ip, JSON.stringify(idx), { mode: 384 });
+  await fs7.mkdir(path8.dirname(ip), { recursive: true, mode: 448 });
+  await fs7.writeFile(ip, JSON.stringify(idx), { mode: 384 });
   const chunks = Object.values(idx.files).reduce((n2, f2) => n2 + f2.chunks.length, 0);
   return { idx, files: Object.keys(idx.files).length, chunks, updated, failed };
 }
@@ -103867,8 +103919,8 @@ async function search(dir, query, { topK = 5, media = false, rebuild = false } =
   const built = await buildIndex(dir, { media, rebuild });
   const [q2] = await embed([query]);
   const scored = [];
-  for (const [file2, f2] of Object.entries(built.idx.files)) {
-    for (const c2 of f2.chunks) scored.push({ file: file2, start: c2.start, end: c2.end, score: cosine(q2, unpack(c2.v)) });
+  for (const [file3, f2] of Object.entries(built.idx.files)) {
+    for (const c2 of f2.chunks) scored.push({ file: file3, start: c2.start, end: c2.end, score: cosine(q2, unpack(c2.v)) });
   }
   scored.sort((a2, b2) => b2.score - a2.score);
   const hits = [];
@@ -104080,7 +104132,7 @@ async function fillTimetable(buf, rows) {
 }
 
 // src/index.js
-var VERSION2 = "0.9.0";
+var VERSION2 = "0.10.0";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -104223,7 +104275,7 @@ server.registerTool("hai_ask_file", {
   }
 }, guard(async ({ path: p2, clipboard, instruction, model, thinking, extra, mask_id, engine, terms }, ex) => {
   progress(ex, clipboard ? "\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 \uC77D\uB294 \uC911" : "\uD30C\uC77C \uC77D\uB294 \uC911");
-  const { file: file2, text, via: how, meta: meta3 } = await readSource({ path: p2, clipboard }, { engine, terms });
+  const { file: file3, text, via: how, meta: meta3 } = await readSource({ path: p2, clipboard }, { engine, terms });
   progress(ex, "HAI \uAC00 \uC77D\uB294 \uC911");
   const answer = await askText(text, instruction, { model, thinking }, (m2) => progress(ex, m2));
   const vault = vaultOf(mask_id);
@@ -104231,7 +104283,7 @@ server.registerTool("hai_ask_file", {
   const len = how === "stt" ? `${dur(meta3?.seconds)} \uB179\uC74C` : `${text.length.toLocaleString()}\uC790`;
   return ok([
     `mask_id: ${vault.id}`,
-    `\uD30C\uC77C: ${path8.basename(file2)} (${len}${via[how]}) \xB7 \uC6D0\uBB38\uC740 HAI \uB9CC \uC77D\uC74C \xB7 \uB2F5\uC5D0\uC11C \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)}`,
+    `\uD30C\uC77C: ${path9.basename(file3)} (${len}${via[how]}) \xB7 \uC6D0\uBB38\uC740 HAI \uB9CC \uC77D\uC74C \xB7 \uB2F5\uC5D0\uC11C \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)}`,
     "--- \uB2F5 ---",
     await inlineOrFile(`${vault.id}-\uB2F5.md`, masked)
   ].join("\n"));
@@ -104253,9 +104305,9 @@ server.registerTool("hai_ask_files", {
   let files = (paths ?? []).map(resolvePath);
   if (dir) {
     const d2 = resolvePath(dir);
-    const names = (await fs7.readdir(d2, { withFileTypes: true })).filter((e2) => e2.isFile() && !e2.name.startsWith(".") && !e2.name.startsWith("~$")).map((e2) => e2.name);
+    const names = (await fs8.readdir(d2, { withFileTypes: true })).filter((e2) => e2.isFile() && !e2.name.startsWith(".") && !e2.name.startsWith("~$")).map((e2) => e2.name);
     const want = pattern?.normalize("NFC");
-    files.push(...names.filter((n2) => SUPPORTED.includes(path8.extname(n2).toLowerCase()) && (!want || n2.normalize("NFC").includes(want))).sort().map((n2) => path8.join(d2, n2)));
+    files.push(...names.filter((n2) => SUPPORTED.includes(path9.extname(n2).toLowerCase()) && (!want || n2.normalize("NFC").includes(want))).sort().map((n2) => path9.join(d2, n2)));
   }
   const all = [...new Set(files)];
   const limit = max_files ?? 30;
@@ -104277,7 +104329,7 @@ server.registerTool("hai_ask_files", {
     }
   }
   await Promise.all([worker(), worker()]);
-  const body = results.map((r2, i2) => `### ${i2 + 1}. ${path8.basename(r2.file)}
+  const body = results.map((r2, i2) => `### ${i2 + 1}. ${path9.basename(r2.file)}
 ${r2.error ? `(\uC77D\uC9C0 \uBABB\uD568: ${r2.error})` : r2.answer}`).join("\n\n");
   const vault = vaultOf(mask_id);
   const masked = await maskAll(body, vault, extra);
@@ -104300,16 +104352,16 @@ server.registerTool("hai_mask_file", {
   inputSchema: { path: pathSchema, clipboard: clipboardSchema, extra: extraSchema, mask_id: maskIdSchema, ...audioSchema }
 }, guard(async ({ path: p2, clipboard, extra, mask_id, engine, terms }, ex) => {
   progress(ex, clipboard ? "\uD074\uB9BD\uBCF4\uB4DC \uCEA1\uCC98 \uC77D\uB294 \uC911" : "\uD30C\uC77C \uC77D\uB294 \uC911");
-  const { file: file2, text, via: how, table } = await readSource({ path: p2, clipboard }, { engine, terms });
+  const { file: file3, text, via: how, table } = await readSource({ path: p2, clipboard }, { engine, terms });
   const vault = vaultOf(mask_id);
   progress(ex, "\uAC1C\uC778\uC815\uBCF4 \uCC3E\uB294 \uC911");
   const masked = await maskAll(text, vault, extra, { table });
   return ok([
     `mask_id: ${vault.id}`,
-    `\uD30C\uC77C: ${path8.basename(file2)} (${text.length.toLocaleString()}\uC790${via[how]})`,
+    `\uD30C\uC77C: ${path9.basename(file3)} (${text.length.toLocaleString()}\uC790${via[how]})`,
     `\uAC00\uB9B0 \uAC83(\uC11C\uB85C \uB2E4\uB978 \uAC12 \uC218): ${counts(vault, mask_id)}`,
     "--- \uAC00\uB9B0 \uBCF8\uBB38 ---",
-    await inlineOrFile(`${vault.id}-${path8.parse(file2).name.replace(/[^\w가-힣.-]/g, "_").slice(0, 40)}.md`, masked)
+    await inlineOrFile(`${vault.id}-${path9.parse(file3).name.replace(/[^\w가-힣.-]/g, "_").slice(0, 40)}.md`, masked)
   ].join("\n"));
 }));
 server.registerTool("hai_restore", {
@@ -104327,12 +104379,12 @@ server.registerTool("hai_restore", {
   const vault = vaults.get(mask_id);
   if (!vault) throw new Error(`mask_id ${mask_id} \uB97C \uCC3E\uC744 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4(MCP \uC11C\uBC84\uAC00 \uB2E4\uC2DC \uC2DC\uC791\uB410\uAC70\uB098 12\uC2DC\uAC04\uC774 \uC9C0\uB0AC\uC2B5\uB2C8\uB2E4). \uC2E4\uBA85\uC73C\uB85C \uB418\uB3CC\uB9B4 \uC218 \uC5C6\uC73C\uB2C8, \uC6D0\uBCF8\uC744 \uB2E4\uC2DC \uAC00\uB824(hai_mask_file \uB4F1) \uCD08\uC548\uC744 \uC0C8\uB85C \uB9CC\uB4E4\uC5B4\uC57C \uD569\uB2C8\uB2E4.`);
   if (!text && !in_path) throw new Error("text \uB098 in_path \uC911 \uD558\uB098\uAC00 \uD544\uC694\uD569\uB2C8\uB2E4");
-  const src = text ?? await fs7.readFile(resolvePath(in_path), "utf8");
-  const file2 = resolvePath(out_path);
-  if (!overwrite && await fs7.stat(file2).then(() => true, () => false)) throw new Error(`\uC774\uBBF8 \uC788\uB294 \uD30C\uC77C\uC785\uB2C8\uB2E4: ${file2} \u2014 \uB36E\uC5B4\uC4F0\uB824\uBA74 overwrite: true`);
+  const src = text ?? await fs8.readFile(resolvePath(in_path), "utf8");
+  const file3 = resolvePath(out_path);
+  if (!overwrite && await fs8.stat(file3).then(() => true, () => false)) throw new Error(`\uC774\uBBF8 \uC788\uB294 \uD30C\uC77C\uC785\uB2C8\uB2E4: ${file3} \u2014 \uB36E\uC5B4\uC4F0\uB824\uBA74 overwrite: true`);
   const { text: restored, restored: n2, unknown: unknown2 } = vault.restore(src);
   if (!n2) throw new Error(`\uC774 mask_id \uB85C \uB418\uB3CC\uB9B4 \uC790\uB9AC\uD45C\uC2DC\uAC00 \uD558\uB098\uB3C4 \uC5C6\uC2B5\uB2C8\uB2E4${unknown2 ? `(\uBAA8\uB974\uB294 \uC790\uB9AC\uD45C\uC2DC ${unknown2}\uACF3 \u2014 \uB2E4\uB978 mask_id \uC758 \uACB0\uACFC\uB85C \uBCF4\uC785\uB2C8\uB2E4)` : ""}. \uC800\uC7A5\uD558\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4.`);
-  const saved = await writeRaw(file2, restored, { overwrite: true });
+  const saved = await writeRaw(file3, restored, { overwrite: true });
   const warn2 = unknown2 ? `
 \uC8FC\uC758: \uC774 mask_id \uC5D0 \uC5C6\uB294 \uC790\uB9AC\uD45C\uC2DC ${unknown2}\uACF3\uC740 \uADF8\uB300\uB85C \uB0A8\uC558\uC2B5\uB2C8\uB2E4(\uB2E4\uB978 \uACB0\uACFC\uC5D0\uC11C \uC628 \uAC83) \u2014 \uADF8 \uBD80\uBD84\uC740 \uC2E4\uBA85\uC774 \uC544\uB2D9\uB2C8\uB2E4.` : "";
   return ok(`\uC800\uC7A5: ${saved} (\uC790\uB9AC\uD45C\uC2DC ${n2}\uACF3 \uBCF5\uC6D0). \uC2E4\uBA85\uC774 \uB4E0 \uD30C\uC77C\uC774\uB77C Claude \uB294 \uC774 \uD30C\uC77C\uC744 \uB2E4\uC2DC \uC5F4\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4 \u2014 \uD655\uC778\uC740 \uC0AC\uC6A9\uC790\uAC00 \uC9C1\uC811 \uD558\uC138\uC694.${warn2}`);
@@ -104347,11 +104399,11 @@ server.registerTool("hai_transcribe", {
     out_path: external_exports.string().optional().describe('\uC800\uC7A5 \uC704\uCE58(\uAE30\uBCF8: \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354\uC758 "<\uC774\uB984> \uBC1B\uC544\uC4F0\uAE30.txt")')
   }
 }, guard(async ({ path: p2, engine, terms, timestamps, out_path }, ex) => {
-  const file2 = resolvePath(p2);
-  if (kindOf(file2) !== "audio") throw new Error("\uB179\uC74C \uD30C\uC77C\uC774 \uC544\uB2D9\uB2C8\uB2E4(wav\xB7mp3\xB7m4a\xB7ogg\xB7flac \uB4F1)");
+  const file3 = resolvePath(p2);
+  if (kindOf(file3) !== "audio") throw new Error("\uB179\uC74C \uD30C\uC77C\uC774 \uC544\uB2D9\uB2C8\uB2E4(wav\xB7mp3\xB7m4a\xB7ogg\xB7flac \uB4F1)");
   progress(ex, "\uBC1B\uC544\uC4F0\uB294 \uC911");
-  const { text, meta: meta3 } = await readText(file2, { engine, terms, timestamps });
-  const saved = await writeRaw(out_path ? resolvePath(out_path) : path8.join(config2.rawDir, `${path8.parse(file2).name} \uBC1B\uC544\uC4F0\uAE30.txt`), `${text}
+  const { text, meta: meta3 } = await readText(file3, { engine, terms, timestamps });
+  const saved = await writeRaw(out_path ? resolvePath(out_path) : path9.join(config2.rawDir, `${path9.parse(file3).name} \uBC1B\uC544\uC4F0\uAE30.txt`), `${text}
 `);
   return ok(`\uC800\uC7A5: ${saved}
 ${dur(meta3?.seconds)} \uB179\uC74C \xB7 ${text.length.toLocaleString()}\uC790 \xB7 ${meta3?.engine === "qwen" ? "qwen3-asr" : "whisper-large-v3"}
@@ -104364,20 +104416,20 @@ server.registerTool("hai_ocr", {
 }, guard(async ({ path: p2, clipboard, format, out_path }, ex) => {
   if (clipboard && p2) throw new Error("path \uC640 clipboard \uC911 \uD558\uB098\uB9CC \uC8FC\uC138\uC694");
   if (!clipboard && !p2) throw new Error("path \uB098 clipboard: true \uC911 \uD558\uB098\uAC00 \uD544\uC694\uD569\uB2C8\uB2E4");
-  const file2 = clipboard ? await readClipboardImage() : resolvePath(p2);
-  const name = clipboard ? file2.name : file2;
-  if (!clipboard && !["pdf", "image"].includes(kindOf(file2))) throw new Error("PDF \uB098 \uC774\uBBF8\uC9C0(png\xB7jpg\xB7tif\xB7bmp\xB7webp)\uB9CC \uB429\uB2C8\uB2E4");
+  const file3 = clipboard ? await readClipboardImage() : resolvePath(p2);
+  const name = clipboard ? file3.name : file3;
+  if (!clipboard && !["pdf", "image"].includes(kindOf(file3))) throw new Error("PDF \uB098 \uC774\uBBF8\uC9C0(png\xB7jpg\xB7tif\xB7bmp\xB7webp)\uB9CC \uB429\uB2C8\uB2E4");
   progress(ex, "OCR \uC911");
   const ext = format === "docx" ? ".docx" : ".md";
-  const target = out_path ? resolvePath(out_path) : path8.join(config2.rawDir, `${path8.parse(name).name} OCR${ext}`);
+  const target = out_path ? resolvePath(out_path) : path9.join(config2.rawDir, `${path9.parse(name).name} OCR${ext}`);
   if (format === "docx") {
-    const { count, docx } = await ocr(file2, { docx: true });
+    const { count, docx } = await ocr(file3, { docx: true });
     if (!docx) throw new Error("HAI \uAC00 \uC6CC\uB4DC \uD30C\uC77C\uC744 \uB3CC\uB824\uC8FC\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. format \uC5C6\uC774(Markdown) \uB2E4\uC2DC \uD574 \uBCF4\uC138\uC694.");
     const saved2 = await writeRaw(target, docx);
     return ok(`\uC800\uC7A5: ${saved2}
 ${count}\uCABD \u2192 \uC6CC\uB4DC(docx) \xB7 \uC6D0\uBB38\uC740 Claude \uC5D0 \uBCF4\uC774\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC6CC\uB4DC\uB85C \uC5F4\uC5B4 \uACE0\uCE58\uC138\uC694.`);
   }
-  const { text, meta: meta3 } = clipboard ? await readClipboard(file2) : await readText(file2, { ocr: true });
+  const { text, meta: meta3 } = clipboard ? await readClipboard(file3) : await readText(file3, { ocr: true });
   const saved = await writeRaw(target, `${text}
 `);
   return ok(`\uC800\uC7A5: ${saved}
@@ -104398,12 +104450,12 @@ server.registerTool("hai_search", {
   progress(ex, "\uC0C9\uC778 \uD655\uC778 \uC911");
   const r2 = await search(resolvePath(dir), query, { topK: top_k ?? 5, media, rebuild });
   const root2 = resolvePath(dir);
-  const hits = r2.hits.map((h2, i2) => `### ${i2 + 1}. ${path8.relative(root2, h2.file)} (\uC720\uC0AC\uB3C4 ${h2.score.toFixed(2)})
+  const hits = r2.hits.map((h2, i2) => `### ${i2 + 1}. ${path9.relative(root2, h2.file)} (\uC720\uC0AC\uB3C4 ${h2.score.toFixed(2)})
 ${h2.text.trim()}`).join("\n\n") || "\uCC3E\uC740 \uAD6C\uC808\uC774 \uC5C6\uC2B5\uB2C8\uB2E4.";
   const failed = r2.failed.length ? `
 
 ### \uC77D\uC9C0 \uBABB\uD55C \uD30C\uC77C ${r2.failed.length}\uAC1C
-${r2.failed.slice(0, 10).map((f2) => `- ${path8.relative(root2, f2.file)}: ${f2.why.split(root2).join("\u2026")}`).join("\n")}` : "";
+${r2.failed.slice(0, 10).map((f2) => `- ${path9.relative(root2, f2.file)}: ${f2.why.split(root2).join("\u2026")}`).join("\n")}` : "";
   const vault = vaultOf(mask_id);
   const masked = await maskAll(hits + failed, vault);
   return ok([
@@ -104438,24 +104490,24 @@ ${await maskAll(r2.content, vault)}
 
 (\uBAA8\uB378: ${r2.model} \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)})`);
 }));
-async function isProtected(file2) {
+async function isProtected(file3) {
   const fold = os6.platform() === "darwin" || os6.platform() === "win32";
   const canon = async (p2) => {
-    let r2 = path8.resolve(p2);
+    let r2 = path9.resolve(p2);
     try {
-      r2 = await fs7.realpath(r2);
+      r2 = await fs8.realpath(r2);
     } catch {
       try {
-        r2 = path8.join(await fs7.realpath(path8.dirname(r2)), path8.basename(r2));
+        r2 = path9.join(await fs8.realpath(path9.dirname(r2)), path9.basename(r2));
       } catch {
       }
     }
     const n2 = r2.normalize("NFC");
     return fold ? n2.toLowerCase() : n2;
   };
-  const f2 = await canon(file2);
+  const f2 = await canon(file3);
   const dirs = await Promise.all([...config2.protectedDirs, config2.rawDir].map(canon));
-  if (dirs.some((d2) => f2 === d2 || f2.startsWith(d2 + path8.sep))) return true;
+  if (dirs.some((d2) => f2 === d2 || f2.startsWith(d2 + path9.sep))) return true;
   const raws = await Promise.all((await rawFiles()).map(canon));
   return raws.includes(f2);
 }
@@ -104483,14 +104535,14 @@ server.registerTool("hai_timetable_fill", {
   if (await isProtected(src)) {
     throw new Error("\uBCF4\uD638 \uD3F4\uB354(\uB610\uB294 \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354)\uC758 \uD30C\uC77C\uC740 \uC591\uC2DD\uC73C\uB85C \uC4F8 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. EVS \uC5D0\uC11C \uBC1B\uC740 \uC591\uC2DD\uC740 \uB2E4\uC6B4\uB85C\uB4DC \uD3F4\uB354\uC5D0 \uADF8\uB300\uB85C \uB450\uACE0 \uADF8 \uACBD\uB85C\uB97C \uC8FC\uC138\uC694.");
   }
-  const r2 = await fillTimetable(await fs7.readFile(src), rows);
-  const file2 = out_path ? resolvePath(out_path) : path8.join(path8.dirname(src), `${path8.parse(src).name}_\uC791\uC131.xlsx`);
-  if (!overwrite && await fs7.stat(file2).then(() => true, () => false)) throw new Error(`\uC774\uBBF8 \uC788\uB294 \uD30C\uC77C\uC785\uB2C8\uB2E4: ${file2} \u2014 \uB36E\uC5B4\uC4F0\uB824\uBA74 overwrite: true`);
-  await fs7.writeFile(file2, r2.buffer);
+  const r2 = await fillTimetable(await fs8.readFile(src), rows);
+  const file3 = out_path ? resolvePath(out_path) : path9.join(path9.dirname(src), `${path9.parse(src).name}_\uC791\uC131.xlsx`);
+  if (!overwrite && await fs8.stat(file3).then(() => true, () => false)) throw new Error(`\uC774\uBBF8 \uC788\uB294 \uD30C\uC77C\uC785\uB2C8\uB2E4: ${file3} \u2014 \uB36E\uC5B4\uC4F0\uB824\uBA74 overwrite: true`);
+  await fs8.writeFile(file3, r2.buffer);
   const off = r2.days.filter((d2) => d2.sum && d2.sum !== 8);
   const total = Object.entries(r2.totals).filter(([, h2]) => h2).map(([c2, h2]) => `${c2} ${h2}`).join(" \xB7 ");
   return ok([
-    `\uC800\uC7A5: ${file2}`,
+    `\uC800\uC7A5: ${file3}`,
     `\uCC44\uC6B4 \uB0A0 ${r2.filled.length}\uC77C / \uC591\uC2DD \uADFC\uBB34\uC77C ${r2.days.length}\uC77C \xB7 \uD569\uACC4 ${r2.days.reduce((a2, d2) => a2 + d2.sum, 0).toFixed(1)}\uC2DC\uAC04`,
     `\uBC95\uC778\uBCC4: ${total || "\uC5C6\uC74C"}`,
     ...r2.empty.length ? [`\uBE48 \uB0A0(\uC5C5\uBB34 \uC5C6\uC774 \uB0A8\uC74C): ${r2.empty.join(", ")}`] : [],
@@ -104607,6 +104659,39 @@ server.registerTool("agent_answer", {
   const st2 = await waitRun(run3, { waitMs: (wait_sec ?? 120) * 1e3, onProgress: (m2) => progress(ex, m2) });
   return ok(`${note}${describeRun(st2)}`);
 }));
+server.registerTool("hai_todo", {
+  title: "\uD560 \uC77C \uBAA9\uB85D",
+  description: "\uC774 PC \uC5D0\uB9CC \uB450\uB294 \uD560 \uC77C \uBAA9\uB85D\uC744 \uBCF4\uACE0 \uACE0\uCE5C\uB2E4. action: list(\uC5F4\uB9B0 \uD560 \uC77C) \xB7 add(items \uB354\uD558\uAE30, \uAC19\uC740 \uAE00\uC740 \uD55C \uAC74) \xB7 done(\uB05D\uB0C4) \xB7 dismiss(\uD560 \uC77C \uC544\uB2D8 \u2014 \uAC19\uC740 \uAE00\uC774 \uB2E4\uC2DC \uC62C\uB77C\uC624\uC9C0 \uC54A\uB294\uB2E4). \uBA54\uC77C\xB7\uB300\uD654\uC5D0\uC11C \uBF51\uC740 \uC77C\uC744 \uC800\uC7A5\uD558\uAC70\uB098 \uBE0C\uB9AC\uD551\uC5D0 \uB123\uC744 \uB54C \uC4F4\uB2E4.",
+  inputSchema: {
+    action: external_exports.enum(["list", "add", "done", "dismiss"]),
+    items: external_exports.array(external_exports.object({
+      text: external_exports.string().describe("\uD560 \uC77C \uD55C \uBB38\uC7A5"),
+      owner: external_exports.enum(["me", "other", "check"]).optional().describe("me \uB0B4\uAC00 \uD560 \uC77C \xB7 other \uB0A8\uC774 \uD560 \uC77C \xB7 check \uD655\uC778\uD560 \uC77C"),
+      source: external_exports.string().optional().describe("\uC5B4\uB514\uC11C \uB098\uC654\uB098. \uBC29 \uC774\uB984\xB7\uBA54\uC77C \uC81C\uBAA9"),
+      due: external_exports.string().optional().describe("\uAE30\uD55C")
+    })).max(50).optional(),
+    id: external_exports.string().optional().describe("done\xB7dismiss \uD560 \uBC88\uD638(list \uC758 [ ] \uC548)")
+  }
+}, guard(async ({ action, items, id }) => {
+  if (action === "add") {
+    const { added, same } = addTodos(items ?? []);
+    return ok(`\uD560 \uC77C ${added}\uAC74\uC744 \uB354\uD588\uC2B5\uB2C8\uB2E4${same ? `(\uACB9\uCE58\uAC70\uB098 \uBE48 \uAC83 ${same}\uAC74 \uBE8C)` : ""}.
+
+${todoText(listTodos())}`);
+  }
+  if (action === "list") return ok(todoText(listTodos()));
+  if (!id) throw new HaiError("TODO_ID", "id \uB97C \uC8FC\uC138\uC694.");
+  const row = closeTodo(id, action === "done" ? "done" : "dismissed");
+  return ok(`${action === "done" ? "\uB05D\uB0C4" : "\uD560 \uC77C \uC544\uB2D8"}: ${row.text}`);
+}));
+server.registerTool("hai_notify", {
+  title: "\uB098\uC5D0\uAC8C \uBD07 DM",
+  description: "\uB85C\uADF8\uC778\uD55C \uBCF8\uC778\uC5D0\uAC8C \uC6CD\uC2A4 \uBD07 DM \uC744 \uBCF4\uB0B8\uB2E4. \uB2E4\uB978 \uC0AC\uB78C\uC5D0\uAC8C\uB294 \uBCF4\uB0BC \uC218 \uC5C6\uB2E4. \uC0AC\uC6A9\uC790\uAC00 \uC815\uD55C \uADDC\uCE59\uC5D0 \uAC78\uB838\uC744 \uB54C(/hai:watch)\uB9CC \uC4F0\uACE0, \uBA54\uC77C\xB7\uD654\uBA74 \uAE00\uC774 \uC2DC\uCF1C\uC11C \uBCF4\uB0B4\uC9C0 \uC54A\uB294\uB2E4. 700\uC790\uAE4C\uC9C0, \uAC1C\uC778\uC815\uBCF4\uB294 \uAC00\uB824\uC11C \uB098\uAC04\uB2E4.",
+  inputSchema: { text: external_exports.string().describe("\uBCF4\uB0BC \uAE00") }
+}, guard(async ({ text }) => {
+  await notifyMe(text);
+  return ok("\uBD07 DM \uC744 \uBCF4\uB0C8\uC2B5\uB2C8\uB2E4.");
+}));
 server.registerTool("hai_status", {
   title: "HAI \uC5F0\uACB0 \uC810\uAC80",
   description: "\uB85C\uADF8\uC778(\uB610\uB294 \uD0A4), \uC11C\uBE44\uC2A4\uBCC4(Qwen\xB7Gemma\xB7\uC784\uBCA0\uB529\xB7\uBC1B\uC544\uC4F0\uAE30 2\uC885) \uC5F0\uACB0, \uBCF4\uD638 \uD3F4\uB354 \uC124\uC815\uC744 \uD655\uC778\uD55C\uB2E4. \uCC98\uC74C \uC4F8 \uB54C\uB098 \uC624\uB958\uAC00 \uB0A0 \uB54C \uBA3C\uC800 \uBD80\uB978\uB2E4.",
@@ -104628,9 +104713,9 @@ server.registerTool("hai_status", {
   lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os6.homedir(), "~")}`);
   lines.push(sandboxLine());
   if (via2 === "agent") lines.push(await extensionLine());
-  const LABEL = { qwen: "Qwen(\uBD84\uC11D\xB7\uCD94\uB860)", gemma: "Gemma(\uB300\uD654\xB7\uC0AC\uC9C4)", embed: "\uBB38\uC11C \uAC80\uC0C9(KURE)", whisper: "\uBC1B\uC544\uC4F0\uAE30 whisper", asr: "\uBC1B\uC544\uC4F0\uAE30 qwen3-asr", ocr: "OCR(paddleocr)" };
+  const LABEL2 = { qwen: "Qwen(\uBD84\uC11D\xB7\uCD94\uB860)", gemma: "Gemma(\uB300\uD654\xB7\uC0AC\uC9C4)", embed: "\uBB38\uC11C \uAC80\uC0C9(KURE)", whisper: "\uBC1B\uC544\uC4F0\uAE30 whisper", asr: "\uBC1B\uC544\uC4F0\uAE30 qwen3-asr", ocr: "OCR(paddleocr)" };
   const rows = await probe();
-  for (const r2 of rows) lines.push(`- ${LABEL[r2.name]}: ${r2.ok === null ? r2.note : r2.ok ? `\uB428 (${r2.model}, ${r2.ms}ms)` : `\uC548 \uB428 \u2014 ${r2.note}`}`);
+  for (const r2 of rows) lines.push(`- ${LABEL2[r2.name]}: ${r2.ok === null ? r2.note : r2.ok ? `\uB428 (${r2.model}, ${r2.ms}ms)` : `\uC548 \uB428 \u2014 ${r2.note}`}`);
   if (rows.some((r2) => r2.code === "HAI_LOGIN_REQUIRED")) lines.push("\u2192 \uB85C\uADF8\uC778\uC774 \uB04A\uACBC\uC2B5\uB2C8\uB2E4. hai_login \uC73C\uB85C \uB2E4\uC2DC \uB85C\uADF8\uC778\uD558\uC138\uC694.");
   if (rows.some((r2) => r2.code === "HAI_KEY_INVALID")) lines.push("\u2192 \uD0A4\uAC00 \uD2C0\uB838\uAC70\uB098 \uB9CC\uB8CC\uB410\uC2B5\uB2C8\uB2E4. hai_login \uC73C\uB85C \uB85C\uADF8\uC778\uD558\uBA74 \uD0A4 \uC5C6\uC774 \uC4F8 \uC218 \uC788\uC2B5\uB2C8\uB2E4.");
   if (rows.some((r2) => r2.code === "HAI_UNREACHABLE")) lines.push(via2 === "agent" ? "\u2192 \uC778\uD130\uB137 \uC5F0\uACB0\uC744 \uD655\uC778\uD558\uC138\uC694." : "\u2192 \uC0AC\uB0B4\uB9DD(\uB610\uB294 \uD5C8\uC6A9\uB41C IP)\uC5D0\uC11C\uB9CC \uB429\uB2C8\uB2E4. hai_login \uC73C\uB85C \uB85C\uADF8\uC778\uD558\uBA74 \uD68C\uC0AC \uBC16\uC5D0\uC11C\uB3C4 \uB429\uB2C8\uB2E4.");
@@ -104639,21 +104724,21 @@ server.registerTool("hai_status", {
 function sandboxLine() {
   let st2 = {};
   try {
-    st2 = JSON.parse(readFileSync(path8.join(os6.homedir(), ".claude", "settings.json"), "utf8"));
+    st2 = JSON.parse(readFileSync(path9.join(os6.homedir(), ".claude", "settings.json"), "utf8"));
   } catch {
   }
   const sb = st2.sandbox ?? {};
-  const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path8.resolve(String(d2).replace(/^~(?=\/|$)/, os6.homedir())));
+  const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path9.resolve(String(d2).replace(/^~(?=\/|$)/, os6.homedir())));
   const want = [...config2.protectedDirs, config2.rawDir];
-  const covered = want.filter((w2) => deny.some((d2) => w2 === d2 || w2.startsWith(d2 + path8.sep)));
+  const covered = want.filter((w2) => deny.some((d2) => w2 === d2 || w2.startsWith(d2 + path9.sep)));
   if (os6.platform() === "win32") return "\uBCF4\uD638: Windows \uB294 \uC0CC\uB4DC\uBC15\uC2A4\uAC00 \uC5C6\uC5B4 \uAC00\uB4DC \uD6C5(\uBA85\uB839 \uAE00\uC790 \uAC80\uC0AC)\uB9CC \uB3D9\uC791\uD569\uB2C8\uB2E4 \u2014 /hai:protect \uB85C \uAE30\uBCF8 \uB3C4\uAD6C \uCC28\uB2E8 \uADDC\uCE59\uC744 \uB354\uD558\uACE0, \uBBFC\uAC10\uD55C \uD3F4\uB354\uC5D0\uC11C Claude \uB97C \uC2DC\uC791\uD558\uC9C0 \uB9C8\uC138\uC694";
   if (!sb.enabled) return "\uC0CC\uB4DC\uBC15\uC2A4: \uAEBC\uC9D0 \u2014 /hai:protect \uB85C \uCF1C\uBA74 \uBCF4\uD638 \uD3F4\uB354\uB97C \uC6B4\uC601\uCCB4\uC81C \uC218\uC900\uC5D0\uC11C \uB9C9\uC2B5\uB2C8\uB2E4(\uAD8C\uC7A5)";
   return covered.length === want.length ? `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uBCF4\uD638 \uD3F4\uB354\xB7\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354 \uC77D\uAE30 \uCC28\uB2E8\uB428(${covered.length}\uACF3)` : `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uC77D\uAE30 \uCC28\uB2E8\uC5D0 \uBE60\uC9C4 \uACF3 ${want.length - covered.length}\uACF3 \u2014 /hai:protect \uB85C \uCD94\uAC00\uD558\uC138\uC694`;
 }
 try {
   mkdirSync(config2.dataDir, { recursive: true, mode: 448 });
-  writeFileSync(path8.join(config2.dataDir, "raw-dir"), config2.rawDir);
-  writeFileSync(path8.join(config2.dataDir, "docs-dir"), config2.docsDir);
+  writeFileSync(path9.join(config2.dataDir, "raw-dir"), config2.rawDir);
+  writeFileSync(path9.join(config2.dataDir, "docs-dir"), config2.docsDir);
 } catch {
 }
 await server.connect(new StdioServerTransport());

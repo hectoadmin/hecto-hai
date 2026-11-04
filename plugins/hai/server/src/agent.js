@@ -32,6 +32,7 @@ async function api(path, body) {
 }
 
 export const listRecipes = () => api('/recipes');
+export const notifyMe = (text) => api('/notify', { text });
 export const isOnline = async () => (await api('/online')).online;
 export const startRun = (recipeId, params, scheduled = false) => api('/runs', { recipeId, params, scheduled });
 export const startTask = ({ task, url, readOnly = false, scheduled = false }) => api('/runs', { task, startUrl: url ?? undefined, readOnly, scheduled });

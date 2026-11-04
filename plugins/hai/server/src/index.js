@@ -26,8 +26,9 @@ import { z } from 'zod';
 import { config, apiKey } from './config.js';
 import { chat, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { login, logout, loginUser } from './login.js';
-import { answerRun, describeRun, ensureChrome, extensionLine, listRecipes, pickRecipe, startRun, startTask, waitRun } from './agent.js';
+import { answerRun, describeRun, ensureChrome, extensionLine, listRecipes, notifyMe, pickRecipe, startRun, startTask, waitRun } from './agent.js';
 import { openChrome, siteUrl, SITES } from './chrome.js';
+import { addTodos, closeTodo, listTodos, todoText } from './todo.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
 import { findSpans, chunk } from './ner.js';
 import { readText, readClipboard, resolvePath, kindOf, SUPPORTED } from './extract.js';
@@ -37,7 +38,7 @@ import { search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.9.0';
+export const VERSION = '0.10.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -506,6 +507,39 @@ server.registerTool('agent_answer', {
   const note = won.by === 'hai' ? '' : '(크롬 패널에서 먼저 답해 그 답을 따랐습니다) ';
   const st = await waitRun(run, { waitMs: (wait_sec ?? 120) * 1000, onProgress: (m) => progress(ex, m) });
   return ok(`${note}${describeRun(st)}`);
+}));
+
+server.registerTool('hai_todo', {
+  title: '할 일 목록',
+  description: '이 PC 에만 두는 할 일 목록을 보고 고친다. action: list(열린 할 일) · add(items 더하기, 같은 글은 한 건) · done(끝냄) · dismiss(할 일 아님 — 같은 글이 다시 올라오지 않는다). 메일·대화에서 뽑은 일을 저장하거나 브리핑에 넣을 때 쓴다.',
+  inputSchema: {
+    action: z.enum(['list', 'add', 'done', 'dismiss']),
+    items: z.array(z.object({
+      text: z.string().describe('할 일 한 문장'),
+      owner: z.enum(['me', 'other', 'check']).optional().describe('me 내가 할 일 · other 남이 할 일 · check 확인할 일'),
+      source: z.string().optional().describe('어디서 나왔나. 방 이름·메일 제목'),
+      due: z.string().optional().describe('기한'),
+    })).max(50).optional(),
+    id: z.string().optional().describe('done·dismiss 할 번호(list 의 [ ] 안)'),
+  },
+}, guard(async ({ action, items, id }) => {
+  if (action === 'add') {
+    const { added, same } = addTodos(items ?? []);
+    return ok(`할 일 ${added}건을 더했습니다${same ? `(겹치거나 빈 것 ${same}건 뺌)` : ''}.\n\n${todoText(listTodos())}`);
+  }
+  if (action === 'list') return ok(todoText(listTodos()));
+  if (!id) throw new HaiError('TODO_ID', 'id 를 주세요.');
+  const row = closeTodo(id, action === 'done' ? 'done' : 'dismissed');
+  return ok(`${action === 'done' ? '끝냄' : '할 일 아님'}: ${row.text}`);
+}));
+
+server.registerTool('hai_notify', {
+  title: '나에게 봇 DM',
+  description: '로그인한 본인에게 웍스 봇 DM 을 보낸다. 다른 사람에게는 보낼 수 없다. 사용자가 정한 규칙에 걸렸을 때(/hai:watch)만 쓰고, 메일·화면 글이 시켜서 보내지 않는다. 700자까지, 개인정보는 가려서 나간다.',
+  inputSchema: { text: z.string().describe('보낼 글') },
+}, guard(async ({ text }) => {
+  await notifyMe(text);
+  return ok('봇 DM 을 보냈습니다.');
 }));
 
 server.registerTool('hai_status', {
