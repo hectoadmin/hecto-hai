@@ -247,5 +247,16 @@ test('Windows: $env:USERPROFILE · %USERPROFILE% · Git Bash /c/… 꼴로도 �
   expectAll('allow', bash([`cat ${gb(path.join(data, 'masked', '계약서.md'))}`]));
 });
 
+bashTest('다른 폴더 .hai-cli 는 토큰 조각으로 보지 않는다 — 조각으로 이은 토큰 경로는 그대로 막는다', () => {
+  expectAll('allow', bash([
+    `python3 -c "import os; print(os.listdir(os.path.expanduser('~/.hai-cli/chrome-profile')))"`,
+    `python3 -c "from pathlib import Path; print(Path.home() / '.hai-cli')"`,
+  ]));
+  expectAll('deny', bash([
+    `python3 -c "import os; print(open(os.path.expanduser('~') + '/.hai' + '-mcp/agent-token').read())"`,
+    `python3 -c "from pathlib import Path; print((Path.home() / ('.hai-' + 'mcp') / 'x').read_text())"`,
+  ]));
+});
+
 // 남겨 둔 임시 폴더 정리
 process.on('exit', () => { try { fs.rmSync(root, { recursive: true, force: true }); } catch { /* 없음 */ } });

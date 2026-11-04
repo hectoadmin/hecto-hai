@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { describeRun, ensureChrome, pickRecipe, waitRun } from '../src/agent.js';
+import { describeRun, ensureChrome, extensionLine, pickRecipe, waitRun } from '../src/agent.js';
 import { chromeCommand, openChrome, siteUrl } from '../src/chrome.js';
 
 const list = [
@@ -78,4 +78,10 @@ test('확장이 꺼져 있으면 크롬을 켜고 연결될 때까지 기다린�
   assert.equal(opened, 0);
   assert.equal(await ensureChrome({ online: async () => false, open: async () => {}, sleep: async () => {}, tries: 2 }), false);
   assert.equal(await ensureChrome({ online: async () => false, open: async () => { throw new Error('없음'); } }), false);
+});
+
+test('hai_status 의 크롬 확장 줄', async () => {
+  assert.equal(await extensionLine(async () => true), '크롬 확장: 연결됨');
+  assert.match(await extensionLine(async () => false), /연결 안 됨.*로그인/);
+  assert.equal(await extensionLine(async () => { throw new Error('x'); }), '크롬 확장: 확인하지 못함');
 });

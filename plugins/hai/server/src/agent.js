@@ -50,6 +50,13 @@ export async function ensureChrome({ onProgress, online = isOnline, open = openC
   return false;
 }
 
+/** hai_status 한 줄 — 크롬 확장이 연결돼 있나. 안 되면 무엇을 할지까지 */
+export async function extensionLine(online = isOnline) {
+  try {
+    return await online() ? '크롬 확장: 연결됨' : '크롬 확장: 연결 안 됨 — 크롬을 켜고 헥토 에이전트 패널에서 로그인하세요(사내 화면 읽기·실행에 필요)';
+  } catch { return '크롬 확장: 확인하지 못함'; }
+}
+
 const squash = (s) => String(s ?? '').replace(/\s+/g, '').toLowerCase();
 /** 이름(띄어쓰기·대소문자 무시)이나 번호로 고른다. 정확히 같은 이름 → 이름을 포함하는 것이 하나일 때. 아니면 후보를 알려 준다 */
 export function pickRecipe(recipes, want) {

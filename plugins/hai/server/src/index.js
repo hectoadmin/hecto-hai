@@ -26,7 +26,7 @@ import { z } from 'zod';
 import { config, apiKey } from './config.js';
 import { chat, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { login, logout, loginUser } from './login.js';
-import { answerRun, describeRun, ensureChrome, listRecipes, pickRecipe, startRun, startTask, waitRun } from './agent.js';
+import { answerRun, describeRun, ensureChrome, extensionLine, listRecipes, pickRecipe, startRun, startTask, waitRun } from './agent.js';
 import { openChrome, siteUrl, SITES } from './chrome.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
 import { findSpans, chunk } from './ner.js';
@@ -37,7 +37,7 @@ import { search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.8.0';
+export const VERSION = '0.9.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -523,6 +523,7 @@ server.registerTool('hai_status', {
   if (!via) return ok([...lines, '→ 로그인이 필요합니다. hai_login 을 실행하면 브라우저가 열리고, 헥토 이메일로 로그인하면 끝납니다.'].join('\n'));
   lines.push(`원문 결과 폴더: ${config.rawDir.replace(os.homedir(), '~')}`);
   lines.push(sandboxLine());
+  if (via === 'agent') lines.push(await extensionLine());
   const LABEL = { qwen: 'Qwen(분석·추론)', gemma: 'Gemma(대화·사진)', embed: '문서 검색(KURE)', whisper: '받아쓰기 whisper', asr: '받아쓰기 qwen3-asr', ocr: 'OCR(paddleocr)' };
   const rows = await probe();
   for (const r of rows) lines.push(`- ${LABEL[r.name]}: ${r.ok === null ? r.note : r.ok ? `됨 (${r.model}, ${r.ms}ms)` : `안 됨 — ${r.note}`}`);
