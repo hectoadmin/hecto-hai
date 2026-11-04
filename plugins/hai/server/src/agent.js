@@ -1,5 +1,5 @@
 /**
- * 크롬 헥토 에이전트에 저장한 작업을 Claude Code 에서 실행(연동 2단계). hai 로그인 토큰으로 agent 서버(/hai-api)를 부른다.
+ * 크롬 헥토 에이전트에 일을 맡긴다(연동 2~4단계) — 저장한 작업 실행, 글로 맡기기, 사내 화면 읽기. hai 로그인 토큰으로 agent 서버(/hai-api)를 부른다.
  *   실행은 그 사람의 크롬(확장 프로그램)에서 돈다 — 여기서는 서버에 맡기고 진행·결과를 받을 뿐 화면에 닿지 않는다.
  *   화면 읽기·판단은 사내 AI 가 하고, 이쪽으로는 단계 이름·확인 질문·결과 문장(서버가 가린 뒤)만 온다.
  *   확인: 저장·임시 저장·입력류는 대화로 답할 수 있고, 상신·승인·삭제·제출·이동·파일은 크롬 패널에서만(서버가 거른다, 결정 E2).
@@ -7,6 +7,7 @@
 import { config } from './config.js';
 import { HaiError } from './hai.js';
 import { loadToken } from './login.js';
+import { openChrome } from './chrome.js';
 
 const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
 
@@ -31,9 +32,23 @@ async function api(path, body) {
 }
 
 export const listRecipes = () => api('/recipes');
-export const startRun = (recipeId, params) => api('/runs', { recipeId, params });
+export const isOnline = async () => (await api('/online')).online;
+export const startRun = (recipeId, params, scheduled = false) => api('/runs', { recipeId, params, scheduled });
+export const startTask = ({ task, url, readOnly = false, scheduled = false }) => api('/runs', { task, startUrl: url ?? undefined, readOnly, scheduled });
 export const runStatus = (id) => api(`/runs/${Number(id)}`);
 export const answerRun = (id, q, answer) => api(`/runs/${Number(id)}/answer`, { q, answer });
+
+/** 확장이 연결돼 있나 보고, 아니면 크롬을 켜고 기다린다(서비스 워커가 깨어 서버에 물을 때까지). 못 켜도 시작은 시도한다 — 서버가 왜 안 되는지 알려 주고 예약이면 DM 을 보낸다 */
+export async function ensureChrome({ onProgress, online = isOnline, open = openChrome, sleep = pause, tries = 20, every = 2000 } = {}) {
+  if (await online()) return true;
+  onProgress?.('크롬을 켜는 중');
+  try { await open(); } catch { return false; }
+  for (let i = 0; i < tries; i++) {
+    await sleep(every);
+    if (await online()) return true;
+  }
+  return false;
+}
 
 const squash = (s) => String(s ?? '').replace(/\s+/g, '').toLowerCase();
 /** 이름(띄어쓰기·대소문자 무시)이나 번호로 고른다. 정확히 같은 이름 → 이름을 포함하는 것이 하나일 때. 아니면 후보를 알려 준다 */
