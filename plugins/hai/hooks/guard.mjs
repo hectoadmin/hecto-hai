@@ -451,8 +451,8 @@ function codeCheck(txt, where, cwds = []) {
   // 토큰 폴더를 조각으로 잇는 코드 — os.path.join(expanduser('~'), '.hai-mcp', …) · Path.home() / '.hai-mcp'
   const sb = fold(P.basename(DATA));
   if (sb.length >= 4 && quotedIs(raw, sb) && (HOME_REF.test(raw) || raw.includes(fold(HOME)))) deny(tokens[0], `${where}가 홈 폴더에 ${sb} 를 이어 붙여 그 안을 가리킴`);
-  // 이름을 조각으로 잇는 꼴('.hai' + '-mcp' · '/.ha' + 'i-mcp/agent-tok' + 'en') — 홈을 가리키면서 따옴표 글자에 그 조각이 있으면
-  if (HOME_REF.test(raw) && /(['"])[^'"\n]*(\.hai?(?=[/\\'"]|-)|-mcp\b|agent-(t|['"]))[^'"\n]*\1/.test(raw)) deny(tokens[0], `${where}가 홈 폴더 아래 토큰 폴더 이름 조각을 이어 붙임`);
+  // 이름을 조각으로 잇는 꼴('.hai' + '-mcp' · '/.ha' + 'i-mcp/agent-tok' + 'en') — 홈을 가리키면서 따옴표 글자에 그 조각이 있으면. ~/.hai-cli 는 다른 폴더라 뺀다
+  if (HOME_REF.test(raw) && /(['"])[^'"\n]*(\.hai?(?=[/\\'"]|-(?!cli\b))|-mcp\b|agent-(t|['"]))[^'"\n]*\1/.test(raw)) deny(tokens[0], `${where}가 홈 폴더 아래 토큰 폴더 이름 조각을 이어 붙임`);
   const walk = WALK.test(raw);
   // 작업 폴더(cd 로 옮긴 곳 포함)가 보호 폴더의 상위면 코드 속 '인사' · os.walk('.') 는 그 아래를 가리킨다
   const cwdKeys = [].concat(cwds).filter(Boolean).map((c) => key(c));

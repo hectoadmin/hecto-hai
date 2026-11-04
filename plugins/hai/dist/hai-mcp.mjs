@@ -103076,6 +103076,13 @@ async function ensureChrome({ onProgress, online = isOnline, open: open2 = openC
   }
   return false;
 }
+async function extensionLine(online = isOnline) {
+  try {
+    return await online() ? "\uD06C\uB86C \uD655\uC7A5: \uC5F0\uACB0\uB428" : "\uD06C\uB86C \uD655\uC7A5: \uC5F0\uACB0 \uC548 \uB428 \u2014 \uD06C\uB86C\uC744 \uCF1C\uACE0 \uD5E5\uD1A0 \uC5D0\uC774\uC804\uD2B8 \uD328\uB110\uC5D0\uC11C \uB85C\uADF8\uC778\uD558\uC138\uC694(\uC0AC\uB0B4 \uD654\uBA74 \uC77D\uAE30\xB7\uC2E4\uD589\uC5D0 \uD544\uC694)";
+  } catch {
+    return "\uD06C\uB86C \uD655\uC7A5: \uD655\uC778\uD558\uC9C0 \uBABB\uD568";
+  }
+}
 var squash = (s2) => String(s2 ?? "").replace(/\s+/g, "").toLowerCase();
 function pickRecipe(recipes, want) {
   const w2 = String(want ?? "").trim().replace(/^#/, "");
@@ -104073,7 +104080,7 @@ async function fillTimetable(buf, rows) {
 }
 
 // src/index.js
-var VERSION2 = "0.8.0";
+var VERSION2 = "0.9.0";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -104620,6 +104627,7 @@ server.registerTool("hai_status", {
   if (!via2) return ok([...lines, "\u2192 \uB85C\uADF8\uC778\uC774 \uD544\uC694\uD569\uB2C8\uB2E4. hai_login \uC744 \uC2E4\uD589\uD558\uBA74 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC5F4\uB9AC\uACE0, \uD5E5\uD1A0 \uC774\uBA54\uC77C\uB85C \uB85C\uADF8\uC778\uD558\uBA74 \uB05D\uB0A9\uB2C8\uB2E4."].join("\n"));
   lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os6.homedir(), "~")}`);
   lines.push(sandboxLine());
+  if (via2 === "agent") lines.push(await extensionLine());
   const LABEL = { qwen: "Qwen(\uBD84\uC11D\xB7\uCD94\uB860)", gemma: "Gemma(\uB300\uD654\xB7\uC0AC\uC9C4)", embed: "\uBB38\uC11C \uAC80\uC0C9(KURE)", whisper: "\uBC1B\uC544\uC4F0\uAE30 whisper", asr: "\uBC1B\uC544\uC4F0\uAE30 qwen3-asr", ocr: "OCR(paddleocr)" };
   const rows = await probe();
   for (const r2 of rows) lines.push(`- ${LABEL[r2.name]}: ${r2.ok === null ? r2.note : r2.ok ? `\uB428 (${r2.model}, ${r2.ms}ms)` : `\uC548 \uB428 \u2014 ${r2.note}`}`);
