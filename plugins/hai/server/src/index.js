@@ -26,7 +26,8 @@ import { z } from 'zod';
 import { config, apiKey } from './config.js';
 import { chat, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { login, logout, loginUser } from './login.js';
-import { answerRun, describeRun, listRecipes, pickRecipe, startRun, waitRun } from './agent.js';
+import { answerRun, describeRun, ensureChrome, listRecipes, pickRecipe, startRun, startTask, waitRun } from './agent.js';
+import { openChrome, siteUrl, SITES } from './chrome.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
 import { findSpans, chunk } from './ner.js';
 import { readText, readClipboard, resolvePath, kindOf, SUPPORTED } from './extract.js';
@@ -36,7 +37,7 @@ import { search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.7.0';
+export const VERSION = '0.8.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -409,7 +410,7 @@ server.registerTool('hai_logout', {
   return ok('로그아웃했습니다. 다시 쓰려면 hai_login 을 실행하세요.');
 }));
 
-// ── 크롬 헥토 에이전트의 저장한 작업(연동 2단계) ─────────────────────────────
+// ── 크롬 헥토 에이전트(연동 2~4단계) ─────────────────────────────
 const waitSchema = z.number().int().min(5).max(280).optional().describe('끝나거나 확인이 필요할 때까지 기다릴 최대 초(기본 120). 넘으면 "진행 중"과 실행 번호를 돌려준다');
 
 server.registerTool('agent_recipes', {
@@ -425,27 +426,65 @@ server.registerTool('agent_recipes', {
     '', '실행: agent_run {recipe: "이름 또는 #번호", params: {키: 값}}. 바꿀 값을 비우면 예시 값으로 실행된다. {이번달}·{지난달} 같은 날짜 자리는 실행하는 날로 채워진다.'].join('\n'));
 }));
 
-server.registerTool('agent_run', {
-  title: '저장한 작업 실행',
-  description: '크롬 헥토 에이전트에 저장한 작업을 사용자의 크롬에서 실행한다(화면 조작은 확장이, 화면 판단은 사내 AI 가 한다 — 화면 내용은 이쪽으로 오지 않는다). 끝나거나 확인·질문이 필요하거나 wait_sec 이 지나면 돌려준다. '
-    + '확인이 오면 반드시 사용자에게 그대로 묻고 답을 받아 agent_answer 로 보낸다 — 스스로 승인하지 않는다. 상신·승인·삭제·제출 같은 되돌릴 수 없는 동작은 크롬 패널에서만 확인할 수 있다. 크롬이 꺼져 있으면 바로 알려 준다.',
+const scheduledSchema = z.boolean().optional().describe('예약 작업에서 부를 때 true — 사람이 보고 있지 않으니 막히면 그 사람에게 봇 DM 이 간다');
+const siteSchema = `${Object.keys(SITES).join('·')} 또는 http(s) 주소`;
+
+server.registerTool('agent_open', {
+  title: '크롬 켜기',
+  description: '사용자가 평소 쓰는 크롬을 켜고 사이트를 새 탭으로 연다(로그인·확장 그대로, 이미 켜져 있으면 탭만 더한다). 사용자가 "메일·그룹웨어 열어 둬"라고 할 때 쓴다. agent_read·agent_run 은 크롬이 꺼져 있으면 알아서 켜므로 따로 부르지 않는다.',
+  inputSchema: { sites: z.array(z.string()).max(10).optional().describe(`열 곳: ${siteSchema}. 비우면 크롬만 켠다`) },
+}, guard(async ({ sites }) => {
+  await openChrome(sites ?? []);
+  return ok(sites?.length ? `크롬에서 열었습니다: ${sites.join(', ')}` : '크롬을 켰습니다.');
+}));
+
+server.registerTool('agent_read', {
+  title: '사내 화면 읽기',
+  description: `메일·메신저·캘린더·그룹웨어 같은 사내 웹 화면을 사내 AI 가 읽고 물은 것에 답한다. 화면 원문은 이쪽으로 오지 않고 사내 AI 의 답(가린 뒤)만 온다. 사용자의 크롬 뒤쪽 탭에서 돌아 보던 화면을 건드리지 않고 끝나면 탭을 닫는다. 읽기 전용이라 저장·보내기·승인·주소 이동은 서버가 막는다(안 읽은 메일을 열면 읽음으로 바뀔 수는 있다). 크롬이 꺼져 있으면 켠다. 끝나거나 wait_sec 이 지나면 돌려준다.`,
   inputSchema: {
-    recipe: z.string().describe('저장한 작업 이름 또는 번호(#12). agent_recipes 의 이름'),
-    params: z.record(z.string(), z.string()).optional().describe('바꿀 값 {키: 값}. agent_recipes 에 나온 키만. 비우면 저장 때 예시 값'),
+    site: z.string().describe(`읽을 곳: ${siteSchema}`),
+    ask: z.string().describe('무엇을 읽어 어떻게 답할지. 예: "오늘 온 안 읽은 메일의 보낸 사람·제목·할 일을 요약"'),
+    scheduled: scheduledSchema,
     wait_sec: waitSchema,
   },
-}, guard(async ({ recipe, params, wait_sec }, ex) => {
-  const { recipes } = await listRecipes();
-  const r = pickRecipe(recipes, recipe);
-  const { id } = await startRun(r.id, params ?? {});
+}, guard(async ({ site, ask, scheduled, wait_sec }, ex) => {
+  const url = siteUrl(site);
+  await ensureChrome({ onProgress: (m) => progress(ex, m) });
+  const { id } = await startTask({ task: ask, url, readOnly: true, scheduled });
+  progress(ex, `읽기 #${id} 맡김`);
+  const st = await waitRun(id, { waitMs: (wait_sec ?? 120) * 1000, onProgress: (m) => progress(ex, m) });
+  return ok(describeRun(st));
+}));
+
+server.registerTool('agent_run', {
+  title: '크롬 작업 실행',
+  description: '사용자의 크롬에서 사내 화면 일을 실행한다 — 저장한 작업(recipe)이나 글로 맡긴 일(task) 중 하나. 저장한 작업이 있으면 먼저 쓴다(agent_recipes). 화면 조작은 확장이, 화면 판단은 사내 AI 가 하고 화면 내용은 이쪽으로 오지 않는다. 읽기만 할 일은 agent_read 를 쓴다. 끝나거나 확인·질문이 필요하거나 wait_sec 이 지나면 돌려준다. 크롬이 꺼져 있으면 켠다. '
+    + '확인이 오면 반드시 사용자에게 그대로 묻고 답을 받아 agent_answer 로 보낸다 — 스스로 승인하지 않는다. 상신·승인·삭제·제출 같은 되돌릴 수 없는 동작은 크롬 패널에서만 확인할 수 있다.',
+  inputSchema: {
+    recipe: z.string().optional().describe('저장한 작업 이름 또는 번호(#12). agent_recipes 의 이름'),
+    params: z.record(z.string(), z.string()).optional().describe('저장한 작업의 바꿀 값 {키: 값}. agent_recipes 에 나온 키만. 비우면 저장 때 예시 값'),
+    task: z.string().optional().describe('저장한 작업 없이 글로 맡길 일. 크롬 패널에 적는 것과 같다'),
+    site: z.string().optional().describe(`task 를 시작할 곳: ${siteSchema}. 비우면 지금 보는 탭에서(예약이면 꼭 준다)`),
+    scheduled: scheduledSchema,
+    wait_sec: waitSchema,
+  },
+}, guard(async ({ recipe, params, task, site, scheduled, wait_sec }, ex) => {
+  if (Boolean(recipe) === Boolean(task)) throw new HaiError('AGENT_INPUT', 'recipe 와 task 중 하나만 주세요.');
+  const url = site ? siteUrl(site) : undefined;
+  await ensureChrome({ onProgress: (m) => progress(ex, m) });
+  let id;
+  if (recipe) {
+    const { recipes } = await listRecipes();
+    ({ id } = await startRun(pickRecipe(recipes, recipe).id, params ?? {}, Boolean(scheduled)));
+  } else ({ id } = await startTask({ task, url, scheduled }));
   progress(ex, `실행 #${id} 맡김 — 크롬에서 시작을 기다리는 중`);
   const st = await waitRun(id, { waitMs: (wait_sec ?? 120) * 1000, onProgress: (m) => progress(ex, m) });
   return ok(describeRun(st));
 }));
 
 server.registerTool('agent_status', {
-  title: '저장한 작업 진행 보기',
-  description: 'agent_run 으로 맡긴 실행의 진행을 본다 — 끝나거나 확인·질문이 생기거나 wait_sec 이 지날 때까지 기다렸다 돌려준다.',
+  title: '크롬 작업 진행 보기',
+  description: 'agent_read·agent_run 으로 맡긴 실행의 진행을 본다 — 끝나거나 확인·질문이 생기거나 wait_sec 이 지날 때까지 기다렸다 돌려준다.',
   inputSchema: { run: z.number().int().describe('실행 번호(agent_run 결과의 #)'), wait_sec: waitSchema },
 }, guard(async ({ run, wait_sec }, ex) => {
   const st = await waitRun(run, { waitMs: (wait_sec ?? 120) * 1000, onProgress: (m) => progress(ex, m) });

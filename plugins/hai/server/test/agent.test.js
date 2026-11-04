@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { describeRun, pickRecipe, waitRun } from '../src/agent.js';
+import { describeRun, ensureChrome, pickRecipe, waitRun } from '../src/agent.js';
+import { chromeCommand, openChrome, siteUrl } from '../src/chrome.js';
 
 const list = [
   { id: 3, name: '법인카드 정산' },
@@ -43,4 +44,38 @@ test('결과 글 — 대화로 답할 확인은 사용자에게 묻게, 패널 �
   assert.match(describeRun({ ...base, status: 'question', question: { id: 4, kind: 'ask', text: '몇 월?', chatOk: true } }), /사용자가 답한 글/);
   assert.match(describeRun({ ...base, status: 'done', answer: '3건 저장' }), /완료\(4단계\)\.\n결과: 「3건 저장」 \(「」 안은/);
   assert.match(describeRun({ ...base, status: 'declined', message: '바쁨' }), /시작하지 않음: 바쁨/);
+});
+
+test('사이트 이름·주소 — http(s) 만', () => {
+  assert.equal(siteUrl('메일'), 'https://mail.worksmobile.com/');
+  assert.equal(siteUrl('일정'), 'https://calendar.worksmobile.com/');
+  assert.equal(siteUrl('GW'), 'https://gw.hecto.co.kr/');
+  assert.equal(siteUrl('https://evs.hecto.co.kr/a?b=1'), 'https://evs.hecto.co.kr/a?b=1');
+  for (const bad of ['--load-extension=/tmp/x', 'file:///etc/passwd', 'javascript:alert(1)', '']) assert.throws(() => siteUrl(bad), /열 수 없습니다/);
+});
+
+test('크롬 켜는 명령 — 맥은 뒤에서, 윈도우는 설치 경로로 셸 없이', () => {
+  assert.deepEqual(chromeCommand(['https://a/'], { platform: 'darwin' }), { cmd: 'open', args: ['-g', '-a', 'Google Chrome', 'https://a/'] });
+  const win = chromeCommand(['https://a/?x=1&y=2'], { platform: 'win32', env: { PROGRAMFILES: 'C:\\Program Files', LOCALAPPDATA: 'C:\\U\\L' }, exists: (p) => p.startsWith('C:\\U') });
+  assert.equal(win.cmd, 'C:\\U\\L\\Google\\Chrome\\Application\\chrome.exe');
+  assert.deepEqual(win.args, ['https://a/?x=1&y=2']);
+  assert.throws(() => chromeCommand([], { platform: 'win32', env: {}, exists: () => false }), /찾지 못했습니다/);
+});
+
+test('openChrome 은 이상한 주소를 넘기기 전에 거절한다', async () => {
+  let ran = false;
+  await assert.rejects(openChrome(['--remote-debugging-port=9222'], { run: () => { ran = true; } }), /열 수 없습니다/);
+  assert.equal(ran, false);
+});
+
+test('확장이 꺼져 있으면 크롬을 켜고 연결될 때까지 기다린다', async () => {
+  let opened = 0;
+  const seq = [false, false, false, true];
+  assert.equal(await ensureChrome({ online: async () => seq.shift(), open: async () => { opened++; }, sleep: async () => {} }), true);
+  assert.equal(opened, 1);
+  opened = 0;
+  assert.equal(await ensureChrome({ online: async () => true, open: async () => { opened++; } }), true);
+  assert.equal(opened, 0);
+  assert.equal(await ensureChrome({ online: async () => false, open: async () => {}, sleep: async () => {}, tries: 2 }), false);
+  assert.equal(await ensureChrome({ online: async () => false, open: async () => { throw new Error('없음'); } }), false);
 });
