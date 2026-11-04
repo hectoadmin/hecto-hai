@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { describeRun, ensureChrome, extensionLine, pickRecipe, waitRun } from '../src/agent.js';
+import { describeRun, ensureChrome, extensionLine, notifyText, pickRecipe, waitRun } from '../src/agent.js';
 import { chromeCommand, openChrome, siteUrl } from '../src/chrome.js';
 
 const list = [
@@ -84,4 +84,10 @@ test('hai_status 의 크롬 확장 줄', async () => {
   assert.equal(await extensionLine(async () => true), '크롬 확장: 연결됨');
   assert.match(await extensionLine(async () => false), /연결 안 됨.*로그인/);
   assert.equal(await extensionLine(async () => { throw new Error('x'); }), '크롬 확장: 확인하지 못함');
+});
+
+test('봇 DM 글 — 주소는 빼고 자동 알림으로 표시한다', () => {
+  assert.equal(notifyText('긴급: 서버 장애'), '[자동 알림] 긴급: 서버 장애');
+  assert.equal(notifyText('확인 https://evil.example/login?a=1 바람'), '[자동 알림] 확인 [주소 생략] 바람');
+  assert.equal(notifyText('HTTP://A.B www.evil.example/x'), '[자동 알림] [주소 생략] [주소 생략]');
 });
