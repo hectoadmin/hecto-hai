@@ -7,6 +7,7 @@
  *   HAI_KEEP_DOMAINS   가리지 않을 이메일 도메인, 쉼표 구분 (기본 없음 = 이메일 전부 가림)
  *   HAI_MAX_CHARS      파일 한 개 최대 글자 수 (기본 300000)
  *   HAI_PROTECTED_DIRS 보호 폴더(점검 화면에 보여 주는 용도 — 막는 건 훅)
+ *   HAI_MY_NAMES       할 일 뽑기에서 '나'로 볼 이름·별칭·메일 주소, 쉼표 구분(로그인 이름·주소에 더한다. 기본 없음)
  *   HAI_RAW_DIR        원문 결과(받아쓰기·OCR) 기본 저장 폴더 (기본 문서 폴더/HAI 원문, Windows 는 OneDrive 문서일 수 있음) — 한곳에 모아 훅·샌드박스 규칙 하나로 막는다.
  *                      정한 곳은 dataDir/raw-dir 에 적어 둔다 — 훅이 같은 곳을 막게
  * 서비스 이름은 HAI 연동 가이드 v2.10(2026-10) 기준.
@@ -48,6 +49,7 @@ export const config = {
   keepDomains: list(env('HAI_KEEP_DOMAINS', '')).map((d) => d.toLowerCase()),
   maxChars: Number(env('HAI_MAX_CHARS', '300000')),
   protectedDirs: list(env('HAI_PROTECTED_DIRS', '')).map(resolveUserPath),
+  myNames: list(env('HAI_MY_NAMES', '')),
   rawDir: (() => { const d = env('HAI_RAW_DIR', ''); return d ? resolveUserPath(d) : path.join(DOCS, 'HAI 원문'); })(),
   // 이 플러그인이 만든 원문 파일 목록·검색 색인을 두는 곳. 훅(guard.mjs)도 같은 경로를 읽는다
   dataDir: env('HAI_DATA_DIR', path.join(os.homedir(), '.hai-mcp')),

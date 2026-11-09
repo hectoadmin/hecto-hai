@@ -1,6 +1,6 @@
 {
   "name": "hai",
-  "version": "0.11.1",
+  "version": "0.12.0",
   "description": "사내 AI(HAI) 전체를 Claude 에 연결 — 헥토 이메일로 로그인(키 필요 없음), 문서·스캔·녹음을 사내 AI 가 먼저 읽고 개인정보를 가려서 넘긴다. 회의록·OCR·클립보드 캡처·문서 검색·EVS 타임테이블. /hai:guide 로 시작",
   "author": {
     "name": "헥토 총무팀"
@@ -38,6 +38,13 @@
       "type": "string",
       "title": "가리지 않을 이메일 도메인 (선택)",
       "description": "업무 메일 주소는 그대로 두려면 도메인을 쉼표로. 예: hecto.co.kr. 비우면 이메일을 전부 가립니다.",
+      "required": false,
+      "default": ""
+    },
+    "my_names": {
+      "type": "string",
+      "title": "내 이름·별칭 (선택)",
+      "description": "할 일 정리에서 '나'로 볼 이름. 로그인한 이름·메일 주소는 자동으로 들어가니, 회의록에 다르게 적히는 이름(영문 이름, 별명)이 있을 때만 쉼표로 적습니다. 예: Gildong, 길동",
       "required": false,
       "default": ""
     }
