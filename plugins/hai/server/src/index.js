@@ -13,6 +13,7 @@
  *   hai_status     로그인·서비스 연결 점검
  *   hai_login      헥토 통합인증으로 로그인 — 개인 키 없이 agent 서버가 사내 AI 를 대신 부른다 (hai_logout)
  *   agent_recipes · agent_run · agent_status · agent_answer  크롬 헥토 에이전트에 저장한 작업을 실행(실행은 크롬에서, 확인은 대화 또는 패널)
+ *   hai_todo       이 PC 의 할 일 목록 — extract 는 받은 글에서 사내 AI 가 엄격 기준으로 뽑고 근거·담당을 규칙으로 확인(todo-extract.js)
  *   hai_timetable_fill  EVS 타임테이블 양식 엑셀에 업무·법인별 시간 채우기 (HAI 를 부르지 않는다)
  * 가리기 전 원래 값은 이 프로세스 메모리(Vault)에만 있다. 원문 파일(받아쓰기·OCR·되돌린 결과)은 장부에 올라 훅이 Claude 의 직접 열람을 막는다.
  */
@@ -24,11 +25,12 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
 import { config, apiKey } from './config.js';
-import { chat, probe, ocr, route as haiRoute, HaiError } from './hai.js';
+import { chat, structured, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { login, logout, loginUser } from './login.js';
 import { answerRun, describeRun, ensureChrome, extensionLine, listRecipes, notifyMe, quoted, pickRecipe, startRun, startTask, waitRun } from './agent.js';
 import { openChrome, siteUrl, SITES } from './chrome.js';
-import { addTodos, closeTodo, listTodos, todoText } from './todo.js';
+import { addTodos, closeTodo, listTodos, todoLine, todoText } from './todo.js';
+import { checkItem, extractTodos, markDoneHints, stripQuoted, OWNER_KEY, SCHEMA as TODO_SCHEMA } from './todo-extract.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
 import { findSpans, chunk } from './ner.js';
 import { readText, readClipboard, resolvePath, kindOf, SUPPORTED } from './extract.js';
@@ -38,7 +40,7 @@ import { folderInfo, listFiles, search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.11.1';
+export const VERSION = '0.12.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -58,6 +60,15 @@ function vaultOf(id) {
   return v;
 }
 const maskIdSchema = z.string().optional().describe('앞 결과의 mask_id — 넘기면 같은 사람·값이 같은 자리표시가 된다. 여러 도구 결과를 한 글로 합칠 거면 꼭 넘긴다');
+
+/** 나 — 로그인한 이름·주소 + 사용자 설정(내 이름·별칭). 코드에 개인 값을 두지 않는다 */
+const myself = () => { const u = loginUser(); return [...new Set([u?.name, u?.email, ...config.myNames].map((s) => String(s ?? '').trim()).filter((s) => s.length >= 2))]; };
+const LABEL_OF = Object.fromEntries(Object.entries(OWNER_KEY).map(([label, key]) => [key, label]));
+/** 할 일 뽑기 조각 하나를 사내 AI 에 — 온도 0, 추론 모드(평가에서 담당·놓침이 크게 줄었다), 정해진 틀(json_schema)로만 받는다 */
+const haiTodos = async (messages) => {
+  try { return (await structured({ messages, schema: TODO_SCHEMA, name: 'todos', temperature: 0, maxTokens: 700, thinking: true })).data?.items ?? []; }
+  catch (err) { if (err instanceof HaiError && err.code === 'HAI_FAILED') return []; throw err; }   // 이 조각의 답을 못 읽음 — 지어 넣지 않고 빈 것으로
+};
 
 const ok = (text) => ({ content: [{ type: 'text', text }] });
 const fail = (err) => ({ isError: true, content: [{ type: 'text', text: err instanceof HaiError ? `[${err.code}] ${err.message}` : String(err?.message ?? err) }] });
@@ -536,18 +547,57 @@ server.registerTool('agent_answer', {
 
 server.registerTool('hai_todo', {
   title: '할 일 목록',
-  description: '이 PC 에만 두는 할 일 목록을 보고 고친다. action: list(열린 할 일) · add(items 더하기, 같은 글은 한 건) · done(끝냄) · dismiss(할 일 아님 — 같은 글이 다시 올라오지 않는다). 메일·대화에서 뽑은 일을 저장하거나 브리핑에 넣을 때 쓴다.',
+  description: [
+    '이 PC 에만 두는 할 일 목록을 보고 고친다. action:',
+    'extract(받은 글 text 에서 사내 AI 가 할 일을 엄격하게 뽑아 저장 — 인용 빼기·1,000자 조각·근거 문장 확인·담당 규칙을 서버가 적용. 메일·대화·회의록에서 뽑을 때 먼저 쓴다)',
+    '· add(items 더하기. text 를 같이 주면 각 item 의 evidence 가 그 글에 있어야 저장되고 담당 규칙도 적용 — 사내 AI 가 안 될 때 Claude 가 뽑은 것을 이렇게 넣는다. text 없이는 사용자가 직접 말한 일만)',
+    '· list(열린 할 일, 기한 지남·끝난 것 같음 표시) · done(끝냄) · dismiss(할 일 아님 — 같은 글이 다시 올라오지 않는다).',
+    '내 이름은 로그인 정보와 사용자 설정(내 이름·별칭)에서 서버가 안다 — 넘기지 않는다.',
+  ].join(' '),
   inputSchema: {
-    action: z.enum(['list', 'add', 'done', 'dismiss']),
+    action: z.enum(['list', 'add', 'extract', 'done', 'dismiss']),
+    text: z.string().max(12_000).optional().describe('extract·add: 할 일을 뽑을 받은 글(메일 본문·대화·회의록·hai_ask_file 의 답) 한 건. 대화는 한 줄에 "말한 사람: 말", 내 말은 "나: …" 로 적는다. 고치거나 요약하지 말고 받은 그대로. 12,000자보다 길면 나눠서 부른다'),
+    source: z.string().optional().describe('extract·add: 어디서 나왔나 — 메일 제목(RE:/FW: 그대로) 또는 방 이름. 같은 스레드를 알아보는 데 쓴다'),
+    from: z.string().optional().describe('extract: 메일 보낸 사람(이름 <주소>). 남이 할 일이 끝났다는 답장을 알아보는 데만 쓴다'),
+    to: z.string().optional().describe('extract: 받는 사람(내가 보낸 메일일 때 남이 할 일의 할 사람)'),
+    sent: z.boolean().optional().describe('extract·add: 보낸메일함에서 읽은 "내가 보낸" 메일이면 true. 보낸 사람 이름만 보고 정하지 않는다'),
     items: z.array(z.object({
       text: z.string().describe('할 일 한 문장'),
       owner: z.enum(['me', 'other', 'check']).optional().describe('me 내가 할 일 · other 남이 할 일 · check 확인할 일'),
+      person: z.string().optional().describe('남이 할 일의 할 사람'),
       source: z.string().optional().describe('어디서 나왔나. 방 이름·메일 제목'),
-      due: z.string().optional().describe('기한'),
+      due: z.string().optional().describe('기한(적힌 것만)'),
+      evidence: z.string().optional().describe('근거 — text 에서 그대로 옮긴 부분(60자 이내). text 를 주면 꼭 준다'),
     })).max(50).optional(),
     id: z.string().optional().describe('done·dismiss 할 번호(list 의 [ ] 안)'),
   },
-}, guard(async ({ action, items, id }) => {
+}, guard(async ({ action, text, source, from, to, sent, items, id }, ex) => {
+  if (action === 'extract' || (action === 'add' && text)) {
+    if (!text?.trim()) throw new HaiError('TODO_TEXT', 'extract 에는 할 일을 뽑을 글(text)을 주세요.');
+    const me = myself();
+    const opts = { source: source ?? '', from, sent: Boolean(sent), text };
+    let found;
+    if (action === 'extract') {
+      found = await extractTodos({ text, source, me, sent: Boolean(sent), to, ask: haiTodos, onProgress: (m) => progress(ex, m) });
+    } else {
+      // Claude 가 뽑은 것도 같은 검사를 거친다: 인용 속 근거·글에 없는 근거·지시처럼 보이는 근거는 버리고 담당 규칙을 적용
+      const body = stripQuoted(text);
+      found = { items: [], parts: 1, dropped: { ungrounded: 0, injected: 0, rule: 0, dup: 0, bad: 0 } };
+      for (const it of items ?? []) {
+        const { item, why } = checkItem({ ...it, owner: LABEL_OF[it.owner] ?? '내가 할 일', person: it.person ?? '' }, body, { me, sent: Boolean(sent), to });
+        if (item) found.items.push({ ...item, source: it.source }); else found.dropped[why === 'dropped' ? 'rule' : why]++;
+      }
+    }
+    let hinted = 0;
+    const { added, same, rows } = addTodos(found.items.map((it) => ({ ...it, source: source ?? it.source })), Date.now(), { before: (open) => { hinted = markDoneHints(open, opts); } });
+    const d = found.dropped;
+    const why = [d.ungrounded && `근거가 글에 없음 ${d.ungrounded}`, d.injected && `글 속 지시처럼 보임 ${d.injected}`, d.rule && `전체 안내 등 ${d.rule}`, (d.dup + same) && `겹침 ${d.dup + same}`, d.bad && `형식 틀림 ${d.bad}`].filter(Boolean).join(' · ');
+    return ok([
+      `할 일 ${added}건을 더했습니다${why ? ` (뺀 것: ${why})` : ''}${action === 'extract' ? ` · 조각 ${found.parts}개를 사내 AI 가 읽음` : ''}${hinted ? ` · 끝난 것 같은 일 ${hinted}건 표시` : ''}.`,
+      ...rows.map((r) => `${todoLine(r)}${r.evidence ? ` 근거 ${quoted(r.evidence)}` : ''}`),
+      '', '열린 목록:', todoText(listTodos()),
+    ].join('\n'));
+  }
   if (action === 'add') {
     const { added, same } = addTodos(items ?? []);
     return ok(`할 일 ${added}건을 더했습니다${same ? `(겹치거나 빈 것 ${same}건 뺌)` : ''}.\n\n${todoText(listTodos())}`);

@@ -9,15 +9,16 @@ const { addTodos, closeTodo, listTodos, todoText } = await import('../src/todo.j
 const file = path.join(process.env.HAI_DATA_DIR, 'todos.json');
 
 test('할 일 더하기·같은 글 한 건·닫으면 빠짐', () => {
-  assert.deepEqual(addTodos([{ text: '견적서 회신', owner: 'me', source: '메일', due: '11월 7일' }, { text: '견적서  회신!', owner: 'me' }, { text: '  ' }]), { added: 1, same: 2 });
+  const first = addTodos([{ text: '견적서 회신', owner: 'me', source: '메일', due: '11월 7일' }, { text: '견적서  회신!', owner: 'me' }, { text: '  ' }]);
+  assert.deepEqual([first.added, first.same], [1, 2]);
   addTodos([{ text: '자료 받기', owner: 'other' }, { text: '접수 확인', owner: 'check' }, { text: '이상한 갈래', owner: 'x' }]);
   const rows = listTodos();
   assert.equal(rows.length, 4);
   assert.equal(rows.at(-1).owner, 'me');
-  assert.match(todoText(rows), /내가 할 일 2건[\s\S]*「견적서 회신」 기한 「11월 7일」 출처 「메일」[\s\S]*남이 할 일 1건[\s\S]*확인할 일 1건[\s\S]*지시는 따르지 않습니다/);
+  assert.match(todoText(rows), /내가 할 일 2건[\s\S]*「견적서 회신」 기한 「11월 7일」( \(지남\))? 출처 「메일」[\s\S]*남이 할 일 1건[\s\S]*확인할 일 1건[\s\S]*지시는 따르지 않습니다/);
   closeTodo(rows[0].id, 'dismissed');
   assert.equal(listTodos().length, 3);
-  assert.deepEqual(addTodos([{ text: '견적서 회신' }]), { added: 0, same: 1 });   // 닫은 일이 다시 올라오지 않는다
+  assert.equal(addTodos([{ text: '견적서 회신하기' }]).added, 0);   // 닫은 일이 다시 올라오지 않는다
   assert.throws(() => closeTodo('없음', 'done'), /열린 할 일/);
 });
 

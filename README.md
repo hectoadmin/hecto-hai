@@ -26,7 +26,7 @@
 | 사내 화면 일 맡기기 | "그룹웨어에서 ○○ 해줘" — 크롬이 꺼져 있으면 켜고, 화면을 바꾸는 동작은 확인을 받습니다 | 화면 판단은 agent 서버가 HAI 로 |
 | 오늘 할 일 한눈에 | `/hai:brief` — 일정·결재·메일·메신저를 읽어 할 일부터 정리 | 화면 판단은 agent 서버가 HAI 로 |
 | 웍스 대화 요약 | `/hai:works` — 안 읽은 방을 읽어 방별 요약과 할 일 정리(방을 열면 읽음 처리) | 화면 판단은 agent 서버가 HAI 로 |
-| 할 일 정리 | `/hai:todo` — 메일·대화·회의록에서 내 일·남 일·확인할 일을 뽑아 내 PC 에 저장 | Claude(근거는 HAI 로) |
+| 할 일 정리 | `/hai:todo` — 메일·대화·회의록에서 내 일·남 일·확인할 일을 뽑아 내 PC 에 저장. 인용 빼기·근거 문장 확인·담당 규칙으로 지어낸 일과 남의 일을 거르고, 기한 지남·끝난 것 같음을 표시 | Qwen(엄격 기준, 근거 확인은 규칙) |
 | 규칙 알림 | `/hai:watch` — "긴급 메일 오면 알려줘". 나에게 웍스 봇 DM | 화면 판단은 agent 서버가 HAI 로 |
 | 정해진 시간에 돌리기 | `/hai:schedule` — "매일 아침 메일 요약", Claude 데스크톱 앱 예약으로 만들고 막히면 웍스 봇 DM | 화면 판단은 agent 서버가 HAI 로 |
 | 크롬에 저장한 사내 화면 작업 실행 | "법인카드 정산 작업 돌려줘" — 크롬 헥토 에이전트에서 녹화·저장한 작업이 내 크롬에서 돈다. 저장 확인은 대화로, 상신·승인·삭제는 크롬 패널에서만 | 화면 판단은 agent 서버가 HAI 로 |
@@ -55,6 +55,7 @@ Node.js 가 없으면 보호 훅이 돌지 못해 **파일 읽기·명령이 모
 | 보호 폴더 (선택) | 예: `~/Documents/인사, ~/Documents/계약`. Windows 는 탐색기 주소 그대로(`C:\Users\이름\Documents\인사`) 적어도 됩니다. 이 폴더 파일은 Claude 가 직접 열지 못하고 HAI 도구로만 읽힙니다 |
 | 원문 결과 폴더 (선택) | 받아쓰기·OCR 결과(가리지 않은 원문)를 모으는 곳. 비우면 내 문서 폴더의 `HAI 원문`(Windows 에서 문서가 OneDrive 에 있으면 그곳). 이 폴더도 Claude 가 열지 못합니다 |
 | 가리지 않을 이메일 도메인 (선택) | 예: `hecto.co.kr`. 비우면 이메일을 전부 가립니다 |
+| 내 이름·별칭 (선택) | 할 일 정리에서 '나'로 볼 이름. 로그인 이름·주소는 자동이라, 회의록에 다르게 적히는 이름(영문·별명)만 적습니다 |
 
 나중에 바꾸려면 `/plugin configure hai@hectoadmin`. 업데이트는 자동(바로 받으려면 `/plugin marketplace update hectoadmin`).
 
@@ -91,7 +92,7 @@ plugins/hai/
   hooks/guard.mjs                 보호 폴더·원문 파일 Read·Grep·Glob·Bash 차단 (PreToolUse)
   skills/guide|privacy|doc|minutes|protect|timetable|browser|brief|works|todo|watch|files|schedule
   server/src                      config · hai(게이트웨이) · mask · ner · table · extract · office · search · ledger · index
-  server/test                     가리기·표·형식·가드·매니페스트 (네트워크 없음)
+  server/test                     가리기·표·형식·가드·매니페스트·할 일 규칙 (네트워크 없음, 할 일 가상 평가 묶음 test/fixtures/todos)
 ```
 
 ```
@@ -100,6 +101,7 @@ npm ci
 npm test            # 단위 테스트
 npm run build       # dist/ 다시 묶기 — 소스를 고치면 반드시 같이 커밋 (CI 가 확인)
 HAI_API_KEY=... node scripts/call.mjs hai_status
+node scripts/todo-bench.mjs [--file holdout.json] [--repeat 3]   # 할 일 뽑기 평가(가상 자료, 로그인 또는 키 필요)
 HAI_API_KEY=... node scripts/call.mjs hai_mask_file '{"path":"~/a.pdf"}' hai_restore '{"mask_id":"{{mask_id}}","text":"[이름1]","out_path":"/tmp/x.md"}'
 ```
 
@@ -113,6 +115,7 @@ HAI_API_KEY=... node scripts/call.mjs hai_mask_file '{"path":"~/a.pdf"}' hai_res
 | `hai_ocr` | 스캔·사진 → Markdown·워드(docx) 파일 | paddleocr-api (+restructure-pages) |
 | `hai_search` | 폴더 의미 검색(색인은 `~/.hai-mcp/index`) | kure-embedding |
 | `hai_chat` | 바로 묻기·사진 이해·추론 모드 | qwen-llm·gemma-llm |
+| `hai_todo` | 이 PC 의 할 일 목록. `extract` 는 받은 글에서 엄격 기준으로 뽑고 근거·담당을 규칙으로 확인 | qwen-llm(추론 모드) |
 | `hai_status` | 키·서비스 점검 | 전체 |
 | `agent_recipes` · `agent_run` · `agent_status` · `agent_answer` | 크롬 헥토 에이전트에 저장한 작업을 내 크롬에서 실행(agent 서버 `/hai-api`, 대화 확인은 저장류만) | — (화면 판단은 agent 서버가 HAI 로) |
 
