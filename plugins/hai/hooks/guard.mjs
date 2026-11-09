@@ -436,8 +436,8 @@ const HOME_REF = /expanduser\(\s*(['"])~\1|path\.home\(\)|homedir\(\)|\$env:user
 const UP_RE = /(^|[/\\'"\s])\.\.([/\\'"\s)]|$)|\.parents?\b|dirname\s*\(|split-path\b[^\n]*-parent|\.directory\b|getparent|path\.resolve\([^)]*\.\./i;
 // 작업 폴더 기준으로 훑는 코드
 const REL_WALK = /os\.walk\(\s*(['"]\.{0,2}[/\\]?['"]|os\.getcwd\(\)|os\.curdir)|path\(\s*(['"]\.?['"])?\s*\)\s*\.(rglob|glob|walk)|path\.cwd\(\)|\b(i?glob|glob\.glob)\(\s*r?['"](\*\*|\.[/\\])|walkdir\(\s*['"]\.|readdirsync\(\s*['"]\.|filepath\.walk\(\s*"\./i;
-// 하위 폴더까지 훑는 코드
-const WALK = /rglob|os\.walk|\bwalk\(|walkdir|recursive\s*=\s*true|\*\*[/\\]|[/\\]\*\*|readdirsync\([^)]*recursive|filepath\.walk|files\.walk|dir\.glob/i;
+// 하위 폴더까지 훑는 코드. 와일드카드 /** · **/ 는 경로에 붙어 있을 때만 — 줄 첫머리·공백 뒤의 /** 와 줄 끝의 **/ 는 주석 표시다
+const WALK = /rglob|os\.walk|\bwalk\(|walkdir|recursive\s*=\s*true|\*\*[/\\](?=\S)|(?<=\S)[/\\]\*\*|readdirsync\([^)]*recursive|filepath\.walk|files\.walk|dir\.glob/i;
 
 /**
  * 코드(스크립트 파일·인라인 코드·PowerShell)가 경로를 조각으로 잇거나 상위 폴더를 하위까지 훑어 보호 폴더에 닿나.
