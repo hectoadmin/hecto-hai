@@ -66,13 +66,26 @@ export function clearToken() {
   cached = '';
 }
 
-/** 기본 브라우저로 열기. HAI_LOGIN_OPEN=print 면 열지 않고 돌려준다(시험용) */
+/** 기본 브라우저를 여는 명령(순수 함수) → [cmd, args]. Windows 는 PowerShell 을 거치지 않는다 — 보안 프로그램이 숨은 PowerShell 실행을 막는 PC 가 있다 */
+export function browserCommand(url, { platform = os.platform(), env = process.env } = {}) {
+  if (platform === 'darwin') return ['open', [url]];
+  if (platform === 'win32') return [path.win32.join(env.SystemRoot ?? env.windir ?? 'C:\\Windows', 'System32', 'rundll32.exe'), ['url.dll,FileProtocolHandler', url]];
+  return ['xdg-open', [url]];
+}
+
+/** 기본 브라우저로 열기. 못 열어도 조용히 넘어간다 — 주소를 사용자에게 보여 주는 쪽이 안전망이다. HAI_LOGIN_OPEN=print 면 열지 않는다(시험용) */
 function openBrowser(url) {
   if (process.env.HAI_LOGIN_OPEN === 'print') return;
-  const p = os.platform();
-  // Windows: URL 의 & 를 셸이 자르지 않게 Start-Process 에 작은따옴표로 넘긴다(URL 에 작은따옴표는 없다)
-  const [cmd, args] = p === 'darwin' ? ['open', [url]] : p === 'win32' ? ['powershell.exe', ['-NoProfile', '-Command', `Start-Process '${url}'`]] : ['xdg-open', [url]];
-  spawn(cmd, args, { stdio: 'ignore', detached: true, windowsHide: true }).unref();
+  const start = (cmd, args, onError) => {
+    try {
+      const p = spawn(cmd, args, { stdio: 'ignore', detached: true, windowsHide: true });
+      p.once('error', () => onError?.());   // 듣는 쪽이 없으면 서버가 죽는다
+      p.unref();
+    } catch { onError?.(); }
+  };
+  const [cmd, args] = browserCommand(url);
+  // Windows: rundll32 가 없거나 막혔으면 PowerShell 로 한 번 더(URL 의 & 를 셸이 자르지 않게 작은따옴표로 — URL 에 작은따옴표는 없다)
+  start(cmd, args, os.platform() === 'win32' ? () => start('powershell.exe', ['-NoProfile', '-Command', `Start-Process '${url}'`]) : undefined);
 }
 
 const PAGE = (title, body) => `<!doctype html><html lang="ko"><meta charset="utf-8"><title>${title}</title>
@@ -80,15 +93,27 @@ const PAGE = (title, body) => `<!doctype html><html lang="ko"><meta charset="utf
 <h1 style="font-size:24px">${title}</h1><p>${body}</p></body></html>`;
 
 /**
- * 로그인 — 브라우저에서 통합인증을 마치면 끝난다. onUrl(url): 연 주소를 알린다(브라우저가 안 열릴 때 사용자에게 보여 주게)
- * → { name, email }
+ * 진행 중인 로그인 — 브라우저 창이 안 뜨는 PC·진행 알림을 보여 주지 않는 화면(Claude 데스크톱 앱)에서도 주소를 돌려줄 수 있게,
+ * 도구 호출이 끝난 뒤에도 뒤에서 기다린다. state: waiting | done | failed
  */
-export async function login({ timeoutMs = 5 * 60_000, onUrl } = {}) {
+let pending = null;
+/** 진행 중이거나 방금(2분 안) 끝난 로그인 → { url, state, user?, error?, done } | null */
+export function currentLogin(now = Date.now()) {
+  if (pending && pending.state !== 'waiting' && now - pending.endedAt > 2 * 60_000) pending = null;
+  return pending;
+}
+
+/**
+ * 로그인을 시작한다 — 브라우저를 열고 바로 돌아온다. → { url, state, done: Promise<{name,email}> }
+ * done 은 통합인증을 마치고 토큰을 저장하면 끝난다(실패하면 거절). 이미 기다리는 로그인이 있으면 그것을 돌려준다(창을 또 열지 않는다)
+ */
+export async function startLogin({ timeoutMs = 5 * 60_000, open = openBrowser } = {}) {
+  if (pending?.state === 'waiting') return pending;
   const state = randomBytes(24).toString('base64url');
   const verifier = randomBytes(32).toString('base64url');
   const challenge = createHash('sha256').update(verifier).digest('base64url');
   let finish;
-  const done = new Promise((ok, no) => { finish = { ok, no }; });
+  const got = new Promise((ok, no) => { finish = { ok, no }; });
   const server = http.createServer((req, res) => {
     const u = new URL(req.url, 'http://127.0.0.1');
     if (u.pathname !== '/callback') { res.writeHead(404).end(); return; }
@@ -103,25 +128,47 @@ export async function login({ timeoutMs = 5 * 60_000, onUrl } = {}) {
   await new Promise((ok, no) => server.once('error', no).listen(0, '127.0.0.1', ok));
   const { port } = server.address();
   const url = `${config.agentUrl}/auth/hai/start?${new URLSearchParams({ port: String(port), state, challenge })}`;
-  onUrl?.(url);
-  openBrowser(url);
   const timer = setTimeout(() => finish.no(new Error(`${Math.round(timeoutMs / 60000)}분 안에 로그인이 끝나지 않았습니다. 다시 시도하세요.`)), timeoutMs);
-  try {
-    const code = await done;
-    const res = await fetch(`${config.agentUrl}/auth/hai/token`, {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, verifier, device: os.hostname().slice(0, 40) }),
-      signal: AbortSignal.timeout(30_000),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.token) throw new Error(data.message ?? `로그인 서버 응답 오류(${res.status})`);
-    saveToken(data.token);
-    try { fs.writeFileSync(path.join(config.dataDir, 'agent-user.json'), JSON.stringify({ name: data.name, email: data.email, at: new Date().toISOString() })); } catch { /* 표시용 */ }
-    return { name: data.name, email: data.email };
-  } finally {
-    clearTimeout(timer);
-    server.close();
-  }
+  timer.unref?.();
+  const mine = { url, state: 'waiting', user: null, error: null, endedAt: 0, done: null };
+  mine.done = (async () => {
+    try {
+      const code = await got;
+      const res = await fetch(`${config.agentUrl}/auth/hai/token`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, verifier, device: os.hostname().slice(0, 40) }),
+        signal: AbortSignal.timeout(30_000),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.token) throw new Error(data.message ?? `로그인 서버 응답 오류(${res.status})`);
+      try { saveToken(data.token); } catch (e) {
+        throw new Error(`로그인은 됐지만 이 PC 에 로그인 정보를 저장하지 못했습니다${os.platform() === 'win32' ? '(PowerShell 실행이 보안 프로그램에 막혀 있을 수 있습니다)' : ''}. 담당자에게 알려 주세요. (${String(e.message).slice(0, 120)})`);
+      }
+      try { fs.writeFileSync(path.join(config.dataDir, 'agent-user.json'), JSON.stringify({ name: data.name, email: data.email, at: new Date().toISOString() })); } catch { /* 표시용 */ }
+      Object.assign(mine, { state: 'done', user: { name: data.name, email: data.email }, endedAt: Date.now() });
+      return mine.user;
+    } catch (e) {
+      Object.assign(mine, { state: 'failed', error: e, endedAt: Date.now() });
+      throw e;
+    } finally {
+      clearTimeout(timer);
+      server.close();
+    }
+  })();
+  mine.done.catch(() => {});   // 기다리는 쪽이 없어도 서버가 죽지 않게 — 결과는 state 로 읽는다
+  pending = mine;
+  open(url);
+  return mine;
+}
+
+/**
+ * 로그인 — 브라우저에서 통합인증을 마칠 때까지 기다린다. onUrl(url): 연 주소를 알린다(브라우저가 안 열릴 때 사용자에게 보여 주게)
+ * → { name, email }
+ */
+export async function login({ timeoutMs = 5 * 60_000, onUrl } = {}) {
+  const p = await startLogin({ timeoutMs });
+  onUrl?.(p.url);
+  return p.done;
 }
 
 /** 서버에서 토큰을 지우고 이 PC 에서도 지운다 */
