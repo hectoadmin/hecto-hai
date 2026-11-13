@@ -13,7 +13,7 @@ const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
 
 async function api(path, body) {
   const token = loadToken();
-  if (!token) throw new HaiError('HAI_LOGIN_REQUIRED', '저장한 작업을 실행하려면 hai 로그인이 필요합니다. hai_login 을 실행하세요(크롬 확장과 같은 헥토 계정).');
+  if (!token) throw new HaiError('HAI_LOGIN_REQUIRED', '사내 화면 기능(메일·그룹웨어 읽기, 저장한 작업 실행)에는 hai 로그인이 필요합니다 — 개인 키만으로는 안 됩니다. hai_login 을 실행하세요(크롬 확장과 같은 헥토 계정). 크롬 확장이 아직 없으면 로그인 뒤 agent_install 로 설치합니다.');
   let res;
   try {
     res = await fetch(`${config.agentUrl}/hai-api${path}`, {
@@ -56,7 +56,7 @@ export async function ensureChrome({ onProgress, online = isOnline, open = openC
 /** hai_status 한 줄 — 크롬 확장이 연결돼 있나. 안 되면 무엇을 할지까지 */
 export async function extensionLine(online = isOnline) {
   try {
-    return await online() ? '크롬 확장: 연결됨' : '크롬 확장: 연결 안 됨 — 크롬을 켜고 헥토 에이전트 패널에서 로그인하세요(사내 화면 읽기·실행에 필요)';
+    return await online() ? '크롬 확장: 연결됨' : '크롬 확장: 연결 안 됨 — 설치했으면 크롬을 켜고 헥토 에이전트 패널에서 로그인하세요. 아직 설치 전이면 agent_install 로 설치 파일을 받습니다(사내 화면 읽기·실행에 필요)';
   } catch { return '크롬 확장: 확인하지 못함'; }
 }
 

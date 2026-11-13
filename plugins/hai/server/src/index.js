@@ -11,6 +11,7 @@
  *   hai_search     폴더 문서에서 뜻으로 찾기 (kure-embedding)
  *   hai_chat       Qwen·Gemma 에 바로 묻기(이미지 포함, 추론 모드)
  *   hai_status     로그인·서비스 연결 점검
+ *   agent_install  크롬 확장 설치 파일을 받아 풀어 두고 설치 순서를 알려 준다(새 버전으로 바꿀 때도)
  *   hai_login      헥토 통합인증으로 로그인 — 개인 키 없이 agent 서버가 사내 AI 를 대신 부른다 (hai_logout)
  *   agent_recipes · agent_run · agent_status · agent_answer  크롬 헥토 에이전트에 저장한 작업을 실행(실행은 크롬에서, 확인은 대화 또는 패널)
  *   hai_todo       이 PC 의 할 일 목록 — extract 는 받은 글에서 사내 AI 가 엄격 기준으로 뽑고 근거·담당을 규칙으로 확인(todo-extract.js)
@@ -27,8 +28,9 @@ import { z } from 'zod';
 import { config, apiKey } from './config.js';
 import { chat, structured, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { login, logout, loginUser } from './login.js';
-import { answerRun, describeRun, ensureChrome, extensionLine, listRecipes, notifyMe, quoted, pickRecipe, startRun, startTask, waitRun } from './agent.js';
-import { openChrome, siteUrl, SITES } from './chrome.js';
+import { answerRun, describeRun, ensureChrome, extensionLine, isOnline, listRecipes, notifyMe, quoted, pickRecipe, startRun, startTask, waitRun } from './agent.js';
+import { openChrome, openExtensionsPage, siteUrl, SITES } from './chrome.js';
+import { downloadExtension, installSteps, unpackExtension } from './extension.js';
 import { addTodos, closeTodo, listTodos, todoLine, todoText } from './todo.js';
 import { checkItem, extractTodos, markDoneHints, stripQuoted, OWNER_KEY, SCHEMA as TODO_SCHEMA } from './todo-extract.js';
 import { Vault, maskPatterns, maskSpans, residual, normalize } from './mask.js';
@@ -40,7 +42,7 @@ import { folderInfo, listFiles, search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.12.1';
+export const VERSION = '0.13.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -434,8 +436,11 @@ server.registerTool('hai_login', {
 }, guard(async (args, ex) => {
   // 브라우저가 열리지 않을 때를 위해 주소를 진행 알림으로 보여 준다(한 번 쓰는 값이라 남아도 쓸 수 없다)
   const u = await login({ onUrl: (url) => progress(ex, `브라우저에서 로그인하세요. 창이 안 열리면 이 주소를 여세요: ${url}`) });
+  // 확장이 이미 연결돼 있으면 설치 안내를 붙이지 않는다. 확인하지 못하면 안내한다
+  const hasExt = await isOnline().catch(() => false);
   return ok([`로그인되었습니다${u.name ? ` — ${u.name}` : ''}${u.email ? ` (${u.email})` : ''}.`,
-    '이제 개인 키 없이 사내 AI 를 씁니다. hai_status 로 연결을 확인할 수 있습니다.'].join('\n'));
+    '이제 개인 키 없이 사내 AI 를 씁니다. hai_status 로 연결을 확인할 수 있습니다.',
+    ...(hasExt ? [] : ['메일·메신저·캘린더·그룹웨어 같은 사내 화면까지 쓰려면 크롬 확장이 필요합니다 — "크롬 확장 설치해줘"라고 하면 설치 파일을 받아 풀어 두고 순서를 안내합니다(agent_install). 파일·녹음 처리는 확장 없이 됩니다.'])].join('\n'));
 }));
 
 server.registerTool('hai_logout', {
@@ -473,6 +478,20 @@ server.registerTool('agent_open', {
 }, guard(async ({ sites }) => {
   await openChrome(sites ?? []);
   return ok(sites?.length ? `크롬에서 열었습니다: ${sites.join(', ')}` : '크롬을 켰습니다.');
+}));
+
+server.registerTool('agent_install', {
+  title: '크롬 확장 설치 준비',
+  description: '크롬 확장 "헥토 AI 브라우저 에이전트"의 설치 파일을 받아 이 PC(홈 폴더의 hecto-agent-extension)에 풀어 두고, 크롬의 확장 프로그램 화면을 연 뒤 남은 순서를 알려 준다. 사용자가 "크롬 확장 설치해줘"라고 하거나, 사내 화면 기능(메일·그룹웨어·브리핑)을 쓰려는데 확장이 설치돼 있지 않을 때, 확장을 새 버전으로 바꿀 때 부른다. '
+    + '크롬에 올리는 마지막 단계(개발자 모드 켜기·폴더 고르기·패널 로그인)는 크롬이 사람 손으로만 받으므로 사용자가 한다 — 결과의 순서를 줄이지 말고 그대로 보여 준다. hai_login 로그인이 필요하다(개인 키만으로는 받을 수 없다).',
+  inputSchema: {},
+}, guard(async (args, ex) => {
+  progress(ex, '확장 설치 파일을 받는 중');
+  const { buf } = await downloadExtension();
+  const done = await unpackExtension(buf);
+  let opened = true;
+  try { await openExtensionsPage(); } catch { opened = false; }
+  return ok(installSteps({ ...done, opened }));
 }));
 
 server.registerTool('agent_read', {
@@ -632,7 +651,8 @@ server.registerTool('hai_status', {
   if (!via) return ok([...lines, '→ 로그인이 필요합니다. hai_login 을 실행하면 브라우저가 열리고, 헥토 이메일로 로그인하면 끝납니다.'].join('\n'));
   lines.push(`원문 결과 폴더: ${config.rawDir.replace(os.homedir(), '~')}`);
   lines.push(sandboxLine());
-  if (via === 'agent') lines.push(await extensionLine());
+  lines.push(via === 'agent' ? await extensionLine()
+    : '크롬 확장: 개인 키만으로는 사내 화면(메일·그룹웨어·브리핑)을 쓸 수 없습니다 — hai_login 으로 로그인한 뒤 agent_install 로 확장을 설치하세요(파일·녹음 처리는 지금도 됩니다)');
   const LABEL = { qwen: 'Qwen(분석·추론)', gemma: 'Gemma(대화·사진)', embed: '문서 검색(KURE)', whisper: '받아쓰기 whisper', asr: '받아쓰기 qwen3-asr', ocr: 'OCR(paddleocr)' };
   const rows = await probe();
   for (const r of rows) lines.push(`- ${LABEL[r.name]}: ${r.ok === null ? r.note : r.ok ? `됨 (${r.model}, ${r.ms}ms)` : `안 됨 — ${r.note}`}`);
