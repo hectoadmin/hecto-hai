@@ -93536,13 +93536,13 @@ var recordProcessor = (schema, ctx, _json, params) => {
         ...params,
         path: [...params.path, "propertyNames"]
       });
-      let pending = pendingRecords.get(ctx);
-      if (!pending) {
-        pending = [];
-        pendingRecords.set(ctx, pending);
+      let pending2 = pendingRecords.get(ctx);
+      if (!pending2) {
+        pending2 = [];
+        pendingRecords.set(ctx, pending2);
         ctx.deferred.push(() => rewriteKeyNames(ctx));
       }
-      pending.push(schema);
+      pending2.push(schema);
     }
     json2.additionalProperties = processSchema(def.valueType, ctx, {
       ...params,
@@ -102740,21 +102740,40 @@ function clearToken() {
   }
   cached3 = "";
 }
+function browserCommand(url2, { platform = os2.platform(), env: env2 = process.env } = {}) {
+  if (platform === "darwin") return ["open", [url2]];
+  if (platform === "win32") return [path2.win32.join(env2.SystemRoot ?? env2.windir ?? "C:\\Windows", "System32", "rundll32.exe"), ["url.dll,FileProtocolHandler", url2]];
+  return ["xdg-open", [url2]];
+}
 function openBrowser(url2) {
   if (process.env.HAI_LOGIN_OPEN === "print") return;
-  const p2 = os2.platform();
-  const [cmd, args] = p2 === "darwin" ? ["open", [url2]] : p2 === "win32" ? ["powershell.exe", ["-NoProfile", "-Command", `Start-Process '${url2}'`]] : ["xdg-open", [url2]];
-  spawn(cmd, args, { stdio: "ignore", detached: true, windowsHide: true }).unref();
+  const start = (cmd2, args2, onError) => {
+    try {
+      const p2 = spawn(cmd2, args2, { stdio: "ignore", detached: true, windowsHide: true });
+      p2.once("error", () => onError?.());
+      p2.unref();
+    } catch {
+      onError?.();
+    }
+  };
+  const [cmd, args] = browserCommand(url2);
+  start(cmd, args, os2.platform() === "win32" ? () => start("powershell.exe", ["-NoProfile", "-Command", `Start-Process '${url2}'`]) : void 0);
 }
 var PAGE = (title, body) => `<!doctype html><html lang="ko"><meta charset="utf-8"><title>${title}</title>
 <body style="font-family:'Noto Sans KR',sans-serif;max-width:520px;margin:80px auto;padding:0 16px;word-break:keep-all">
 <h1 style="font-size:24px">${title}</h1><p>${body}</p></body></html>`;
-async function login({ timeoutMs = 5 * 6e4, onUrl } = {}) {
+var pending = null;
+function currentLogin(now = Date.now()) {
+  if (pending && pending.state !== "waiting" && now - pending.endedAt > 2 * 6e4) pending = null;
+  return pending;
+}
+async function startLogin({ timeoutMs = 5 * 6e4, open: open2 = openBrowser } = {}) {
+  if (pending?.state === "waiting") return pending;
   const state = randomBytes(24).toString("base64url");
   const verifier = randomBytes(32).toString("base64url");
   const challenge = createHash("sha256").update(verifier).digest("base64url");
   let finish;
-  const done = new Promise((ok2, no2) => {
+  const got = new Promise((ok2, no2) => {
     finish = { ok: ok2, no: no2 };
   });
   const server2 = http.createServer((req, res) => {
@@ -102774,29 +102793,44 @@ async function login({ timeoutMs = 5 * 6e4, onUrl } = {}) {
   await new Promise((ok2, no2) => server2.once("error", no2).listen(0, "127.0.0.1", ok2));
   const { port } = server2.address();
   const url2 = `${config2.agentUrl}/auth/hai/start?${new URLSearchParams({ port: String(port), state, challenge })}`;
-  onUrl?.(url2);
-  openBrowser(url2);
   const timer = setTimeout(() => finish.no(new Error(`${Math.round(timeoutMs / 6e4)}\uBD84 \uC548\uC5D0 \uB85C\uADF8\uC778\uC774 \uB05D\uB098\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4. \uB2E4\uC2DC \uC2DC\uB3C4\uD558\uC138\uC694.`)), timeoutMs);
-  try {
-    const code = await done;
-    const res = await fetch(`${config2.agentUrl}/auth/hai/token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code, verifier, device: os2.hostname().slice(0, 40) }),
-      signal: AbortSignal.timeout(3e4)
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.token) throw new Error(data.message ?? `\uB85C\uADF8\uC778 \uC11C\uBC84 \uC751\uB2F5 \uC624\uB958(${res.status})`);
-    saveToken(data.token);
+  timer.unref?.();
+  const mine = { url: url2, state: "waiting", user: null, error: null, endedAt: 0, done: null };
+  mine.done = (async () => {
     try {
-      fs.writeFileSync(path2.join(config2.dataDir, "agent-user.json"), JSON.stringify({ name: data.name, email: data.email, at: (/* @__PURE__ */ new Date()).toISOString() }));
-    } catch {
+      const code = await got;
+      const res = await fetch(`${config2.agentUrl}/auth/hai/token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, verifier, device: os2.hostname().slice(0, 40) }),
+        signal: AbortSignal.timeout(3e4)
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.token) throw new Error(data.message ?? `\uB85C\uADF8\uC778 \uC11C\uBC84 \uC751\uB2F5 \uC624\uB958(${res.status})`);
+      try {
+        saveToken(data.token);
+      } catch (e2) {
+        throw new Error(`\uB85C\uADF8\uC778\uC740 \uB410\uC9C0\uB9CC \uC774 PC \uC5D0 \uB85C\uADF8\uC778 \uC815\uBCF4\uB97C \uC800\uC7A5\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4${os2.platform() === "win32" ? "(PowerShell \uC2E4\uD589\uC774 \uBCF4\uC548 \uD504\uB85C\uADF8\uB7A8\uC5D0 \uB9C9\uD600 \uC788\uC744 \uC218 \uC788\uC2B5\uB2C8\uB2E4)" : ""}. \uB2F4\uB2F9\uC790\uC5D0\uAC8C \uC54C\uB824 \uC8FC\uC138\uC694. (${String(e2.message).slice(0, 120)})`);
+      }
+      try {
+        fs.writeFileSync(path2.join(config2.dataDir, "agent-user.json"), JSON.stringify({ name: data.name, email: data.email, at: (/* @__PURE__ */ new Date()).toISOString() }));
+      } catch {
+      }
+      Object.assign(mine, { state: "done", user: { name: data.name, email: data.email }, endedAt: Date.now() });
+      return mine.user;
+    } catch (e2) {
+      Object.assign(mine, { state: "failed", error: e2, endedAt: Date.now() });
+      throw e2;
+    } finally {
+      clearTimeout(timer);
+      server2.close();
     }
-    return { name: data.name, email: data.email };
-  } finally {
-    clearTimeout(timer);
-    server2.close();
-  }
+  })();
+  mine.done.catch(() => {
+  });
+  pending = mine;
+  open2(url2);
+  return mine;
 }
 async function logout() {
   const t2 = loadToken();
@@ -104583,7 +104617,7 @@ async function fillTimetable(buf, rows) {
 }
 
 // src/index.js
-var VERSION2 = "0.13.0";
+var VERSION2 = "0.13.1";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -105042,17 +105076,32 @@ server.registerTool("hai_timetable_fill", {
     "\uB2E4\uC74C: EVS \uD0C0\uC784\uD14C\uC774\uBE14 \uB4F1\uB85D \uD654\uBA74\uC5D0\uC11C \uAC19\uC740 \uB144\uC6D4\uC744 \uACE0\uB974\uACE0 Excel \uC5C5\uB85C\uB4DC\uB85C \uC774 \uD30C\uC77C\uC744 \uC62C\uB9B0 \uB4A4, \uD45C\uB97C \uD655\uC778\uD558\uACE0 \uC800\uC7A5\xB7\uD655\uC815\uC744 \uC9C1\uC811 \uB204\uB974\uC138\uC694."
   ].join("\n"));
 }));
+var LOGIN_WAIT_MS = 3e4;
+async function loggedInText(u2) {
+  const hasExt = await isOnline().catch(() => false);
+  return [
+    `\uB85C\uADF8\uC778\uB418\uC5C8\uC2B5\uB2C8\uB2E4${u2?.name ? ` \u2014 ${u2.name}` : ""}${u2?.email ? ` (${u2.email})` : ""}.`,
+    "\uC774\uC81C \uAC1C\uC778 \uD0A4 \uC5C6\uC774 \uC0AC\uB0B4 AI \uB97C \uC501\uB2C8\uB2E4. hai_status \uB85C \uC5F0\uACB0\uC744 \uD655\uC778\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.",
+    ...hasExt ? [] : ['\uBA54\uC77C\xB7\uBA54\uC2E0\uC800\xB7\uCE98\uB9B0\uB354\xB7\uADF8\uB8F9\uC6E8\uC5B4 \uAC19\uC740 \uC0AC\uB0B4 \uD654\uBA74\uAE4C\uC9C0 \uC4F0\uB824\uBA74 \uD06C\uB86C \uD655\uC7A5\uC774 \uD544\uC694\uD569\uB2C8\uB2E4 \u2014 "\uD06C\uB86C \uD655\uC7A5 \uC124\uCE58\uD574\uC918"\uB77C\uACE0 \uD558\uBA74 \uC124\uCE58 \uD30C\uC77C\uC744 \uBC1B\uC544 \uD480\uC5B4 \uB450\uACE0 \uC21C\uC11C\uB97C \uC548\uB0B4\uD569\uB2C8\uB2E4(agent_install). \uC9C1\uC811 \uBC1B\uC73C\uB824\uBA74 https://agent.hecto.co.kr/install. \uD30C\uC77C\xB7\uB179\uC74C \uCC98\uB9AC\uB294 \uD655\uC7A5 \uC5C6\uC774 \uB429\uB2C8\uB2E4.']
+  ].join("\n");
+}
 server.registerTool("hai_login", {
   title: "\uC0AC\uB0B4 AI \uB85C\uADF8\uC778",
-  description: '\uD5E5\uD1A0 \uD1B5\uD569\uC778\uC99D\uC73C\uB85C \uB85C\uADF8\uC778\uD55C\uB2E4 \u2014 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC5F4\uB9AC\uBA74 \uD5E5\uD1A0 \uC774\uBA54\uC77C\uACFC \uC6CD\uC2A4\uB85C \uC628 \uC778\uC99D\uBC88\uD638\uB97C \uB123\uC73C\uBA74 \uB05D. \uADF8 \uB4A4\uB85C\uB294 \uAC1C\uC778 HAI \uD0A4 \uC5C6\uC774 agent \uC11C\uBC84(agent.hecto.co.kr)\uAC00 \uC0AC\uB0B4 AI \uB97C \uB300\uC2E0 \uBD80\uB974\uACE0, \uD68C\uC0AC \uBC16\uC5D0\uC11C\uB3C4 \uB41C\uB2E4. \uB85C\uADF8\uC778\uC740 \uAE30\uAC04 \uC81C\uD55C \uC5C6\uC774 \uC720\uC9C0\uB418\uACE0 hai_logout\xB7\uD1F4\uC0AC\xB7\uAD00\uB9AC\uC790 \uCC28\uB2E8 \uB54C \uB04A\uAE34\uB2E4. \uCC98\uC74C \uC4F8 \uB54C\uB098 "\uB85C\uADF8\uC778\uC774 \uD544\uC694\uD569\uB2C8\uB2E4/\uB04A\uACBC\uC2B5\uB2C8\uB2E4" \uC624\uB958\uAC00 \uB098\uBA74 \uBD80\uB978\uB2E4.',
+  description: '\uD5E5\uD1A0 \uD1B5\uD569\uC778\uC99D\uC73C\uB85C \uB85C\uADF8\uC778\uD55C\uB2E4 \u2014 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC5F4\uB9AC\uBA74 \uD5E5\uD1A0 \uC774\uBA54\uC77C\uACFC \uC6CD\uC2A4\uB85C \uC628 \uC778\uC99D\uBC88\uD638\uB97C \uB123\uC73C\uBA74 \uB05D. \uADF8 \uB4A4\uB85C\uB294 \uAC1C\uC778 HAI \uD0A4 \uC5C6\uC774 agent \uC11C\uBC84(agent.hecto.co.kr)\uAC00 \uC0AC\uB0B4 AI \uB97C \uB300\uC2E0 \uBD80\uB974\uACE0, \uD68C\uC0AC \uBC16\uC5D0\uC11C\uB3C4 \uB41C\uB2E4. \uB85C\uADF8\uC778\uC740 \uAE30\uAC04 \uC81C\uD55C \uC5C6\uC774 \uC720\uC9C0\uB418\uACE0 hai_logout\xB7\uD1F4\uC0AC\xB7\uAD00\uB9AC\uC790 \uCC28\uB2E8 \uB54C \uB04A\uAE34\uB2E4. \uCC98\uC74C \uC4F8 \uB54C\uB098 "\uB85C\uADF8\uC778\uC774 \uD544\uC694\uD569\uB2C8\uB2E4/\uB04A\uACBC\uC2B5\uB2C8\uB2E4" \uC624\uB958\uAC00 \uB098\uBA74 \uBD80\uB978\uB2E4. \uD06C\uB86C \uD655\uC7A5 \uD328\uB110\uC758 \uB85C\uADF8\uC778\uACFC\uB294 \uBCC4\uAC1C\uB2E4(\uD655\uC7A5\uC5D0 \uB85C\uADF8\uC778\uD588\uC5B4\uB3C4 \uC774 \uB85C\uADF8\uC778\uC740 \uB530\uB85C \uD55C \uBC88 \uD55C\uB2E4). 30\uCD08 \uC548\uC5D0 \uB05D\uB098\uC9C0 \uC54A\uC73C\uBA74 \uB85C\uADF8\uC778 \uC8FC\uC18C\uB97C \uB3CC\uB824\uC900\uB2E4 \u2014 \uBE0C\uB77C\uC6B0\uC800 \uCC3D\uC774 \uC548 \uB5B4\uC744 \uC218 \uC788\uC73C\uB2C8 \uADF8 \uC8FC\uC18C\uB97C \uC0AC\uC6A9\uC790\uC5D0\uAC8C **\uADF8\uB300\uB85C** \uBCF4\uC5EC \uC8FC\uACE0, \uC0AC\uC6A9\uC790\uAC00 \uB9C8\uCCE4\uB2E4\uACE0 \uD558\uBA74 hai_status \uB85C \uD655\uC778\uD55C\uB2E4(\uB2E4\uC2DC \uBD80\uB974\uBA74 \uAC19\uC740 \uB85C\uADF8\uC778\uC744 \uC774\uC5B4 \uAE30\uB2E4\uB9B0\uB2E4).',
   inputSchema: {}
 }, guard(async (args, ex) => {
-  const u2 = await login({ onUrl: (url2) => progress(ex, `\uBE0C\uB77C\uC6B0\uC800\uC5D0\uC11C \uB85C\uADF8\uC778\uD558\uC138\uC694. \uCC3D\uC774 \uC548 \uC5F4\uB9AC\uBA74 \uC774 \uC8FC\uC18C\uB97C \uC5EC\uC138\uC694: ${url2}`) });
-  const hasExt = await isOnline().catch(() => false);
+  const before2 = currentLogin();
+  if (before2?.state === "done") return ok(await loggedInText(before2.user));
+  const p2 = await startLogin();
+  progress(ex, `\uBE0C\uB77C\uC6B0\uC800\uC5D0\uC11C \uB85C\uADF8\uC778\uD558\uC138\uC694. \uCC3D\uC774 \uC548 \uC5F4\uB9AC\uBA74 \uC774 \uC8FC\uC18C\uB97C \uC5EC\uC138\uC694: ${p2.url}`);
+  const u2 = await Promise.race([p2.done, new Promise((r2) => setTimeout(r2, LOGIN_WAIT_MS, null))]);
+  if (u2) return ok(await loggedInText(u2));
   return ok([
-    `\uB85C\uADF8\uC778\uB418\uC5C8\uC2B5\uB2C8\uB2E4${u2.name ? ` \u2014 ${u2.name}` : ""}${u2.email ? ` (${u2.email})` : ""}.`,
-    "\uC774\uC81C \uAC1C\uC778 \uD0A4 \uC5C6\uC774 \uC0AC\uB0B4 AI \uB97C \uC501\uB2C8\uB2E4. hai_status \uB85C \uC5F0\uACB0\uC744 \uD655\uC778\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4.",
-    ...hasExt ? [] : ['\uBA54\uC77C\xB7\uBA54\uC2E0\uC800\xB7\uCE98\uB9B0\uB354\xB7\uADF8\uB8F9\uC6E8\uC5B4 \uAC19\uC740 \uC0AC\uB0B4 \uD654\uBA74\uAE4C\uC9C0 \uC4F0\uB824\uBA74 \uD06C\uB86C \uD655\uC7A5\uC774 \uD544\uC694\uD569\uB2C8\uB2E4 \u2014 "\uD06C\uB86C \uD655\uC7A5 \uC124\uCE58\uD574\uC918"\uB77C\uACE0 \uD558\uBA74 \uC124\uCE58 \uD30C\uC77C\uC744 \uBC1B\uC544 \uD480\uC5B4 \uB450\uACE0 \uC21C\uC11C\uB97C \uC548\uB0B4\uD569\uB2C8\uB2E4(agent_install). \uD30C\uC77C\xB7\uB179\uC74C \uCC98\uB9AC\uB294 \uD655\uC7A5 \uC5C6\uC774 \uB429\uB2C8\uB2E4.']
+    "\uBE0C\uB77C\uC6B0\uC800\uC5D0\uC11C \uB85C\uADF8\uC778\uC744 \uAE30\uB2E4\uB9AC\uB294 \uC911\uC785\uB2C8\uB2E4(\uC544\uC9C1 \uB05D\uB098\uC9C0 \uC54A\uC558\uC2B5\uB2C8\uB2E4).",
+    "\uB85C\uADF8\uC778 \uCC3D\uC774 \uBCF4\uC774\uC9C0 \uC54A\uC73C\uBA74 \uC544\uB798 \uC8FC\uC18C\uB97C \uC774 PC \uC758 \uD06C\uB86C \uC8FC\uC18C\uCC3D\uC5D0 \uBD99\uC5EC \uB123\uC5B4 \uC5EC\uC138\uC694. \uD5E5\uD1A0 \uC774\uBA54\uC77C\uACFC \uC6CD\uC2A4\uB85C \uC628 \uC778\uC99D\uBC88\uD638\uB97C \uB123\uC73C\uBA74 \uB429\uB2C8\uB2E4(5\uBD84 \uC548\uC5D0).",
+    p2.url,
+    "\uD06C\uB86C \uD655\uC7A5 \uD328\uB110\uC758 \uB85C\uADF8\uC778\uACFC\uB294 \uBCC4\uAC1C\uB77C, \uD655\uC7A5\uC5D0 \uB85C\uADF8\uC778\uD588\uC5B4\uB3C4 \uC774 \uB85C\uADF8\uC778\uC740 \uB530\uB85C \uD55C \uBC88 \uD574\uC57C \uD569\uB2C8\uB2E4.",
+    '\uB85C\uADF8\uC778\uC744 \uB9C8\uCE58\uBA74 "\uB85C\uADF8\uC778 \uD588\uC5B4"\uB77C\uACE0 \uB9D0\uD574 \uC8FC\uC138\uC694 \u2014 hai_status \uB85C \uD655\uC778\uD569\uB2C8\uB2E4.'
   ].join("\n"));
 }));
 server.registerTool("hai_logout", {
@@ -105262,7 +105311,7 @@ server.registerTool("hai_status", {
     `\uC5F0\uACB0: ${via2 === "agent" ? `\uD5E5\uD1A0 \uB85C\uADF8\uC778${user?.name ? ` \u2014 ${user.name}` : ""} (agent \uC11C\uBC84\uAC00 \uB300\uC2E0 \uBD80\uB984 \xB7 \uD68C\uC0AC \uBC16\uC5D0\uC11C\uB3C4 \uB428)` : via2 === "key" ? `\uAC1C\uC778 \uD0A4(${source === "env" ? "\uD50C\uB7EC\uADF8\uC778 \uC124\uC815" : "macOS \uD0A4\uCCB4\uC778"}) \xB7 \uAC8C\uC774\uD2B8\uC6E8\uC774 ${config2.baseUrl} \xB7 \uC0AC\uB0B4\uB9DD\uC5D0\uC11C\uB9CC` : "\uC5C6\uC74C"}`,
     `\uBCF4\uD638 \uD3F4\uB354: ${config2.protectedDirs.length ? config2.protectedDirs.join(", ") : "\uC5C6\uC74C(\uC124\uC815 \uAD8C\uC7A5)"}`
   ];
-  if (!via2) return ok([...lines, "\u2192 \uB85C\uADF8\uC778\uC774 \uD544\uC694\uD569\uB2C8\uB2E4. hai_login \uC744 \uC2E4\uD589\uD558\uBA74 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC5F4\uB9AC\uACE0, \uD5E5\uD1A0 \uC774\uBA54\uC77C\uB85C \uB85C\uADF8\uC778\uD558\uBA74 \uB05D\uB0A9\uB2C8\uB2E4."].join("\n"));
+  if (!via2) return ok([...lines, "\u2192 \uB85C\uADF8\uC778\uC774 \uD544\uC694\uD569\uB2C8\uB2E4. hai_login \uC744 \uC2E4\uD589\uD558\uBA74 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC5F4\uB9AC\uACE0, \uD5E5\uD1A0 \uC774\uBA54\uC77C\uB85C \uB85C\uADF8\uC778\uD558\uBA74 \uB05D\uB0A9\uB2C8\uB2E4(\uD06C\uB86C \uD655\uC7A5 \uD328\uB110\uC758 \uB85C\uADF8\uC778\uACFC\uB294 \uBCC4\uAC1C\uC785\uB2C8\uB2E4)."].join("\n"));
   lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os6.homedir(), "~")}`);
   lines.push(sandboxLine());
   lines.push(via2 === "agent" ? await extensionLine() : "\uD06C\uB86C \uD655\uC7A5: \uAC1C\uC778 \uD0A4\uB9CC\uC73C\uB85C\uB294 \uC0AC\uB0B4 \uD654\uBA74(\uBA54\uC77C\xB7\uADF8\uB8F9\uC6E8\uC5B4\xB7\uBE0C\uB9AC\uD551)\uC744 \uC4F8 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4 \u2014 hai_login \uC73C\uB85C \uB85C\uADF8\uC778\uD55C \uB4A4 agent_install \uB85C \uD655\uC7A5\uC744 \uC124\uCE58\uD558\uC138\uC694(\uD30C\uC77C\xB7\uB179\uC74C \uCC98\uB9AC\uB294 \uC9C0\uAE08\uB3C4 \uB429\uB2C8\uB2E4)");

@@ -27,7 +27,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod';
 import { config, apiKey } from './config.js';
 import { chat, structured, probe, ocr, route as haiRoute, HaiError } from './hai.js';
-import { login, logout, loginUser } from './login.js';
+import { currentLogin, logout, loginUser, startLogin } from './login.js';
 import { answerRun, describeRun, ensureChrome, extensionLine, isOnline, listRecipes, notifyMe, quoted, pickRecipe, startRun, startTask, waitRun } from './agent.js';
 import { openChrome, openExtensionsPage, siteUrl, SITES } from './chrome.js';
 import { downloadExtension, installSteps, unpackExtension } from './extension.js';
@@ -42,7 +42,7 @@ import { folderInfo, listFiles, search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.13.0';
+export const VERSION = '0.13.1';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -429,18 +429,33 @@ server.registerTool('hai_timetable_fill', {
     '다음: EVS 타임테이블 등록 화면에서 같은 년월을 고르고 Excel 업로드로 이 파일을 올린 뒤, 표를 확인하고 저장·확정을 직접 누르세요.'].join('\n'));
 }));
 
+const LOGIN_WAIT_MS = 30_000;
+/** 로그인 뒤 붙이는 안내 — 확장이 이미 연결돼 있으면 설치 안내를 붙이지 않는다. 확인하지 못하면 안내한다 */
+async function loggedInText(u) {
+  const hasExt = await isOnline().catch(() => false);
+  return [`로그인되었습니다${u?.name ? ` — ${u.name}` : ''}${u?.email ? ` (${u.email})` : ''}.`,
+    '이제 개인 키 없이 사내 AI 를 씁니다. hai_status 로 연결을 확인할 수 있습니다.',
+    ...(hasExt ? [] : ['메일·메신저·캘린더·그룹웨어 같은 사내 화면까지 쓰려면 크롬 확장이 필요합니다 — "크롬 확장 설치해줘"라고 하면 설치 파일을 받아 풀어 두고 순서를 안내합니다(agent_install). 직접 받으려면 https://agent.hecto.co.kr/install. 파일·녹음 처리는 확장 없이 됩니다.'])].join('\n');
+}
+
 server.registerTool('hai_login', {
   title: '사내 AI 로그인',
-  description: '헥토 통합인증으로 로그인한다 — 브라우저가 열리면 헥토 이메일과 웍스로 온 인증번호를 넣으면 끝. 그 뒤로는 개인 HAI 키 없이 agent 서버(agent.hecto.co.kr)가 사내 AI 를 대신 부르고, 회사 밖에서도 된다. 로그인은 기간 제한 없이 유지되고 hai_logout·퇴사·관리자 차단 때 끊긴다. 처음 쓸 때나 "로그인이 필요합니다/끊겼습니다" 오류가 나면 부른다.',
+  description: '헥토 통합인증으로 로그인한다 — 브라우저가 열리면 헥토 이메일과 웍스로 온 인증번호를 넣으면 끝. 그 뒤로는 개인 HAI 키 없이 agent 서버(agent.hecto.co.kr)가 사내 AI 를 대신 부르고, 회사 밖에서도 된다. 로그인은 기간 제한 없이 유지되고 hai_logout·퇴사·관리자 차단 때 끊긴다. 처음 쓸 때나 "로그인이 필요합니다/끊겼습니다" 오류가 나면 부른다. '
+    + '크롬 확장 패널의 로그인과는 별개다(확장에 로그인했어도 이 로그인은 따로 한 번 한다). 30초 안에 끝나지 않으면 로그인 주소를 돌려준다 — 브라우저 창이 안 떴을 수 있으니 그 주소를 사용자에게 **그대로** 보여 주고, 사용자가 마쳤다고 하면 hai_status 로 확인한다(다시 부르면 같은 로그인을 이어 기다린다).',
   inputSchema: {},
 }, guard(async (args, ex) => {
-  // 브라우저가 열리지 않을 때를 위해 주소를 진행 알림으로 보여 준다(한 번 쓰는 값이라 남아도 쓸 수 없다)
-  const u = await login({ onUrl: (url) => progress(ex, `브라우저에서 로그인하세요. 창이 안 열리면 이 주소를 여세요: ${url}`) });
-  // 확장이 이미 연결돼 있으면 설치 안내를 붙이지 않는다. 확인하지 못하면 안내한다
-  const hasExt = await isOnline().catch(() => false);
-  return ok([`로그인되었습니다${u.name ? ` — ${u.name}` : ''}${u.email ? ` (${u.email})` : ''}.`,
-    '이제 개인 키 없이 사내 AI 를 씁니다. hai_status 로 연결을 확인할 수 있습니다.',
-    ...(hasExt ? [] : ['메일·메신저·캘린더·그룹웨어 같은 사내 화면까지 쓰려면 크롬 확장이 필요합니다 — "크롬 확장 설치해줘"라고 하면 설치 파일을 받아 풀어 두고 순서를 안내합니다(agent_install). 파일·녹음 처리는 확장 없이 됩니다.'])].join('\n'));
+  const before = currentLogin();
+  if (before?.state === 'done') return ok(await loggedInText(before.user));   // 방금 뒤에서 끝난 로그인 — 창을 또 열지 않는다
+  const p = await startLogin();
+  // 진행 알림을 보여 주는 화면(터미널)에서는 여기서 주소가 보인다(한 번 쓰는 값이라 남아도 쓸 수 없다)
+  progress(ex, `브라우저에서 로그인하세요. 창이 안 열리면 이 주소를 여세요: ${p.url}`);
+  const u = await Promise.race([p.done, new Promise((r) => setTimeout(r, LOGIN_WAIT_MS, null))]);
+  if (u) return ok(await loggedInText(u));
+  return ok(['브라우저에서 로그인을 기다리는 중입니다(아직 끝나지 않았습니다).',
+    '로그인 창이 보이지 않으면 아래 주소를 이 PC 의 크롬 주소창에 붙여 넣어 여세요. 헥토 이메일과 웍스로 온 인증번호를 넣으면 됩니다(5분 안에).',
+    p.url,
+    '크롬 확장 패널의 로그인과는 별개라, 확장에 로그인했어도 이 로그인은 따로 한 번 해야 합니다.',
+    '로그인을 마치면 "로그인 했어"라고 말해 주세요 — hai_status 로 확인합니다.'].join('\n'));
 }));
 
 server.registerTool('hai_logout', {
@@ -648,7 +663,7 @@ server.registerTool('hai_status', {
   const lines = [`hai 플러그인 ${VERSION}`,
     `연결: ${via === 'agent' ? `헥토 로그인${user?.name ? ` — ${user.name}` : ''} (agent 서버가 대신 부름 · 회사 밖에서도 됨)` : via === 'key' ? `개인 키(${source === 'env' ? '플러그인 설정' : 'macOS 키체인'}) · 게이트웨이 ${config.baseUrl} · 사내망에서만` : '없음'}`,
     `보호 폴더: ${config.protectedDirs.length ? config.protectedDirs.join(', ') : '없음(설정 권장)'}`];
-  if (!via) return ok([...lines, '→ 로그인이 필요합니다. hai_login 을 실행하면 브라우저가 열리고, 헥토 이메일로 로그인하면 끝납니다.'].join('\n'));
+  if (!via) return ok([...lines, '→ 로그인이 필요합니다. hai_login 을 실행하면 브라우저가 열리고, 헥토 이메일로 로그인하면 끝납니다(크롬 확장 패널의 로그인과는 별개입니다).'].join('\n'));
   lines.push(`원문 결과 폴더: ${config.rawDir.replace(os.homedir(), '~')}`);
   lines.push(sandboxLine());
   lines.push(via === 'agent' ? await extensionLine()
