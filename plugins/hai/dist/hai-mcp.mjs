@@ -102740,24 +102740,41 @@ function clearToken() {
   }
   cached3 = "";
 }
-function browserCommand(url2, { platform = os2.platform(), env: env2 = process.env } = {}) {
-  if (platform === "darwin") return ["open", [url2]];
-  if (platform === "win32") return [path2.win32.join(env2.SystemRoot ?? env2.windir ?? "C:\\Windows", "System32", "rundll32.exe"), ["url.dll,FileProtocolHandler", url2]];
-  return ["xdg-open", [url2]];
+function browserCommands(url2, { platform = os2.platform(), env: env2 = process.env } = {}) {
+  if (platform === "darwin") return [{ cmd: "open", args: [url2] }];
+  if (platform !== "win32") return [{ cmd: "xdg-open", args: [url2] }];
+  const sys = path2.win32.join(env2.SystemRoot ?? env2.windir ?? "C:\\Windows", "System32");
+  return [
+    .../["%]/.test(url2) ? [] : [{ cmd: path2.win32.join(sys, "cmd.exe"), args: ["/d", "/c", "start", '""', `"${url2}"`], opts: { windowsVerbatimArguments: true }, checkExit: true }],
+    { cmd: path2.win32.join(sys, "rundll32.exe"), args: ["url.dll,FileProtocolHandler", url2] },
+    { cmd: "powershell.exe", args: ["-NoProfile", "-Command", `Start-Process '${url2}'`] }
+    // URL 에 작은따옴표는 없다
+  ];
 }
-function openBrowser(url2) {
-  if (process.env.HAI_LOGIN_OPEN === "print") return;
-  const start = (cmd2, args2, onError) => {
+function openBrowser(url2, { run: run3 = spawn, commands = browserCommands(url2) } = {}) {
+  if (process.env.HAI_LOGIN_OPEN === "print" && run3 === spawn) return;
+  const attempt = (i2) => {
+    const c2 = commands[i2];
+    if (!c2) return;
+    let moved = false;
+    const next = () => {
+      if (!moved) {
+        moved = true;
+        attempt(i2 + 1);
+      }
+    };
     try {
-      const p2 = spawn(cmd2, args2, { stdio: "ignore", detached: true, windowsHide: true });
-      p2.once("error", () => onError?.());
-      p2.unref();
+      const p2 = run3(c2.cmd, c2.args, { stdio: "ignore", detached: true, windowsHide: true, ...c2.opts });
+      p2.once("error", next);
+      if (c2.checkExit) p2.once("exit", (code) => {
+        if (code) next();
+      });
+      p2.unref?.();
     } catch {
-      onError?.();
+      next();
     }
   };
-  const [cmd, args] = browserCommand(url2);
-  start(cmd, args, os2.platform() === "win32" ? () => start("powershell.exe", ["-NoProfile", "-Command", `Start-Process '${url2}'`]) : void 0);
+  attempt(0);
 }
 var PAGE = (title, body) => `<!doctype html><html lang="ko"><meta charset="utf-8"><title>${title}</title>
 <body style="font-family:'Noto Sans KR',sans-serif;max-width:520px;margin:80px auto;padding:0 16px;word-break:keep-all">

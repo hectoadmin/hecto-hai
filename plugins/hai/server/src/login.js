@@ -66,26 +66,41 @@ export function clearToken() {
   cached = '';
 }
 
-/** 기본 브라우저를 여는 명령(순수 함수) → [cmd, args]. Windows 는 PowerShell 을 거치지 않는다 — 보안 프로그램이 숨은 PowerShell 실행을 막는 PC 가 있다 */
-export function browserCommand(url, { platform = os.platform(), env = process.env } = {}) {
-  if (platform === 'darwin') return ['open', [url]];
-  if (platform === 'win32') return [path.win32.join(env.SystemRoot ?? env.windir ?? 'C:\\Windows', 'System32', 'rundll32.exe'), ['url.dll,FileProtocolHandler', url]];
-  return ['xdg-open', [url]];
+/**
+ * 기본 브라우저를 여는 명령들(순수 함수) — 앞에서부터 해 보고, 실행하지 못하면 다음 것으로. → [{ cmd, args, opts?, checkExit? }, …]
+ * Windows 는 cmd 의 start 가 먼저다 — 보안 프로그램이 숨은 PowerShell 실행을 막는 PC 가 있다. 그다음 rundll32, 마지막에 PowerShell.
+ *   cmd 는 따옴표 안의 & 를 자르지 않는다(인자를 그대로 넘긴다). 주소에 " 나 % 가 있으면 cmd 로는 열지 않는다
+ */
+export function browserCommands(url, { platform = os.platform(), env = process.env } = {}) {
+  if (platform === 'darwin') return [{ cmd: 'open', args: [url] }];
+  if (platform !== 'win32') return [{ cmd: 'xdg-open', args: [url] }];
+  const sys = path.win32.join(env.SystemRoot ?? env.windir ?? 'C:\\Windows', 'System32');
+  return [
+    ...(/["%]/.test(url) ? [] : [{ cmd: path.win32.join(sys, 'cmd.exe'), args: ['/d', '/c', 'start', '""', `"${url}"`], opts: { windowsVerbatimArguments: true }, checkExit: true }]),
+    { cmd: path.win32.join(sys, 'rundll32.exe'), args: ['url.dll,FileProtocolHandler', url] },
+    { cmd: 'powershell.exe', args: ['-NoProfile', '-Command', `Start-Process '${url}'`] },   // URL 에 작은따옴표는 없다
+  ];
 }
 
-/** 기본 브라우저로 열기. 못 열어도 조용히 넘어간다 — 주소를 사용자에게 보여 주는 쪽이 안전망이다. HAI_LOGIN_OPEN=print 면 열지 않는다(시험용) */
-function openBrowser(url) {
-  if (process.env.HAI_LOGIN_OPEN === 'print') return;
-  const start = (cmd, args, onError) => {
+/**
+ * 기본 브라우저로 열기. 실행하지 못했거나(오류) 실패로 끝나면(checkExit) 다음 방법으로 넘어가고, 다 안 돼도 조용히 넘어간다 —
+ * 주소를 사용자에게 보여 주는 쪽이 안전망이다. HAI_LOGIN_OPEN=print 면 열지 않는다(시험용)
+ */
+export function openBrowser(url, { run = spawn, commands = browserCommands(url) } = {}) {
+  if (process.env.HAI_LOGIN_OPEN === 'print' && run === spawn) return;
+  const attempt = (i) => {
+    const c = commands[i];
+    if (!c) return;
+    let moved = false;
+    const next = () => { if (!moved) { moved = true; attempt(i + 1); } };
     try {
-      const p = spawn(cmd, args, { stdio: 'ignore', detached: true, windowsHide: true });
-      p.once('error', () => onError?.());   // 듣는 쪽이 없으면 서버가 죽는다
-      p.unref();
-    } catch { onError?.(); }
+      const p = run(c.cmd, c.args, { stdio: 'ignore', detached: true, windowsHide: true, ...c.opts });
+      p.once('error', next);   // 듣는 쪽이 없으면 서버가 죽는다
+      if (c.checkExit) p.once('exit', (code) => { if (code) next(); });
+      p.unref?.();
+    } catch { next(); }
   };
-  const [cmd, args] = browserCommand(url);
-  // Windows: rundll32 가 없거나 막혔으면 PowerShell 로 한 번 더(URL 의 & 를 셸이 자르지 않게 작은따옴표로 — URL 에 작은따옴표는 없다)
-  start(cmd, args, os.platform() === 'win32' ? () => start('powershell.exe', ['-NoProfile', '-Command', `Start-Process '${url}'`]) : undefined);
+  attempt(0);
 }
 
 const PAGE = (title, body) => `<!doctype html><html lang="ko"><meta charset="utf-8"><title>${title}</title>
