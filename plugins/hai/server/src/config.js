@@ -10,6 +10,7 @@
  *   HAI_MY_NAMES       할 일 뽑기에서 '나'로 볼 이름·별칭·메일 주소, 쉼표 구분(로그인 이름·주소에 더한다. 기본 없음)
  *   HAI_RAW_DIR        원문 결과(받아쓰기·OCR) 기본 저장 폴더 (기본 문서 폴더/HAI 원문, Windows 는 OneDrive 문서일 수 있음) — 한곳에 모아 훅·샌드박스 규칙 하나로 막는다.
  *                      정한 곳은 dataDir/raw-dir 에 적어 둔다 — 훅이 같은 곳을 막게
+ *   HAI_EXT_DIR        크롬 확장 설치 파일을 풀어 둘 폴더 (기본 홈 폴더/hecto-agent-extension — agent_install)
  * 서비스 이름은 HAI 연동 가이드 v2.10(2026-10) 기준.
  */
 import { execFileSync } from 'node:child_process';
@@ -51,6 +52,7 @@ export const config = {
   protectedDirs: list(env('HAI_PROTECTED_DIRS', '')).map(resolveUserPath),
   myNames: list(env('HAI_MY_NAMES', '')),
   rawDir: (() => { const d = env('HAI_RAW_DIR', ''); return d ? resolveUserPath(d) : path.join(DOCS, 'HAI 원문'); })(),
+  extDir: (() => { const d = env('HAI_EXT_DIR', ''); return d ? resolveUserPath(d) : path.join(os.homedir(), 'hecto-agent-extension'); })(),
   // 이 플러그인이 만든 원문 파일 목록·검색 색인을 두는 곳. 훅(guard.mjs)도 같은 경로를 읽는다
   dataDir: env('HAI_DATA_DIR', path.join(os.homedir(), '.hai-mcp')),
   services: {
