@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { spawnSync } from 'node:child_process';
 import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
@@ -18,7 +19,7 @@ const fake = http.createServer((req, res) => {
 });
 await new Promise((ok) => fake.listen(0, '127.0.0.1', ok));
 Object.assign(process.env, { HAI_AGENT_URL: `http://127.0.0.1:${fake.address().port}`, HAI_DATA_DIR: dataDir, HAI_TOKEN_STORE: 'file', HAI_LOGIN_OPEN: 'print' });
-const { browserCommand, currentLogin, loadToken, startLogin } = await import('../src/login.js');
+const { browserCommands, currentLogin, loadToken, openBrowser, startLogin } = await import('../src/login.js');
 test.after(() => fake.close());
 
 const callback = (url, code) => {
@@ -26,11 +27,52 @@ const callback = (url, code) => {
   return fetch(`http://127.0.0.1:${u.searchParams.get('port')}/callback?code=${code}&state=${u.searchParams.get('state')}`);
 };
 
-test('브라우저 여는 명령 — Windows 는 PowerShell 을 거치지 않고, 주소는 인자 하나로', () => {
+test('브라우저 여는 명령 — Windows 는 cmd start 먼저, 그다음 rundll32, 마지막에 PowerShell', () => {
   const url = 'https://agent.hecto.co.kr/auth/hai/start?port=5&state=a&challenge=b';
-  assert.deepEqual(browserCommand(url, { platform: 'darwin' }), ['open', [url]]);
-  assert.deepEqual(browserCommand(url, { platform: 'win32', env: { SystemRoot: 'C:\\Windows' } }), ['C:\\Windows\\System32\\rundll32.exe', ['url.dll,FileProtocolHandler', url]]);
-  assert.deepEqual(browserCommand(url, { platform: 'linux' }), ['xdg-open', [url]]);
+  assert.deepEqual(browserCommands(url, { platform: 'darwin' }), [{ cmd: 'open', args: [url] }]);
+  assert.deepEqual(browserCommands(url, { platform: 'linux' }), [{ cmd: 'xdg-open', args: [url] }]);
+  const win = browserCommands(url, { platform: 'win32', env: { SystemRoot: 'C:\\Windows' } });
+  assert.deepEqual(win.map((c) => c.cmd), ['C:\\Windows\\System32\\cmd.exe', 'C:\\Windows\\System32\\rundll32.exe', 'powershell.exe']);
+  // & 가 든 주소를 따옴표로 싸서 그대로 넘긴다 — cmd 가 & 에서 자르지 않게
+  assert.deepEqual(win[0].args, ['/d', '/c', 'start', '""', `"${url}"`]);
+  assert.equal(win[0].opts.windowsVerbatimArguments, true);
+  assert.deepEqual(win[1].args, ['url.dll,FileProtocolHandler', url]);
+  // 따옴표·% 가 든 주소는 cmd 로 열지 않는다
+  assert.equal(browserCommands('https://a/?x="&calc', { platform: 'win32', env: {} })[0].cmd.endsWith('rundll32.exe'), true);
+});
+
+test('Windows cmd 가 & 가 든 주소를 자르지 않는다(실제 cmd 로)', { skip: process.platform !== 'win32' }, () => {
+  const url = 'https://agent.hecto.co.kr/auth/hai/start?port=51234&state=abc_DEF-123&challenge=xyz_456';
+  const [c] = browserCommands(url);
+  // start 자리에 echo 를 넣어 cmd 가 받은 그대로를 본다 — 잘리면 "'state' 은(는) 내부 또는 외부 명령…" 오류가 난다
+  const r = spawnSync(c.cmd, ['/d', '/c', 'echo', c.args.at(-1)], { ...c.opts, encoding: 'utf8' });
+  assert.equal(r.status, 0, r.stderr);
+  assert.ok(r.stdout.includes(url), r.stdout);
+  assert.equal(r.stderr.trim(), '');
+});
+
+test('여는 데 실패하면 다음 방법으로 — 실행 오류·실패 종료 모두', () => {
+  const made = [];
+  const proc = () => { const h = {}; return { h, once: (ev, fn) => { h[ev] = fn; }, unref() {} }; };
+  const run = (cmd) => { const p = proc(); made.push({ cmd, p }); if (cmd === 'boom') throw new Error('EPERM'); return p; };
+  const commands = [{ cmd: 'a', args: [], checkExit: true }, { cmd: 'boom', args: [] }, { cmd: 'c', args: [] }, { cmd: 'd', args: [] }];
+  openBrowser('https://x/', { run, commands });
+  assert.deepEqual(made.map((m) => m.cmd), ['a']);
+  made[0].p.h.exit(1);            // a 가 실패로 끝남 → boom(던짐) → c
+  assert.deepEqual(made.map((m) => m.cmd), ['a', 'boom', 'c']);
+  made[0].p.h.error?.(new Error('늦은 오류'));   // 같은 단계에서 두 번 넘어가지 않는다
+  assert.equal(made.length, 3);
+  made[2].p.h.error(new Error('ENOENT'));         // c 실행 오류 → d
+  assert.deepEqual(made.map((m) => m.cmd), ['a', 'boom', 'c', 'd']);
+  made[3].p.h.error(new Error('ENOENT'));         // 다 안 돼도 조용히
+});
+
+test('성공으로 끝나면 다음 방법을 쓰지 않는다(창이 두 번 뜨지 않게)', () => {
+  const made = [];
+  const run = (cmd) => { const h = {}; made.push({ cmd, h }); return { once: (ev, fn) => { h[ev] = fn; }, unref() {} }; };
+  openBrowser('https://x/', { run, commands: [{ cmd: 'a', args: [], checkExit: true }, { cmd: 'b', args: [] }] });
+  made[0].h.exit(0);
+  assert.deepEqual(made.map((m) => m.cmd), ['a']);
 });
 
 test('시작하면 바로 주소를 돌려주고, 기다리는 동안 다시 불러도 같은 로그인이다', async () => {
