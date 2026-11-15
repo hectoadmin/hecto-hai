@@ -103123,6 +103123,14 @@ var startRun = (recipeId, params, scheduled = false) => api("/runs", { recipeId,
 var startTask = ({ task, url: url2, readOnly = false, scheduled = false }) => api("/runs", { task, startUrl: url2 ?? void 0, readOnly, scheduled });
 var runStatus = (id) => api(`/runs/${Number(id)}`);
 var answerRun = (id, q2, answer) => api(`/runs/${Number(id)}/answer`, { q: q2, answer });
+var stopRun = (id) => api(`/runs/${Number(id)}/stop`, {});
+function describeStop(id, r2) {
+  const head = `[\uC2E4\uD589 #${Number(id)}]`;
+  if (r2.stopped && r2.state === "waiting") return `${head} \uBA48\uCDA4 \u2014 \uD06C\uB86C\uC5D0\uC11C \uC2DC\uC791\uD558\uAE30 \uC804\uC5D0 \uCDE8\uC18C\uD588\uC2B5\uB2C8\uB2E4.`;
+  if (r2.stopped) return `${head} \uBA48\uCDA4 \u2014 \uD655\uC7A5\uC774 \uC9C0\uAE08 \uD558\uB358 \uB3D9\uC791 \uD558\uB098\uB97C \uB9C8\uCE58\uBA74 \uB354 \uD558\uC9C0 \uC54A\uACE0 \uB2EB\uC2B5\uB2C8\uB2E4. \uD06C\uB86C \uD328\uB110\uC758 \uD655\uC778 \uCE74\uB4DC\uB3C4 \uB2EB\uD799\uB2C8\uB2E4.`;
+  if (r2.state === "starting") return `${head} \uC544\uC9C1 \uD06C\uB86C\uC5D0\uC11C \uC2DC\uC791\uD558\uB294 \uC911\uC774\uB77C \uBA48\uCD94\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. \uBA87 \uCD08 \uB4A4 \uB2E4\uC2DC agent_stop \uC744 \uBD80\uB974\uC138\uC694.`;
+  return `${head} \uC774\uBBF8 \uB05D\uB09C \uC2E4\uD589\uC785\uB2C8\uB2E4. agent_status \uB85C \uACB0\uACFC\uB97C \uBCF4\uC138\uC694.`;
+}
 async function ensureChrome({ onProgress, online = isOnline, open: open2 = openChrome, sleep: sleep2 = pause, tries = 20, every: every2 = 2e3 } = {}) {
   if (await online()) return true;
   onProgress?.("\uD06C\uB86C\uC744 \uCF1C\uB294 \uC911");
@@ -103184,13 +103192,13 @@ function describeRun(st2) {
     case "starting":
       return `${head} \u2014 \uD06C\uB86C\uC5D0\uC11C \uC2DC\uC791\uC744 \uAE30\uB2E4\uB9AC\uB294 \uC911\uC785\uB2C8\uB2E4. \uD328\uB110\uC774 \uB2EB\uD600 \uC788\uC73C\uBA74 \uD06C\uB86C \uC54C\uB9BC\uC744 \uB204\uB974\uBA74 \uC2DC\uC791\uD569\uB2C8\uB2E4(2\uBD84 \uC548). agent_status {run: ${id}} \uB85C \uC774\uC5B4\uC11C \uAE30\uB2E4\uB9AC\uC138\uC694.`;
     case "running":
-      return `${head} \u2014 \uC9C4\uD589 \uC911(${st2.steps}\uB2E8\uACC4${st2.last ? `, \uB9C8\uC9C0\uB9C9: ${st2.last}` : ""}). agent_status {run: ${id}} \uB85C \uC774\uC5B4\uC11C \uAE30\uB2E4\uB9AC\uC138\uC694.`;
+      return `${head} \u2014 \uC9C4\uD589 \uC911(${st2.steps}\uB2E8\uACC4${st2.last ? `, \uB9C8\uC9C0\uB9C9: ${st2.last}` : ""}). agent_status {run: ${id}} \uB85C \uC774\uC5B4\uC11C \uAE30\uB2E4\uB9AC\uC138\uC694. \uAC19\uC740 \uB3D9\uC791\uC744 \uB418\uD480\uC774\uD558\uAC70\uB098 \uC0AC\uC6A9\uC790\uAC00 \uBA48\uCD94\uB77C\uACE0 \uD558\uBA74 agent_stop {run: ${id}}.`;
     case "question": {
       const q2 = st2.question;
       q2.text = `${q2.kind === "dialog" ? "\uD398\uC774\uC9C0 \uD655\uC778 \uCC3D " : ""}${quoted(q2.text)} ${UNTRUSTED}`;
       if (!q2.chatOk) {
         return `${head} \u2014 \uD06C\uB86C \uD328\uB110\uC5D0\uC11C\uB9CC \uD655\uC778\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4: ${q2.text}
-\uB418\uB3CC\uB9B4 \uC218 \uC5C6\uB294 \uB3D9\uC791\xB7\uC774\uB3D9\xB7\uD30C\uC77C \uACE0\uB974\uAE30\uB77C \uB300\uD654\uB85C \uB300\uC2E0 \uB2F5\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \uC0AC\uC6A9\uC790\uC5D0\uAC8C \uD06C\uB86C \uD328\uB110\uC5D0\uC11C \uC9C1\uC811 \uD655\uC778(\uB610\uB294 \uAC70\uBD80)\uD574 \uB2EC\uB77C\uACE0 \uC548\uB0B4\uD558\uACE0 agent_status {run: ${id}} \uB85C \uAE30\uB2E4\uB9AC\uC138\uC694. \uBA48\uCD94\uB824\uBA74 agent_answer {run: ${id}, q: ${q2.id}, answer: "stop"}.`;
+\uB418\uB3CC\uB9B4 \uC218 \uC5C6\uB294 \uB3D9\uC791\xB7\uC774\uB3D9\xB7\uD30C\uC77C \uACE0\uB974\uAE30\uB77C \uB300\uD654\uB85C \uB300\uC2E0 \uB2F5\uD560 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. \uC0AC\uC6A9\uC790\uC5D0\uAC8C \uD06C\uB86C \uD328\uB110\uC5D0\uC11C \uC9C1\uC811 \uD655\uC778(\uB610\uB294 \uAC70\uBD80)\uD574 \uB2EC\uB77C\uACE0 \uC548\uB0B4\uD558\uACE0 agent_status {run: ${id}} \uB85C \uAE30\uB2E4\uB9AC\uC138\uC694. \uBA48\uCD94\uB824\uBA74 agent_stop {run: ${id}}.`;
       }
       if (q2.kind === "ask") {
         return `${head} \u2014 \uC9C8\uBB38\uC774 \uC654\uC2B5\uB2C8\uB2E4: ${q2.text}
@@ -104634,7 +104642,7 @@ async function fillTimetable(buf, rows) {
 }
 
 // src/index.js
-var VERSION2 = "0.13.1";
+var VERSION2 = "0.13.2";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -105235,6 +105243,11 @@ server.registerTool("agent_answer", {
   const st2 = await waitRun(run3, { waitMs: (wait_sec ?? 120) * 1e3, onProgress: (m2) => progress(ex, m2) });
   return ok(`${note}${describeRun(st2)}`);
 }));
+server.registerTool("agent_stop", {
+  title: "\uB9E1\uAE34 \uC2E4\uD589 \uBA48\uCD94\uAE30",
+  description: "agent_read\xB7agent_run \uC73C\uB85C \uB9E1\uAE34 \uC2E4\uD589\uC744 \uBA48\uCD98\uB2E4 \u2014 \uAE30\uB2E4\uB9AC\uB294 \uD655\uC778\xB7\uC9C8\uBB38\uC774 \uC5C6\uC5B4\uB3C4 \uB41C\uB2E4. \uC9C4\uD589 \uC0C1\uD669(agent_status)\uC5D0 \uAC19\uC740 \uB3D9\uC791\uC774 \uB418\uD480\uC774\uB418\uAC70\uB098, \uC5C9\uB6B1\uD55C \uD654\uBA74\uC5D0\uC11C \uD5E4\uB9E4\uAC70\uB098, \uC0AC\uC6A9\uC790\uAC00 \uBA48\uCD94\uB77C\uACE0 \uD560 \uB54C \uBD80\uB978\uB2E4. \uD655\uC7A5\uC740 \uC9C0\uAE08 \uD558\uB358 \uB3D9\uC791 \uD558\uB098\uB97C \uB9C8\uCE5C \uB4A4 \uB354 \uD558\uC9C0 \uC54A\uACE0 \uB2EB\uB294\uB2E4(\uC774\uBBF8 \uC800\uC7A5\xB7\uC81C\uCD9C\uD55C \uAC83\uC740 \uB418\uB3CC\uB9AC\uC9C0 \uC54A\uB294\uB2E4). \uC2DC\uC791 \uC804\uC774\uBA74 \uC2DC\uC791\uD558\uC9C0 \uC54A\uAC8C \uCDE8\uC18C\uD55C\uB2E4.",
+  inputSchema: { run: external_exports.number().int().describe("\uC2E4\uD589 \uBC88\uD638(agent_run\xB7agent_read \uACB0\uACFC\uC758 #)") }
+}, guard(async ({ run: run3 }) => ok(describeStop(run3, await stopRun(run3)))));
 server.registerTool("hai_todo", {
   title: "\uD560 \uC77C \uBAA9\uB85D",
   description: [

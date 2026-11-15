@@ -13,7 +13,7 @@
  *   hai_status     로그인·서비스 연결 점검
  *   agent_install  크롬 확장 설치 파일을 받아 풀어 두고 설치 순서를 알려 준다(새 버전으로 바꿀 때도)
  *   hai_login      헥토 통합인증으로 로그인 — 개인 키 없이 agent 서버가 사내 AI 를 대신 부른다 (hai_logout)
- *   agent_recipes · agent_run · agent_status · agent_answer  크롬 헥토 에이전트에 저장한 작업을 실행(실행은 크롬에서, 확인은 대화 또는 패널)
+ *   agent_recipes · agent_run · agent_status · agent_answer · agent_stop  크롬 헥토 에이전트에 저장한 작업을 실행(실행은 크롬에서, 확인은 대화 또는 패널, 멈춤은 언제나)
  *   hai_todo       이 PC 의 할 일 목록 — extract 는 받은 글에서 사내 AI 가 엄격 기준으로 뽑고 근거·담당을 규칙으로 확인(todo-extract.js)
  *   hai_timetable_fill  EVS 타임테이블 양식 엑셀에 업무·법인별 시간 채우기 (HAI 를 부르지 않는다)
  * 가리기 전 원래 값은 이 프로세스 메모리(Vault)에만 있다. 원문 파일(받아쓰기·OCR·되돌린 결과)은 장부에 올라 훅이 Claude 의 직접 열람을 막는다.
@@ -28,7 +28,7 @@ import { z } from 'zod';
 import { config, apiKey } from './config.js';
 import { chat, structured, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { currentLogin, logout, loginUser, startLogin } from './login.js';
-import { answerRun, describeRun, ensureChrome, extensionLine, isOnline, listRecipes, notifyMe, quoted, pickRecipe, startRun, startTask, waitRun } from './agent.js';
+import { answerRun, describeRun, describeStop, stopRun, ensureChrome, extensionLine, isOnline, listRecipes, notifyMe, quoted, pickRecipe, startRun, startTask, waitRun } from './agent.js';
 import { openChrome, openExtensionsPage, siteUrl, SITES } from './chrome.js';
 import { downloadExtension, installSteps, unpackExtension } from './extension.js';
 import { addTodos, closeTodo, listTodos, todoLine, todoText } from './todo.js';
@@ -42,7 +42,7 @@ import { folderInfo, listFiles, search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.13.1';
+export const VERSION = '0.13.2';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -578,6 +578,13 @@ server.registerTool('agent_answer', {
   const st = await waitRun(run, { waitMs: (wait_sec ?? 120) * 1000, onProgress: (m) => progress(ex, m) });
   return ok(`${note}${describeRun(st)}`);
 }));
+
+server.registerTool('agent_stop', {
+  title: '맡긴 실행 멈추기',
+  description: 'agent_read·agent_run 으로 맡긴 실행을 멈춘다 — 기다리는 확인·질문이 없어도 된다. 진행 상황(agent_status)에 같은 동작이 되풀이되거나, 엉뚱한 화면에서 헤매거나, 사용자가 멈추라고 할 때 부른다. '
+    + '확장은 지금 하던 동작 하나를 마친 뒤 더 하지 않고 닫는다(이미 저장·제출한 것은 되돌리지 않는다). 시작 전이면 시작하지 않게 취소한다.',
+  inputSchema: { run: z.number().int().describe('실행 번호(agent_run·agent_read 결과의 #)') },
+}, guard(async ({ run }) => ok(describeStop(run, await stopRun(run)))));
 
 server.registerTool('hai_todo', {
   title: '할 일 목록',
