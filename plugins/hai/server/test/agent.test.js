@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { describeRun, ensureChrome, extensionLine, notifyText, pickRecipe, waitRun } from '../src/agent.js';
+import { describeRun, describeStop, ensureChrome, extensionLine, notifyText, pickRecipe, waitRun } from '../src/agent.js';
 import { chromeCommand, openChrome, siteUrl } from '../src/chrome.js';
 
 const list = [
@@ -90,4 +90,14 @@ test('봇 DM 글 — 주소는 빼고 자동 알림으로 표시한다', () => {
   assert.equal(notifyText('긴급: 서버 장애'), '[자동 알림] 긴급: 서버 장애');
   assert.equal(notifyText('확인 https://evil.example/login?a=1 바람'), '[자동 알림] 확인 [주소 생략] 바람');
   assert.equal(notifyText('HTTP://A.B www.evil.example/x'), '[자동 알림] [주소 생략] [주소 생략]');
+});
+
+test('agent_stop 결과 글', () => {
+  assert.match(describeStop(7, { stopped: true, state: 'waiting' }), /#7.*시작하기 전에 취소/);
+  assert.match(describeStop(7, { stopped: true, state: 'running' }), /동작 하나를 마치면/);
+  assert.match(describeStop(7, { stopped: false, state: 'starting' }), /다시 agent_stop/);
+  assert.match(describeStop(7, { stopped: false, state: 'finished' }), /이미 끝난/);
+  // 진행 중·패널 전용 확인에서 멈추는 길은 agent_stop
+  assert.match(describeRun({ id: 3, recipe: 'x', status: 'running', steps: 2 }), /agent_stop \{run: 3\}/);
+  assert.match(describeRun({ id: 3, recipe: 'x', status: 'question', steps: 2, question: { id: 1, kind: 'approve', text: '확인', chatOk: false } }), /agent_stop \{run: 3\}/);
 });

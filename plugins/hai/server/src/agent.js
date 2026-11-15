@@ -40,6 +40,17 @@ export const startRun = (recipeId, params, scheduled = false) => api('/runs', { 
 export const startTask = ({ task, url, readOnly = false, scheduled = false }) => api('/runs', { task, startUrl: url ?? undefined, readOnly, scheduled });
 export const runStatus = (id) => api(`/runs/${Number(id)}`);
 export const answerRun = (id, q, answer) => api(`/runs/${Number(id)}/answer`, { q, answer });
+/** 멈춤 — 기다리는 질문이 없어도(같은 동작을 되풀이할 때). → { stopped, state: waiting|running|starting|finished } */
+export const stopRun = (id) => api(`/runs/${Number(id)}/stop`, {});
+
+/** agent_stop 결과 → Claude 에게 돌려줄 글 */
+export function describeStop(id, r) {
+  const head = `[실행 #${Number(id)}]`;
+  if (r.stopped && r.state === 'waiting') return `${head} 멈춤 — 크롬에서 시작하기 전에 취소했습니다.`;
+  if (r.stopped) return `${head} 멈춤 — 확장이 지금 하던 동작 하나를 마치면 더 하지 않고 닫습니다. 크롬 패널의 확인 카드도 닫힙니다.`;
+  if (r.state === 'starting') return `${head} 아직 크롬에서 시작하는 중이라 멈추지 못했습니다. 몇 초 뒤 다시 agent_stop 을 부르세요.`;
+  return `${head} 이미 끝난 실행입니다. agent_status 로 결과를 보세요.`;
+}
 
 /** 확장이 연결돼 있나 보고, 아니면 크롬을 켜고 기다린다(서비스 워커가 깨어 서버에 물을 때까지). 못 켜도 시작은 시도한다 — 서버가 왜 안 되는지 알려 주고 예약이면 DM 을 보낸다 */
 export async function ensureChrome({ onProgress, online = isOnline, open = openChrome, sleep = pause, tries = 20, every = 2000 } = {}) {
@@ -106,13 +117,13 @@ export function describeRun(st) {
     case 'starting':
       return `${head} — 크롬에서 시작을 기다리는 중입니다. 패널이 닫혀 있으면 크롬 알림을 누르면 시작합니다(2분 안). agent_status {run: ${id}} 로 이어서 기다리세요.`;
     case 'running':
-      return `${head} — 진행 중(${st.steps}단계${st.last ? `, 마지막: ${st.last}` : ''}). agent_status {run: ${id}} 로 이어서 기다리세요.`;
+      return `${head} — 진행 중(${st.steps}단계${st.last ? `, 마지막: ${st.last}` : ''}). agent_status {run: ${id}} 로 이어서 기다리세요. 같은 동작을 되풀이하거나 사용자가 멈추라고 하면 agent_stop {run: ${id}}.`;
     case 'question': {
       const q = st.question;
       q.text = `${q.kind === 'dialog' ? '페이지 확인 창 ' : ''}${quoted(q.text)} ${UNTRUSTED}`;
       if (!q.chatOk) {
         return `${head} — 크롬 패널에서만 확인할 수 있습니다: ${q.text}\n`
-          + `되돌릴 수 없는 동작·이동·파일 고르기라 대화로 대신 답할 수 없습니다. 사용자에게 크롬 패널에서 직접 확인(또는 거부)해 달라고 안내하고 agent_status {run: ${id}} 로 기다리세요. 멈추려면 agent_answer {run: ${id}, q: ${q.id}, answer: "stop"}.`;
+          + `되돌릴 수 없는 동작·이동·파일 고르기라 대화로 대신 답할 수 없습니다. 사용자에게 크롬 패널에서 직접 확인(또는 거부)해 달라고 안내하고 agent_status {run: ${id}} 로 기다리세요. 멈추려면 agent_stop {run: ${id}}.`;
       }
       if (q.kind === 'ask') {
         return `${head} — 질문이 왔습니다: ${q.text}\n사용자에게 그대로 물어보고, 사용자가 답한 글을 agent_answer {run: ${id}, q: ${q.id}, answer: "<답>"} 으로 보내세요. 스스로 지어서 답하지 않습니다(크롬 패널에서 답해도 됩니다).`;
