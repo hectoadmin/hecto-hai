@@ -116,5 +116,5 @@ test('확장 화면은 적어 둔 주소 하나만, 앞으로 띄워 연다', as
   await openExtensionsPage({ run: fake, browser: BROWSERS.chrome });
   assert.equal(ran.args.at(-1), 'chrome://extensions');
   assert.equal(await openExtensionsPage({ run: fake, browser: BROWSERS.edge }), BROWSERS.edge);
-  assert.deepEqual(ran.args, ['-a', 'Microsoft Edge', 'edge://extensions']);
+  assert.deepEqual(ran.args, process.platform === 'darwin' ? ['-a', 'Microsoft Edge', 'edge://extensions'] : ['edge://extensions']);
 });

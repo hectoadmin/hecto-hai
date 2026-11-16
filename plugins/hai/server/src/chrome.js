@@ -103,7 +103,10 @@ export function hasExtension(browser, { platform = process.platform, env = proce
   let dirs = [];
   try { dirs = readdir(root).filter((d) => /^(Default|Profile \d+)$/.test(d)); } catch { return false; }
   return dirs.some((d) => ['Secure Preferences', 'Preferences'].some((f) => {
-    try { return Boolean(JSON.parse(read(join(root, d, f), 'utf8'))?.extensions?.settings?.[EXTENSION_ID]); } catch { return false; }
+    try {
+      const ext = JSON.parse(read(join(root, d, f), 'utf8'))?.extensions?.settings?.[EXTENSION_ID];
+      return Boolean(ext) && ext.state !== 0;   // 비활성 확장은 연결할 수 없다
+    } catch { return false; }
   }));
 }
 

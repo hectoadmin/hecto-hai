@@ -103152,7 +103152,8 @@ function hasExtension(browser, { platform = process.platform, env: env2 = proces
   }
   return dirs.some((d2) => ["Secure Preferences", "Preferences"].some((f2) => {
     try {
-      return Boolean(JSON.parse(read(join(root2, d2, f2), "utf8"))?.extensions?.settings?.[EXTENSION_ID]);
+      const ext = JSON.parse(read(join(root2, d2, f2), "utf8"))?.extensions?.settings?.[EXTENSION_ID];
+      return Boolean(ext) && ext.state !== 0;
     } catch {
       return false;
     }

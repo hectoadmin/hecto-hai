@@ -96,6 +96,9 @@ test('확장이 어느 브라우저에 올라가 있나 — 프로필 설정 파
   assert.equal(hasExtension(BROWSERS.chrome, opt), false);
   assert.equal(hasExtension(BROWSERS.edge, { ...opt, readdir: () => { throw new Error('폴더 없음'); } }), false);
   assert.equal(hasExtension(BROWSERS.edge, { ...opt, env: {} }), false);
+  const disabled = { ...opt, read: () => JSON.stringify({ extensions: { settings: { [EXTENSION_ID]: { state: 0 } } } }) };
+  assert.equal(hasExtension(BROWSERS.edge, disabled), false);
+  assert.equal(hasExtension(BROWSERS.edge, { ...disabled, read: () => JSON.stringify({ extensions: { settings: { [EXTENSION_ID]: { state: 1 } } } }) }), true);
   const trace = { ...opt, read: () => `{"extensions":{"settings":{},"pinned_extensions":["${EXTENSION_ID}"]}}` };   // 지운 뒤 남은 흔적
   assert.equal(hasExtension(BROWSERS.edge, trace), false);
   const mac = { platform: 'darwin', home: '/Users/a', readdir: (p) => { assert.equal(p, '/Users/a/Library/Application Support/Google/Chrome'); return ['Default']; }, read: () => `{"extensions":{"settings":{"${EXTENSION_ID}":{"path":"/x"}}}}` };
