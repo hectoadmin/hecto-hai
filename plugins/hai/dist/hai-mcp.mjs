@@ -30424,7 +30424,7 @@ var require_fs = __commonJS({
 var require_files = __commonJS({
   "node_modules/mammoth/lib/docx/files.js"(exports) {
     var url2 = __require("url");
-    var os7 = __require("os");
+    var os8 = __require("os");
     var dirname = __require("path").dirname;
     var isAbsolutePath = __require("path").isAbsolute;
     var resolvePath2 = __require("path").resolve;
@@ -30466,7 +30466,7 @@ var require_files = __commonJS({
     }
     function uriToPath(uriString, platform) {
       if (!platform) {
-        platform = os7.platform();
+        platform = os8.platform();
       }
       var uri = url2.parse(uriString);
       if (isLocalFileUri(uri) || isRelativeUri(uri)) {
@@ -37735,7 +37735,7 @@ function normalizeEdgeBoundary(e2, t2, n2) {
 function percentage(e2) {
   return `${(e2 * 100).toFixed(2)}%`;
 }
-var e, t, n, r, i, a, o, s, c, l, u, d, f, p, m, h, g, _3, v, y, b, x, S, C, w, T, E, D, O, k, PasswordException$1, UnknownErrorException$1, InvalidPDFException$1, ResponseException$1, FormatError$1, AbortException$1, FeatureTest$1, Util$1, j, ee, makeArr$1, makeMap$1, makeObj$1, M, te, ne, re, ie, N, ae, oe, F, L, RefSet, RefSetCache, BaseStream, se, ce, le, ue, de, fe, MissingDataException, ParserEOFException, XRefEntryException, XRefParseException, pe, me, QCMS, he, ge, _e, ve, ye, be, xe, Se, AlternateCS, PatternCS, IndexedCS, DeviceGrayCS, DeviceRgbCS, DeviceRgbaCS, DeviceCmykCS, CalGrayCS, Ce, LabCS, we, Te, Ee, StringStream, NullStream, ChunkedStream, ChunkedStreamManager, De, Oe, ke, DecodeStream, StreamsSequenceStream, ColorSpaceUtils, JpegError, DNLMarkerError, EOIMarkerError, Ae, je, Me, Ne, Pe, Fe, Ie, Le, JpegImage, Re, ze, NullOptimizer, QueueOptimizer, Be, CheckedOperatorList, Ve, Pattern, BaseShading, RadialAxialShading, He, MeshStreamReader, Ue, We, DummyShading, BinaryCMapStream, BinaryCMapReader, Ascii85Stream, AsciiHexStream, makeBrotliDecode, Ge, BrotliStream, Ke, qe, Jbig2Error, Je, CCITTFaxStream, Ye, Xe, Ze, Qe, $e, FlateStream, et, tt, JpxError, nt, JpxStream, LZWStream, PredictorStream, RunLengthStream, Parser, rt, Lexer, Linearization, it, at, CMap, IdentityCMap, CMapFactory, CSS_FONT_INFO$1, SYSTEM_FONT_INFO$1, FONT_INFO$1, PATTERN_INFO$1, ot, st, ct, lt, ut, dt, ft, pt, mt, ht, gt, _t, vt, yt, bt, xt, St, Ct, wt, Tt, DataBuilder, Et, Dt, Ot, kt, At, CFFParser, CFF, CFFHeader, CFFStrings, CFFIndex, CFFDict, jt, Mt, Nt, Pt, Ft, CFFCharset, CFFEncoding, CFFFDSelect, CFFOffsetTracker, It, Lt, Rt, zt, Bt, Vt, Ht, Ut, Wt, GlyfTable, Gt, Kt, Contour, qt, Jt, ToUnicodeMap, IdentityToUnicodeMap, CFFFont, Commands, Yt, TrueTypeCompiled, Type2Compiled, FontRendererFactory, Xt, Zt, Qt, $t, Type1CharString, en, Type1Parser, Type1Font, tn, nn, rn, an, fonts_Glyph, Font, ErrorFont, on, sn, cn, ln, un, dn, fn, pn, mn, hn, gn, _n, vn, yn, bn, xn, Sn, Cn, wn, Tn, En, Dn, On, kn, An, jn, Mn, Nn, Pn, Fn, In, Ln, Rn, zn, Bn, Vn, Hn, Un, Wn, Gn, Kn, R, Token, qn, Jn, z2, PsNode, PsProgram, PsBlock, PsNumber, PsOperator, PsIf, PsIfElse, PsArgNode, PsConstNode, PsUnaryNode, PsBinaryNode, PsTernaryNode, Yn, Xn, V, Zn, Qn, PsJsCompiler, PSStackBasedInterpreter, H, $n, er, tr, nr, BaseLocalCache, LocalImageCache, LocalColorSpaceCache, LocalFunctionCache, LocalGStateCache, LocalTilingPatternCache, RegionalImageCache, GlobalColorSpaceCache, rr, ir, ar, PDFFunction, or, sr, cr, lr, ur, dr, fr, pr, mr, hr, gr, _r, vr, yr, MurmurHash3_64$1, br, xr, Sr, Cr, wr, Tr, TranslatedFont, StateManager, TextState, EvalState, Er, DefaultAppearanceEvaluator, AppearanceStreamEvaluator, Dr, Or, kr, NameOrNumberTree, NameTree, NumberTree, Ar, jr, Mr, SimpleDOMNode, SimpleXMLParser, MetadataParser, Nr, Pr, StructElementNode, StructElement, StructTreePage, isRef2, Fr, Ir, Lr, Rr, zr, Vr, Hr, Ur, Wr, Gr, Kr, qr, U, Jr, Yr, W, Xr, Zr, Qr, $r, ei, ti, ni, ri, ii, ai, oi, si, ci, li, ui, G, di, fi, pi, mi, hi, gi, _i, vi, yi, bi, xi, Si, Ci, wi, Ti, Ei, Di, Oi, ki, Ai, ji, Mi, Ni, Pi, Fi, Ii, Ri, zi, Bi, Vi, Hi, Wi, Gi, Ki, qi, K, Ji, Yi, Xi, Zi, Qi, $i, ea, q, FontFinder, FontInfo$1, FontSelector, TextMeasure, ta, na, ra, ia, aa, oa, sa, ca, J, la, ua, da, fa, pa, ma, ha, ga, _a3, va, ya, ba, xa, Sa, Ca, Y, X, XFAAttribute, wa, ContentObject, OptionObject, StringObject, IntegerObject, Option01, Option10, Ta, Z, Ea, Da, Oa, AppearanceFilter, Arc, Area, Assist, Barcode, Bind, BindItems, Bookend, BooleanElement, Border, Break, BreakAfter, BreakBefore, Button, Calculate, Caption, Certificate, Certificates, CheckButton, ChoiceList, Color, Comb, Connect, ContentArea, Corner, DateElement, DateTime, DateTimeEdit, Decimal, DefaultUi, Desc, DigestMethod, DigestMethods, Draw, Edge, Encoding, Encodings, Encrypt, EncryptData, Encryption, EncryptionMethod, EncryptionMethods, Event$1, ExData, ExObject, ExclGroup, Execute, Extras, Field, Fill, Filter, Float, template_Font, Format, Handler, Hyphenation, Image$1, ImageEdit, Integer, Issuers, Items, Keep, KeyUsage, Line, Linear, LockDocument, Manifest, Margin, Mdp, Medium, Message, NumericEdit, Occur, Oid, Oids, Overflow, PageArea, ka, Para, PasswordEdit, template_Pattern, Picture, Proto, Radial, Reason, Reasons, Rectangle, RefElement, Script, SetProperty, SignData, Signature, Signing, Solid, Speak, Stipple, Subform, SubformSet, SubjectDN, SubjectDNs, Submit, Template, Text, TextEdit, Time, TimeStamp, ToolTip, Traversal, Traverse, Ui, Validate, Value, Variables, Aa, ja, Binder, DataHandler, Q, Acrobat, Acrobat7, ADBE_JSConsole, ADBE_JSDebugger, AddSilentPrint, AddViewerPreferences, AdjustData, AdobeExtensionLevel, Agent, AlwaysEmbed, Amd, config_Area, Attributes, AutoSave, Base, BatchOutput, BehaviorOverride, Cache, Change, Common, Compress, CompressLogicalStructure, CompressObjectStream, Compression, Config, Conformance, ContentCopy, Copies, Creator, CurrentPage, Data, Debug, DefaultTypeface, Destination, DocumentAssembly, Driver, DuplexOption, DynamicRender, Embed, config_Encrypt, config_Encryption, EncryptionLevel, Enforce, Equate, EquateRange, Exclude, ExcludeNS, FlipLabel, config_FontInfo, FormFieldFilling, GroupParent, IfEmpty, IncludeXDPContent, IncrementalLoad, IncrementalMerge, Interactive, Jog, LabelPrinter, Layout, Level, Linearized, Locale, LocaleSet, Log, MapElement, MediumInfo, config_Message, Messaging, Mode, ModifyAnnots, MsgId, NameAttr, NeverEmbed, NumberOfCopies, OpenAction, Output, OutputBin, OutputXSL, Overprint, Packets, PageOffset, PageRange, Pagination, PaginationOverride, Part, Pcl, Pdf, Pdfa, Permissions, PickTrayByPDFSize, config_Picture, PlaintextMetadata, Presence, Present, Print, PrintHighQuality, PrintScaling, PrinterName, Producer, Ps, Range$1, Record, Relevant, Rename, RenderPolicy, RunScripts, config_Script, ScriptModel, Severity, SilentPrint, Staple, StartNode, StartPage, SubmitFormat, SubmitUrl, SubsetBelow, SuppressBanner, Tagged, config_Template, Threshold, To, TemplateCache, Trace, Transform, Type, Uri, config_Validate, ValidateApprovalSignatures, ValidationMessaging, Version, VersionControl, ViewerPreferences, WebClient, Whitespace, Window, Xdc, Xdp, Xsl, Zpl, Ma, Na, ConnectionSet, EffectiveInputPolicy, EffectiveOutputPolicy, Operation, RootElement, SoapAction, SoapAddress, connection_set_Uri, WsdlAddress, WsdlConnection, XmlConnection, XsdConnection, Pa, Fa, datasets_Data, Datasets, Ia, La, CalendarSymbols, CurrencySymbol, CurrencySymbols, DatePattern, DatePatterns, DateTimeSymbols, Day, DayNames, Era, EraNames, locale_set_Locale, locale_set_LocaleSet, Meridiem, MeridiemNames, Month, MonthNames, NumberPattern, NumberPatterns, NumberSymbol, NumberSymbols, TimePattern, TimePatterns, TypeFace, TypeFaces, Ra, za, signature_Signature, Ba, Va, Stylesheet, Ha, Ua, xdp_Xdp, Wa, Ga, Ka, qa, Ja, Ya, Xa, Za, Qa, XhtmlObject, A, B, Body, Br, Html, I, Li, Ol, P, Span, Sub, Sup, Ul, $a, eo, UnknownNamespace, Root, Empty, Builder, to, no, AnnotationFactory, Annotation, AnnotationBorderStyle, MarkupAnnotation, ro, TextWidgetAnnotation, ButtonWidgetAnnotation, ChoiceWidgetAnnotation, SignatureWidgetAnnotation, TextAnnotation, LinkAnnotation, PopupAnnotation, FreeTextAnnotation, LineAnnotation, SquareAnnotation, CircleAnnotation, PolylineAnnotation, PolygonAnnotation, CaretAnnotation, InkAnnotation, HighlightAnnotation, UnderlineAnnotation, SquigglyAnnotation, StrikeOutAnnotation, StampAnnotation, FileAttachmentAnnotation, io, ao, oo, so, DatasetXMLParser, DatasetReader, SingleIntersector, Intersector, Word64, co, lo, DecryptStream, ARCFourCipher, NullCipher, AESBaseCipher, AES128Cipher, AES256Cipher, PDFBase, PDF17, PDF20, CipherTransform, uo, XRef, fo, Page, po, mo, ho, PDFDocument, BasePdfManager, LocalPdfManager, NetworkPdfManager, go, _o, MessageHandler$1, PageData, DocumentData, XRefWrapper, PDFEditor, BasePDFStream$1, BasePDFStreamReader$1, BasePDFStreamRangeReader$1, PDFWorkerStream, PDFWorkerStreamReader, PDFWorkerStreamRangeReader, WorkerTask, WorkerMessageHandler, vo, yo, bo, xo, So, Co, wo, Eo, Do, Oo, $, ko, Ao, jo, Mo, No, Po, Fo, Io, Lo, Ro, zo, Bo, PasswordException, UnknownErrorException, InvalidPDFException, ResponseException, FormatError, AbortException, FeatureTest, Util, Vo, Ho, makeArr, makeMap, makeObj, Uo, Wo, XfaLayer, PixelsPerInch, RenderingCancelledException, StatTimer, PDFDateString, Go, Ko, ColorScheme, CSSConstants, qo, Jo, FloatingToolbar, Yo, Xo, IdManager, Zo, CommandManager, Qo, $o, es, ts, Comment, ns, rs, FakeEditor, is, as, os4, MurmurHash3_64, ss, AnnotationStorage, PrintAnnotationStorage, cs, ls, us, ds, BBoxReader, ensureDebugMetadata, CanvasBBoxTracker, CanvasDependencyTracker, fs6, ps2, ms, FontLoader, FontFaceObject, CSS_FONT_INFO, SYSTEM_FONT_INFO, FONT_INFO, PATTERN_INFO, CssFontInfo, SystemFontInfo, FontInfo, PatternInfo, FontPathInfo, isRefProxy, isNameProxy, hs, LoopbackPort, gs, _s, MessageHandler, BaseBinaryDataFactory, DOMBinaryDataFactory, BaseCanvasFactory, DOMCanvasFactory, BaseFilterFactory, DOMFilterFactory, NodeFilterFactory, NodeCanvasFactory, NodeBinaryDataFactory, WebGPU, vs, ys, BaseShadingPattern, RadialAxialShadingPattern, MeshShadingPattern, DummyShadingPattern, bs, xs, Ss, Cs, CanvasExtraState, ws, Ts, Es, Ds, Os, BasePDFStream, BasePDFStreamReader, BasePDFStreamRangeReader, PDFFetchStream, PDFFetchStreamReader, PDFFetchStreamRangeReader, PDFDataTransportStream, PDFDataTransportStreamReader, PDFDataTransportStreamRangeReader, PDFNetworkStream, PDFNetworkStreamReader, PDFNetworkStreamRangeReader, PDFNodeStream, PDFNodeStreamReader, PDFNodeStreamRangeReader, GlobalWorkerOptions, Metadata, ks, OptionalContentGroup, As, PagesMapper, js, dataObj, PDFObjects, Ms, Ns, PDFDataRangeTransport, PDFDocumentProxy, Fs, Is, WorkerTransport, RenderTask, Ls, Rs, zs, Bs, Vs, ColorConverters, BaseSVGFactory, DOMSVGFactory, Hs, Us, AnnotationElementFactory, Ws, EditorAnnotationElement, LinkAnnotationElement, TextAnnotationElement, WidgetAnnotationElement, TextWidgetAnnotationElement, SignatureWidgetAnnotationElement, CheckboxWidgetAnnotationElement, RadioButtonWidgetAnnotationElement, PushButtonWidgetAnnotationElement, ChoiceWidgetAnnotationElement, PopupAnnotationElement, PopupElement, FreeTextAnnotationElement, LineAnnotationElement, SquareAnnotationElement, CircleAnnotationElement, PolylineAnnotationElement, PolygonAnnotationElement, CaretAnnotationElement, InkAnnotationElement, HighlightAnnotationElement, UnderlineAnnotationElement, SquigglyAnnotationElement, StrikeOutAnnotationElement, StampAnnotationElement, FileAttachmentAnnotationElement, MediaAnnotationElement, Gs, Ks, qs, Outline, Js, FreeDrawOutline, HighlightOutliner, HighlightOutline, FreeHighlightOutliner, FreeHighlightOutline, Ys, DrawingOptions, Xs, InkDrawOutliner, InkDrawOutline, Zs, Qs, ContourDrawOutline, SignatureExtractor, $s, ec, tc, StampEditor, nc, rc, ic;
+var e, t, n, r, i, a, o, s, c, l, u, d, f, p, m, h, g, _3, v, y, b, x, S, C, w, T, E, D, O, k, PasswordException$1, UnknownErrorException$1, InvalidPDFException$1, ResponseException$1, FormatError$1, AbortException$1, FeatureTest$1, Util$1, j, ee, makeArr$1, makeMap$1, makeObj$1, M, te, ne, re, ie, N, ae, oe, F, L, RefSet, RefSetCache, BaseStream, se, ce, le, ue, de, fe, MissingDataException, ParserEOFException, XRefEntryException, XRefParseException, pe, me, QCMS, he, ge, _e, ve, ye, be, xe, Se, AlternateCS, PatternCS, IndexedCS, DeviceGrayCS, DeviceRgbCS, DeviceRgbaCS, DeviceCmykCS, CalGrayCS, Ce, LabCS, we, Te, Ee, StringStream, NullStream, ChunkedStream, ChunkedStreamManager, De, Oe, ke, DecodeStream, StreamsSequenceStream, ColorSpaceUtils, JpegError, DNLMarkerError, EOIMarkerError, Ae, je, Me, Ne, Pe, Fe, Ie, Le, JpegImage, Re, ze, NullOptimizer, QueueOptimizer, Be, CheckedOperatorList, Ve, Pattern, BaseShading, RadialAxialShading, He, MeshStreamReader, Ue, We, DummyShading, BinaryCMapStream, BinaryCMapReader, Ascii85Stream, AsciiHexStream, makeBrotliDecode, Ge, BrotliStream, Ke, qe, Jbig2Error, Je, CCITTFaxStream, Ye, Xe, Ze, Qe, $e, FlateStream, et, tt, JpxError, nt, JpxStream, LZWStream, PredictorStream, RunLengthStream, Parser, rt, Lexer, Linearization, it, at, CMap, IdentityCMap, CMapFactory, CSS_FONT_INFO$1, SYSTEM_FONT_INFO$1, FONT_INFO$1, PATTERN_INFO$1, ot, st, ct, lt, ut, dt, ft, pt, mt, ht, gt, _t, vt, yt, bt, xt, St, Ct, wt, Tt, DataBuilder, Et, Dt, Ot, kt, At, CFFParser, CFF, CFFHeader, CFFStrings, CFFIndex, CFFDict, jt, Mt, Nt, Pt, Ft, CFFCharset, CFFEncoding, CFFFDSelect, CFFOffsetTracker, It, Lt, Rt, zt, Bt, Vt, Ht, Ut, Wt, GlyfTable, Gt, Kt, Contour, qt, Jt, ToUnicodeMap, IdentityToUnicodeMap, CFFFont, Commands, Yt, TrueTypeCompiled, Type2Compiled, FontRendererFactory, Xt, Zt, Qt, $t, Type1CharString, en, Type1Parser, Type1Font, tn, nn, rn, an, fonts_Glyph, Font, ErrorFont, on, sn, cn, ln, un, dn, fn, pn, mn, hn, gn, _n, vn, yn, bn, xn, Sn, Cn, wn, Tn, En, Dn, On, kn, An, jn, Mn, Nn, Pn, Fn, In, Ln, Rn, zn, Bn, Vn, Hn, Un, Wn, Gn, Kn, R, Token, qn, Jn, z2, PsNode, PsProgram, PsBlock, PsNumber, PsOperator, PsIf, PsIfElse, PsArgNode, PsConstNode, PsUnaryNode, PsBinaryNode, PsTernaryNode, Yn, Xn, V, Zn, Qn, PsJsCompiler, PSStackBasedInterpreter, H, $n, er, tr, nr, BaseLocalCache, LocalImageCache, LocalColorSpaceCache, LocalFunctionCache, LocalGStateCache, LocalTilingPatternCache, RegionalImageCache, GlobalColorSpaceCache, rr, ir, ar, PDFFunction, or, sr, cr, lr, ur, dr, fr, pr, mr, hr, gr, _r, vr, yr, MurmurHash3_64$1, br, xr, Sr, Cr, wr, Tr, TranslatedFont, StateManager, TextState, EvalState, Er, DefaultAppearanceEvaluator, AppearanceStreamEvaluator, Dr, Or, kr, NameOrNumberTree, NameTree, NumberTree, Ar, jr, Mr, SimpleDOMNode, SimpleXMLParser, MetadataParser, Nr, Pr, StructElementNode, StructElement, StructTreePage, isRef2, Fr, Ir, Lr, Rr, zr, Vr, Hr, Ur, Wr, Gr, Kr, qr, U, Jr, Yr, W, Xr, Zr, Qr, $r, ei, ti, ni, ri, ii, ai, oi, si, ci, li, ui, G, di, fi, pi, mi, hi, gi, _i, vi, yi, bi, xi, Si, Ci, wi, Ti, Ei, Di, Oi, ki, Ai, ji, Mi, Ni, Pi, Fi, Ii, Ri, zi, Bi, Vi, Hi, Wi, Gi, Ki, qi, K, Ji, Yi, Xi, Zi, Qi, $i, ea, q, FontFinder, FontInfo$1, FontSelector, TextMeasure, ta, na, ra, ia, aa, oa, sa, ca, J, la, ua, da, fa, pa, ma, ha, ga, _a3, va, ya, ba, xa, Sa, Ca, Y, X, XFAAttribute, wa, ContentObject, OptionObject, StringObject, IntegerObject, Option01, Option10, Ta, Z, Ea, Da, Oa, AppearanceFilter, Arc, Area, Assist, Barcode, Bind, BindItems, Bookend, BooleanElement, Border, Break, BreakAfter, BreakBefore, Button, Calculate, Caption, Certificate, Certificates, CheckButton, ChoiceList, Color, Comb, Connect, ContentArea, Corner, DateElement, DateTime, DateTimeEdit, Decimal, DefaultUi, Desc, DigestMethod, DigestMethods, Draw, Edge, Encoding, Encodings, Encrypt, EncryptData, Encryption, EncryptionMethod, EncryptionMethods, Event$1, ExData, ExObject, ExclGroup, Execute, Extras, Field, Fill, Filter, Float, template_Font, Format, Handler, Hyphenation, Image$1, ImageEdit, Integer, Issuers, Items, Keep, KeyUsage, Line, Linear, LockDocument, Manifest, Margin, Mdp, Medium, Message, NumericEdit, Occur, Oid, Oids, Overflow, PageArea, ka, Para, PasswordEdit, template_Pattern, Picture, Proto, Radial, Reason, Reasons, Rectangle, RefElement, Script, SetProperty, SignData, Signature, Signing, Solid, Speak, Stipple, Subform, SubformSet, SubjectDN, SubjectDNs, Submit, Template, Text, TextEdit, Time, TimeStamp, ToolTip, Traversal, Traverse, Ui, Validate, Value, Variables, Aa, ja, Binder, DataHandler, Q, Acrobat, Acrobat7, ADBE_JSConsole, ADBE_JSDebugger, AddSilentPrint, AddViewerPreferences, AdjustData, AdobeExtensionLevel, Agent, AlwaysEmbed, Amd, config_Area, Attributes, AutoSave, Base, BatchOutput, BehaviorOverride, Cache, Change, Common, Compress, CompressLogicalStructure, CompressObjectStream, Compression, Config, Conformance, ContentCopy, Copies, Creator, CurrentPage, Data, Debug, DefaultTypeface, Destination, DocumentAssembly, Driver, DuplexOption, DynamicRender, Embed, config_Encrypt, config_Encryption, EncryptionLevel, Enforce, Equate, EquateRange, Exclude, ExcludeNS, FlipLabel, config_FontInfo, FormFieldFilling, GroupParent, IfEmpty, IncludeXDPContent, IncrementalLoad, IncrementalMerge, Interactive, Jog, LabelPrinter, Layout, Level, Linearized, Locale, LocaleSet, Log, MapElement, MediumInfo, config_Message, Messaging, Mode, ModifyAnnots, MsgId, NameAttr, NeverEmbed, NumberOfCopies, OpenAction, Output, OutputBin, OutputXSL, Overprint, Packets, PageOffset, PageRange, Pagination, PaginationOverride, Part, Pcl, Pdf, Pdfa, Permissions, PickTrayByPDFSize, config_Picture, PlaintextMetadata, Presence, Present, Print, PrintHighQuality, PrintScaling, PrinterName, Producer, Ps, Range$1, Record, Relevant, Rename, RenderPolicy, RunScripts, config_Script, ScriptModel, Severity, SilentPrint, Staple, StartNode, StartPage, SubmitFormat, SubmitUrl, SubsetBelow, SuppressBanner, Tagged, config_Template, Threshold, To, TemplateCache, Trace, Transform, Type, Uri, config_Validate, ValidateApprovalSignatures, ValidationMessaging, Version, VersionControl, ViewerPreferences, WebClient, Whitespace, Window, Xdc, Xdp, Xsl, Zpl, Ma, Na, ConnectionSet, EffectiveInputPolicy, EffectiveOutputPolicy, Operation, RootElement, SoapAction, SoapAddress, connection_set_Uri, WsdlAddress, WsdlConnection, XmlConnection, XsdConnection, Pa, Fa, datasets_Data, Datasets, Ia, La, CalendarSymbols, CurrencySymbol, CurrencySymbols, DatePattern, DatePatterns, DateTimeSymbols, Day, DayNames, Era, EraNames, locale_set_Locale, locale_set_LocaleSet, Meridiem, MeridiemNames, Month, MonthNames, NumberPattern, NumberPatterns, NumberSymbol, NumberSymbols, TimePattern, TimePatterns, TypeFace, TypeFaces, Ra, za, signature_Signature, Ba, Va, Stylesheet, Ha, Ua, xdp_Xdp, Wa, Ga, Ka, qa, Ja, Ya, Xa, Za, Qa, XhtmlObject, A, B, Body, Br, Html, I, Li, Ol, P, Span, Sub, Sup, Ul, $a, eo, UnknownNamespace, Root, Empty, Builder, to, no, AnnotationFactory, Annotation, AnnotationBorderStyle, MarkupAnnotation, ro, TextWidgetAnnotation, ButtonWidgetAnnotation, ChoiceWidgetAnnotation, SignatureWidgetAnnotation, TextAnnotation, LinkAnnotation, PopupAnnotation, FreeTextAnnotation, LineAnnotation, SquareAnnotation, CircleAnnotation, PolylineAnnotation, PolygonAnnotation, CaretAnnotation, InkAnnotation, HighlightAnnotation, UnderlineAnnotation, SquigglyAnnotation, StrikeOutAnnotation, StampAnnotation, FileAttachmentAnnotation, io, ao, oo, so, DatasetXMLParser, DatasetReader, SingleIntersector, Intersector, Word64, co, lo, DecryptStream, ARCFourCipher, NullCipher, AESBaseCipher, AES128Cipher, AES256Cipher, PDFBase, PDF17, PDF20, CipherTransform, uo, XRef, fo, Page, po, mo, ho, PDFDocument, BasePdfManager, LocalPdfManager, NetworkPdfManager, go, _o, MessageHandler$1, PageData, DocumentData, XRefWrapper, PDFEditor, BasePDFStream$1, BasePDFStreamReader$1, BasePDFStreamRangeReader$1, PDFWorkerStream, PDFWorkerStreamReader, PDFWorkerStreamRangeReader, WorkerTask, WorkerMessageHandler, vo, yo, bo, xo, So, Co, wo, Eo, Do, Oo, $, ko, Ao, jo, Mo, No, Po, Fo, Io, Lo, Ro, zo, Bo, PasswordException, UnknownErrorException, InvalidPDFException, ResponseException, FormatError, AbortException, FeatureTest, Util, Vo, Ho, makeArr, makeMap, makeObj, Uo, Wo, XfaLayer, PixelsPerInch, RenderingCancelledException, StatTimer, PDFDateString, Go, Ko, ColorScheme, CSSConstants, qo, Jo, FloatingToolbar, Yo, Xo, IdManager, Zo, CommandManager, Qo, $o, es, ts, Comment, ns, rs, FakeEditor, is, as, os5, MurmurHash3_64, ss, AnnotationStorage, PrintAnnotationStorage, cs, ls, us, ds, BBoxReader, ensureDebugMetadata, CanvasBBoxTracker, CanvasDependencyTracker, fs6, ps2, ms, FontLoader, FontFaceObject, CSS_FONT_INFO, SYSTEM_FONT_INFO, FONT_INFO, PATTERN_INFO, CssFontInfo, SystemFontInfo, FontInfo, PatternInfo, FontPathInfo, isRefProxy, isNameProxy, hs, LoopbackPort, gs, _s, MessageHandler, BaseBinaryDataFactory, DOMBinaryDataFactory, BaseCanvasFactory, DOMCanvasFactory, BaseFilterFactory, DOMFilterFactory, NodeFilterFactory, NodeCanvasFactory, NodeBinaryDataFactory, WebGPU, vs, ys, BaseShadingPattern, RadialAxialShadingPattern, MeshShadingPattern, DummyShadingPattern, bs, xs, Ss, Cs, CanvasExtraState, ws, Ts, Es, Ds, Os, BasePDFStream, BasePDFStreamReader, BasePDFStreamRangeReader, PDFFetchStream, PDFFetchStreamReader, PDFFetchStreamRangeReader, PDFDataTransportStream, PDFDataTransportStreamReader, PDFDataTransportStreamRangeReader, PDFNetworkStream, PDFNetworkStreamReader, PDFNetworkStreamRangeReader, PDFNodeStream, PDFNodeStreamReader, PDFNodeStreamRangeReader, GlobalWorkerOptions, Metadata, ks, OptionalContentGroup, As, PagesMapper, js, dataObj, PDFObjects, Ms, Ns, PDFDataRangeTransport, PDFDocumentProxy, Fs, Is, WorkerTransport, RenderTask, Ls, Rs, zs, Bs, Vs, ColorConverters, BaseSVGFactory, DOMSVGFactory, Hs, Us, AnnotationElementFactory, Ws, EditorAnnotationElement, LinkAnnotationElement, TextAnnotationElement, WidgetAnnotationElement, TextWidgetAnnotationElement, SignatureWidgetAnnotationElement, CheckboxWidgetAnnotationElement, RadioButtonWidgetAnnotationElement, PushButtonWidgetAnnotationElement, ChoiceWidgetAnnotationElement, PopupAnnotationElement, PopupElement, FreeTextAnnotationElement, LineAnnotationElement, SquareAnnotationElement, CircleAnnotationElement, PolylineAnnotationElement, PolygonAnnotationElement, CaretAnnotationElement, InkAnnotationElement, HighlightAnnotationElement, UnderlineAnnotationElement, SquigglyAnnotationElement, StrikeOutAnnotationElement, StampAnnotationElement, FileAttachmentAnnotationElement, MediaAnnotationElement, Gs, Ks, qs, Outline, Js, FreeDrawOutline, HighlightOutliner, HighlightOutline, FreeHighlightOutliner, FreeHighlightOutline, Ys, DrawingOptions, Xs, InkDrawOutliner, InkDrawOutline, Zs, Qs, ContourDrawOutline, SignatureExtractor, $s, ec, tc, StampEditor, nc, rc, ic;
 var init_pdfjs = __esm({
   "node_modules/unpdf/dist/pdfjs.mjs"() {
     if (polyfillDOMMatrix(), globalThis.FinalizationRegistry === void 0 && (globalThis.FinalizationRegistry = class FinalizationRegistry2 {
@@ -63551,7 +63551,7 @@ var init_pdfjs = __esm({
     };
     is = 3285377520;
     as = 4294901760;
-    os4 = 65535;
+    os5 = 65535;
     MurmurHash3_64 = class {
       constructor(e2) {
         this.h1 = e2 ? e2 & 4294967295 : is, this.h2 = e2 ? e2 & 4294967295 : is;
@@ -63567,20 +63567,20 @@ var init_pdfjs = __esm({
         } else if (ArrayBuffer.isView(e2)) t2 = e2.slice(), n2 = t2.byteLength;
         else throw Error(`Invalid data format, must be a string or TypedArray.`);
         let r2 = n2 >> 2, i2 = n2 - r2 * 4, a2 = new Uint32Array(t2.buffer, 0, r2), o2 = 0, s2 = 0, c2 = this.h1, l2 = this.h2, u2 = 3432918353, d2 = 461845907, f2 = 11601, p2 = 13715;
-        for (let e3 = 0; e3 < r2; e3++) e3 & 1 ? (o2 = a2[e3], o2 = o2 * u2 & as | o2 * f2 & os4, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os4, c2 ^= o2, c2 = c2 << 13 | c2 >>> 19, c2 = c2 * 5 + 3864292196) : (s2 = a2[e3], s2 = s2 * u2 & as | s2 * f2 & os4, s2 = s2 << 15 | s2 >>> 17, s2 = s2 * d2 & as | s2 * p2 & os4, l2 ^= s2, l2 = l2 << 13 | l2 >>> 19, l2 = l2 * 5 + 3864292196);
+        for (let e3 = 0; e3 < r2; e3++) e3 & 1 ? (o2 = a2[e3], o2 = o2 * u2 & as | o2 * f2 & os5, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os5, c2 ^= o2, c2 = c2 << 13 | c2 >>> 19, c2 = c2 * 5 + 3864292196) : (s2 = a2[e3], s2 = s2 * u2 & as | s2 * f2 & os5, s2 = s2 << 15 | s2 >>> 17, s2 = s2 * d2 & as | s2 * p2 & os5, l2 ^= s2, l2 = l2 << 13 | l2 >>> 19, l2 = l2 * 5 + 3864292196);
         switch (o2 = 0, i2) {
           case 3:
             o2 ^= t2[r2 * 4 + 2] << 16;
           case 2:
             o2 ^= t2[r2 * 4 + 1] << 8;
           case 1:
-            o2 ^= t2[r2 * 4], o2 = o2 * u2 & as | o2 * f2 & os4, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os4, r2 & 1 ? c2 ^= o2 : l2 ^= o2;
+            o2 ^= t2[r2 * 4], o2 = o2 * u2 & as | o2 * f2 & os5, o2 = o2 << 15 | o2 >>> 17, o2 = o2 * d2 & as | o2 * p2 & os5, r2 & 1 ? c2 ^= o2 : l2 ^= o2;
         }
         this.h1 = c2, this.h2 = l2;
       }
       hexdigest() {
         let e2 = this.h1, t2 = this.h2;
-        return e2 ^= t2 >>> 1, e2 = e2 * 3981806797 & as | e2 * 36045 & os4, t2 = t2 * 4283543511 & as | ((t2 << 16 | e2 >>> 16) * 2950163797 & as) >>> 16, e2 ^= t2 >>> 1, e2 = e2 * 444984403 & as | e2 * 60499 & os4, t2 = t2 * 3301882366 & as | ((t2 << 16 | e2 >>> 16) * 3120437893 & as) >>> 16, e2 ^= t2 >>> 1, (e2 >>> 0).toString(16).padStart(8, `0`) + (t2 >>> 0).toString(16).padStart(8, `0`);
+        return e2 ^= t2 >>> 1, e2 = e2 * 3981806797 & as | e2 * 36045 & os5, t2 = t2 * 4283543511 & as | ((t2 << 16 | e2 >>> 16) * 2950163797 & as) >>> 16, e2 ^= t2 >>> 1, e2 = e2 * 444984403 & as | e2 * 60499 & os5, t2 = t2 * 3301882366 & as | ((t2 << 16 | e2 >>> 16) * 3120437893 & as) >>> 16, e2 ^= t2 >>> 1, (e2 >>> 0).toString(16).padStart(8, `0`) + (t2 >>> 0).toString(16).padStart(8, `0`);
       }
     };
     ss = Object.freeze({ map: null, hash: ``, transfer: void 0 });
@@ -73207,8 +73207,8 @@ var init_dist = __esm({
 
 // src/index.js
 import fs9 from "node:fs/promises";
-import { readFileSync, mkdirSync, writeFileSync } from "node:fs";
-import os6 from "node:os";
+import { readFileSync as readFileSync2, mkdirSync, writeFileSync } from "node:fs";
+import os7 from "node:os";
 import path10 from "node:path";
 
 // node_modules/zod/v3/helpers/util.js
@@ -103049,9 +103049,35 @@ function causeOf(err, timeoutMs) {
 }
 
 // src/chrome.js
-import { spawn as spawn2 } from "node:child_process";
-import { existsSync } from "node:fs";
+import { execFileSync as execFileSync3, spawn as spawn2 } from "node:child_process";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import os3 from "node:os";
 import path4 from "node:path";
+var BROWSERS = {
+  chrome: {
+    id: "chrome",
+    name: "\uD06C\uB86C",
+    eul: "\uD06C\uB86C\uC744",
+    i: "\uD06C\uB86C\uC774",
+    app: "Google Chrome",
+    win: ["Google", "Chrome", "Application", "chrome.exe"],
+    bin: "google-chrome",
+    extensions: "chrome://extensions",
+    profiles: { darwin: ["Library", "Application Support", "Google", "Chrome"], win32: ["Google", "Chrome", "User Data"], linux: [".config", "google-chrome"] }
+  },
+  edge: {
+    id: "edge",
+    name: "\uC5E3\uC9C0",
+    eul: "\uC5E3\uC9C0\uB97C",
+    i: "\uC5E3\uC9C0\uAC00",
+    app: "Microsoft Edge",
+    win: ["Microsoft", "Edge", "Application", "msedge.exe"],
+    bin: "microsoft-edge",
+    extensions: "edge://extensions",
+    profiles: { darwin: ["Library", "Application Support", "Microsoft Edge"], win32: ["Microsoft", "Edge", "User Data"], linux: [".config", "microsoft-edge"] }
+  }
+};
+var EXTENSION_ID = "emfajicbilaefeelnkgpndhhakpakfmc";
 var SITES = {
   \uBA54\uC77C: "https://mail.worksmobile.com/",
   \uBA54\uC2E0\uC800: "https://talk.worksmobile.com/",
@@ -103071,27 +103097,86 @@ function siteUrl(site) {
   if (!u2 || !/^https?:$/.test(u2.protocol)) throw new HaiError("SITE_INVALID", `'${s2}' \uB294 \uC5F4 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4. ${Object.keys(SITES).join("\xB7")} \uB610\uB294 http(s) \uC8FC\uC18C\uB97C \uC8FC\uC138\uC694.`);
   return u2.href;
 }
-function chromeCommand(urls, { platform = process.platform, env: env2 = process.env, exists = existsSync, front = false } = {}) {
-  if (platform === "darwin") return { cmd: "open", args: [...front ? [] : ["-g"], "-a", "Google Chrome", ...urls] };
+function winExe(browser, { env: env2 = process.env, exists = existsSync } = {}) {
+  const roots = [env2.PROGRAMFILES, env2["PROGRAMFILES(X86)"], env2.LOCALAPPDATA].filter(Boolean);
+  return roots.map((r2) => path4.win32.join(r2, ...browser.win)).find((p2) => exists(p2));
+}
+function chromeCommand(urls, { platform = process.platform, env: env2 = process.env, exists = existsSync, front = false, browser = BROWSERS.chrome } = {}) {
+  if (platform === "darwin") return { cmd: "open", args: [...front ? [] : ["-g"], "-a", browser.app, ...urls] };
   if (platform === "win32") {
-    const roots = [env2.PROGRAMFILES, env2["PROGRAMFILES(X86)"], env2.LOCALAPPDATA].filter(Boolean);
-    const exe = roots.map((r2) => path4.win32.join(r2, "Google", "Chrome", "Application", "chrome.exe")).find((p2) => exists(p2));
-    if (!exe) throw new HaiError("CHROME_NOT_FOUND", "\uD06C\uB86C\uC744 \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. \uD06C\uB86C\uC744 \uC9C1\uC811 \uCF1C \uC8FC\uC138\uC694.");
+    const exe = winExe(browser, { env: env2, exists });
+    if (!exe) throw new HaiError("CHROME_NOT_FOUND", `${browser.eul} \uCC3E\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. ${browser.eul} \uC9C1\uC811 \uCF1C \uC8FC\uC138\uC694.`);
     return { cmd: exe, args: urls };
   }
-  return { cmd: "google-chrome", args: urls };
+  return { cmd: browser.bin, args: urls };
 }
-var EXTENSIONS_PAGE = "chrome://extensions";
+function winProgId(out) {
+  const found = {};
+  let key = "";
+  for (const line of String(out ?? "").split(/\r?\n/)) {
+    if (/^HKEY_/i.test(line.trim())) key = line.trim();
+    const m2 = /^\s*ProgId\s+REG_SZ\s+(\S+)/i.exec(line);
+    if (m2) found[/UserChoiceLatest/i.test(key) ? "latest" : "choice"] = m2[1];
+  }
+  return found.latest ?? found.choice ?? null;
+}
+var QUIET = { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], windowsHide: true, timeout: 1e4 };
+var WIN_HTTPS_KEY = "HKCU\\Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\https";
+function defaultBrowser({ platform = process.platform, exec = execFileSync3, home = os3.homedir(), env: env2 = process.env } = {}) {
+  try {
+    if (platform === "win32") {
+      const reg = path4.win32.join(env2.SystemRoot ?? env2.SYSTEMROOT ?? "C:\\Windows", "System32", "reg.exe");
+      return /^MSEdgeHTM$/i.test(winProgId(exec(reg, ["query", WIN_HTTPS_KEY, "/s", "/v", "ProgId"], QUIET)) ?? "") ? "edge" : "chrome";
+    }
+    if (platform === "darwin") {
+      const plist = path4.join(home, "Library", "Preferences", "com.apple.LaunchServices", "com.apple.launchservices.secure.plist");
+      const handlers = JSON.parse(exec("plutil", ["-extract", "LSHandlers", "json", "-o", "-", plist], QUIET));
+      const https = handlers.find((h2) => h2.LSHandlerURLScheme === "https");
+      return /^com\.microsoft\.edgemac$/i.test(https?.LSHandlerRoleAll ?? "") ? "edge" : "chrome";
+    }
+    return /^microsoft-edge\.desktop$/i.test(String(exec("xdg-settings", ["get", "default-web-browser"], QUIET)).trim()) ? "edge" : "chrome";
+  } catch {
+    return "chrome";
+  }
+}
+function hasExtension(browser, { platform = process.platform, env: env2 = process.env, home = os3.homedir(), readdir = readdirSync, read = readFileSync } = {}) {
+  const base = platform === "win32" ? env2.LOCALAPPDATA : home;
+  if (!base) return false;
+  const join = platform === "win32" ? path4.win32.join : path4.join;
+  const root2 = join(base, ...browser.profiles[platform] ?? browser.profiles.linux);
+  let dirs = [];
+  try {
+    dirs = readdir(root2).filter((d2) => /^(Default|Profile \d+)$/.test(d2));
+  } catch {
+    return false;
+  }
+  return dirs.some((d2) => ["Secure Preferences", "Preferences"].some((f2) => {
+    try {
+      const ext = JSON.parse(read(join(root2, d2, f2), "utf8"))?.extensions?.settings?.[EXTENSION_ID];
+      return Boolean(ext) && ext.state !== 0;
+    } catch {
+      return false;
+    }
+  }));
+}
+function pickBrowser({ platform = process.platform, def = defaultBrowser, has: has3 = hasExtension, installed = (b2) => platform !== "win32" || Boolean(winExe(b2)) } = {}) {
+  const { chrome, edge } = BROWSERS;
+  let want = chrome;
+  if (def({ platform }) === "edge") want = has3(chrome, { platform }) && !has3(edge, { platform }) ? chrome : edge;
+  const other = want === chrome ? edge : chrome;
+  return !installed(want) && installed(other) ? other : want;
+}
 var openChrome = async (urls = [], opts) => launch(urls.map(siteUrl), opts);
-var openExtensionsPage = (opts) => launch([EXTENSIONS_PAGE], { ...opts, front: true });
-async function launch(urls, { run: run3 = spawn2, front = false } = {}) {
-  const { cmd, args } = chromeCommand(urls, { front });
+var openExtensionsPage = ({ browser = pickBrowser(), ...opts } = {}) => launch([browser.extensions], { ...opts, browser, front: true });
+async function launch(urls, { run: run3 = spawn2, front = false, browser = pickBrowser() } = {}) {
+  const { cmd, args } = chromeCommand(urls, { front, browser });
   await new Promise((ok2, no2) => {
     const p2 = run3(cmd, args, { detached: true, stdio: "ignore" });
-    p2.once("error", () => no2(new HaiError("CHROME_NOT_FOUND", "\uD06C\uB86C\uC744 \uCF1C\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. \uD06C\uB86C\uC744 \uC9C1\uC811 \uCF1C \uC8FC\uC138\uC694.")));
+    p2.once("error", () => no2(new HaiError("CHROME_NOT_FOUND", `${browser.eul} \uCF1C\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. ${browser.eul} \uC9C1\uC811 \uCF1C \uC8FC\uC138\uC694.`)));
     p2.once("spawn", ok2);
     p2.unref();
   });
+  return browser;
 }
 
 // src/agent.js
@@ -103131,11 +103216,12 @@ function describeStop(id, r2) {
   if (r2.state === "starting") return `${head} \uC544\uC9C1 \uD06C\uB86C\uC5D0\uC11C \uC2DC\uC791\uD558\uB294 \uC911\uC774\uB77C \uBA48\uCD94\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. \uBA87 \uCD08 \uB4A4 \uB2E4\uC2DC agent_stop \uC744 \uBD80\uB974\uC138\uC694.`;
   return `${head} \uC774\uBBF8 \uB05D\uB09C \uC2E4\uD589\uC785\uB2C8\uB2E4. agent_status \uB85C \uACB0\uACFC\uB97C \uBCF4\uC138\uC694.`;
 }
-async function ensureChrome({ onProgress, online = isOnline, open: open2 = openChrome, sleep: sleep2 = pause, tries = 20, every: every2 = 2e3 } = {}) {
+async function ensureChrome({ onProgress, online = isOnline, open: open2 = openChrome, pick: pick2 = pickBrowser, sleep: sleep2 = pause, tries = 20, every: every2 = 2e3 } = {}) {
   if (await online()) return true;
-  onProgress?.("\uD06C\uB86C\uC744 \uCF1C\uB294 \uC911");
+  const browser = pick2();
+  onProgress?.(`${browser.eul} \uCF1C\uB294 \uC911`);
   try {
-    await open2();
+    await open2([], { browser });
   } catch {
     return false;
   }
@@ -103145,9 +103231,9 @@ async function ensureChrome({ onProgress, online = isOnline, open: open2 = openC
   }
   return false;
 }
-async function extensionLine(online = isOnline) {
+async function extensionLine(online = isOnline, pick2 = pickBrowser) {
   try {
-    return await online() ? "\uD06C\uB86C \uD655\uC7A5: \uC5F0\uACB0\uB428" : "\uD06C\uB86C \uD655\uC7A5: \uC5F0\uACB0 \uC548 \uB428 \u2014 \uC124\uCE58\uD588\uC73C\uBA74 \uD06C\uB86C\uC744 \uCF1C\uACE0 \uD5E5\uD1A0 \uC5D0\uC774\uC804\uD2B8 \uD328\uB110\uC5D0\uC11C \uB85C\uADF8\uC778\uD558\uC138\uC694. \uC544\uC9C1 \uC124\uCE58 \uC804\uC774\uBA74 agent_install \uB85C \uC124\uCE58 \uD30C\uC77C\uC744 \uBC1B\uC2B5\uB2C8\uB2E4(\uC0AC\uB0B4 \uD654\uBA74 \uC77D\uAE30\xB7\uC2E4\uD589\uC5D0 \uD544\uC694)";
+    return await online() ? "\uD06C\uB86C \uD655\uC7A5: \uC5F0\uACB0\uB428" : `\uD06C\uB86C \uD655\uC7A5: \uC5F0\uACB0 \uC548 \uB428 \u2014 \uC124\uCE58\uD588\uC73C\uBA74 ${pick2().eul} \uCF1C\uACE0 \uD5E5\uD1A0 \uC5D0\uC774\uC804\uD2B8 \uD328\uB110\uC5D0\uC11C \uB85C\uADF8\uC778\uD558\uC138\uC694. \uC544\uC9C1 \uC124\uCE58 \uC804\uC774\uBA74 agent_install \uB85C \uC124\uCE58 \uD30C\uC77C\uC744 \uBC1B\uC2B5\uB2C8\uB2E4(\uC0AC\uB0B4 \uD654\uBA74 \uC77D\uAE30\xB7\uC2E4\uD589\uC5D0 \uD544\uC694)`;
   } catch {
     return "\uD06C\uB86C \uD655\uC7A5: \uD655\uC778\uD558\uC9C0 \uBABB\uD568";
   }
@@ -103310,31 +103396,53 @@ async function unpackExtension(buf, dir = config2.extDir) {
   for (const rel of existing) if (!keep.has(rel)) await fs3.rm(path5.join(root2, ...rel.split("/")), { force: true });
   return { dir: root2, version: String(manifest.version), previous: old?.version ? String(old.version) : null, files: files.length };
 }
-function installSteps({ dir, version: version2, previous, opened, platform = process.platform }) {
+var WORDS = {
+  chrome: {
+    ext: "\uD06C\uB86C \uD655\uC7A5",
+    page: '"\uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8" \uD654\uBA74',
+    dev: '\uC624\uB978\uCABD \uC704\uC758 "\uAC1C\uBC1C\uC790 \uBAA8\uB4DC"',
+    load: '\uC67C\uCABD \uC704 "\uC555\uCD95\uD574\uC81C\uB41C \uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8 \uB85C\uB4DC"',
+    reload: "\uC0C8\uB85C \uACE0\uCE68(\uB3D9\uADF8\uB780 \uD654\uC0B4\uD45C)\uC744",
+    pin: '\uD06C\uB86C \uC624\uB978\uCABD \uC704 \uD37C\uC990 \uBAA8\uC591 \uC544\uC774\uCF58\uC5D0\uC11C "\uD5E5\uD1A0 AI \uBE0C\uB77C\uC6B0\uC800 \uC5D0\uC774\uC804\uD2B8"\uB97C \uACE0\uC815(\uD540)\uD569\uB2C8\uB2E4.',
+    first: '"\uC555\uCD95\uD574\uC81C\uB41C \uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8 \uB85C\uB4DC"'
+  },
+  edge: {
+    ext: "\uC5E3\uC9C0 \uD655\uC7A5",
+    page: '"\uD655\uC7A5" \uD654\uBA74',
+    dev: '\uC67C\uCABD \uBA54\uB274\uC758 "\uAC1C\uBC1C\uC790 \uBAA8\uB4DC"',
+    load: '\uC704\uCABD "\uC555\uCD95 \uD480\uB9B0 \uD30C\uC77C \uB85C\uB4DC"(Load unpacked)',
+    reload: '"\uB2E4\uC2DC \uB85C\uB4DC"\uB97C',
+    pin: '\uC5E3\uC9C0 \uC8FC\uC18C\uCC3D \uC606 \uD37C\uC990 \uBAA8\uC591 \uC544\uC774\uCF58\uC744 \uB204\uB974\uACE0 "\uD5E5\uD1A0 AI \uBE0C\uB77C\uC6B0\uC800 \uC5D0\uC774\uC804\uD2B8" \uC606 \uB208 \uBAA8\uC591(\uB3C4\uAD6C \uBAA8\uC74C\uC5D0 \uD45C\uC2DC)\uC744 \uB20C\uB7EC \uACE0\uC815\uD569\uB2C8\uB2E4.',
+    first: '"\uC555\uCD95 \uD480\uB9B0 \uD30C\uC77C \uB85C\uB4DC"'
+  }
+};
+function installSteps({ dir, version: version2, previous, opened, platform = process.platform, browser = BROWSERS.chrome }) {
+  const { name, extensions } = browser;
+  const w2 = WORDS[browser.id] ?? WORDS.chrome;
   const pick2 = platform === "win32" ? '\uD3F4\uB354 \uACE0\uB974\uB294 \uCC3D \uB9E8 \uC544\uB798 "\uD3F4\uB354" \uCE78\uC5D0 \uC704 \uACBD\uB85C\uB97C \uBD99\uC5EC \uB123\uACE0 "\uD3F4\uB354 \uC120\uD0DD"' : platform === "darwin" ? '\uD3F4\uB354 \uACE0\uB974\uB294 \uCC3D\uC5D0\uC11C Cmd+Shift+G \uB97C \uB204\uB974\uACE0 \uC704 \uACBD\uB85C\uB97C \uBD99\uC5EC \uB123\uC740 \uB4A4 "\uC120\uD0DD"' : "\uD3F4\uB354 \uACE0\uB974\uB294 \uCC3D\uC5D0\uC11C \uC704 \uACBD\uB85C\uC758 \uD3F4\uB354\uB97C \uACE0\uB985\uB2C8\uB2E4";
-  const where2 = opened ? '\uBC29\uAE08 \uD06C\uB86C\uC5D0 \uC5F0 "\uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8" \uD654\uBA74(\uC548 \uBCF4\uC774\uBA74 \uC8FC\uC18C\uCC3D\uC5D0 chrome://extensions)' : "\uD3C9\uC18C \uC4F0\uB294 \uD06C\uB86C \uC8FC\uC18C\uCC3D\uC5D0 chrome://extensions \uB97C \uB123\uC5B4 \uC5F0 \uD654\uBA74";
+  const where2 = opened ? `\uBC29\uAE08 ${name}\uC5D0 \uC5F0 ${w2.page}(\uC548 \uBCF4\uC774\uBA74 \uC8FC\uC18C\uCC3D\uC5D0 ${extensions})` : `\uD3C9\uC18C \uC4F0\uB294 ${name} \uC8FC\uC18C\uCC3D\uC5D0 ${extensions} \uB97C \uB123\uC5B4 \uC5F0 \uD654\uBA74`;
   if (previous) {
     return [
-      previous === version2 ? `\uD06C\uB86C \uD655\uC7A5 ${version2} \uC744 \uB2E4\uC2DC \uBC1B\uC544 \uAC19\uC740 \uD3F4\uB354\uC5D0 \uB36E\uC5B4\uC37C\uC2B5\uB2C8\uB2E4.` : `\uD06C\uB86C \uD655\uC7A5\uC744 ${previous} \u2192 ${version2} \uC73C\uB85C \uBC14\uAFD4 \uB450\uC5C8\uC2B5\uB2C8\uB2E4(\uAC19\uC740 \uD3F4\uB354\uC5D0 \uB36E\uC5B4\uC500).`,
+      previous === version2 ? `${w2.ext} ${version2} \uC744 \uB2E4\uC2DC \uBC1B\uC544 \uAC19\uC740 \uD3F4\uB354\uC5D0 \uB36E\uC5B4\uC37C\uC2B5\uB2C8\uB2E4.` : `${w2.ext}\uC744 ${previous} \u2192 ${version2} \uC73C\uB85C \uBC14\uAFD4 \uB450\uC5C8\uC2B5\uB2C8\uB2E4(\uAC19\uC740 \uD3F4\uB354\uC5D0 \uB36E\uC5B4\uC500).`,
       `\uD3F4\uB354: ${dir}`,
       "",
       "\uB0A8\uC740 \uC77C (\uC9C1\uC811 \uD558\uC154\uC57C \uD569\uB2C8\uB2E4):",
-      '1. \uD06C\uB86C\uC5D0\uC11C \uD5E5\uD1A0 \uC5D0\uC774\uC804\uD2B8 \uD328\uB110 \uB9E8 \uC704 "\uC0C8 \uBC84\uC804" \uCE74\uB4DC\uC758 "\uB2E4\uC2DC \uBD88\uB7EC\uC624\uAE30"\uB97C \uB204\uB985\uB2C8\uB2E4.',
-      `   \uCE74\uB4DC\uAC00 \uC5C6\uC73C\uBA74 ${where2}\uC5D0\uC11C "\uD5E5\uD1A0 AI \uBE0C\uB77C\uC6B0\uC800 \uC5D0\uC774\uC804\uD2B8" \uCE74\uB4DC\uC758 \uC0C8\uB85C \uACE0\uCE68(\uB3D9\uADF8\uB780 \uD654\uC0B4\uD45C)\uC744 \uB204\uB985\uB2C8\uB2E4.`,
+      `1. ${name}\uC5D0\uC11C \uD5E5\uD1A0 \uC5D0\uC774\uC804\uD2B8 \uD328\uB110 \uB9E8 \uC704 "\uC0C8 \uBC84\uC804" \uCE74\uB4DC\uC758 "\uB2E4\uC2DC \uBD88\uB7EC\uC624\uAE30"\uB97C \uB204\uB985\uB2C8\uB2E4.`,
+      `   \uCE74\uB4DC\uAC00 \uC5C6\uC73C\uBA74 ${where2}\uC5D0\uC11C "\uD5E5\uD1A0 AI \uBE0C\uB77C\uC6B0\uC800 \uC5D0\uC774\uC804\uD2B8" \uCE74\uB4DC\uC758 ${w2.reload} \uB204\uB985\uB2C8\uB2E4.`,
       "2. \uD328\uB110\uC774 \uB2EB\uD788\uBA74 \uC544\uC774\uCF58\uC744 \uB2E4\uC2DC \uB204\uB985\uB2C8\uB2E4. \uB85C\uADF8\uC778\uACFC \uC800\uC7A5\uD55C \uC791\uC5C5\uC740 \uADF8\uB300\uB85C \uB0A8\uC2B5\uB2C8\uB2E4.",
       "",
-      '\uC544\uC9C1 \uD06C\uB86C\uC5D0 \uC62C\uB9B0 \uC801\uC774 \uC5C6\uB2E4\uBA74 \uCC98\uC74C \uC124\uCE58 \uC21C\uC11C\uB300\uB85C \uD558\uC138\uC694: \uAC1C\uBC1C\uC790 \uBAA8\uB4DC \uCF1C\uAE30 \u2192 "\uC555\uCD95\uD574\uC81C\uB41C \uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8 \uB85C\uB4DC" \u2192 \uC704 \uD3F4\uB354 \uC120\uD0DD.'
+      `\uC544\uC9C1 ${name}\uC5D0 \uC62C\uB9B0 \uC801\uC774 \uC5C6\uB2E4\uBA74 \uCC98\uC74C \uC124\uCE58 \uC21C\uC11C\uB300\uB85C \uD558\uC138\uC694: \uAC1C\uBC1C\uC790 \uBAA8\uB4DC \uCF1C\uAE30 \u2192 ${w2.first} \u2192 \uC704 \uD3F4\uB354 \uC120\uD0DD.`
     ].join("\n");
   }
   return [
-    `\uD06C\uB86C \uD655\uC7A5 ${version2} \uC124\uCE58 \uD30C\uC77C\uC744 \uBC1B\uC544 \uD480\uC5B4 \uB450\uC5C8\uC2B5\uB2C8\uB2E4.`,
+    `${w2.ext} ${version2} \uC124\uCE58 \uD30C\uC77C\uC744 \uBC1B\uC544 \uD480\uC5B4 \uB450\uC5C8\uC2B5\uB2C8\uB2E4.`,
     `\uD3F4\uB354: ${dir}`,
     "\uC774 \uD3F4\uB354\uB97C \uC9C0\uC6B0\uAC70\uB098 \uC62E\uAE30\uBA74 \uD655\uC7A5\uC774 \uBA48\uCDA5\uB2C8\uB2E4.",
     "",
-    "\uB0A8\uC740 \uC77C (\uD06C\uB86C\uC774 \uC0AC\uB78C \uC190\uC73C\uB85C\uB9CC \uBC1B\uB294 \uB2E8\uACC4\uB77C \uC9C1\uC811 \uD558\uC154\uC57C \uD569\uB2C8\uB2E4):",
-    `1. ${where2} \uC624\uB978\uCABD \uC704\uC758 "\uAC1C\uBC1C\uC790 \uBAA8\uB4DC"\uB97C \uCF2D\uB2C8\uB2E4.`,
-    `2. \uC67C\uCABD \uC704 "\uC555\uCD95\uD574\uC81C\uB41C \uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8 \uB85C\uB4DC"\uB97C \uB204\uB985\uB2C8\uB2E4. ${pick2}.`,
-    '3. \uD06C\uB86C \uC624\uB978\uCABD \uC704 \uD37C\uC990 \uBAA8\uC591 \uC544\uC774\uCF58\uC5D0\uC11C "\uD5E5\uD1A0 AI \uBE0C\uB77C\uC6B0\uC800 \uC5D0\uC774\uC804\uD2B8"\uB97C \uACE0\uC815(\uD540)\uD569\uB2C8\uB2E4.',
+    `\uB0A8\uC740 \uC77C (${browser.i} \uC0AC\uB78C \uC190\uC73C\uB85C\uB9CC \uBC1B\uB294 \uB2E8\uACC4\uB77C \uC9C1\uC811 \uD558\uC154\uC57C \uD569\uB2C8\uB2E4):`,
+    `1. ${where2} ${w2.dev}\uB97C \uCF2D\uB2C8\uB2E4.`,
+    `2. ${w2.load}\uB97C \uB204\uB985\uB2C8\uB2E4. ${pick2}.`,
+    `3. ${w2.pin}`,
     '4. \uADF8 \uC544\uC774\uCF58\uC744 \uB20C\uB7EC \uD328\uB110\uC744 \uC5F4\uACE0 "\uB85C\uADF8\uC778"\uC744 \uB204\uB985\uB2C8\uB2E4(Claude Code \uC758 hai \uB85C\uADF8\uC778\uACFC \uAC19\uC740 \uD5E5\uD1A0 \uACC4\uC815).',
     '5. \uBA54\uC77C\xB7\uBA54\uC2E0\uC800\xB7\uCE98\uB9B0\uB354\xB7\uADF8\uB8F9\uC6E8\uC5B4\uCC98\uB7FC \uC4F8 \uC0AC\uC774\uD2B8\uB97C \uC5F4\uC5B4 \uB85C\uADF8\uC778\uD558\uACE0, \uD328\uB110\uC758 "\uC774 \uC0AC\uC774\uD2B8 \uD5C8\uC6A9"\uC744 \uC0AC\uC774\uD2B8\uB9C8\uB2E4 \uD55C \uBC88\uC529 \uB204\uB985\uB2C8\uB2E4.',
     "",
@@ -103897,7 +104005,7 @@ ${part}
 import { execFile as execFile2 } from "node:child_process";
 import { createHash as createHash3, randomUUID as randomUUID2 } from "node:crypto";
 import fs7 from "node:fs/promises";
-import os5 from "node:os";
+import os6 from "node:os";
 import path8 from "node:path";
 import { promisify as promisify2 } from "node:util";
 import { fileURLToPath } from "node:url";
@@ -104039,7 +104147,7 @@ async function writeMasked(name, text) {
 
 // src/clipboard.js
 import { execFile } from "node:child_process";
-import os3 from "node:os";
+import os4 from "node:os";
 import { promisify } from "node:util";
 var run = promisify(execFile);
 var MAX = 20 * 1024 * 1024;
@@ -104071,7 +104179,7 @@ async function readClipboardImage() {
   const opt = { encoding: "utf8", maxBuffer: MAX * 2, timeout: 3e4, windowsHide: true };
   let data;
   try {
-    const p2 = os3.platform();
+    const p2 = os4.platform();
     if (p2 === "win32") {
       const { stdout } = await run("powershell.exe", ["-NoProfile", "-NonInteractive", "-STA", "-ExecutionPolicy", "Bypass", "-EncodedCommand", Buffer.from(WIN, "utf16le").toString("base64")], opt);
       data = decodeOutput(stdout);
@@ -104275,8 +104383,8 @@ async function toWav(file3) {
   const name = `${randomUUID2()}.wav`;
   const out = path8.join(dir, name);
   const tries = [];
-  if (os5.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file3, out]]);
-  if (os5.platform() === "win32") {
+  if (os6.platform() === "darwin") tries.push(["afconvert", ["-f", "WAVE", "-d", "LEI16@16000", "-c", "1", file3, out]]);
+  if (os6.platform() === "win32") {
     tries.push([
       "powershell.exe",
       ["-NoProfile", "-NonInteractive", "-ExecutionPolicy", "Bypass", "-EncodedCommand", Buffer.from(WIN_TO_WAV, "utf16le").toString("base64")],
@@ -104296,7 +104404,7 @@ async function toWav(file3) {
   }
   await fs7.rm(out, { force: true });
   if (why) process.stderr.write(why);
-  throw new HaiError("HAI_BAD_INPUT", `${path8.extname(file3)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694${os5.platform() === "win32" ? "(winget install Gyan.FFmpeg)" : ""}.`);
+  throw new HaiError("HAI_BAD_INPUT", `${path8.extname(file3)} \uC74C\uC131\uC744 \uBCC0\uD658\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. wav\xB7mp3 \uB85C \uC800\uC7A5\uD574\uC11C \uB123\uAC70\uB098 ffmpeg \uB97C \uC124\uCE58\uD558\uC138\uC694${os6.platform() === "win32" ? "(winget install Gyan.FFmpeg)" : ""}.`);
 }
 var mmss = (sec) => {
   const s2 = Math.floor(Number(sec) || 0);
@@ -104642,7 +104750,7 @@ async function fillTimetable(buf, rows) {
 }
 
 // src/index.js
-var VERSION2 = "0.13.2";
+var VERSION2 = "0.14.0";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;
@@ -105042,7 +105150,7 @@ ${await maskAll(r2.content, vault)}
 (\uBAA8\uB378: ${r2.model} \xB7 \uAC00\uB9B0 \uAC83: ${counts(vault, mask_id)})`);
 }));
 async function isProtected(file3) {
-  const fold = os6.platform() === "darwin" || os6.platform() === "win32";
+  const fold = os7.platform() === "darwin" || os7.platform() === "win32";
   const canon = async (p2) => {
     let r2 = path10.resolve(p2);
     try {
@@ -105157,27 +105265,28 @@ var scheduledSchema = external_exports.boolean().optional().describe("\uC608\uC5
 var siteSchema = `${Object.keys(SITES).join("\xB7")} \uB610\uB294 http(s) \uC8FC\uC18C`;
 server.registerTool("agent_open", {
   title: "\uD06C\uB86C \uCF1C\uAE30",
-  description: '\uC0AC\uC6A9\uC790\uAC00 \uD3C9\uC18C \uC4F0\uB294 \uD06C\uB86C\uC744 \uCF1C\uACE0 \uC0AC\uC774\uD2B8\uB97C \uC0C8 \uD0ED\uC73C\uB85C \uC5F0\uB2E4(\uB85C\uADF8\uC778\xB7\uD655\uC7A5 \uADF8\uB300\uB85C, \uC774\uBBF8 \uCF1C\uC838 \uC788\uC73C\uBA74 \uD0ED\uB9CC \uB354\uD55C\uB2E4). \uC0AC\uC6A9\uC790\uAC00 "\uBA54\uC77C\xB7\uADF8\uB8F9\uC6E8\uC5B4 \uC5F4\uC5B4 \uB46C"\uB77C\uACE0 \uD560 \uB54C \uC4F4\uB2E4. agent_read\xB7agent_run \uC740 \uD06C\uB86C\uC774 \uAEBC\uC838 \uC788\uC73C\uBA74 \uC54C\uC544\uC11C \uCF1C\uBBC0\uB85C \uB530\uB85C \uBD80\uB974\uC9C0 \uC54A\uB294\uB2E4.',
+  description: '\uC0AC\uC6A9\uC790\uAC00 \uD3C9\uC18C \uC4F0\uB294 \uD06C\uB86C\uC744 \uCF1C\uACE0 \uC0AC\uC774\uD2B8\uB97C \uC0C8 \uD0ED\uC73C\uB85C \uC5F0\uB2E4(\uB85C\uADF8\uC778\xB7\uD655\uC7A5 \uADF8\uB300\uB85C, \uC774\uBBF8 \uCF1C\uC838 \uC788\uC73C\uBA74 \uD0ED\uB9CC \uB354\uD55C\uB2E4). \uC2DC\uC2A4\uD15C \uAE30\uBCF8 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC5E3\uC9C0\uBA74 \uD06C\uB86C \uB300\uC2E0 \uC5E3\uC9C0\uB97C \uC4F4\uB2E4 \u2014 \uC544\uB798 \uB3C4\uAD6C\uB4E4\uC758 "\uD06C\uB86C"\uB3C4 \uADF8\uB54C\uB294 \uC5E3\uC9C0\uB2E4. \uC0AC\uC6A9\uC790\uAC00 "\uBA54\uC77C\xB7\uADF8\uB8F9\uC6E8\uC5B4 \uC5F4\uC5B4 \uB46C"\uB77C\uACE0 \uD560 \uB54C \uC4F4\uB2E4. agent_read\xB7agent_run \uC740 \uD06C\uB86C\uC774 \uAEBC\uC838 \uC788\uC73C\uBA74 \uC54C\uC544\uC11C \uCF1C\uBBC0\uB85C \uB530\uB85C \uBD80\uB974\uC9C0 \uC54A\uB294\uB2E4.',
   inputSchema: { sites: external_exports.array(external_exports.string()).max(10).optional().describe(`\uC5F4 \uACF3: ${siteSchema}. \uBE44\uC6B0\uBA74 \uD06C\uB86C\uB9CC \uCF20\uB2E4`) }
 }, guard(async ({ sites }) => {
-  await openChrome(sites ?? []);
-  return ok(sites?.length ? `\uD06C\uB86C\uC5D0\uC11C \uC5F4\uC5C8\uC2B5\uB2C8\uB2E4: ${sites.join(", ")}` : "\uD06C\uB86C\uC744 \uCF30\uC2B5\uB2C8\uB2E4.");
+  const browser = await openChrome(sites ?? []);
+  return ok(sites?.length ? `${browser.name}\uC5D0\uC11C \uC5F4\uC5C8\uC2B5\uB2C8\uB2E4: ${sites.join(", ")}` : `${browser.eul} \uCF30\uC2B5\uB2C8\uB2E4.`);
 }));
 server.registerTool("agent_install", {
   title: "\uD06C\uB86C \uD655\uC7A5 \uC124\uCE58 \uC900\uBE44",
-  description: '\uD06C\uB86C \uD655\uC7A5 "\uD5E5\uD1A0 AI \uBE0C\uB77C\uC6B0\uC800 \uC5D0\uC774\uC804\uD2B8"\uC758 \uC124\uCE58 \uD30C\uC77C\uC744 \uBC1B\uC544 \uC774 PC(\uD648 \uD3F4\uB354\uC758 hecto-agent-extension)\uC5D0 \uD480\uC5B4 \uB450\uACE0, \uD06C\uB86C\uC758 \uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8 \uD654\uBA74\uC744 \uC5F0 \uB4A4 \uB0A8\uC740 \uC21C\uC11C\uB97C \uC54C\uB824 \uC900\uB2E4. \uC0AC\uC6A9\uC790\uAC00 "\uD06C\uB86C \uD655\uC7A5 \uC124\uCE58\uD574\uC918"\uB77C\uACE0 \uD558\uAC70\uB098, \uC0AC\uB0B4 \uD654\uBA74 \uAE30\uB2A5(\uBA54\uC77C\xB7\uADF8\uB8F9\uC6E8\uC5B4\xB7\uBE0C\uB9AC\uD551)\uC744 \uC4F0\uB824\uB294\uB370 \uD655\uC7A5\uC774 \uC124\uCE58\uB3FC \uC788\uC9C0 \uC54A\uC744 \uB54C, \uD655\uC7A5\uC744 \uC0C8 \uBC84\uC804\uC73C\uB85C \uBC14\uAFC0 \uB54C \uBD80\uB978\uB2E4. \uD06C\uB86C\uC5D0 \uC62C\uB9AC\uB294 \uB9C8\uC9C0\uB9C9 \uB2E8\uACC4(\uAC1C\uBC1C\uC790 \uBAA8\uB4DC \uCF1C\uAE30\xB7\uD3F4\uB354 \uACE0\uB974\uAE30\xB7\uD328\uB110 \uB85C\uADF8\uC778)\uB294 \uD06C\uB86C\uC774 \uC0AC\uB78C \uC190\uC73C\uB85C\uB9CC \uBC1B\uC73C\uBBC0\uB85C \uC0AC\uC6A9\uC790\uAC00 \uD55C\uB2E4 \u2014 \uACB0\uACFC\uC758 \uC21C\uC11C\uB97C \uC904\uC774\uC9C0 \uB9D0\uACE0 \uADF8\uB300\uB85C \uBCF4\uC5EC \uC900\uB2E4. hai_login \uB85C\uADF8\uC778\uC774 \uD544\uC694\uD558\uB2E4(\uAC1C\uC778 \uD0A4\uB9CC\uC73C\uB85C\uB294 \uBC1B\uC744 \uC218 \uC5C6\uB2E4).',
+  description: '\uD06C\uB86C \uD655\uC7A5 "\uD5E5\uD1A0 AI \uBE0C\uB77C\uC6B0\uC800 \uC5D0\uC774\uC804\uD2B8"\uC758 \uC124\uCE58 \uD30C\uC77C\uC744 \uBC1B\uC544 \uC774 PC(\uD648 \uD3F4\uB354\uC758 hecto-agent-extension)\uC5D0 \uD480\uC5B4 \uB450\uACE0, \uD06C\uB86C(\uC2DC\uC2A4\uD15C \uAE30\uBCF8 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC5E3\uC9C0\uBA74 \uC5E3\uC9C0)\uC758 \uD655\uC7A5 \uD504\uB85C\uADF8\uB7A8 \uD654\uBA74\uC744 \uC5F0 \uB4A4 \uB0A8\uC740 \uC21C\uC11C\uB97C \uC54C\uB824 \uC900\uB2E4. \uC0AC\uC6A9\uC790\uAC00 "\uD06C\uB86C \uD655\uC7A5 \uC124\uCE58\uD574\uC918"\uB77C\uACE0 \uD558\uAC70\uB098, \uC0AC\uB0B4 \uD654\uBA74 \uAE30\uB2A5(\uBA54\uC77C\xB7\uADF8\uB8F9\uC6E8\uC5B4\xB7\uBE0C\uB9AC\uD551)\uC744 \uC4F0\uB824\uB294\uB370 \uD655\uC7A5\uC774 \uC124\uCE58\uB3FC \uC788\uC9C0 \uC54A\uC744 \uB54C, \uD655\uC7A5\uC744 \uC0C8 \uBC84\uC804\uC73C\uB85C \uBC14\uAFC0 \uB54C \uBD80\uB978\uB2E4. \uD06C\uB86C\uC5D0 \uC62C\uB9AC\uB294 \uB9C8\uC9C0\uB9C9 \uB2E8\uACC4(\uAC1C\uBC1C\uC790 \uBAA8\uB4DC \uCF1C\uAE30\xB7\uD3F4\uB354 \uACE0\uB974\uAE30\xB7\uD328\uB110 \uB85C\uADF8\uC778)\uB294 \uD06C\uB86C\uC774 \uC0AC\uB78C \uC190\uC73C\uB85C\uB9CC \uBC1B\uC73C\uBBC0\uB85C \uC0AC\uC6A9\uC790\uAC00 \uD55C\uB2E4 \u2014 \uACB0\uACFC\uC758 \uC21C\uC11C\uB97C \uC904\uC774\uC9C0 \uB9D0\uACE0 \uADF8\uB300\uB85C \uBCF4\uC5EC \uC900\uB2E4. hai_login \uB85C\uADF8\uC778\uC774 \uD544\uC694\uD558\uB2E4(\uAC1C\uC778 \uD0A4\uB9CC\uC73C\uB85C\uB294 \uBC1B\uC744 \uC218 \uC5C6\uB2E4).',
   inputSchema: {}
 }, guard(async (args, ex) => {
   progress(ex, "\uD655\uC7A5 \uC124\uCE58 \uD30C\uC77C\uC744 \uBC1B\uB294 \uC911");
   const { buf } = await downloadExtension();
   const done = await unpackExtension(buf);
+  const browser = pickBrowser();
   let opened = true;
   try {
-    await openExtensionsPage();
+    await openExtensionsPage({ browser });
   } catch {
     opened = false;
   }
-  return ok(installSteps({ ...done, opened }));
+  return ok(installSteps({ ...done, opened, browser }));
 }));
 server.registerTool("agent_read", {
   title: "\uC0AC\uB0B4 \uD654\uBA74 \uC77D\uAE30",
@@ -105342,7 +105451,7 @@ server.registerTool("hai_status", {
     `\uBCF4\uD638 \uD3F4\uB354: ${config2.protectedDirs.length ? config2.protectedDirs.join(", ") : "\uC5C6\uC74C(\uC124\uC815 \uAD8C\uC7A5)"}`
   ];
   if (!via2) return ok([...lines, "\u2192 \uB85C\uADF8\uC778\uC774 \uD544\uC694\uD569\uB2C8\uB2E4. hai_login \uC744 \uC2E4\uD589\uD558\uBA74 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC5F4\uB9AC\uACE0, \uD5E5\uD1A0 \uC774\uBA54\uC77C\uB85C \uB85C\uADF8\uC778\uD558\uBA74 \uB05D\uB0A9\uB2C8\uB2E4(\uD06C\uB86C \uD655\uC7A5 \uD328\uB110\uC758 \uB85C\uADF8\uC778\uACFC\uB294 \uBCC4\uAC1C\uC785\uB2C8\uB2E4)."].join("\n"));
-  lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os6.homedir(), "~")}`);
+  lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354: ${config2.rawDir.replace(os7.homedir(), "~")}`);
   lines.push(sandboxLine());
   lines.push(via2 === "agent" ? await extensionLine() : "\uD06C\uB86C \uD655\uC7A5: \uAC1C\uC778 \uD0A4\uB9CC\uC73C\uB85C\uB294 \uC0AC\uB0B4 \uD654\uBA74(\uBA54\uC77C\xB7\uADF8\uB8F9\uC6E8\uC5B4\xB7\uBE0C\uB9AC\uD551)\uC744 \uC4F8 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4 \u2014 hai_login \uC73C\uB85C \uB85C\uADF8\uC778\uD55C \uB4A4 agent_install \uB85C \uD655\uC7A5\uC744 \uC124\uCE58\uD558\uC138\uC694(\uD30C\uC77C\xB7\uB179\uC74C \uCC98\uB9AC\uB294 \uC9C0\uAE08\uB3C4 \uB429\uB2C8\uB2E4)");
   const LABEL2 = { qwen: "Qwen(\uBD84\uC11D\xB7\uCD94\uB860)", gemma: "Gemma(\uB300\uD654\xB7\uC0AC\uC9C4)", embed: "\uBB38\uC11C \uAC80\uC0C9(KURE)", whisper: "\uBC1B\uC544\uC4F0\uAE30 whisper", asr: "\uBC1B\uC544\uC4F0\uAE30 qwen3-asr", ocr: "OCR(paddleocr)" };
@@ -105356,14 +105465,14 @@ server.registerTool("hai_status", {
 function sandboxLine() {
   let st2 = {};
   try {
-    st2 = JSON.parse(readFileSync(path10.join(os6.homedir(), ".claude", "settings.json"), "utf8"));
+    st2 = JSON.parse(readFileSync2(path10.join(os7.homedir(), ".claude", "settings.json"), "utf8"));
   } catch {
   }
   const sb = st2.sandbox ?? {};
-  const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path10.resolve(String(d2).replace(/^~(?=\/|$)/, os6.homedir())));
+  const deny = (sb.filesystem?.denyRead ?? []).map((d2) => path10.resolve(String(d2).replace(/^~(?=\/|$)/, os7.homedir())));
   const want = [...config2.protectedDirs, config2.rawDir];
   const covered = want.filter((w2) => deny.some((d2) => w2 === d2 || w2.startsWith(d2 + path10.sep)));
-  if (os6.platform() === "win32") return "\uBCF4\uD638: Windows \uB294 \uC0CC\uB4DC\uBC15\uC2A4\uAC00 \uC5C6\uC5B4 \uAC00\uB4DC \uD6C5(\uBA85\uB839 \uAE00\uC790 \uAC80\uC0AC)\uB9CC \uB3D9\uC791\uD569\uB2C8\uB2E4 \u2014 /hai:protect \uB85C \uAE30\uBCF8 \uB3C4\uAD6C \uCC28\uB2E8 \uADDC\uCE59\uC744 \uB354\uD558\uACE0, \uBBFC\uAC10\uD55C \uD3F4\uB354\uC5D0\uC11C Claude \uB97C \uC2DC\uC791\uD558\uC9C0 \uB9C8\uC138\uC694";
+  if (os7.platform() === "win32") return "\uBCF4\uD638: Windows \uB294 \uC0CC\uB4DC\uBC15\uC2A4\uAC00 \uC5C6\uC5B4 \uAC00\uB4DC \uD6C5(\uBA85\uB839 \uAE00\uC790 \uAC80\uC0AC)\uB9CC \uB3D9\uC791\uD569\uB2C8\uB2E4 \u2014 /hai:protect \uB85C \uAE30\uBCF8 \uB3C4\uAD6C \uCC28\uB2E8 \uADDC\uCE59\uC744 \uB354\uD558\uACE0, \uBBFC\uAC10\uD55C \uD3F4\uB354\uC5D0\uC11C Claude \uB97C \uC2DC\uC791\uD558\uC9C0 \uB9C8\uC138\uC694";
   if (!sb.enabled) return "\uC0CC\uB4DC\uBC15\uC2A4: \uAEBC\uC9D0 \u2014 /hai:protect \uB85C \uCF1C\uBA74 \uBCF4\uD638 \uD3F4\uB354\uB97C \uC6B4\uC601\uCCB4\uC81C \uC218\uC900\uC5D0\uC11C \uB9C9\uC2B5\uB2C8\uB2E4(\uAD8C\uC7A5)";
   return covered.length === want.length ? `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uBCF4\uD638 \uD3F4\uB354\xB7\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354 \uC77D\uAE30 \uCC28\uB2E8\uB428(${covered.length}\uACF3)` : `\uC0CC\uB4DC\uBC15\uC2A4: \uCF1C\uC9D0 \xB7 \uC77D\uAE30 \uCC28\uB2E8\uC5D0 \uBE60\uC9C4 \uACF3 ${want.length - covered.length}\uACF3 \u2014 /hai:protect \uB85C \uCD94\uAC00\uD558\uC138\uC694`;
 }
