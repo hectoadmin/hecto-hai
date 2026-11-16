@@ -78,10 +78,11 @@ const QUIET = { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], windowsHi
 const WIN_HTTPS_KEY = 'HKCU\\Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\https';
 
 /** 시스템 기본 브라우저 → 'edge' | 'chrome'. 엣지(정식판)일 때만 'edge' — 그 밖(사파리·웨일·알 수 없음)은 전처럼 크롬 */
-export function defaultBrowser({ platform = process.platform, exec = execFileSync, home = os.homedir() } = {}) {
+export function defaultBrowser({ platform = process.platform, exec = execFileSync, home = os.homedir(), env = process.env } = {}) {
   try {
     if (platform === 'win32') {
-      return /^MSEdgeHTM$/i.test(winProgId(exec('reg.exe', ['query', WIN_HTTPS_KEY, '/s', '/v', 'ProgId'], QUIET)) ?? '') ? 'edge' : 'chrome';
+      const reg = path.win32.join(env.SystemRoot ?? env.SYSTEMROOT ?? 'C:\\Windows', 'System32', 'reg.exe');   // 이름만 주면 지금 폴더의 같은 이름 파일이 먼저 잡힌다
+      return /^MSEdgeHTM$/i.test(winProgId(exec(reg, ['query', WIN_HTTPS_KEY, '/s', '/v', 'ProgId'], QUIET)) ?? '') ? 'edge' : 'chrome';
     }
     if (platform === 'darwin') {
       const plist = path.join(home, 'Library', 'Preferences', 'com.apple.LaunchServices', 'com.apple.launchservices.secure.plist');
@@ -93,7 +94,7 @@ export function defaultBrowser({ platform = process.platform, exec = execFileSyn
   } catch { return 'chrome'; }
 }
 
-/** 그 브라우저의 어느 프로필에든 헥토 에이전트 확장이 올라가 있나 — 프로필 설정 파일에 확장 ID 가 적혀 있는지만 본다 */
+/** 그 브라우저의 어느 프로필에든 헥토 에이전트 확장이 올라가 있나 — 프로필 설정 파일의 확장 목록(extensions.settings)에 확장 ID 가 있는지만 본다(지운 뒤 다른 곳에 남은 흔적은 세지 않는다) */
 export function hasExtension(browser, { platform = process.platform, env = process.env, home = os.homedir(), readdir = readdirSync, read = readFileSync } = {}) {
   const base = platform === 'win32' ? env.LOCALAPPDATA : home;
   if (!base) return false;
@@ -102,7 +103,7 @@ export function hasExtension(browser, { platform = process.platform, env = proce
   let dirs = [];
   try { dirs = readdir(root).filter((d) => /^(Default|Profile \d+)$/.test(d)); } catch { return false; }
   return dirs.some((d) => ['Secure Preferences', 'Preferences'].some((f) => {
-    try { return String(read(join(root, d, f), 'utf8')).includes(`"${EXTENSION_ID}"`); } catch { return false; }
+    try { return Boolean(JSON.parse(read(join(root, d, f), 'utf8'))?.extensions?.settings?.[EXTENSION_ID]); } catch { return false; }
   }));
 }
 

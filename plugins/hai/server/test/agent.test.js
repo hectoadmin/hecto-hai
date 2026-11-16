@@ -78,7 +78,7 @@ test('기본 브라우저 — 윈도우 레지스트리에서 엣지일 때만 �
   assert.equal(winProgId(REG('MSEdgeHTM')), 'MSEdgeHTM');
   assert.equal(winProgId(REG('MSEdgeHTM', 'ChromeHTML')), 'ChromeHTML');   // 새 Windows 는 UserChoiceLatest 가 먼저
   assert.equal(winProgId(''), null);
-  const win = (out) => defaultBrowser({ platform: 'win32', exec: (cmd, args) => { assert.equal(cmd, 'reg.exe'); assert.equal(args[0], 'query'); return out; } });
+  const win = (out) => defaultBrowser({ platform: 'win32', env: { SystemRoot: 'C:\\Windows' }, exec: (cmd, args) => { assert.equal(cmd, 'C:\\Windows\\System32\\reg.exe'); assert.equal(args[0], 'query'); return out; } });
   assert.equal(win(REG('MSEdgeHTM')), 'edge');
   assert.equal(win(REG('ChromeHTML')), 'chrome');
   assert.equal(win(REG('WhaleHTML')), 'chrome');   // 그 밖은 전처럼 크롬
@@ -96,6 +96,10 @@ test('확장이 어느 브라우저에 올라가 있나 — 프로필 설정 파
   assert.equal(hasExtension(BROWSERS.chrome, opt), false);
   assert.equal(hasExtension(BROWSERS.edge, { ...opt, readdir: () => { throw new Error('폴더 없음'); } }), false);
   assert.equal(hasExtension(BROWSERS.edge, { ...opt, env: {} }), false);
+  const trace = { ...opt, read: () => `{"extensions":{"settings":{},"pinned_extensions":["${EXTENSION_ID}"]}}` };   // 지운 뒤 남은 흔적
+  assert.equal(hasExtension(BROWSERS.edge, trace), false);
+  const mac = { platform: 'darwin', home: '/Users/a', readdir: (p) => { assert.equal(p, '/Users/a/Library/Application Support/Google/Chrome'); return ['Default']; }, read: () => `{"extensions":{"settings":{"${EXTENSION_ID}":{"path":"/x"}}}}` };
+  if (process.platform !== 'win32') assert.equal(hasExtension(BROWSERS.chrome, mac), true);   // 경로 구분자가 / 인 곳에서만
 });
 
 test('쓸 브라우저 — 기본이 엣지면 엣지, 확장이 크롬에만 있으면 크롬', () => {
@@ -118,8 +122,9 @@ test('openChrome 은 이상한 주소를 넘기기 전에 거절한다', async (
 
 test('확장이 꺼져 있으면 크롬을 켜고 연결될 때까지 기다린다', async () => {
   let opened = 0;
+  const pick = () => BROWSERS.chrome;   // 이 PC 의 기본 브라우저에 기대지 않게
   const seq = [false, false, false, true];
-  assert.equal(await ensureChrome({ online: async () => seq.shift(), open: async () => { opened++; }, sleep: async () => {} }), true);
+  assert.equal(await ensureChrome({ online: async () => seq.shift(), pick, open: async () => { opened++; }, sleep: async () => {} }), true);
   assert.equal(opened, 1);
   const seen = [];
   let used;
@@ -129,13 +134,13 @@ test('확장이 꺼져 있으면 크롬을 켜고 연결될 때까지 기다린�
   opened = 0;
   assert.equal(await ensureChrome({ online: async () => true, open: async () => { opened++; } }), true);
   assert.equal(opened, 0);
-  assert.equal(await ensureChrome({ online: async () => false, open: async () => {}, sleep: async () => {}, tries: 2 }), false);
-  assert.equal(await ensureChrome({ online: async () => false, open: async () => { throw new Error('없음'); } }), false);
+  assert.equal(await ensureChrome({ online: async () => false, pick, open: async () => {}, sleep: async () => {}, tries: 2 }), false);
+  assert.equal(await ensureChrome({ online: async () => false, pick, open: async () => { throw new Error('없음'); } }), false);
 });
 
 test('hai_status 의 크롬 확장 줄', async () => {
   assert.equal(await extensionLine(async () => true), '크롬 확장: 연결됨');
-  assert.match(await extensionLine(async () => false), /연결 안 됨.*로그인/);
+  assert.match(await extensionLine(async () => false, () => BROWSERS.chrome), /연결 안 됨.*크롬을 켜고.*로그인/);
   assert.match(await extensionLine(async () => false, () => BROWSERS.edge), /엣지를 켜고/);
   assert.equal(await extensionLine(async () => { throw new Error('x'); }), '크롬 확장: 확인하지 못함');
 });

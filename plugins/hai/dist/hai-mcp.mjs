@@ -103122,10 +103122,11 @@ function winProgId(out) {
 }
 var QUIET = { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"], windowsHide: true, timeout: 1e4 };
 var WIN_HTTPS_KEY = "HKCU\\Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\https";
-function defaultBrowser({ platform = process.platform, exec = execFileSync3, home = os3.homedir() } = {}) {
+function defaultBrowser({ platform = process.platform, exec = execFileSync3, home = os3.homedir(), env: env2 = process.env } = {}) {
   try {
     if (platform === "win32") {
-      return /^MSEdgeHTM$/i.test(winProgId(exec("reg.exe", ["query", WIN_HTTPS_KEY, "/s", "/v", "ProgId"], QUIET)) ?? "") ? "edge" : "chrome";
+      const reg = path4.win32.join(env2.SystemRoot ?? env2.SYSTEMROOT ?? "C:\\Windows", "System32", "reg.exe");
+      return /^MSEdgeHTM$/i.test(winProgId(exec(reg, ["query", WIN_HTTPS_KEY, "/s", "/v", "ProgId"], QUIET)) ?? "") ? "edge" : "chrome";
     }
     if (platform === "darwin") {
       const plist = path4.join(home, "Library", "Preferences", "com.apple.LaunchServices", "com.apple.launchservices.secure.plist");
@@ -103151,7 +103152,7 @@ function hasExtension(browser, { platform = process.platform, env: env2 = proces
   }
   return dirs.some((d2) => ["Secure Preferences", "Preferences"].some((f2) => {
     try {
-      return String(read(join(root2, d2, f2), "utf8")).includes(`"${EXTENSION_ID}"`);
+      return Boolean(JSON.parse(read(join(root2, d2, f2), "utf8"))?.extensions?.settings?.[EXTENSION_ID]);
     } catch {
       return false;
     }
