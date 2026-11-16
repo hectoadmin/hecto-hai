@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { describeRun, describeStop, ensureChrome, extensionLine, notifyText, pickRecipe, waitRun } from '../src/agent.js';
-import { chromeCommand, openChrome, siteUrl } from '../src/chrome.js';
+import { BROWSERS, EXTENSION_ID, chromeCommand, defaultBrowser, hasExtension, openChrome, pickBrowser, siteUrl, winProgId } from '../src/chrome.js';
 
 const list = [
   { id: 3, name: '법인카드 정산' },
@@ -62,6 +62,54 @@ test('크롬 켜는 명령 — 맥은 뒤에서, 윈도우는 설치 경로로 �
   assert.throws(() => chromeCommand([], { platform: 'win32', env: {}, exists: () => false }), /찾지 못했습니다/);
 });
 
+test('엣지 켜는 명령 — 윈도우는 msedge.exe, 맥은 Microsoft Edge', () => {
+  const env = { PROGRAMFILES: 'C:\\Program Files', 'PROGRAMFILES(X86)': 'C:\\Program Files (x86)' };
+  const win = chromeCommand(['https://a/'], { platform: 'win32', env, exists: (p) => p.includes('(x86)') && p.endsWith('msedge.exe'), browser: BROWSERS.edge });
+  assert.deepEqual(win, { cmd: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe', args: ['https://a/'] });
+  assert.deepEqual(chromeCommand([], { platform: 'darwin', browser: BROWSERS.edge }), { cmd: 'open', args: ['-g', '-a', 'Microsoft Edge'] });
+  assert.throws(() => chromeCommand([], { platform: 'win32', env: {}, exists: () => false, browser: BROWSERS.edge }), /엣지를 찾지 못했습니다/);
+});
+
+const REG = (choice, latest) => ['', 'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\https\\UserChoice', `    ProgId    REG_SZ    ${choice}`, '',
+  ...(latest ? ['HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\https\\UserChoiceLatest\\ProgId', `    ProgId    REG_SZ    ${latest}`, ''] : []),
+  '검색 완료: 1개 일치 항목이 있습니다.'].join('\r\n');
+
+test('기본 브라우저 — 윈도우 레지스트리에서 엣지일 때만 엣지', () => {
+  assert.equal(winProgId(REG('MSEdgeHTM')), 'MSEdgeHTM');
+  assert.equal(winProgId(REG('MSEdgeHTM', 'ChromeHTML')), 'ChromeHTML');   // 새 Windows 는 UserChoiceLatest 가 먼저
+  assert.equal(winProgId(''), null);
+  const win = (out) => defaultBrowser({ platform: 'win32', exec: (cmd, args) => { assert.equal(cmd, 'reg.exe'); assert.equal(args[0], 'query'); return out; } });
+  assert.equal(win(REG('MSEdgeHTM')), 'edge');
+  assert.equal(win(REG('ChromeHTML')), 'chrome');
+  assert.equal(win(REG('WhaleHTML')), 'chrome');   // 그 밖은 전처럼 크롬
+  assert.equal(defaultBrowser({ platform: 'win32', exec: () => { throw new Error('키 없음'); } }), 'chrome');
+  const mac = (id) => defaultBrowser({ platform: 'darwin', home: '/Users/a', exec: () => JSON.stringify([{ LSHandlerURLScheme: 'http', LSHandlerRoleAll: 'x' }, { LSHandlerURLScheme: 'https', LSHandlerRoleAll: id }]) });
+  assert.equal(mac('com.microsoft.edgemac'), 'edge');
+  assert.equal(mac('com.google.chrome'), 'chrome');
+  assert.equal(defaultBrowser({ platform: 'linux', exec: () => 'microsoft-edge.desktop\n' }), 'edge');
+});
+
+test('확장이 어느 브라우저에 올라가 있나 — 프로필 설정 파일에서 확장 ID 를 찾는다', () => {
+  const files = { 'C:\\U\\L\\Microsoft\\Edge\\User Data\\Profile 2\\Secure Preferences': `{"extensions":{"settings":{"${EXTENSION_ID}":{}}}}` };
+  const opt = { platform: 'win32', env: { LOCALAPPDATA: 'C:\\U\\L' }, readdir: () => ['Default', 'Profile 2', 'Crashpad'], read: (p) => { if (!(p in files)) throw new Error('없음'); return files[p]; } };
+  assert.equal(hasExtension(BROWSERS.edge, opt), true);
+  assert.equal(hasExtension(BROWSERS.chrome, opt), false);
+  assert.equal(hasExtension(BROWSERS.edge, { ...opt, readdir: () => { throw new Error('폴더 없음'); } }), false);
+  assert.equal(hasExtension(BROWSERS.edge, { ...opt, env: {} }), false);
+});
+
+test('쓸 브라우저 — 기본이 엣지면 엣지, 확장이 크롬에만 있으면 크롬', () => {
+  const pick = (def, ext, installed = ['chrome', 'edge']) => pickBrowser({ platform: 'win32', def: () => def, has: (b) => ext.includes(b.id), installed: (b) => installed.includes(b.id) }).id;
+  assert.equal(pick('chrome', []), 'chrome');
+  assert.equal(pick('chrome', ['edge']), 'chrome');          // 기본이 크롬이면 그대로
+  assert.equal(pick('edge', []), 'edge');                    // 처음 설치
+  assert.equal(pick('edge', ['edge']), 'edge');
+  assert.equal(pick('edge', ['chrome', 'edge']), 'edge');
+  assert.equal(pick('edge', ['chrome']), 'chrome');          // 기본은 엣지인데 크롬에 깔아 쓰던 사람
+  assert.equal(pick('chrome', [], ['edge']), 'edge');        // 크롬이 안 깔린 PC
+  assert.equal(pick('edge', [], ['chrome']), 'chrome');
+});
+
 test('openChrome 은 이상한 주소를 넘기기 전에 거절한다', async () => {
   let ran = false;
   await assert.rejects(openChrome(['--remote-debugging-port=9222'], { run: () => { ran = true; } }), /열 수 없습니다/);
@@ -73,6 +121,11 @@ test('확장이 꺼져 있으면 크롬을 켜고 연결될 때까지 기다린�
   const seq = [false, false, false, true];
   assert.equal(await ensureChrome({ online: async () => seq.shift(), open: async () => { opened++; }, sleep: async () => {} }), true);
   assert.equal(opened, 1);
+  const seen = [];
+  let used;
+  await ensureChrome({ online: async () => seen.length > 0, pick: () => BROWSERS.edge, open: async (urls, o) => { used = o.browser; }, sleep: async () => {}, onProgress: (m) => seen.push(m) });
+  assert.deepEqual(seen, ['엣지를 켜는 중']);
+  assert.equal(used, BROWSERS.edge);
   opened = 0;
   assert.equal(await ensureChrome({ online: async () => true, open: async () => { opened++; } }), true);
   assert.equal(opened, 0);
@@ -83,6 +136,7 @@ test('확장이 꺼져 있으면 크롬을 켜고 연결될 때까지 기다린�
 test('hai_status 의 크롬 확장 줄', async () => {
   assert.equal(await extensionLine(async () => true), '크롬 확장: 연결됨');
   assert.match(await extensionLine(async () => false), /연결 안 됨.*로그인/);
+  assert.match(await extensionLine(async () => false, () => BROWSERS.edge), /엣지를 켜고/);
   assert.equal(await extensionLine(async () => { throw new Error('x'); }), '크롬 확장: 확인하지 못함');
 });
 

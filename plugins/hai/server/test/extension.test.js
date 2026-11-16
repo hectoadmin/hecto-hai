@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import JSZip from 'jszip';
 import { downloadExtension, installSteps, safeParts, unpackExtension, unpackedVersion } from '../src/extension.js';
-import { chromeCommand, openExtensionsPage } from '../src/chrome.js';
+import { BROWSERS, chromeCommand, openExtensionsPage } from '../src/chrome.js';
 
 const tmp = () => fs.mkdtempSync(path.join(os.tmpdir(), 'hai-ext-'));
 async function zipOf(files) {
@@ -92,6 +92,15 @@ test('안내 글 — 처음 설치는 순서 다섯, Windows·Mac 폴더 고르�
   assert.match(mac, /주소창에 chrome:\/\/extensions 를 넣어/);
 });
 
+test('안내 글 — 엣지면 엣지 화면 말로', () => {
+  const edge = installSteps({ dir: 'C:\\Users\\a\\hecto-agent-extension', version: '0.9.0', previous: null, opened: true, platform: 'win32', browser: BROWSERS.edge });
+  assert.match(edge, /엣지에 연[\s\S]*edge:\/\/extensions[\s\S]*개발자 모드[\s\S]*압축 풀린 파일 로드[\s\S]*고정[\s\S]*로그인/);
+  assert.doesNotMatch(edge, /크롬|chrome:/);
+  const up = installSteps({ dir: 'C:\\x', version: '0.9.1', previous: '0.9.0', opened: false, platform: 'win32', browser: BROWSERS.edge });
+  assert.match(up, /엣지 주소창에 edge:\/\/extensions/);
+  assert.doesNotMatch(up, /크롬|chrome:/);
+});
+
 test('안내 글 — 새 버전은 다시 불러오기만', () => {
   const up = installSteps({ dir: '/x', version: '0.9.1', previous: '0.9.0', opened: true, platform: 'darwin' });
   assert.match(up, /0\.9\.0 → 0\.9\.1/);
@@ -104,6 +113,8 @@ test('확장 화면은 적어 둔 주소 하나만, 앞으로 띄워 연다', as
   let ran;
   const fake = (cmd, args) => { ran = { cmd, args }; return { once: (ev, fn) => { if (ev === 'spawn') fn(); }, unref() {} }; };
   if (process.platform === 'win32') return;   // 크롬 설치 위치를 찾는 쪽은 agent.test.js 가 본다
-  await openExtensionsPage({ run: fake });
+  await openExtensionsPage({ run: fake, browser: BROWSERS.chrome });
   assert.equal(ran.args.at(-1), 'chrome://extensions');
+  assert.equal(await openExtensionsPage({ run: fake, browser: BROWSERS.edge }), BROWSERS.edge);
+  assert.deepEqual(ran.args, ['-a', 'Microsoft Edge', 'edge://extensions']);
 });

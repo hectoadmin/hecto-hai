@@ -29,7 +29,7 @@ import { config, apiKey } from './config.js';
 import { chat, structured, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { currentLogin, logout, loginUser, startLogin } from './login.js';
 import { answerRun, describeRun, describeStop, stopRun, ensureChrome, extensionLine, isOnline, listRecipes, notifyMe, quoted, pickRecipe, startRun, startTask, waitRun } from './agent.js';
-import { openChrome, openExtensionsPage, siteUrl, SITES } from './chrome.js';
+import { openChrome, openExtensionsPage, pickBrowser, siteUrl, SITES } from './chrome.js';
 import { downloadExtension, installSteps, unpackExtension } from './extension.js';
 import { addTodos, closeTodo, listTodos, todoLine, todoText } from './todo.js';
 import { checkItem, extractTodos, markDoneHints, stripQuoted, OWNER_KEY, SCHEMA as TODO_SCHEMA } from './todo-extract.js';
@@ -42,7 +42,7 @@ import { folderInfo, listFiles, search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.13.2';
+export const VERSION = '0.14.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -488,25 +488,26 @@ const siteSchema = `${Object.keys(SITES).join('·')} 또는 http(s) 주소`;
 
 server.registerTool('agent_open', {
   title: '크롬 켜기',
-  description: '사용자가 평소 쓰는 크롬을 켜고 사이트를 새 탭으로 연다(로그인·확장 그대로, 이미 켜져 있으면 탭만 더한다). 사용자가 "메일·그룹웨어 열어 둬"라고 할 때 쓴다. agent_read·agent_run 은 크롬이 꺼져 있으면 알아서 켜므로 따로 부르지 않는다.',
+  description: '사용자가 평소 쓰는 크롬을 켜고 사이트를 새 탭으로 연다(로그인·확장 그대로, 이미 켜져 있으면 탭만 더한다). 시스템 기본 브라우저가 엣지면 크롬 대신 엣지를 쓴다 — 아래 도구들의 "크롬"도 그때는 엣지다. 사용자가 "메일·그룹웨어 열어 둬"라고 할 때 쓴다. agent_read·agent_run 은 크롬이 꺼져 있으면 알아서 켜므로 따로 부르지 않는다.',
   inputSchema: { sites: z.array(z.string()).max(10).optional().describe(`열 곳: ${siteSchema}. 비우면 크롬만 켠다`) },
 }, guard(async ({ sites }) => {
-  await openChrome(sites ?? []);
-  return ok(sites?.length ? `크롬에서 열었습니다: ${sites.join(', ')}` : '크롬을 켰습니다.');
+  const browser = await openChrome(sites ?? []);
+  return ok(sites?.length ? `${browser.name}에서 열었습니다: ${sites.join(', ')}` : `${browser.eul} 켰습니다.`);
 }));
 
 server.registerTool('agent_install', {
   title: '크롬 확장 설치 준비',
-  description: '크롬 확장 "헥토 AI 브라우저 에이전트"의 설치 파일을 받아 이 PC(홈 폴더의 hecto-agent-extension)에 풀어 두고, 크롬의 확장 프로그램 화면을 연 뒤 남은 순서를 알려 준다. 사용자가 "크롬 확장 설치해줘"라고 하거나, 사내 화면 기능(메일·그룹웨어·브리핑)을 쓰려는데 확장이 설치돼 있지 않을 때, 확장을 새 버전으로 바꿀 때 부른다. '
+  description: '크롬 확장 "헥토 AI 브라우저 에이전트"의 설치 파일을 받아 이 PC(홈 폴더의 hecto-agent-extension)에 풀어 두고, 크롬(시스템 기본 브라우저가 엣지면 엣지)의 확장 프로그램 화면을 연 뒤 남은 순서를 알려 준다. 사용자가 "크롬 확장 설치해줘"라고 하거나, 사내 화면 기능(메일·그룹웨어·브리핑)을 쓰려는데 확장이 설치돼 있지 않을 때, 확장을 새 버전으로 바꿀 때 부른다. '
     + '크롬에 올리는 마지막 단계(개발자 모드 켜기·폴더 고르기·패널 로그인)는 크롬이 사람 손으로만 받으므로 사용자가 한다 — 결과의 순서를 줄이지 말고 그대로 보여 준다. hai_login 로그인이 필요하다(개인 키만으로는 받을 수 없다).',
   inputSchema: {},
 }, guard(async (args, ex) => {
   progress(ex, '확장 설치 파일을 받는 중');
   const { buf } = await downloadExtension();
   const done = await unpackExtension(buf);
+  const browser = pickBrowser();
   let opened = true;
-  try { await openExtensionsPage(); } catch { opened = false; }
-  return ok(installSteps({ ...done, opened }));
+  try { await openExtensionsPage({ browser }); } catch { opened = false; }
+  return ok(installSteps({ ...done, opened, browser }));
 }));
 
 server.registerTool('agent_read', {

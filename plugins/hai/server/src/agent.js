@@ -7,7 +7,7 @@
 import { config } from './config.js';
 import { HaiError } from './hai.js';
 import { loadToken } from './login.js';
-import { openChrome } from './chrome.js';
+import { openChrome, pickBrowser } from './chrome.js';
 
 const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
 
@@ -52,11 +52,12 @@ export function describeStop(id, r) {
   return `${head} 이미 끝난 실행입니다. agent_status 로 결과를 보세요.`;
 }
 
-/** 확장이 연결돼 있나 보고, 아니면 크롬을 켜고 기다린다(서비스 워커가 깨어 서버에 물을 때까지). 못 켜도 시작은 시도한다 — 서버가 왜 안 되는지 알려 주고 예약이면 DM 을 보낸다 */
-export async function ensureChrome({ onProgress, online = isOnline, open = openChrome, sleep = pause, tries = 20, every = 2000 } = {}) {
+/** 확장이 연결돼 있나 보고, 아니면 브라우저(크롬, 기본 브라우저가 엣지면 엣지)를 켜고 기다린다(서비스 워커가 깨어 서버에 물을 때까지). 못 켜도 시작은 시도한다 — 서버가 왜 안 되는지 알려 주고 예약이면 DM 을 보낸다 */
+export async function ensureChrome({ onProgress, online = isOnline, open = openChrome, pick = pickBrowser, sleep = pause, tries = 20, every = 2000 } = {}) {
   if (await online()) return true;
-  onProgress?.('크롬을 켜는 중');
-  try { await open(); } catch { return false; }
+  const browser = pick();
+  onProgress?.(`${browser.eul} 켜는 중`);
+  try { await open([], { browser }); } catch { return false; }
   for (let i = 0; i < tries; i++) {
     await sleep(every);
     if (await online()) return true;
@@ -65,9 +66,10 @@ export async function ensureChrome({ onProgress, online = isOnline, open = openC
 }
 
 /** hai_status 한 줄 — 크롬 확장이 연결돼 있나. 안 되면 무엇을 할지까지 */
-export async function extensionLine(online = isOnline) {
+export async function extensionLine(online = isOnline, pick = pickBrowser) {
   try {
-    return await online() ? '크롬 확장: 연결됨' : '크롬 확장: 연결 안 됨 — 설치했으면 크롬을 켜고 헥토 에이전트 패널에서 로그인하세요. 아직 설치 전이면 agent_install 로 설치 파일을 받습니다(사내 화면 읽기·실행에 필요)';
+    return await online() ? '크롬 확장: 연결됨' : `크롬 확장: 연결 안 됨 — 설치했으면 ${pick().eul} 켜고 헥토 에이전트 패널에서 로그인하세요.`
+      + ' 아직 설치 전이면 agent_install 로 설치 파일을 받습니다(사내 화면 읽기·실행에 필요)';
   } catch { return '크롬 확장: 확인하지 못함'; }
 }
 

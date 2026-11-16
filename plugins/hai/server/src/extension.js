@@ -11,6 +11,7 @@ import JSZip from 'jszip';
 import { config } from './config.js';
 import { HaiError } from './hai.js';
 import { loadToken } from './login.js';
+import { BROWSERS } from './chrome.js';
 
 const ROOT = 'hecto-agent-extension/';   // 압축 안의 확장 폴더(그 밖의 README.txt·guide.html 은 풀지 않는다)
 const MAX_ZIP = 30 * 1024 * 1024;
@@ -95,34 +96,44 @@ export async function unpackExtension(buf, dir = config.extDir) {
 /** 이 PC 에 풀어 둔 확장 버전(없으면 null) — 직접 다른 곳에 설치한 것은 알 수 없다 */
 export const unpackedVersion = async (dir = config.extDir) => (await readManifest(dir))?.version ?? null;
 
-/** 사람에게 보여 줄 남은 순서(순수 함수). opened: 크롬 확장 화면을 열었나 */
-export function installSteps({ dir, version, previous, opened, platform = process.platform }) {
+/** 브라우저마다 다른 화면 말 — 엣지는 확장 화면의 자리·이름이 크롬과 조금 다르다 */
+const WORDS = {
+  chrome: { ext: '크롬 확장', page: '"확장 프로그램" 화면', dev: '오른쪽 위의 "개발자 모드"', load: '왼쪽 위 "압축해제된 확장 프로그램 로드"', reload: '새로 고침(동그란 화살표)을',
+    pin: '크롬 오른쪽 위 퍼즐 모양 아이콘에서 "헥토 AI 브라우저 에이전트"를 고정(핀)합니다.', first: '"압축해제된 확장 프로그램 로드"' },
+  edge: { ext: '엣지 확장', page: '"확장" 화면', dev: '왼쪽 메뉴의 "개발자 모드"', load: '위쪽 "압축 풀린 파일 로드"(Load unpacked)', reload: '"다시 로드"를',
+    pin: '엣지 주소창 옆 퍼즐 모양 아이콘을 누르고 "헥토 AI 브라우저 에이전트" 옆 눈 모양(도구 모음에 표시)을 눌러 고정합니다.', first: '"압축 풀린 파일 로드"' },
+};
+
+/** 사람에게 보여 줄 남은 순서(순수 함수). opened: 확장 화면을 열었나, browser: 올릴 브라우저(안 주면 크롬) */
+export function installSteps({ dir, version, previous, opened, platform = process.platform, browser = BROWSERS.chrome }) {
+  const { name, extensions } = browser;
+  const w = WORDS[browser.id] ?? WORDS.chrome;
   const pick = platform === 'win32'
     ? '폴더 고르는 창 맨 아래 "폴더" 칸에 위 경로를 붙여 넣고 "폴더 선택"'
     : platform === 'darwin' ? '폴더 고르는 창에서 Cmd+Shift+G 를 누르고 위 경로를 붙여 넣은 뒤 "선택"' : '폴더 고르는 창에서 위 경로의 폴더를 고릅니다';
-  const where = opened ? '방금 크롬에 연 "확장 프로그램" 화면(안 보이면 주소창에 chrome://extensions)' : '평소 쓰는 크롬 주소창에 chrome://extensions 를 넣어 연 화면';
+  const where = opened ? `방금 ${name}에 연 ${w.page}(안 보이면 주소창에 ${extensions})` : `평소 쓰는 ${name} 주소창에 ${extensions} 를 넣어 연 화면`;
   if (previous) {
     return [
-      previous === version ? `크롬 확장 ${version} 을 다시 받아 같은 폴더에 덮어썼습니다.` : `크롬 확장을 ${previous} → ${version} 으로 바꿔 두었습니다(같은 폴더에 덮어씀).`,
+      previous === version ? `${w.ext} ${version} 을 다시 받아 같은 폴더에 덮어썼습니다.` : `${w.ext}을 ${previous} → ${version} 으로 바꿔 두었습니다(같은 폴더에 덮어씀).`,
       `폴더: ${dir}`,
       '',
       '남은 일 (직접 하셔야 합니다):',
-      '1. 크롬에서 헥토 에이전트 패널 맨 위 "새 버전" 카드의 "다시 불러오기"를 누릅니다.',
-      `   카드가 없으면 ${where}에서 "헥토 AI 브라우저 에이전트" 카드의 새로 고침(동그란 화살표)을 누릅니다.`,
+      `1. ${name}에서 헥토 에이전트 패널 맨 위 "새 버전" 카드의 "다시 불러오기"를 누릅니다.`,
+      `   카드가 없으면 ${where}에서 "헥토 AI 브라우저 에이전트" 카드의 ${w.reload} 누릅니다.`,
       '2. 패널이 닫히면 아이콘을 다시 누릅니다. 로그인과 저장한 작업은 그대로 남습니다.',
       '',
-      '아직 크롬에 올린 적이 없다면 처음 설치 순서대로 하세요: 개발자 모드 켜기 → "압축해제된 확장 프로그램 로드" → 위 폴더 선택.',
+      `아직 ${name}에 올린 적이 없다면 처음 설치 순서대로 하세요: 개발자 모드 켜기 → ${w.first} → 위 폴더 선택.`,
     ].join('\n');
   }
   return [
-    `크롬 확장 ${version} 설치 파일을 받아 풀어 두었습니다.`,
+    `${w.ext} ${version} 설치 파일을 받아 풀어 두었습니다.`,
     `폴더: ${dir}`,
     '이 폴더를 지우거나 옮기면 확장이 멈춥니다.',
     '',
-    '남은 일 (크롬이 사람 손으로만 받는 단계라 직접 하셔야 합니다):',
-    `1. ${where} 오른쪽 위의 "개발자 모드"를 켭니다.`,
-    `2. 왼쪽 위 "압축해제된 확장 프로그램 로드"를 누릅니다. ${pick}.`,
-    '3. 크롬 오른쪽 위 퍼즐 모양 아이콘에서 "헥토 AI 브라우저 에이전트"를 고정(핀)합니다.',
+    `남은 일 (${browser.i} 사람 손으로만 받는 단계라 직접 하셔야 합니다):`,
+    `1. ${where} ${w.dev}를 켭니다.`,
+    `2. ${w.load}를 누릅니다. ${pick}.`,
+    `3. ${w.pin}`,
     '4. 그 아이콘을 눌러 패널을 열고 "로그인"을 누릅니다(Claude Code 의 hai 로그인과 같은 헥토 계정).',
     '5. 메일·메신저·캘린더·그룹웨어처럼 쓸 사이트를 열어 로그인하고, 패널의 "이 사이트 허용"을 사이트마다 한 번씩 누릅니다.',
     '',
