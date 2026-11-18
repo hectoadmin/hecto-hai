@@ -25,7 +25,7 @@ test('확장이 저장한 파일을 원문 결과 폴더로 옮기고 장부에 
   assert.equal(path.dirname(out[0].path), rawDir);
   await assert.rejects(fs.access(txt), '다운로드 폴더에서는 사라진다');
   assert.equal(await fs.readFile(out[0].path, 'utf8'), '원문');
-  assert.equal((await fs.stat(out[0].path)).mode & 0o777, 0o600);
+  if (process.platform !== 'win32') assert.equal((await fs.stat(out[0].path)).mode & 0o777, 0o600);   // Windows 엔 유닉스 권한이 없다(늘 666)
   const ledger = await rawFiles();
   assert.ok(ledger.some((p) => p.endsWith('웍스 대화 가상방 2026-11-01~2026-11-15.txt')), '장부에 올라 훅이 Claude 의 열람을 막는다');
   // 다시 불러도(agent_status 를 두 번) 옮긴 곳을 알려 준다
