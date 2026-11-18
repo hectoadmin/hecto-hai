@@ -30,7 +30,7 @@ test('확장이 저장한 파일을 원문 결과 폴더로 옮기고 장부에 
   assert.ok(ledger.some((p) => p.endsWith('웍스 대화 가상방 2026-11-01~2026-11-15.txt')), '장부에 올라 훅이 Claude 의 열람을 막는다');
   // 다시 불러도(agent_status 를 두 번) 옮긴 곳을 알려 준다
   const again = await moveChatFiles([txt], { rawDir });
-  assert.deepEqual(again, [{ path: path.join(rawDir, path.basename(txt)), moved: true }]);
+  assert.deepEqual(again, [{ path: path.join(rawDir, path.basename(txt)), name: path.basename(txt), moved: true }]);
 });
 
 test('확장이 쓰는 모양이 아닌 경로는 옮기지 않는다(서버가 준 경로를 그대로 믿지 않음)', async () => {
@@ -40,8 +40,19 @@ test('확장이 쓰는 모양이 아닌 경로는 옮기지 않는다(서버가 
   await fs.writeFile(wrongDir, 'x');
   const out = await moveChatFiles([other, wrongDir, 'relative/hai-chat-find/웍스 대화 a.txt', path.join(downloads, '웍스 대화 없음.txt')], { rawDir });
   assert.deepEqual(out.map((o) => o.moved), [false, false, false, false]);
+  assert.ok(out.slice(0, 3).every((o) => o.rejected && !o.path && !o.name), '모양이 다른 경로는 이름도 돌려주지 않는다');
   await fs.access(other);
   await fs.access(wrongDir);
+});
+
+test('옮기지 못해도 다운로드 쪽 원본은 먼저 장부에 올리고, 경로는 돌려주지 않는다', async () => {
+  const txt = await put('웍스 대화 실패방 2026-11-01~2026-11-02.txt', '비밀');
+  const out = await moveChatFiles([txt], { rawDir, move: async () => { const e = new Error(`EACCES: ${txt}`); e.code = 'EACCES'; throw e; } });
+  assert.deepEqual(out, [{ name: path.basename(txt), moved: false, why: '옮기기 실패(EACCES)' }]);
+  assert.ok((await rawFiles()).some((p) => p.endsWith('웍스 대화 실패방 2026-11-01~2026-11-02.txt')), '원본이 장부에 올라 있다');
+  const msg = await describeChatFind({ id: 9, recipe: 'x', status: 'done', count: 1, files: [txt] }, { rawDir, move: async () => { throw Object.assign(new Error('x'), { code: 'EPERM' }); } });
+  assert.doesNotMatch(msg, new RegExp(root.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')), '절대 경로를 돌려주지 않는다');
+  assert.match(msg, /「웍스 대화 실패방 2026-11-01~2026-11-02\.txt」/);
 });
 
 test('결과 글 — 건수·파일 위치만, 내용은 없고 Read 대신 hai_ask_file 로 안내', async () => {

@@ -8,7 +8,7 @@ import { config } from './config.js';
 import { HaiError } from './hai.js';
 import { loadToken } from './login.js';
 import { openChrome, pickBrowser } from './chrome.js';
-import { moveRaw } from './ledger.js';
+import { addRaw, moveRaw } from './ledger.js';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -60,22 +60,25 @@ const home = (p) => p.replace(os.homedir(), '~');
  * 대화방 원문 찾기 결과 파일을 원문 결과 폴더로 옮긴다 → [{ path, moved, why? }]
  * 이미 옮긴 뒤 다시 부르면(agent_status 를 두 번) 원문 결과 폴더의 같은 이름을 찾아 돌려준다.
  */
-export async function moveChatFiles(files, { rawDir = config.rawDir, move = moveRaw } = {}) {
+export async function moveChatFiles(files, { rawDir = config.rawDir, move = moveRaw, protect = addRaw } = {}) {
   const out = [];
   for (const f of files ?? []) {
     const name = path.basename(String(f));
+    // 모양이 다른 경로는 이름도 돌려주지 않는다(서버가 준 글을 Claude 에 그대로 옮기지 않게)
     if (!path.isAbsolute(String(f)) || !CHAT_FILE.test(name) || path.basename(path.dirname(String(f))) !== CHAT_DIR) {
-      out.push({ path: String(f), moved: false, why: '확장이 저장하는 파일 모양이 아님' });
+      out.push({ moved: false, rejected: true, why: '확장이 저장하는 파일 모양이 아님' });
       continue;
     }
+    // 무엇이든 하기 전에 다운로드 쪽 원본부터 장부에 — 옮기지 못해도 Claude 가 읽지 못하게(fail closed)
+    await protect(f).catch(() => {});
     const st = await fs.stat(f).catch(() => null);
     if (!st) {
       const done = path.join(rawDir, name);
-      out.push(await fs.stat(done).then(() => ({ path: done, moved: true }), () => ({ path: f, moved: false, why: '파일이 없음(다른 PC 의 크롬이었거나 이미 옮기거나 지움)' })));
+      out.push(await fs.stat(done).then(() => ({ path: done, name, moved: true }), () => ({ name, moved: false, why: '파일이 없음(다른 PC 의 크롬이었거나 이미 옮기거나 지움)' })));
       continue;
     }
-    if (!st.isFile() || st.size > MAX_FILE) { out.push({ path: f, moved: false, why: '파일이 아니거나 너무 큼' }); continue; }
-    try { out.push({ path: await move(f, rawDir), moved: true }); } catch (e) { out.push({ path: f, moved: false, why: e.message }); }
+    if (!st.isFile() || st.size > MAX_FILE) { out.push({ name, moved: false, why: '파일이 아니거나 너무 큼' }); continue; }
+    try { out.push({ path: await move(f, rawDir), name, moved: true }); } catch (e) { out.push({ name, moved: false, why: `옮기기 실패(${e.code ?? '오류'})` }); }
   }
   return out;
 }
@@ -84,12 +87,13 @@ export async function moveChatFiles(files, { rawDir = config.rawDir, move = move
 export async function describeChatFind(st, opts) {
   if (st.status !== 'done') return describeRun(st);
   const head = `[대화방 원문 찾기 #${st.id}] ${st.recipe}`;
-  const moved = await moveChatFiles(st.files, opts);
-  const txt = moved.find((m) => m.path.endsWith('.txt')) ?? moved[0];
+  const moved = (await moveChatFiles(st.files, opts)).filter((m) => !m.rejected);
+  const txt = moved.find((m) => m.name.endsWith('.txt')) ?? moved[0];
   const lines = [`${head} — ${st.count}건 (불러와 본 메시지 ${st.scanned ?? 0}개).`];
-  if (!txt) lines.push('저장한 파일 경로를 받지 못했습니다. 크롬 다운로드 폴더의 hai-chat-find 폴더를 사용자에게 확인하게 하세요.');
-  else if (txt.moved) lines.push(`저장: ${home(txt.path)}${moved.some((m) => m.moved && m.path.endsWith('.csv')) ? ' (엑셀용 .csv 함께)' : ''}`);
-  else lines.push(`저장: ${home(txt.path)} — 원문 결과 폴더로 옮기지 못했습니다(${txt.why}). 크롬 다운로드 폴더에 그대로 있습니다.`);
+  if (!txt) lines.push('저장한 파일을 확인하지 못했습니다. 사용자에게 크롬 다운로드 폴더의 hai-chat-find 폴더를 직접 확인하게 하세요.');
+  else if (txt.moved) lines.push(`저장: ${home(txt.path)}${moved.some((m) => m.moved && m.name.endsWith('.csv')) ? ' (엑셀용 .csv 함께)' : ''}`);
+  // 옮기지 못했으면 경로는 돌려주지 않는다 — 파일 이름(방 이름이 든 화면 글)만 인용해서
+  else lines.push(`원문 결과 폴더로 옮기지 못했습니다(${txt.why}). 크롬 다운로드 폴더의 hai-chat-find 폴더에 ${quoted(txt.name)} 로 그대로 있습니다 ${UNTRUSTED}. 그 폴더도 Claude 가 열지 못하게 막혀 있습니다.`);
   if (st.note) lines.push(`주의: ${quoted(st.note)} ${UNTRUSTED}`);
   lines.push('원문은 이 파일에만 있고 Claude 에는 보이지 않습니다. 사용자에게 파일 위치를 알려 직접 열어 보게 하세요. 내용을 묻거나 요약하려면 이 파일에 hai_ask_file 을 씁니다(HAI 만 읽음). 파일을 Read 로 열지 않습니다.');
   return lines.join('\n');

@@ -103291,28 +103291,30 @@ var CHAT_DIR = "hai-chat-find";
 var CHAT_FILE = /^웍스 대화 .+\.(txt|csv)$/;
 var MAX_FILE = 50 * 1024 * 1024;
 var home = (p2) => p2.replace(os4.homedir(), "~");
-async function moveChatFiles(files, { rawDir = config2.rawDir, move = moveRaw } = {}) {
+async function moveChatFiles(files, { rawDir = config2.rawDir, move = moveRaw, protect = addRaw } = {}) {
   const out = [];
   for (const f2 of files ?? []) {
     const name = path6.basename(String(f2));
     if (!path6.isAbsolute(String(f2)) || !CHAT_FILE.test(name) || path6.basename(path6.dirname(String(f2))) !== CHAT_DIR) {
-      out.push({ path: String(f2), moved: false, why: "\uD655\uC7A5\uC774 \uC800\uC7A5\uD558\uB294 \uD30C\uC77C \uBAA8\uC591\uC774 \uC544\uB2D8" });
+      out.push({ moved: false, rejected: true, why: "\uD655\uC7A5\uC774 \uC800\uC7A5\uD558\uB294 \uD30C\uC77C \uBAA8\uC591\uC774 \uC544\uB2D8" });
       continue;
     }
+    await protect(f2).catch(() => {
+    });
     const st2 = await fs4.stat(f2).catch(() => null);
     if (!st2) {
       const done = path6.join(rawDir, name);
-      out.push(await fs4.stat(done).then(() => ({ path: done, moved: true }), () => ({ path: f2, moved: false, why: "\uD30C\uC77C\uC774 \uC5C6\uC74C(\uB2E4\uB978 PC \uC758 \uD06C\uB86C\uC774\uC5C8\uAC70\uB098 \uC774\uBBF8 \uC62E\uAE30\uAC70\uB098 \uC9C0\uC6C0)" })));
+      out.push(await fs4.stat(done).then(() => ({ path: done, name, moved: true }), () => ({ name, moved: false, why: "\uD30C\uC77C\uC774 \uC5C6\uC74C(\uB2E4\uB978 PC \uC758 \uD06C\uB86C\uC774\uC5C8\uAC70\uB098 \uC774\uBBF8 \uC62E\uAE30\uAC70\uB098 \uC9C0\uC6C0)" })));
       continue;
     }
     if (!st2.isFile() || st2.size > MAX_FILE) {
-      out.push({ path: f2, moved: false, why: "\uD30C\uC77C\uC774 \uC544\uB2C8\uAC70\uB098 \uB108\uBB34 \uD07C" });
+      out.push({ name, moved: false, why: "\uD30C\uC77C\uC774 \uC544\uB2C8\uAC70\uB098 \uB108\uBB34 \uD07C" });
       continue;
     }
     try {
-      out.push({ path: await move(f2, rawDir), moved: true });
+      out.push({ path: await move(f2, rawDir), name, moved: true });
     } catch (e2) {
-      out.push({ path: f2, moved: false, why: e2.message });
+      out.push({ name, moved: false, why: `\uC62E\uAE30\uAE30 \uC2E4\uD328(${e2.code ?? "\uC624\uB958"})` });
     }
   }
   return out;
@@ -103320,12 +103322,12 @@ async function moveChatFiles(files, { rawDir = config2.rawDir, move = moveRaw } 
 async function describeChatFind(st2, opts) {
   if (st2.status !== "done") return describeRun(st2);
   const head = `[\uB300\uD654\uBC29 \uC6D0\uBB38 \uCC3E\uAE30 #${st2.id}] ${st2.recipe}`;
-  const moved = await moveChatFiles(st2.files, opts);
-  const txt = moved.find((m2) => m2.path.endsWith(".txt")) ?? moved[0];
+  const moved = (await moveChatFiles(st2.files, opts)).filter((m2) => !m2.rejected);
+  const txt = moved.find((m2) => m2.name.endsWith(".txt")) ?? moved[0];
   const lines = [`${head} \u2014 ${st2.count}\uAC74 (\uBD88\uB7EC\uC640 \uBCF8 \uBA54\uC2DC\uC9C0 ${st2.scanned ?? 0}\uAC1C).`];
-  if (!txt) lines.push("\uC800\uC7A5\uD55C \uD30C\uC77C \uACBD\uB85C\uB97C \uBC1B\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. \uD06C\uB86C \uB2E4\uC6B4\uB85C\uB4DC \uD3F4\uB354\uC758 hai-chat-find \uD3F4\uB354\uB97C \uC0AC\uC6A9\uC790\uC5D0\uAC8C \uD655\uC778\uD558\uAC8C \uD558\uC138\uC694.");
-  else if (txt.moved) lines.push(`\uC800\uC7A5: ${home(txt.path)}${moved.some((m2) => m2.moved && m2.path.endsWith(".csv")) ? " (\uC5D1\uC140\uC6A9 .csv \uD568\uAED8)" : ""}`);
-  else lines.push(`\uC800\uC7A5: ${home(txt.path)} \u2014 \uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354\uB85C \uC62E\uAE30\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4(${txt.why}). \uD06C\uB86C \uB2E4\uC6B4\uB85C\uB4DC \uD3F4\uB354\uC5D0 \uADF8\uB300\uB85C \uC788\uC2B5\uB2C8\uB2E4.`);
+  if (!txt) lines.push("\uC800\uC7A5\uD55C \uD30C\uC77C\uC744 \uD655\uC778\uD558\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4. \uC0AC\uC6A9\uC790\uC5D0\uAC8C \uD06C\uB86C \uB2E4\uC6B4\uB85C\uB4DC \uD3F4\uB354\uC758 hai-chat-find \uD3F4\uB354\uB97C \uC9C1\uC811 \uD655\uC778\uD558\uAC8C \uD558\uC138\uC694.");
+  else if (txt.moved) lines.push(`\uC800\uC7A5: ${home(txt.path)}${moved.some((m2) => m2.moved && m2.name.endsWith(".csv")) ? " (\uC5D1\uC140\uC6A9 .csv \uD568\uAED8)" : ""}`);
+  else lines.push(`\uC6D0\uBB38 \uACB0\uACFC \uD3F4\uB354\uB85C \uC62E\uAE30\uC9C0 \uBABB\uD588\uC2B5\uB2C8\uB2E4(${txt.why}). \uD06C\uB86C \uB2E4\uC6B4\uB85C\uB4DC \uD3F4\uB354\uC758 hai-chat-find \uD3F4\uB354\uC5D0 ${quoted(txt.name)} \uB85C \uADF8\uB300\uB85C \uC788\uC2B5\uB2C8\uB2E4 ${UNTRUSTED}. \uADF8 \uD3F4\uB354\uB3C4 Claude \uAC00 \uC5F4\uC9C0 \uBABB\uD558\uAC8C \uB9C9\uD600 \uC788\uC2B5\uB2C8\uB2E4.`);
   if (st2.note) lines.push(`\uC8FC\uC758: ${quoted(st2.note)} ${UNTRUSTED}`);
   lines.push("\uC6D0\uBB38\uC740 \uC774 \uD30C\uC77C\uC5D0\uB9CC \uC788\uACE0 Claude \uC5D0\uB294 \uBCF4\uC774\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC0AC\uC6A9\uC790\uC5D0\uAC8C \uD30C\uC77C \uC704\uCE58\uB97C \uC54C\uB824 \uC9C1\uC811 \uC5F4\uC5B4 \uBCF4\uAC8C \uD558\uC138\uC694. \uB0B4\uC6A9\uC744 \uBB3B\uAC70\uB098 \uC694\uC57D\uD558\uB824\uBA74 \uC774 \uD30C\uC77C\uC5D0 hai_ask_file \uC744 \uC501\uB2C8\uB2E4(HAI \uB9CC \uC77D\uC74C). \uD30C\uC77C\uC744 Read \uB85C \uC5F4\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4.");
   return lines.join("\n");
@@ -104812,7 +104814,7 @@ async function fillTimetable(buf, rows) {
 }
 
 // src/index.js
-var VERSION2 = "0.14.0";
+var VERSION2 = "0.15.0";
 var VAULT_TTL_MS = 12 * 36e5;
 var INLINE_MAX = 15e3;
 var SINGLE_MAX = 8e4;

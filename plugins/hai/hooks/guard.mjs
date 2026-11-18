@@ -63,7 +63,9 @@ const opt = process.env.CLAUDE_PLUGIN_OPTION_PROTECTED_DIRS ?? '';
 const rawOpt = process.env.HAI_RAW_DIR ?? process.env.CLAUDE_PLUGIN_OPTION_RAW_DIR ?? '';
 const rawSaved = (() => { try { return fs.readFileSync(toN(P.join(DATA, 'raw-dir')), 'utf8').trim(); } catch { return ''; } })();
 const rawDir = rawOpt && !rawOpt.includes('${') ? rawOpt : rawSaved || P.join(HOME, 'Documents', 'HAI 원문');
-const userDirs = [...(opt.includes('${') ? [] : opt.split(',').map((s) => s.trim()).filter(Boolean)).map((d) => [d, false]), ...(exists(expand(rawDir)) ? [[rawDir, true]] : [])]
+// 크롬 확장이 대화방 원문 찾기(agent_chat_find) 결과를 잠깐 두는 다운로드 폴더 — 플러그인이 옮기기 전이나 옮기지 못했을 때도 내용 읽기를 막는다
+const chatDl = P.join(HOME, 'Downloads', 'hai-chat-find');
+const userDirs = [...(opt.includes('${') ? [] : opt.split(',').map((s) => s.trim()).filter(Boolean)).map((d) => [d, false]), ...(exists(expand(rawDir)) ? [[rawDir, true]] : []), ...(exists(chatDl) ? [[chatDl, true]] : [])]
   // rawdir: 원문 결과 폴더 — 파일 이름은 Claude 가 만든 것이라 이름만 보는 명령(ls·open·find·Glob)은 괜찮고, 내용 읽기만 막는다
   .map(([d, rawdir]) => { const p = real(expand(d)); return { shown: tilde(p), key: norm(p), dir: true, rawdir, forms: [fold(p), fold(tilde(p))] }; });
 const internal = { shown: '~/.hai-mcp/tmp', key: key(P.join(DATA, 'tmp')), dir: true, internal: true };

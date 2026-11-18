@@ -14,6 +14,7 @@
  *   agent_install  크롬 확장 설치 파일을 받아 풀어 두고 설치 순서를 알려 준다(새 버전으로 바꿀 때도)
  *   hai_login      헥토 통합인증으로 로그인 — 개인 키 없이 agent 서버가 사내 AI 를 대신 부른다 (hai_logout)
  *   agent_recipes · agent_run · agent_status · agent_answer · agent_stop  크롬 헥토 에이전트에 저장한 작업을 실행(실행은 크롬에서, 확인은 대화 또는 패널, 멈춤은 언제나)
+ *   agent_chat_find 웍스 대화방 원문을 방·단어·기간으로 — 확장이 화면 구조로 골라 PC 파일로, 원문 결과 폴더로 옮김(Claude 에는 건수·위치만)
  *   hai_todo       이 PC 의 할 일 목록 — extract 는 받은 글에서 사내 AI 가 엄격 기준으로 뽑고 근거·담당을 규칙으로 확인(todo-extract.js)
  *   hai_timetable_fill  EVS 타임테이블 양식 엑셀에 업무·법인별 시간 채우기 (HAI 를 부르지 않는다)
  * 가리기 전 원래 값은 이 프로세스 메모리(Vault)에만 있다. 원문 파일(받아쓰기·OCR·되돌린 결과)은 장부에 올라 훅이 Claude 의 직접 열람을 막는다.
@@ -42,7 +43,7 @@ import { folderInfo, listFiles, search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.14.0';
+export const VERSION = '0.15.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
