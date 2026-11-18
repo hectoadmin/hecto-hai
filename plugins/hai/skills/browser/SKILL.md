@@ -11,6 +11,7 @@ description: 사내 웹 화면 읽기·맡기기 — 메일·메신저·캘린�
 
 ## 고르는 순서
 1. **읽기만** → `agent_read {site, ask}`. 뒤쪽 탭에서 돌고 끝나면 닫힙니다. 곳마다 한 번씩 부르고, 결과를 합쳐 정리합니다.
+   - 웍스 대화방의 **원문**(방·단어·기간)이 필요하면 `agent_read` 가 아니라 `agent_chat_find {room, keywords, from, to}`. 원문은 파일로만 저장되고 건수·위치만 옵니다(`/hai:works` 참고).
 2. **저장한 작업이 있는 일** → `agent_recipes` 로 찾아 `agent_run {recipe, params}`.
 3. **그 밖의 일** → `agent_run {task, site}`. 화면을 바꾸는 일이라 확인이 옵니다. 잘 되면 패널에서 작업으로 저장해 두라고 권합니다.
 4. **열어 달라고만 할 때** → `agent_open {sites}`. 읽기·실행은 크롬이 꺼져 있으면 알아서 켜므로 따로 부르지 않습니다.

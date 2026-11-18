@@ -50,6 +50,23 @@ export async function writeRaw(p, text, { overwrite = false } = {}) {
   return target;
 }
 
+/**
+ * 다른 곳(크롬 다운로드 폴더)에 생긴 원문 파일을 dir 로 옮기고 장부에 올린다(600) → 새 경로.
+ * 장부부터 올린다 — 옮기는 사이에 Claude 가 읽지 못하게. 디스크가 다르면(EXDEV) 복사 뒤 지운다.
+ */
+export async function moveRaw(src, dir) {
+  await fs.mkdir(dir, { recursive: true });
+  const target = await freePath(path.join(dir, path.basename(src)));
+  await addRaw(target);
+  try { await fs.rename(src, target); } catch (e) {
+    if (e.code !== 'EXDEV') throw e;
+    await fs.copyFile(src, target);
+    await fs.unlink(src);
+  }
+  await fs.chmod(target, 0o600).catch(() => {});
+  return target;
+}
+
 /** 가린 결과(긴 것)를 둘 곳 — Claude 가 읽어도 되는 파일 */
 export async function writeMasked(name, text) {
   const dir = path.join(await ensureDataDir(), 'masked');

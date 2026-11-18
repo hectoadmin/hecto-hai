@@ -129,5 +129,6 @@ HAI_API_KEY=... node scripts/call.mjs hai_mask_file '{"path":"~/a.pdf"}' hai_res
 | `hai_todo` | 이 PC 의 할 일 목록. `extract` 는 받은 글에서 엄격 기준으로 뽑고 근거·담당을 규칙으로 확인 | qwen-llm(추론 모드) |
 | `hai_status` | 키·서비스 점검 | 전체 |
 | `agent_recipes` · `agent_run` · `agent_status` · `agent_answer` | 크롬 헥토 에이전트에 저장한 작업을 내 크롬에서 실행(agent 서버 `/hai-api`, 대화 확인은 저장류만) | — (화면 판단은 agent 서버가 HAI 로) |
+| `agent_chat_find` | 웍스 대화방 원문 찾기 — 방·단어·기간에 맞는 메시지를 확장이 화면 구조로 골라 그 PC 다운로드 폴더에 저장, 플러그인이 원문 결과 폴더로 옮겨 장부에 올림 | — (사내 AI 를 쓰지 않음, Claude 에는 건수·위치만) |
 
 서비스 이름·주소는 HAI 연동 가이드 v2.10 기준이며 환경변수(`HAI_BASE_URL`, `HAI_CHAT_SERVICE` 등, `server/src/config.js`)로 바꿀 수 있습니다.

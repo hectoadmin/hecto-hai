@@ -14,6 +14,7 @@
  *   agent_install  크롬 확장 설치 파일을 받아 풀어 두고 설치 순서를 알려 준다(새 버전으로 바꿀 때도)
  *   hai_login      헥토 통합인증으로 로그인 — 개인 키 없이 agent 서버가 사내 AI 를 대신 부른다 (hai_logout)
  *   agent_recipes · agent_run · agent_status · agent_answer · agent_stop  크롬 헥토 에이전트에 저장한 작업을 실행(실행은 크롬에서, 확인은 대화 또는 패널, 멈춤은 언제나)
+ *   agent_chat_find 웍스 대화방 원문을 방·단어·기간으로 — 확장이 화면 구조로 골라 PC 파일로, 원문 결과 폴더로 옮김(Claude 에는 건수·위치만)
  *   hai_todo       이 PC 의 할 일 목록 — extract 는 받은 글에서 사내 AI 가 엄격 기준으로 뽑고 근거·담당을 규칙으로 확인(todo-extract.js)
  *   hai_timetable_fill  EVS 타임테이블 양식 엑셀에 업무·법인별 시간 채우기 (HAI 를 부르지 않는다)
  * 가리기 전 원래 값은 이 프로세스 메모리(Vault)에만 있다. 원문 파일(받아쓰기·OCR·되돌린 결과)은 장부에 올라 훅이 Claude 의 직접 열람을 막는다.
@@ -28,7 +29,7 @@ import { z } from 'zod';
 import { config, apiKey } from './config.js';
 import { chat, structured, probe, ocr, route as haiRoute, HaiError } from './hai.js';
 import { currentLogin, logout, loginUser, startLogin } from './login.js';
-import { answerRun, describeRun, describeStop, stopRun, ensureChrome, extensionLine, isOnline, listRecipes, notifyMe, quoted, pickRecipe, startRun, startTask, waitRun } from './agent.js';
+import { answerRun, describeChatFind, describeRun, describeStop, stopRun, ensureChrome, extensionLine, isOnline, listRecipes, notifyMe, quoted, pickRecipe, startChatFind, startRun, startTask, waitRun } from './agent.js';
 import { openChrome, openExtensionsPage, pickBrowser, siteUrl, SITES } from './chrome.js';
 import { downloadExtension, installSteps, unpackExtension } from './extension.js';
 import { addTodos, closeTodo, listTodos, todoLine, todoText } from './todo.js';
@@ -42,7 +43,7 @@ import { folderInfo, listFiles, search } from './search.js';
 import { maskTable } from './table.js';
 import { fillTimetable } from './timetable.js';
 
-export const VERSION = '0.14.0';
+export const VERSION = '0.15.0';
 const VAULT_TTL_MS = 12 * 3600_000;
 const INLINE_MAX = 15_000; // 이보다 긴 가린 글은 파일로 — Claude Code 의 도구 결과 상한(약 25k 토큰)에 걸리지 않게
 const SINGLE_MAX = 80_000; // 이보다 짧으면 한 번에 읽힌다(HAI 컨텍스트 256k 토큰)
@@ -528,6 +529,27 @@ server.registerTool('agent_read', {
   return ok(describeRun(st));
 }));
 
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+server.registerTool('agent_chat_find', {
+  title: '웍스 대화방 원문 찾기',
+  description: '웍스 메신저 대화방 하나에서 기간·단어에 맞는 메시지를 원문 그대로 찾아 내 PC 파일(메모장용 .txt·엑셀용 .csv)로 저장한다. '
+    + '사내 AI 를 쓰지 않고 크롬 확장이 화면 구조로 직접 읽어 고르므로 빠뜨리거나 지어내지 않는다. 원문은 원문 결과 폴더에만 저장되고 Claude 에는 건수·파일 위치만 온다. '
+    + '"○○방에서 ○○ 들어간 메시지 원문", "○월 ○일부터 ○일까지 대화 그대로" 같은 요청에 쓴다(요약만 필요하면 agent_read). 방을 열면 그 방이 읽음으로 바뀐다. 기간이 길면 지난 대화를 불러오느라 몇 분 걸린다(최대 4분).',
+  inputSchema: {
+    room: z.string().min(1).describe('대화방 이름 — 웍스 목록에 보이는 이름 그대로(띄어쓰기·대소문자는 무시). 정확히 같은 방이 없으면 비슷한 방 이름을 알려 준다'),
+    keywords: z.array(z.string()).max(10).optional().describe('찾을 단어 — 하나라도 들어간 메시지(띄어쓰기 무시). 비우면 기간 전체'),
+    from: z.string().regex(DAY).describe('시작일 YYYY-MM-DD'),
+    to: z.string().regex(DAY).describe('종료일 YYYY-MM-DD(그날 포함). 오늘까지면 오늘 날짜'),
+    wait_sec: waitSchema,
+  },
+}, guard(async ({ room, keywords, from, to, wait_sec }, ex) => {
+  await ensureChrome({ onProgress: (m) => progress(ex, m) });
+  const { id } = await startChatFind({ url: siteUrl('메신저'), room, keywords: keywords ?? [], from, to });
+  progress(ex, `대화방 원문 찾기 #${id} 맡김`);
+  const st = await waitRun(id, { waitMs: (wait_sec ?? 280) * 1000, onProgress: (m) => progress(ex, m) });
+  return ok(await describeChatFind(st));
+}));
+
 server.registerTool('agent_run', {
   title: '크롬 작업 실행',
   description: '사용자의 크롬에서 사내 화면 일을 실행한다 — 저장한 작업(recipe)이나 글로 맡긴 일(task) 중 하나. 저장한 작업이 있으면 먼저 쓴다(agent_recipes). 화면 조작은 확장이, 화면 판단은 사내 AI 가 하고 화면 내용은 이쪽으로 오지 않는다. 읽기만 할 일은 agent_read 를 쓴다. 끝나거나 확인·질문이 필요하거나 wait_sec 이 지나면 돌려준다. 크롬이 꺼져 있으면 켠다. '
@@ -560,7 +582,7 @@ server.registerTool('agent_status', {
   inputSchema: { run: z.number().int().describe('실행 번호(agent_run 결과의 #)'), wait_sec: waitSchema },
 }, guard(async ({ run, wait_sec }, ex) => {
   const st = await waitRun(run, { waitMs: (wait_sec ?? 120) * 1000, onProgress: (m) => progress(ex, m) });
-  return ok(describeRun(st));
+  return ok(st.kind === 'chat_find' ? await describeChatFind(st) : describeRun(st));
 }));
 
 server.registerTool('agent_answer', {
