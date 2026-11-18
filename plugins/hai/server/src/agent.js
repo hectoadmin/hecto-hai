@@ -8,6 +8,10 @@ import { config } from './config.js';
 import { HaiError } from './hai.js';
 import { loadToken } from './login.js';
 import { openChrome, pickBrowser } from './chrome.js';
+import { moveRaw } from './ledger.js';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 
 const pause = (ms) => new Promise((ok) => setTimeout(ok, ms));
 
@@ -42,6 +46,54 @@ export const runStatus = (id) => api(`/runs/${Number(id)}`);
 export const answerRun = (id, q, answer) => api(`/runs/${Number(id)}/answer`, { q, answer });
 /** 멈춤 — 기다리는 질문이 없어도(같은 동작을 되풀이할 때). → { stopped, state: waiting|running|starting|finished } */
 export const stopRun = (id) => api(`/runs/${Number(id)}/stop`, {});
+
+/** 대화방 원문 찾기 맡기기 — 확장이 AI 없이 웍스 화면 구조로 읽어 그 PC 다운로드 폴더에 파일로 저장한다. 서버·이쪽으로 메시지 글은 오지 않는다 */
+export const startChatFind = ({ url, room, keywords = [], from, to }) => api('/runs', { kind: 'chat_find', startUrl: url, find: { room, keywords, from, to } });
+
+// 확장(hecto-agent extension/lib/chat-find.js)이 쓰는 다운로드 폴더 안 폴더·파일 이름 — 이 모양만 옮긴다(서버가 준 경로를 그대로 믿지 않는다)
+const CHAT_DIR = 'hai-chat-find';
+const CHAT_FILE = /^웍스 대화 .+\.(txt|csv)$/;
+const MAX_FILE = 50 * 1024 * 1024;
+const home = (p) => p.replace(os.homedir(), '~');
+
+/**
+ * 대화방 원문 찾기 결과 파일을 원문 결과 폴더로 옮긴다 → [{ path, moved, why? }]
+ * 이미 옮긴 뒤 다시 부르면(agent_status 를 두 번) 원문 결과 폴더의 같은 이름을 찾아 돌려준다.
+ */
+export async function moveChatFiles(files, { rawDir = config.rawDir, move = moveRaw } = {}) {
+  const out = [];
+  for (const f of files ?? []) {
+    const name = path.basename(String(f));
+    if (!path.isAbsolute(String(f)) || !CHAT_FILE.test(name) || path.basename(path.dirname(String(f))) !== CHAT_DIR) {
+      out.push({ path: String(f), moved: false, why: '확장이 저장하는 파일 모양이 아님' });
+      continue;
+    }
+    const st = await fs.stat(f).catch(() => null);
+    if (!st) {
+      const done = path.join(rawDir, name);
+      out.push(await fs.stat(done).then(() => ({ path: done, moved: true }), () => ({ path: f, moved: false, why: '파일이 없음(다른 PC 의 크롬이었거나 이미 옮기거나 지움)' })));
+      continue;
+    }
+    if (!st.isFile() || st.size > MAX_FILE) { out.push({ path: f, moved: false, why: '파일이 아니거나 너무 큼' }); continue; }
+    try { out.push({ path: await move(f, rawDir), moved: true }); } catch (e) { out.push({ path: f, moved: false, why: e.message }); }
+  }
+  return out;
+}
+
+/** 대화방 원문 찾기 상태 → Claude 에게 돌려줄 글. 끝났으면 파일을 옮긴 뒤 위치만 알린다(내용은 없다) */
+export async function describeChatFind(st, opts) {
+  if (st.status !== 'done') return describeRun(st);
+  const head = `[대화방 원문 찾기 #${st.id}] ${st.recipe}`;
+  const moved = await moveChatFiles(st.files, opts);
+  const txt = moved.find((m) => m.path.endsWith('.txt')) ?? moved[0];
+  const lines = [`${head} — ${st.count}건 (불러와 본 메시지 ${st.scanned ?? 0}개).`];
+  if (!txt) lines.push('저장한 파일 경로를 받지 못했습니다. 크롬 다운로드 폴더의 hai-chat-find 폴더를 사용자에게 확인하게 하세요.');
+  else if (txt.moved) lines.push(`저장: ${home(txt.path)}${moved.some((m) => m.moved && m.path.endsWith('.csv')) ? ' (엑셀용 .csv 함께)' : ''}`);
+  else lines.push(`저장: ${home(txt.path)} — 원문 결과 폴더로 옮기지 못했습니다(${txt.why}). 크롬 다운로드 폴더에 그대로 있습니다.`);
+  if (st.note) lines.push(`주의: ${quoted(st.note)} ${UNTRUSTED}`);
+  lines.push('원문은 이 파일에만 있고 Claude 에는 보이지 않습니다. 사용자에게 파일 위치를 알려 직접 열어 보게 하세요. 내용을 묻거나 요약하려면 이 파일에 hai_ask_file 을 씁니다(HAI 만 읽음). 파일을 Read 로 열지 않습니다.');
+  return lines.join('\n');
+}
 
 /** agent_stop 결과 → Claude 에게 돌려줄 글 */
 export function describeStop(id, r) {
